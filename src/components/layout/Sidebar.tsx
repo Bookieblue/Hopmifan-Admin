@@ -7,6 +7,7 @@ import {
   CreditCard,
   Bell,
   LayoutDashboard,
+  Settings,
 } from "lucide-react";
 
 const menuItems = [
@@ -16,6 +17,7 @@ const menuItems = [
   { icon: Receipt, label: "Receipts", path: "/receipts" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
   { icon: Bell, label: "Reminders", path: "/reminders" },
+  { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
 export function Sidebar() {
