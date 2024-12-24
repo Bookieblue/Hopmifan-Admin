@@ -8,6 +8,8 @@ import {
   Bell,
   LayoutDashboard,
   Settings,
+  Users,
+  User,
 } from "lucide-react";
 
 const menuItems = [
@@ -16,6 +18,7 @@ const menuItems = [
   { icon: Calculator, label: "Estimates", path: "/estimates" },
   { icon: Receipt, label: "Receipts", path: "/receipts" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
+  { icon: Users, label: "Customers", path: "/customers" },
   { icon: Bell, label: "Reminders", path: "/reminders" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];

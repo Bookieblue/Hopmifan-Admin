@@ -13,6 +13,8 @@ import Payments from "./pages/payments/Index";
 import Settings from "./pages/settings/Index";
 import Onboarding from "./pages/onboarding/Index";
 import BusinessOnboarding from "./pages/onboarding/Business";
+import CustomerList from "./pages/customers/CustomerList";
+import CustomerDetail from "./pages/customers/CustomerDetail";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +35,8 @@ const App = () => (
             <Route path="/settings" element={<Settings />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/onboarding/business" element={<BusinessOnboarding />} />
+            <Route path="/customers" element={<CustomerList />} />
+            <Route path="/customers/:id" element={<CustomerDetail />} />
           </Route>
         </Routes>
       </BrowserRouter>
