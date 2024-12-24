@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, PaypalIcon, Wallet } from "lucide-react";
+import { CreditCard, Wallet } from "lucide-react";
 
 export default function Payments() {
   return (
