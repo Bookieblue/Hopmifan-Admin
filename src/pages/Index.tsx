@@ -1,14 +1,61 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Layout } from "@/components/layout/Layout";
+import { StatCard } from "@/components/dashboard/StatCard";
+import {
+  FileText,
+  Calculator,
+  Receipt,
+  TrendingUp,
+  Clock,
+  DollarSign,
+} from "lucide-react";
 
-const Index = () => {
+export default function Index() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
-};
+    <Layout>
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-4xl font-semibold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground mt-2">
+            Welcome back! Here's an overview of your business.
+          </p>
+        </div>
 
-export default Index;
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <StatCard
+            title="Total Invoices"
+            value="$24,500"
+            icon={<FileText className="w-6 h-6" />}
+            trend={{ value: 12, isPositive: true }}
+          />
+          <StatCard
+            title="Pending Estimates"
+            value="8"
+            icon={<Calculator className="w-6 h-6" />}
+          />
+          <StatCard
+            title="Recent Receipts"
+            value="15"
+            icon={<Receipt className="w-6 h-6" />}
+          />
+          <StatCard
+            title="Monthly Revenue"
+            value="$8,250"
+            icon={<TrendingUp className="w-6 h-6" />}
+            trend={{ value: 8, isPositive: true }}
+          />
+          <StatCard
+            title="Upcoming Reminders"
+            value="3"
+            icon={<Clock className="w-6 h-6" />}
+          />
+          <StatCard
+            title="Outstanding Balance"
+            value="$3,450"
+            icon={<DollarSign className="w-6 h-6" />}
+            trend={{ value: 5, isPositive: false }}
+          />
+        </div>
+      </div>
+    </Layout>
+  );
+}
