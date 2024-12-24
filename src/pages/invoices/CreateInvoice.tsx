@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { VoiceControl } from "@/components/VoiceControl";
 
 const CreateInvoice = () => {
   const handleSubmit = (e: React.FormEvent) => {
@@ -12,15 +13,23 @@ const CreateInvoice = () => {
     // Handle form submission
   };
 
+  const handleVoiceData = (data: any) => {
+    // Handle voice data and update form
+    console.log("Voice data received:", data);
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Link to="/invoices">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <h1 className="text-3xl font-bold">Create Invoice</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link to="/invoices">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <h1 className="text-3xl font-bold">Create Invoice</h1>
+        </div>
+        <VoiceControl onDataReceived={handleVoiceData} type="invoice" />
       </div>
 
       <Card>
