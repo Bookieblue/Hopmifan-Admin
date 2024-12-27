@@ -15,6 +15,7 @@ import CreateReceipt from "./pages/receipts/CreateReceipt";
 import PaymentHistory from "./pages/payments/Index";
 import Settings from "./pages/settings/Index";
 import BusinessOnboarding from "./pages/onboarding/Business";
+import CustomerList from "./pages/customers/CustomerList";
 import CreateCustomer from "./pages/customers/CreateCustomer";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/receipts/create" element={<CreateReceipt />} />
             <Route path="/payments" element={<PaymentHistory />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/customers" element={<CustomerList />} />
             <Route path="/customers/create" element={<CreateCustomer />} />
           </Route>
         </Routes>
