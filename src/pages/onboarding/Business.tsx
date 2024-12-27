@@ -28,6 +28,17 @@ export default function BusinessOnboarding() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!businessName || !country || !email || !phone || !businessType || !workLocation || !targetCountry) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please fill in all required fields",
+      });
+      return;
+    }
+
     // TODO: Implement actual form submission
     toast({
       title: "Business details saved",
@@ -38,13 +49,13 @@ export default function BusinessOnboarding() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
-      <div className="w-full max-w-3xl space-y-8">
+      <div className="w-full max-w-4xl space-y-8">
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2">
             <img 
               src="/lovable-uploads/43d04b44-fc73-46eb-8543-89f240871e1d.png" 
               alt="Cordlo Logo" 
-              className="h-12"
+              className="h-12 w-auto"
             />
           </div>
           <h1 className="text-3xl font-bold">Welcome to Cordlo</h1>
@@ -76,97 +87,99 @@ export default function BusinessOnboarding() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="business-name">Business Name</Label>
-                <Input 
-                  id="business-name" 
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
-                  placeholder="Enter your business name" 
-                  required
-                />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="business-name">Business Name</Label>
+                  <Input 
+                    id="business-name" 
+                    value={businessName}
+                    onChange={(e) => setBusinessName(e.target.value)}
+                    placeholder="Enter your business name" 
+                    required
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="country">Country</Label>
-                <Select onValueChange={setCountry} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="us">United States</SelectItem>
-                    <SelectItem value="uk">United Kingdom</SelectItem>
-                    <SelectItem value="ca">Canada</SelectItem>
-                    <SelectItem value="au">Australia</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="country">Country</Label>
+                  <Select onValueChange={setCountry} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="us">United States</SelectItem>
+                      <SelectItem value="uk">United Kingdom</SelectItem>
+                      <SelectItem value="ca">Canada</SelectItem>
+                      <SelectItem value="au">Australia</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="business-email">Business Email</Label>
-                <Input 
-                  id="business-email" 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your business email" 
-                  required
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="business-email">Business Email</Label>
+                  <Input 
+                    id="business-email" 
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com" 
+                    required
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="business-phone">Business Phone</Label>
-                <Input 
-                  id="business-phone" 
-                  type="tel" 
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Enter your business phone" 
-                  required
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="business-phone">Business Phone</Label>
+                  <Input 
+                    id="business-phone" 
+                    type="tel" 
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Enter your business phone" 
+                    required
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="business-type">Business Type</Label>
-                <Select onValueChange={setBusinessType} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your business type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="freelance">Freelance Business</SelectItem>
-                    <SelectItem value="local">Local Business</SelectItem>
-                    <SelectItem value="company">Company Business</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="business-type">Business Type</Label>
+                  <Select onValueChange={setBusinessType} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your business type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="freelance">Freelance Business</SelectItem>
+                      <SelectItem value="local">Local Business</SelectItem>
+                      <SelectItem value="company">Company Business</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="work-location">Work Location</Label>
-                <Select onValueChange={setWorkLocation} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your work location" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="remote">Remote</SelectItem>
-                    <SelectItem value="physical">Physical Address</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="work-location">Work Location</Label>
+                  <Select onValueChange={setWorkLocation} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your work location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="remote">Remote</SelectItem>
+                      <SelectItem value="physical">Physical Address</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="target-country">Target Audience Country</Label>
-                <Select onValueChange={setTargetCountry} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select target audience country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="us">United States</SelectItem>
-                    <SelectItem value="uk">United Kingdom</SelectItem>
-                    <SelectItem value="ca">Canada</SelectItem>
-                    <SelectItem value="au">Australia</SelectItem>
-                    <SelectItem value="global">Global</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="target-country">Target Audience Country</Label>
+                  <Select onValueChange={setTargetCountry} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select target audience country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="us">United States</SelectItem>
+                      <SelectItem value="uk">United Kingdom</SelectItem>
+                      <SelectItem value="ca">Canada</SelectItem>
+                      <SelectItem value="au">Australia</SelectItem>
+                      <SelectItem value="global">Global</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <Button type="submit" className="w-full">
