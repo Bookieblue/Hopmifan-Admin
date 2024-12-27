@@ -14,6 +14,7 @@ import ReceiptList from "./pages/receipts/ReceiptList";
 import CreateReceipt from "./pages/receipts/CreateReceipt";
 import Payments from "./pages/payments/Index";
 import Settings from "./pages/settings/Index";
+import BusinessOnboarding from "./pages/onboarding/Business";
 import CreateCustomer from "./pages/customers/CreateCustomer";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/auth/signin" element={<SignIn />} />
           <Route path="/auth/signup" element={<SignUp />} />
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+          <Route path="/onboarding/business" element={<BusinessOnboarding />} />
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
             <Route path="/invoices" element={<InvoiceList />} />
