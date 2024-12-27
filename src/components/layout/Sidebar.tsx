@@ -11,6 +11,7 @@ import {
   LogOut,
   MessageSquare,
   HelpCircle,
+  X,
 } from "lucide-react";
 import { SupportModal } from "../modals/SupportModal";
 import { FeedbackModal } from "../modals/FeedbackModal";
@@ -27,14 +28,29 @@ const menuItems = [
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onClose?: () => void;
+}
+
+export function Sidebar({ onClose }: SidebarProps) {
   const location = useLocation();
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   return (
-    <div className="h-screen w-64 bg-[#F9FAFB] border-r border-gray-100 p-6 fixed left-0 top-0 flex flex-col font-inter">
-      <div className="mb-8">
+    <div className="h-screen w-64 bg-[#F9FAFB] border-r border-gray-100 p-6 flex flex-col font-inter relative">
+      {/* Close button for mobile */}
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg md:hidden"
+          aria-label="Close menu"
+        >
+          <X className="h-5 w-5 text-gray-500" />
+        </button>
+      )}
+
+      <div className="mb-8 md:block">
         <Link to="/" className="flex items-center">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -53,6 +69,7 @@ export function Sidebar() {
             <Link
               key={item.path}
               to={item.path}
+              onClick={onClose}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                 isActive
