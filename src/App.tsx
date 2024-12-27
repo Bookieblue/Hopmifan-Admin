@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Layout } from "./components/layout/Layout";
 import Index from "./pages/Index";
+import SignIn from "./pages/auth/SignIn";
+import SignUp from "./pages/auth/SignUp";
 import InvoiceList from "./pages/invoices/InvoiceList";
 import CreateInvoice from "./pages/invoices/CreateInvoice";
 import EstimateList from "./pages/estimates/EstimateList";
@@ -23,6 +25,8 @@ const App = () => (
     <TooltipProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/auth/signin" element={<SignIn />} />
+          <Route path="/auth/signup" element={<SignUp />} />
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
             <Route path="/invoices" element={<InvoiceList />} />

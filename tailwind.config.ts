@@ -18,6 +18,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        inter: ['Inter', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -52,18 +55,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        mint: {
-          50: "#f2fbf9",
-          100: "#d3f4ed",
-          200: "#a7e9db",
-          300: "#74d4c0",
-          400: "#44b59d",
-          500: "#2a9680",
-          600: "#1f7865",
-          700: "#1d6052",
-          800: "#1a4b42",
-          900: "#193d37",
-        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -79,20 +70,10 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        slideIn: {
-          "0%": { transform: "translateX(100%)" },
-          "100%": { transform: "translateX(0)" },
-        },
-        fadeIn: {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        slideIn: "slideIn 0.3s ease-out",
-        fadeIn: "fadeIn 0.3s ease-out",
       },
     },
   },
