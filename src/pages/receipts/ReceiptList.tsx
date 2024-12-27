@@ -62,12 +62,16 @@ export default function ReceiptList() {
                 <TableCell>{receipt.date}</TableCell>
                 <TableCell>{receipt.amount}</TableCell>
                 <TableCell className="text-right space-x-2">
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Eye className="w-4 h-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Pencil className="w-4 h-4" />
-                  </Button>
+                  <Link to={`/receipts/${receipt.id}`}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                  </Link>
+                  <Link to={`/receipts/${receipt.id}/edit`}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                  </Link>
                   <Button variant="ghost" size="icon" className="h-8 w-8">
                     <Download className="w-4 h-4" />
                   </Button>
