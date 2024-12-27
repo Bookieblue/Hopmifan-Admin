@@ -40,11 +40,13 @@ export default function BusinessOnboarding() {
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
       <div className="w-full max-w-3xl space-y-8">
         <div className="text-center space-y-4">
-          <img 
-            src="/lovable-uploads/6a8f39bd-d44e-4077-910a-9365f8d34d90.png" 
-            alt="Cordlo Logo" 
-            className="mx-auto h-12"
-          />
+          <div className="flex items-center justify-center gap-2">
+            <img 
+              src="/lovable-uploads/43d04b44-fc73-46eb-8543-89f240871e1d.png" 
+              alt="Cordlo Logo" 
+              className="h-12"
+            />
+          </div>
           <h1 className="text-3xl font-bold">Welcome to Cordlo</h1>
           <p className="text-muted-foreground">Let's set up your business profile to get started</p>
         </div>
