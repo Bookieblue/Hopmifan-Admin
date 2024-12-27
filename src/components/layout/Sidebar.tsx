@@ -9,7 +9,12 @@ import {
   BarChart,
   Settings,
   LogOut,
+  MessageSquare,
+  HelpCircle,
 } from "lucide-react";
+import { SupportModal } from "../modals/SupportModal";
+import { FeedbackModal } from "../modals/FeedbackModal";
+import { useState } from "react";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -24,6 +29,8 @@ const menuItems = [
 
 export function Sidebar() {
   const location = useLocation();
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   return (
     <div className="h-screen w-64 bg-[#F9FAFB] border-r border-gray-100 p-6 fixed left-0 top-0 flex flex-col font-inter">
@@ -41,7 +48,7 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname.startsWith(item.path === "/" ? "/" : `${item.path}/`) || location.pathname === item.path;
+          const isActive = location.pathname === item.path;
           return (
             <Link
               key={item.path}
@@ -65,15 +72,34 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="mt-auto pt-4 border-t border-gray-100">
-        <Link
-          to="/auth/signin"
-          className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+      <div className="mt-auto space-y-1">
+        <button
+          onClick={() => setShowSupportModal(true)}
+          className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
         >
-          <LogOut className="w-5 h-5 text-gray-500" />
-          Sign out
-        </Link>
+          <HelpCircle className="w-5 h-5 text-gray-500" />
+          Support
+        </button>
+        <button
+          onClick={() => setShowFeedbackModal(true)}
+          className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+        >
+          <MessageSquare className="w-5 h-5 text-gray-500" />
+          Feedback
+        </button>
+        <div className="pt-4 border-t border-gray-100">
+          <Link
+            to="/auth/signin"
+            className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+          >
+            <LogOut className="w-5 h-5 text-gray-500" />
+            Sign out
+          </Link>
+        </div>
       </div>
+
+      <SupportModal open={showSupportModal} onOpenChange={setShowSupportModal} />
+      <FeedbackModal open={showFeedbackModal} onOpenChange={setShowFeedbackModal} />
     </div>
   );
 }
