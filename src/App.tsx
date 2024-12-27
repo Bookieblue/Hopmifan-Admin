@@ -18,6 +18,7 @@ import Onboarding from "./pages/onboarding/Index";
 import BusinessOnboarding from "./pages/onboarding/Business";
 import CustomerList from "./pages/customers/CustomerList";
 import CustomerDetail from "./pages/customers/CustomerDetail";
+import CreateCustomer from "./pages/customers/CreateCustomer";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/settings" element={<Settings />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/customers" element={<CustomerList />} />
+            <Route path="/customers/create" element={<CreateCustomer />} />
             <Route path="/customers/:id" element={<CustomerDetail />} />
           </Route>
         </Routes>
