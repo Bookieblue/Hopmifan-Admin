@@ -12,6 +12,7 @@ import EstimateList from "./pages/estimates/EstimateList";
 import CreateEstimate from "./pages/estimates/CreateEstimate";
 import ReceiptList from "./pages/receipts/ReceiptList";
 import CreateReceipt from "./pages/receipts/CreateReceipt";
+import ViewReceipt from "./pages/receipts/ViewReceipt";
 import PaymentHistory from "./pages/payments/Index";
 import Settings from "./pages/settings/Index";
 import BusinessOnboarding from "./pages/onboarding/Business";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/estimates/create" element={<CreateEstimate />} />
             <Route path="/receipts" element={<ReceiptList />} />
             <Route path="/receipts/create" element={<CreateReceipt />} />
+            <Route path="/receipts/:id" element={<ViewReceipt />} />
             <Route path="/payments" element={<PaymentHistory />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/customers" element={<CustomerList />} />

@@ -1,64 +1,123 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const CreateReceipt = () => {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-  };
-
+export default function CreateReceipt() {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="p-6 max-w-[1000px] mx-auto">
+      <div className="flex items-center gap-4 mb-8">
         <Link to="/receipts">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">Create Receipt</h1>
+        <h1 className="text-2xl font-semibold">Create Receipt</h1>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Receipt Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
+      <form className="space-y-8">
+        <Card>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="client">Client Name</Label>
-                <Input id="client" placeholder="Enter client name" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="receiptNumber">Receipt Number</Label>
-                <Input id="receiptNumber" placeholder="RCP-001" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="amount">Amount</Label>
-                <Input id="amount" type="number" placeholder="0.00" />
+                <Label htmlFor="number">Number</Label>
+                <Input id="number" placeholder="RCP-001" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="date">Date</Label>
                 <Input id="date" type="date" />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="clientName">Client Name</Label>
+                <Input id="clientName" placeholder="Enter client name" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="clientEmail">Client Email</Label>
+                <Input id="clientEmail" type="email" placeholder="client@example.com" />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="notes">Notes</Label>
-              <Textarea id="notes" placeholder="Enter any additional notes" />
+
+            <div className="mt-8">
+              <h3 className="text-lg font-medium mb-4">Items</h3>
+              <div className="space-y-4">
+                <div className="grid grid-cols-12 gap-4">
+                  <div className="col-span-5">
+                    <Label>Description</Label>
+                  </div>
+                  <div className="col-span-2">
+                    <Label>Quantity</Label>
+                  </div>
+                  <div className="col-span-2">
+                    <Label>Price</Label>
+                  </div>
+                  <div className="col-span-2">
+                    <Label>Amount</Label>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-12 gap-4 items-center">
+                  <div className="col-span-5">
+                    <Input placeholder="Item description" />
+                  </div>
+                  <div className="col-span-2">
+                    <Input type="number" defaultValue={1} min={1} />
+                  </div>
+                  <div className="col-span-2">
+                    <Input type="number" defaultValue={0} min={0} />
+                  </div>
+                  <div className="col-span-2">
+                    <Input type="number" defaultValue={0} disabled />
+                  </div>
+                  <div className="col-span-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <Button variant="outline" className="mt-4 gap-2">
+                <Plus className="w-4 h-4" />
+                Add Item
+              </Button>
             </div>
-            <div className="flex justify-end gap-4">
-              <Button type="submit">Create Receipt</Button>
+
+            <div className="mt-8 space-y-6">
+              <div className="space-y-2">
+                <Label>Bank Account</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select bank account" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="account1">Account 1</SelectItem>
+                    <SelectItem value="account2">Account 2</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Notes</Label>
+                <Textarea placeholder="Add any notes..." />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Terms & Conditions</Label>
+                <Textarea placeholder="Add terms and conditions..." />
+              </div>
             </div>
-          </form>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-end gap-4">
+          <Button variant="outline">Cancel</Button>
+          <Button type="submit">Create Receipt</Button>
+        </div>
+      </form>
     </div>
   );
-};
-
-export default CreateReceipt;
+}
