@@ -21,6 +21,7 @@ import Settings from "./pages/settings/Index";
 import BusinessOnboarding from "./pages/onboarding/Business";
 import CustomerList from "./pages/customers/CustomerList";
 import CreateCustomer from "./pages/customers/CreateCustomer";
+import PricingPage from "./pages/pricing/Index";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/auth/signup" element={<SignUp />} />
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
           <Route path="/onboarding/business" element={<BusinessOnboarding />} />
+          <Route path="/pricing" element={<PricingPage />} />
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
             <Route path="/invoices" element={<InvoiceList />} />
