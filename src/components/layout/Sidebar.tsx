@@ -9,7 +9,6 @@ import {
   LayoutDashboard,
   Settings,
   Users,
-  User,
 } from "lucide-react";
 
 const menuItems = [
@@ -30,7 +29,13 @@ export function Sidebar() {
     <div className="h-screen w-64 bg-background border-r border-border p-4 fixed left-0 top-0">
       <div className="flex flex-col h-full">
         <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-mint-500">InvoiceFlow</h1>
+          <Link to="/" className="flex items-center space-x-2">
+            <img 
+              src="/lovable-uploads/43d04b44-fc73-46eb-8543-89f240871e1d.png" 
+              alt="InvoiceFlow Logo" 
+              className="h-8 w-auto"
+            />
+          </Link>
         </div>
         <nav className="space-y-2 flex-1">
           {menuItems.map((item) => {
@@ -41,10 +46,10 @@ export function Sidebar() {
                 to={item.path}
                 className={cn(
                   "flex items-center gap-3 px-4 py-2 rounded-lg transition-colors",
-                  "hover:bg-mint-50 hover:text-mint-600",
+                  "hover:bg-accent hover:text-accent-foreground",
                   location.pathname === item.path
-                    ? "bg-mint-50 text-mint-600"
-                    : "text-gray-600"
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground"
                 )}
               >
                 <Icon className="w-5 h-5" />
