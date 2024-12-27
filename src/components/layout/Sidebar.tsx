@@ -26,7 +26,7 @@ export function Sidebar() {
   const location = useLocation();
 
   return (
-    <div className="h-full w-64 bg-white border-r border-gray-100 p-6 flex flex-col">
+    <div className="h-screen w-64 bg-white border-r border-gray-100 p-6 fixed left-0 top-0 flex flex-col font-inter">
       <div className="mb-8">
         <Link to="/" className="flex items-center">
           <div className="flex items-center gap-2">
