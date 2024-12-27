@@ -57,18 +57,18 @@ const pricingPlans = [
 
 export default function PricingPage() {
   return (
-    <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
-      <div className="text-center mb-16">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+    <div className="w-full">
+      <div className="text-center mb-8 md:mb-16">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
           Simple & Affordable Pricing.
         </h1>
-        <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="mt-4 text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
           We offer completely transparent and affordable pricing packages that can
           easily scale with your business needs and requirements.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto px-4">
         {pricingPlans.map((plan) => (
           <Card
             key={plan.name}
@@ -76,12 +76,12 @@ export default function PricingPage() {
               plan.popular ? "border-primary shadow-lg" : ""
             }`}
           >
-            <CardHeader className="flex-none">
-              <h3 className="text-2xl font-semibold leading-none tracking-tight">
+            <CardHeader className="flex-none space-y-4">
+              <h3 className="text-xl md:text-2xl font-semibold leading-none tracking-tight">
                 {plan.name}
               </h3>
-              <div className="mt-4">
-                <span className="text-4xl font-bold">{plan.price}</span>
+              <div>
+                <span className="text-3xl md:text-4xl font-bold">{plan.price}</span>
                 <span className="text-sm text-muted-foreground ml-1">
                   {plan.period}
                 </span>
@@ -95,8 +95,8 @@ export default function PricingPage() {
             <CardContent className="flex-grow">
               <ul className="space-y-3">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                  <li key={feature} className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary flex-shrink-0 mt-1" />
                     <span className="text-gray-700">{feature}</span>
                   </li>
                 ))}
