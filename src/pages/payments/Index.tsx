@@ -14,30 +14,30 @@ const payments = [
 
 export default function PaymentHistory() {
   return (
-    <div className="w-full space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold">Payment History</h1>
-        <Button variant="outline" className="gap-2 whitespace-nowrap">
+    <div className="p-6 max-w-[1400px] mx-auto">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-semibold">Payment History</h1>
+        <Button variant="outline" className="gap-2">
           <Download className="w-4 h-4" />
           Export as CSV
         </Button>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
+      <div className="flex justify-between items-center mb-6 gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
           <Input
-            className="pl-10 w-full"
+            className="pl-10"
             placeholder="Search by customer name, amount, or reference..."
           />
         </div>
-        <Button variant="outline" className="gap-2 whitespace-nowrap">
+        <Button variant="outline" className="gap-2">
           <Calendar className="w-4 h-4" />
           Filter by Date
         </Button>
       </div>
 
-      <div className="w-full overflow-auto rounded-lg border bg-white">
+      <div className="bg-white rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>

@@ -11,9 +11,9 @@ const InvoiceList = () => {
   ];
 
   return (
-    <div className="w-full space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold">Invoices</h1>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Invoices</h1>
         <Link to="/invoices/create">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
@@ -22,11 +22,11 @@ const InvoiceList = () => {
         </Link>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {invoices.map((invoice) => (
-          <Card key={invoice.id} className="w-full hover:shadow-lg transition-shadow">
+          <Card key={invoice.id} className="hover:shadow-lg transition-shadow">
             <CardHeader>
-              <CardTitle className="flex justify-between items-center">
+              <CardTitle className="flex justify-between">
                 <span>{invoice.number}</span>
                 <span className={`text-sm px-2 py-1 rounded ${
                   invoice.status === "Paid" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
