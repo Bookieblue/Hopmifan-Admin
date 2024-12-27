@@ -14,10 +14,6 @@ import ReceiptList from "./pages/receipts/ReceiptList";
 import CreateReceipt from "./pages/receipts/CreateReceipt";
 import Payments from "./pages/payments/Index";
 import Settings from "./pages/settings/Index";
-import Onboarding from "./pages/onboarding/Index";
-import BusinessOnboarding from "./pages/onboarding/Business";
-import CustomerList from "./pages/customers/CustomerList";
-import CustomerDetail from "./pages/customers/CustomerDetail";
 import CreateCustomer from "./pages/customers/CreateCustomer";
 
 const queryClient = new QueryClient();
@@ -30,7 +26,6 @@ const App = () => (
           <Route path="/auth/signin" element={<SignIn />} />
           <Route path="/auth/signup" element={<SignUp />} />
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-          <Route path="/onboarding/business" element={<BusinessOnboarding />} />
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
             <Route path="/invoices" element={<InvoiceList />} />
@@ -41,10 +36,7 @@ const App = () => (
             <Route path="/receipts/create" element={<CreateReceipt />} />
             <Route path="/payments" element={<Payments />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/customers" element={<CustomerList />} />
             <Route path="/customers/create" element={<CreateCustomer />} />
-            <Route path="/customers/:id" element={<CustomerDetail />} />
           </Route>
         </Routes>
       </BrowserRouter>
