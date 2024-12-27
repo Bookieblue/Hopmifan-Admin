@@ -8,8 +8,10 @@ import SignUp from "./pages/auth/SignUp";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import InvoiceList from "./pages/invoices/InvoiceList";
 import CreateInvoice from "./pages/invoices/CreateInvoice";
+import ViewInvoice from "./pages/invoices/ViewInvoice";
 import EstimateList from "./pages/estimates/EstimateList";
 import CreateEstimate from "./pages/estimates/CreateEstimate";
+import ViewEstimate from "./pages/estimates/ViewEstimate";
 import ReceiptList from "./pages/receipts/ReceiptList";
 import CreateReceipt from "./pages/receipts/CreateReceipt";
 import ViewReceipt from "./pages/receipts/ViewReceipt";
@@ -35,8 +37,10 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/invoices" element={<InvoiceList />} />
             <Route path="/invoices/create" element={<CreateInvoice />} />
+            <Route path="/invoices/:id" element={<ViewInvoice />} />
             <Route path="/estimates" element={<EstimateList />} />
             <Route path="/estimates/create" element={<CreateEstimate />} />
+            <Route path="/estimates/:id" element={<ViewEstimate />} />
             <Route path="/receipts" element={<ReceiptList />} />
             <Route path="/receipts/create" element={<CreateReceipt />} />
             <Route path="/receipts/:id" element={<ViewReceipt />} />
