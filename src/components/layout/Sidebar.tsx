@@ -11,10 +11,21 @@ import {
   LogOut,
   MessageSquare,
   HelpCircle,
+  ChevronDown,
+  Building2,
+  Plus,
 } from "lucide-react";
 import { SupportModal } from "../modals/SupportModal";
 import { FeedbackModal } from "../modals/FeedbackModal";
 import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -27,14 +38,33 @@ const menuItems = [
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
+// Mock data for businesses - in a real app, this would come from an API
+const businesses = [
+  { id: 1, name: "Acme Corp" },
+  { id: 2, name: "TechStart Inc" },
+  { id: 3, name: "Design Studio" },
+];
+
 export function Sidebar() {
   const location = useLocation();
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [selectedBusiness, setSelectedBusiness] = useState(businesses[0]);
+
+  const handleBusinessChange = (business: typeof businesses[0]) => {
+    setSelectedBusiness(business);
+    // Here you would typically trigger a context update or API call
+    console.log("Switched to business:", business.name);
+  };
+
+  const handleAddBusiness = () => {
+    // Here you would typically navigate to a new business creation form
+    console.log("Add new business clicked");
+  };
 
   return (
     <div className="h-screen w-64 bg-[#F9FAFB] border-r border-gray-100 p-6 fixed left-0 top-0 flex flex-col font-inter">
-      <div className="mb-8">
+      <div className="mb-4">
         <Link to="/" className="flex items-center">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -43,6 +73,42 @@ export function Sidebar() {
             <span className="text-xl font-semibold text-gray-900">Cordlo</span>
           </div>
         </Link>
+      </div>
+
+      <div className="mb-6">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-between border-dashed"
+            >
+              <div className="flex items-center gap-2">
+                <Building2 className="h-4 w-4" />
+                <span className="truncate">{selectedBusiness.name}</span>
+              </div>
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[--trigger-width]">
+            {businesses.map((business) => (
+              <DropdownMenuItem
+                key={business.id}
+                onClick={() => handleBusinessChange(business)}
+                className="cursor-pointer"
+              >
+                {business.name}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={handleAddBusiness}
+              className="cursor-pointer"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add new business
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <nav className="flex-1 space-y-1">
