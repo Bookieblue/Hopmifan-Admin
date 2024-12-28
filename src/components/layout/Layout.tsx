@@ -5,9 +5,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export function Layout() {
   const isMobile = useIsMobile();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div className="flex min-h-screen bg-gray-50 font-inter">
@@ -23,7 +25,7 @@ export function Layout() {
                   <span className="text-xl font-semibold text-gray-900">Cordlo</span>
                 </div>
               </Link>
-              <Sheet>
+              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                 <SheetTrigger asChild>
                   <button className="p-2 hover:bg-gray-100 rounded-lg">
                     <Menu className="h-6 w-6 text-gray-600" />
