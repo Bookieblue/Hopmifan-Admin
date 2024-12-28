@@ -18,6 +18,7 @@ import ViewReceipt from "./pages/receipts/ViewReceipt";
 import EditReceipt from "./pages/receipts/EditReceipt";
 import PaymentHistory from "./pages/payments/Index";
 import Settings from "./pages/settings/Index";
+import Subscription from "./pages/subscription/Index";
 import BusinessOnboarding from "./pages/onboarding/Business";
 import CustomerList from "./pages/customers/CustomerList";
 import CreateCustomer from "./pages/customers/CreateCustomer";
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/receipts/:id" element={<ViewReceipt />} />
             <Route path="/receipts/:id/edit" element={<EditReceipt />} />
             <Route path="/payments" element={<PaymentHistory />} />
+            <Route path="/subscription" element={<Subscription />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/customers" element={<CustomerList />} />
             <Route path="/customers/create" element={<CreateCustomer />} />

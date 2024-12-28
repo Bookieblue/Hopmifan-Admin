@@ -15,6 +15,7 @@ import {
   Building2,
   Plus,
   ChevronRight,
+  CreditCard as Subscription,
 } from "lucide-react";
 import { SupportModal } from "../modals/SupportModal";
 import { FeedbackModal } from "../modals/FeedbackModal";
@@ -40,6 +41,7 @@ const menuItems = [
 const accountMenuItems = [
   { icon: Users, label: "Customers", path: "/customers" },
   { icon: BarChart, label: "Reports", path: "/reports" },
+  { icon: Subscription, label: "Subscription", path: "/subscription" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
