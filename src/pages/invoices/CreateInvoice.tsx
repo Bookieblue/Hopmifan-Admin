@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { InvoiceHeader } from "@/components/invoices/InvoiceHeader";
 import { PaymentDetails } from "@/components/invoices/PaymentDetails";
@@ -20,27 +19,14 @@ interface InvoiceItem {
 }
 
 export default function CreateInvoice() {
-  const navigate = useNavigate();
-  const [invoiceId] = useState(generateInvoiceId());
+  const [invoiceId, setInvoiceId] = useState(generateInvoiceId());
   const [dueDate, setDueDate] = useState("");
   const [paymentType, setPaymentType] = useState<"one-time" | "recurring">("one-time");
-  const [selectedBankAccount, setSelectedBankAccount] = useState("");
-  const [selectedGateway, setSelectedGateway] = useState("");
+  const [selectedBankAccounts, setSelectedBankAccounts] = useState<string[]>([]);
+  const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
   const [items, setItems] = useState<InvoiceItem[]>([]);
   const [notes, setNotes] = useState("");
   const [termsAndConditions, setTermsAndConditions] = useState("");
-
-  // Fetch default notes and terms from template settings
-  useEffect(() => {
-    // In a real app, this would fetch from your API
-    const mockTemplateContent = {
-      notesTemplate: "Thank you for your business",
-      termsAndConditions: "Payment is due within 30 days"
-    };
-    
-    setNotes(mockTemplateContent.notesTemplate);
-    setTermsAndConditions(mockTemplateContent.termsAndConditions);
-  }, []);
 
   const handleSubmit = async (status: 'draft' | 'published') => {
     try {
@@ -48,7 +34,7 @@ export default function CreateInvoice() {
         id: invoiceId,
         dueDate,
         paymentType,
-        bankAccount: selectedBankAccount,
+        bankAccounts: selectedBankAccounts,
         paymentGateway: selectedGateway,
         items,
         notes,
@@ -57,7 +43,6 @@ export default function CreateInvoice() {
         total: items.reduce((sum, item) => sum + item.amount, 0)
       };
 
-      // In a real app, this would be an API call
       console.log('Saving invoice:', invoiceData);
       
       toast.success(
@@ -66,10 +51,22 @@ export default function CreateInvoice() {
           : "Invoice created successfully"
       );
       
-      navigate('/invoices');
+      // navigate('/invoices');
     } catch (error) {
       toast.error("Failed to create invoice");
     }
+  };
+
+  const handleBankAccountAdd = (accountId: string) => {
+    setSelectedBankAccounts(prev => [...prev, accountId]);
+  };
+
+  const handleBankAccountRemove = (accountId: string) => {
+    setSelectedBankAccounts(prev => prev.filter(id => id !== accountId));
+  };
+
+  const handlePaymentGatewayChange = (gatewayId: string) => {
+    setSelectedGateway(gatewayId || null);
   };
 
   return (
@@ -90,13 +87,17 @@ export default function CreateInvoice() {
               invoiceId={invoiceId}
               dueDate={dueDate}
               paymentType={paymentType}
+              onInvoiceIdChange={setInvoiceId}
               onDueDateChange={setDueDate}
               onPaymentTypeChange={setPaymentType}
             />
 
             <PaymentDetails
-              onBankAccountChange={setSelectedBankAccount}
-              onPaymentGatewayChange={setSelectedGateway}
+              selectedBankAccounts={selectedBankAccounts}
+              selectedGateway={selectedGateway}
+              onBankAccountAdd={handleBankAccountAdd}
+              onBankAccountRemove={handleBankAccountRemove}
+              onPaymentGatewayChange={handlePaymentGatewayChange}
             />
 
             <div className="mt-8">
