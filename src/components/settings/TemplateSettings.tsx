@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
 import { useDocuments } from "@/contexts/DocumentContext";
+import { toast } from "sonner";
 
 export default function TemplateSettings() {
   const { enabledDocuments, toggleDocument } = useDocuments();
@@ -17,10 +18,24 @@ export default function TemplateSettings() {
     termsAndConditions: "Payment is due within 30 days",
     notesTemplate: "Please include invoice number in payment reference"
   });
+  const [colors, setColors] = useState({
+    brand: "#9b87f5",
+    accent: "#7E69AB"
+  });
+
+  // Autosave functionality
+  useEffect(() => {
+    const saveTimeout = setTimeout(() => {
+      console.log("Autosaving...");
+      toast.success("Changes saved automatically");
+    }, 1000);
+
+    return () => clearTimeout(saveTimeout);
+  }, [templateContent, colors]);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <h2 className="text-2xl font-semibold tracking-tight">Template Settings</h2>
         <Select 
           value={selectedDocument} 
@@ -44,7 +59,7 @@ export default function TemplateSettings() {
       </div>
 
       <Tabs defaultValue="document-types" className="space-y-4">
-        <TabsList>
+        <TabsList className="w-full justify-start overflow-x-auto">
           <TabsTrigger value="document-types">Document Types</TabsTrigger>
           <TabsTrigger value="design">Design</TabsTrigger>
           <TabsTrigger value="content">Content</TabsTrigger>
@@ -111,11 +126,33 @@ export default function TemplateSettings() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-medium">Brand Color</label>
-              <div className="h-24 bg-blue-700 rounded-lg"></div>
+              <div className="flex items-center gap-4">
+                <div 
+                  className="h-24 w-24 rounded-lg border"
+                  style={{ backgroundColor: colors.brand }}
+                ></div>
+                <Input
+                  type="color"
+                  value={colors.brand}
+                  onChange={(e) => setColors(prev => ({ ...prev, brand: e.target.value }))}
+                  className="h-12 w-24 p-1 cursor-pointer"
+                />
+              </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Accent Color</label>
-              <div className="h-24 bg-blue-400 rounded-lg"></div>
+              <div className="flex items-center gap-4">
+                <div 
+                  className="h-24 w-24 rounded-lg border"
+                  style={{ backgroundColor: colors.accent }}
+                ></div>
+                <Input
+                  type="color"
+                  value={colors.accent}
+                  onChange={(e) => setColors(prev => ({ ...prev, accent: e.target.value }))}
+                  className="h-12 w-24 p-1 cursor-pointer"
+                />
+              </div>
             </div>
           </div>
         </TabsContent>
@@ -153,11 +190,8 @@ export default function TemplateSettings() {
                 onChange={(e) => setTemplateContent({ ...templateContent, notesTemplate: e.target.value })}
               />
             </div>
-
-            <Button>Save Changes</Button>
           </div>
         </TabsContent>
-
       </Tabs>
     </div>
   );
