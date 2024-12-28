@@ -40,6 +40,8 @@ const InvoiceList = () => {
 
   const [selectedInvoices, setSelectedInvoices] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
 
   const handleSelectInvoice = (invoiceId: string, checked: boolean) => {
     if (checked) {
@@ -55,6 +57,11 @@ const InvoiceList = () => {
     } else {
       setSelectedInvoices([]);
     }
+  };
+
+  const handleResetFilter = () => {
+    setStartDate(undefined);
+    setEndDate(undefined);
   };
 
   const filteredInvoices = invoices.filter(invoice =>
@@ -99,14 +106,14 @@ const InvoiceList = () => {
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">From Date</label>
-                  <DatePicker />
+                  <DatePicker date={startDate} setDate={setStartDate} />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">To Date</label>
-                  <DatePicker />
+                  <DatePicker date={endDate} setDate={setEndDate} />
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline">Reset Filter</Button>
+                  <Button variant="outline" onClick={handleResetFilter}>Reset Filter</Button>
                   <Button>Apply Filter</Button>
                 </div>
               </div>
