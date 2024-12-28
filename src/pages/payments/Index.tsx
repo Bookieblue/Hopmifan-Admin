@@ -1,7 +1,14 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Calendar, Download, MoreHorizontal, Search, Receipt } from "lucide-react";
+import { Calendar, Download, MoreHorizontal, Search, Receipt, X } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { DatePicker } from "@/components/ui/date-picker";
 
 // Mock data for the payment history with added payment type
 const payments = [
@@ -56,6 +65,57 @@ const payments = [
 
 export default function PaymentHistory() {
   const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showDateFilter, setShowDateFilter] = useState(false);
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
+  const [filteredPayments, setFilteredPayments] = useState(payments);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    const filtered = payments.filter((payment) =>
+      Object.values(payment).some((value) =>
+        value.toString().toLowerCase().includes(query.toLowerCase())
+      )
+    );
+    setFilteredPayments(filtered);
+  };
+
+  const handleDateFilter = () => {
+    if (!startDate || !endDate) {
+      toast({
+        title: "Please select both start and end dates",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const filtered = payments.filter((payment) => {
+      const paymentDate = new Date(payment.date);
+      return paymentDate >= startDate && paymentDate <= endDate;
+    });
+
+    setFilteredPayments(filtered);
+    setShowDateFilter(false);
+    
+    toast({
+      title: "Date Filter Applied",
+      description: "Payments filtered by selected date range",
+    });
+  };
+
+  const resetFilters = () => {
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setSearchQuery("");
+    setFilteredPayments(payments);
+    setShowDateFilter(false);
+    
+    toast({
+      title: "Filters Reset",
+      description: "All filters have been cleared",
+    });
+  };
 
   const handleExportCSV = () => {
     // Convert payments data to CSV format
@@ -100,15 +160,21 @@ export default function PaymentHistory() {
         </Button>
       </div>
 
-      <div className="flex justify-between items-center mb-6 gap-4">
-        <div className="relative flex-1">
+      <div className="flex justify-between items-center mb-6 gap-4 flex-col sm:flex-row">
+        <div className="relative flex-1 w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
           <Input
             className="pl-10"
             placeholder="Search by customer name, amount, or reference..."
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <Button variant="outline" className="gap-2">
+        <Button 
+          variant="outline" 
+          className="gap-2 w-full sm:w-auto"
+          onClick={() => setShowDateFilter(true)}
+        >
           <Calendar className="w-4 h-4" />
           Filter by Date
         </Button>
@@ -128,7 +194,7 @@ export default function PaymentHistory() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {payments.map((payment) => (
+            {filteredPayments.map((payment) => (
               <TableRow key={payment.reference}>
                 <TableCell>{payment.date}</TableCell>
                 <TableCell>{payment.customer}</TableCell>
@@ -156,6 +222,44 @@ export default function PaymentHistory() {
           </TableBody>
         </Table>
       </div>
+
+      <Dialog open={showDateFilter} onOpenChange={setShowDateFilter}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Filter by Date Range</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <label>Start Date</label>
+              <DatePicker
+                date={startDate}
+                setDate={setStartDate}
+              />
+            </div>
+            <div className="grid gap-2">
+              <label>End Date</label>
+              <DatePicker
+                date={endDate}
+                setDate={setEndDate}
+              />
+            </div>
+          </div>
+          <DialogFooter className="sm:justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetFilters}
+              className="gap-2"
+            >
+              <X className="w-4 h-4" />
+              Reset Filters
+            </Button>
+            <Button type="button" onClick={handleDateFilter}>
+              Apply Filter
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
