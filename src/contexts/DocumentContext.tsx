@@ -25,7 +25,7 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
     // Count how many documents are currently enabled
     const enabledCount = Object.values(enabledDocuments).filter(Boolean).length;
     
-    // If trying to disable the last enabled document, prevent it
+    // If trying to disable the last enabled document, prevent it and show toast
     if (enabledCount === 1 && enabledDocuments[documentType]) {
       toast.error("At least one document type must remain enabled");
       return;
