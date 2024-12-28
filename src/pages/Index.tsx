@@ -93,14 +93,14 @@ export default function Index() {
           ))}
         </div>
 
-        <div className="h-[300px] w-full mt-8">
+        <div className="h-[300px] w-full mt-8 bg-gradient-to-t from-[#0FA0CE]/10 to-transparent rounded-lg">
           <ChartContainer
             className="h-full w-full"
             config={{
               primary: {
                 theme: {
-                  light: "var(--primary)",
-                  dark: "var(--primary)",
+                  light: "#0FA0CE",
+                  dark: "#0FA0CE",
                 },
               },
             }}
@@ -108,8 +108,8 @@ export default function Index() {
             <AreaChart data={data[timeRange]} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
-                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#0FA0CE" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#0FA0CE" stopOpacity={0}/>
                 </linearGradient>
               </defs>
               <XAxis dataKey="month" />
@@ -120,7 +120,7 @@ export default function Index() {
               <Area
                 type="monotone"
                 dataKey="amount"
-                stroke="hsl(var(--primary))"
+                stroke="#0FA0CE"
                 fillOpacity={1}
                 fill="url(#colorAmount)"
                 strokeWidth={2}
