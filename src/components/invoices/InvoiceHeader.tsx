@@ -9,6 +9,7 @@ interface InvoiceHeaderProps {
   invoiceId: string;
   dueDate: string;
   paymentType: "one-time" | "recurring";
+  onInvoiceIdChange: (id: string) => void;
   onDueDateChange: (date: string) => void;
   onPaymentTypeChange: (type: "one-time" | "recurring") => void;
 }
@@ -16,7 +17,8 @@ interface InvoiceHeaderProps {
 export const InvoiceHeader = ({ 
   invoiceId, 
   dueDate, 
-  paymentType, 
+  paymentType,
+  onInvoiceIdChange,
   onDueDateChange, 
   onPaymentTypeChange 
 }: InvoiceHeaderProps) => {
@@ -24,7 +26,11 @@ export const InvoiceHeader = ({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="space-y-2">
         <Label>Invoice Number</Label>
-        <Input value={invoiceId} disabled />
+        <Input 
+          value={invoiceId} 
+          onChange={(e) => onInvoiceIdChange(e.target.value)}
+          placeholder="Enter invoice number"
+        />
       </div>
       
       <div className="space-y-2">

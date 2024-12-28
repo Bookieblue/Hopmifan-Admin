@@ -18,6 +18,13 @@ interface InvoiceItemsProps {
 }
 
 export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
+  useEffect(() => {
+    // Ensure there's always at least one item
+    if (items.length === 0) {
+      addItem();
+    }
+  }, []);
+
   const addItem = () => {
     const newItem: InvoiceItem = {
       id: Math.random().toString(36).substr(2, 9),
@@ -35,7 +42,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
         const updatedItem = { ...item, [field]: value };
         // Auto-calculate amount when quantity or price changes
         if (field === 'quantity' || field === 'price') {
-          updatedItem.amount = updatedItem.quantity * updatedItem.price;
+          updatedItem.amount = Number(updatedItem.quantity) * Number(updatedItem.price);
         }
         return updatedItem;
       }
@@ -45,7 +52,10 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
   };
 
   const removeItem = (id: string) => {
-    onItemsChange(items.filter(item => item.id !== id));
+    // Prevent removing the last item
+    if (items.length > 1) {
+      onItemsChange(items.filter(item => item.id !== id));
+    }
   };
 
   return (
@@ -88,6 +98,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
               value={item.price}
               onChange={(e) => updateItem(item.id, 'price', Number(e.target.value))}
               min={0}
+              step="0.01"
             />
           </div>
           <div className="col-span-2">
@@ -99,10 +110,12 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
           </div>
           <div className="col-span-1">
             <Button
+              type="button"
               variant="ghost"
               size="icon"
               className="h-8 w-8"
               onClick={() => removeItem(item.id)}
+              disabled={items.length === 1}
             >
               <Trash2 className="w-4 h-4" />
             </Button>
@@ -110,7 +123,12 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
         </div>
       ))}
 
-      <Button variant="outline" className="mt-4 gap-2" onClick={addItem}>
+      <Button 
+        type="button"
+        variant="outline" 
+        className="mt-4 gap-2" 
+        onClick={addItem}
+      >
         <Plus className="w-4 h-4" />
         Add Item
       </Button>
