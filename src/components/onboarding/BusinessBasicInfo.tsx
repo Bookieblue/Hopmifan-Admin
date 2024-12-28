@@ -2,9 +2,9 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { businessTypes } from "@/lib/constants";
+import { businessTypes, countries } from "@/lib/constants";
 import { UseFormReturn } from "react-hook-form";
-import { Image, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 
 interface BusinessBasicInfoProps {
   form: UseFormReturn<any>;
