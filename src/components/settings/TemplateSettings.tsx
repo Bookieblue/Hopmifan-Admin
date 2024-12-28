@@ -16,15 +16,15 @@ export default function TemplateSettings() {
     notesTemplate: "Please include invoice number in payment reference"
   });
   const [colors, setColors] = useState({
-    brand: "#9b87f5",
-    accent: "#7E69AB"
+    brand: "#4F46E5",
+    accent: "#818CF8"
   });
 
   // Autosave functionality
   useEffect(() => {
     const saveTimeout = setTimeout(() => {
-      console.log("Autosaving...");
-      toast.success("Changes saved automatically");
+      console.log("Saving template settings...");
+      toast.success("Template settings saved");
     }, 1000);
 
     return () => clearTimeout(saveTimeout);
@@ -32,10 +32,12 @@ export default function TemplateSettings() {
 
   const handleContentChange = (field: string, value: string) => {
     setTemplateContent(prev => ({ ...prev, [field]: value }));
+    console.log(`Updating ${field} to:`, value);
   };
 
   const handleColorChange = (type: 'brand' | 'accent', value: string) => {
     setColors(prev => ({ ...prev, [type]: value }));
+    console.log(`Updating ${type} color to:`, value);
   };
 
   return (
