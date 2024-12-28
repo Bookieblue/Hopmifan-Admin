@@ -1,12 +1,19 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, SlidersHorizontal } from "lucide-react";
+import { Plus, Search, SlidersHorizontal, Eye, Pencil, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreVertical } from "lucide-react";
 
 const InvoiceList = () => {
-  const invoices = [
+  const [invoices, setInvoices] = useState([
     { 
       id: "045",
       customer: "Sophie Shonia",
@@ -16,7 +23,7 @@ const InvoiceList = () => {
       date: "Sep, 11, 2024"
     },
     { 
-      id: "045",
+      id: "046",
       customer: "Johnson LTD",
       amount: "₦4700.00",
       status: "paid",
@@ -24,7 +31,7 @@ const InvoiceList = () => {
       date: "Sep, 11, 2024"
     },
     { 
-      id: "045",
+      id: "047",
       customer: "Atlantis Limited",
       amount: "₦4700.00",
       status: "paid",
@@ -32,18 +39,29 @@ const InvoiceList = () => {
       date: "Sep, 11, 2024"
     },
     { 
-      id: "045",
+      id: "048",
       customer: "Mary Helen",
       amount: "₦4700.00",
       status: "overdue",
       type: "one-time",
       date: "Sep, 11, 2024"
     }
-  ];
+  ]);
 
   const statusTabs = ["All", "Paid", "Pending", "Overdue"];
-
   const [activeTab, setActiveTab] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleDelete = (id: string) => {
+    setInvoices(invoices.filter(invoice => invoice.id !== id));
+  };
+
+  const filteredInvoices = invoices.filter(invoice => {
+    const matchesSearch = invoice.customer.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = activeTab === "All" || 
+      invoice.status.toLowerCase() === activeTab.toLowerCase();
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="p-4 max-w-[800px] mx-auto">
@@ -62,6 +80,8 @@ const InvoiceList = () => {
           <Input 
             placeholder="Search" 
             className="pl-10 bg-white rounded-full border-gray-200"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
           <Button 
             variant="ghost" 
@@ -90,14 +110,49 @@ const InvoiceList = () => {
         </div>
 
         <div className="space-y-4">
-          {invoices.map((invoice) => (
+          {filteredInvoices.map((invoice) => (
             <div 
               key={`${invoice.customer}-${invoice.id}`}
-              className="p-4 bg-white rounded-lg space-y-2"
+              className="p-4 bg-white rounded-lg"
             >
               <div className="flex justify-between items-start">
                 <h3 className="font-semibold text-lg">{invoice.customer}</h3>
-                <span className="text-lg font-semibold">{invoice.amount}</span>
+                <div className="md:flex items-center gap-4 hidden">
+                  <span className="text-lg font-semibold">{invoice.amount}</span>
+                  <span className={cn(
+                    "px-3 py-1 rounded-full text-sm",
+                    invoice.status === "paid" && "bg-green-100 text-green-800",
+                    invoice.status === "unpaid" && "bg-orange-100 text-orange-800",
+                    invoice.status === "overdue" && "bg-red-100 text-red-800"
+                  )}>
+                    {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
+                  </span>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <Link to={`/invoices/${invoice.id}`}>
+                        <DropdownMenuItem>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View
+                        </DropdownMenuItem>
+                      </Link>
+                      <Link to={`/invoices/${invoice.id}/edit`}>
+                        <DropdownMenuItem>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                      </Link>
+                      <DropdownMenuItem onClick={() => handleDelete(invoice.id)} className="text-red-600">
+                        <Trash className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
               <div className="flex justify-between items-center text-gray-500 text-sm">
                 <div className="space-x-2">
@@ -105,14 +160,17 @@ const InvoiceList = () => {
                   <span>•</span>
                   <span>{invoice.date}</span>
                 </div>
-                <span className={cn(
-                  "px-3 py-1 rounded-full text-sm",
-                  invoice.status === "paid" && "bg-green-100 text-green-800",
-                  invoice.status === "unpaid" && "bg-orange-100 text-orange-800",
-                  invoice.status === "overdue" && "bg-red-100 text-red-800"
-                )}>
-                  {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-                </span>
+                <div className="md:hidden flex items-center space-x-2">
+                  <span className="text-lg font-semibold">{invoice.amount}</span>
+                  <span className={cn(
+                    "px-3 py-1 rounded-full text-sm",
+                    invoice.status === "paid" && "bg-green-100 text-green-800",
+                    invoice.status === "unpaid" && "bg-orange-100 text-orange-800",
+                    invoice.status === "overdue" && "bg-red-100 text-red-800"
+                  )}>
+                    {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
+                  </span>
+                </div>
               </div>
             </div>
           ))}
