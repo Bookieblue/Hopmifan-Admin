@@ -1,49 +1,123 @@
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Search, SlidersHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 const InvoiceList = () => {
   // Placeholder data - in a real app, this would come from your backend
   const invoices = [
-    { id: 1, number: "INV-001", client: "Acme Corp", amount: 1500, status: "Paid", date: "2024-03-20" },
-    { id: 2, number: "INV-002", client: "Tech Inc", amount: 2300, status: "Pending", date: "2024-03-21" },
+    { 
+      id: "045",
+      customer: "Sophie Shonia",
+      amount: "₦4700.00",
+      status: "unpaid",
+      type: "one-time",
+      date: "Sep, 11, 2024"
+    },
+    { 
+      id: "045",
+      customer: "Johnson LTD",
+      amount: "₦4700.00",
+      status: "paid",
+      type: "one-time",
+      date: "Sep, 11, 2024"
+    },
+    { 
+      id: "045",
+      customer: "Atlantis Limited",
+      amount: "₦4700.00",
+      status: "paid",
+      type: "one-time",
+      date: "Sep, 11, 2024"
+    },
+    { 
+      id: "045",
+      customer: "Mary Helen",
+      amount: "₦4700.00",
+      status: "overdue",
+      type: "one-time",
+      date: "Sep, 11, 2024"
+    }
   ];
 
+  const statusTabs = ["All", "Paid", "Pending", "Overdue"];
+  const [activeTab, setActiveTab] = React.useState("All");
+
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Invoices</h1>
+    <div className="p-4 max-w-[800px] mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">All Invoices</h1>
         <Link to="/invoices/create">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Invoice
+          <Button size="icon" className="rounded-full w-12 h-12 bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-6 w-6" />
           </Button>
         </Link>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {invoices.map((invoice) => (
-          <Card key={invoice.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <CardTitle className="flex justify-between">
-                <span>{invoice.number}</span>
-                <span className={`text-sm px-2 py-1 rounded ${
-                  invoice.status === "Paid" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
-                }`}>
-                  {invoice.status}
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Client: {invoice.client}</p>
-                <p className="text-lg font-semibold">${invoice.amount}</p>
-                <p className="text-sm text-muted-foreground">Date: {invoice.date}</p>
+      <div className="space-y-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+          <Input 
+            placeholder="Search" 
+            className="pl-10 bg-white rounded-full border-gray-200"
+          />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="absolute right-2 top-1/2 transform -translate-y-1/2"
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
+
+        <div className="flex space-x-6 border-b">
+          {statusTabs.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                "pb-2 px-1",
+                activeTab === tab 
+                  ? "border-b-2 border-blue-600 text-blue-600" 
+                  : "text-gray-500"
+              )}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        <div className="space-y-4">
+          {invoices.map((invoice) => (
+            <div 
+              key={`${invoice.customer}-${invoice.id}`}
+              className="p-4 bg-white rounded-lg space-y-2"
+            >
+              <div className="flex justify-between items-start">
+                <h3 className="font-semibold text-lg">{invoice.customer}</h3>
+                <span className="text-lg font-semibold">{invoice.amount}</span>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+              <div className="flex justify-between items-center text-gray-500 text-sm">
+                <div className="space-x-2">
+                  <span>#{invoice.id}</span>
+                  <span>•</span>
+                  <span>{invoice.type}</span>
+                  <span>•</span>
+                  <span>{invoice.date}</span>
+                </div>
+                <span className={cn(
+                  "px-3 py-1 rounded-full text-sm",
+                  invoice.status === "paid" && "bg-green-100 text-green-800",
+                  invoice.status === "unpaid" && "bg-orange-100 text-orange-800",
+                  invoice.status === "overdue" && "bg-red-100 text-red-800"
+                )}>
+                  {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
