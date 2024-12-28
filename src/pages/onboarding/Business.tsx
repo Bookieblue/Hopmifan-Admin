@@ -10,7 +10,6 @@ import { BusinessBasicInfo } from "@/components/onboarding/BusinessBasicInfo";
 import { BusinessContactInfo } from "@/components/onboarding/BusinessContactInfo";
 import { BusinessLocationInfo } from "@/components/onboarding/BusinessLocationInfo";
 import { businessTypes, countries } from "@/lib/constants";
-import { Image } from "lucide-react";
 
 const formSchema = z.object({
   businessName: z.string().min(2, "Business name must be at least 2 characters"),
@@ -90,7 +89,11 @@ const BusinessOnboarding = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl w-full space-y-8 bg-white p-8 rounded-lg shadow">
         <div className="flex flex-col items-center">
-          <Image className="w-12 h-12 text-primary mb-4" />
+          <img 
+            src="/lovable-uploads/3f246c75-f51c-40b5-bf6e-f7b019ca6d95.png" 
+            alt="Cordlo Logo" 
+            className="w-12 h-12 mb-4"
+          />
           <h2 className="text-center text-3xl font-extrabold text-gray-900">
             Welcome to Cordlo Invoice
           </h2>
