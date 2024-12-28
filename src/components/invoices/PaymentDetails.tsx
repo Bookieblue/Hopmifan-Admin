@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X, CreditCard, Wallet } from "lucide-react";
+import { X, CreditCard, Wallet, UserPlus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 
 interface PaymentDetailsProps {
   selectedBankAccounts: string[];
@@ -22,116 +25,165 @@ export const PaymentDetails = ({
 }: PaymentDetailsProps) => {
   const [bankAccounts, setBankAccounts] = useState([]);
   const [paymentGateways, setPaymentGateways] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [includeBillingAddress, setIncludeBillingAddress] = useState(false);
 
   useEffect(() => {
     // In a real app, this would fetch from your API
     const mockBankAccounts = [
-      { id: '1', name: "First Bank Account", advantage: "No transaction fees" },
-      { id: '2', name: "Second Bank Account", advantage: "Fast processing" }
+      { id: '1', name: "First Bank Account" },
+      { id: '2', name: "Second Bank Account" }
     ];
     const mockGateways = [
-      { id: 'stripe', name: "Stripe", advantage: "International payments" },
-      { id: 'paypal', name: "PayPal", advantage: "Buyer protection" }
+      { id: 'stripe', name: "Stripe" },
+      { id: 'paypal', name: "PayPal" }
+    ];
+    const mockCustomers = [
+      { id: '1', name: "Customer 1", email: "customer1@example.com" },
+      { id: '2', name: "Customer 2", email: "customer2@example.com" }
     ];
     
     setBankAccounts(mockBankAccounts);
     setPaymentGateways(mockGateways);
+    setCustomers(mockCustomers);
   }, []);
+
+  const filteredCustomers = customers.filter((customer: any) =>
+    customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <Label>Bank Accounts</Label>
-        <div className="flex flex-wrap gap-2 mb-2">
-          {selectedBankAccounts.map((accountId) => {
-            const account = bankAccounts.find((acc: any) => acc.id === accountId);
-            return account ? (
-              <Badge key={accountId} variant="secondary" className="flex items-center gap-1">
-                <Wallet className="w-3 h-3" />
-                {account.name}
+        <div className="space-y-2">
+          <Label>Customer</Label>
+          <div className="flex gap-2 items-center">
+            <Input
+              placeholder="Search customers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1"
+            />
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  New Customer
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Customer</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Name</Label>
+                    <Input placeholder="Enter customer name" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input type="email" placeholder="Enter customer email" />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="billing-address"
+                      checked={includeBillingAddress}
+                      onCheckedChange={setIncludeBillingAddress}
+                    />
+                    <Label htmlFor="billing-address">Include Billing Address</Label>
+                  </div>
+                  {includeBillingAddress && (
+                    <div className="space-y-2">
+                      <Label>Billing Address</Label>
+                      <Input placeholder="Enter billing address" />
+                    </div>
+                  )}
+                  <Button className="w-full">Add Customer</Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+          {searchTerm && (
+            <div className="mt-2 border rounded-md divide-y">
+              {filteredCustomers.map((customer: any) => (
+                <div key={customer.id} className="p-2 hover:bg-accent cursor-pointer">
+                  <div className="font-medium">{customer.name}</div>
+                  <div className="text-sm text-muted-foreground">{customer.email}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label>Bank Accounts</Label>
+          <Select onValueChange={onBankAccountAdd}>
+            <SelectTrigger>
+              <SelectValue placeholder="Add bank account" />
+            </SelectTrigger>
+            <SelectContent>
+              {bankAccounts.map((account: any) => (
+                <SelectItem 
+                  key={account.id} 
+                  value={account.id}
+                  disabled={selectedBankAccounts.includes(account.id)}
+                >
+                  {account.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {selectedBankAccounts.map((accountId) => {
+              const account = bankAccounts.find((acc: any) => acc.id === accountId);
+              return account ? (
+                <Badge key={accountId} variant="secondary" className="flex items-center gap-1">
+                  <Wallet className="w-3 h-3" />
+                  {account.name}
+                  <button
+                    type="button"
+                    onClick={() => onBankAccountRemove(accountId)}
+                    className="ml-1 hover:text-destructive"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              ) : null;
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Payment Gateway</Label>
+          <Select onValueChange={onPaymentGatewayChange} value={selectedGateway || undefined}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select payment gateway" />
+            </SelectTrigger>
+            <SelectContent>
+              {paymentGateways.map((gateway: any) => (
+                <SelectItem key={gateway.id} value={gateway.id}>
+                  {gateway.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {selectedGateway && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <CreditCard className="w-3 h-3" />
+                {paymentGateways.find((g: any) => g.id === selectedGateway)?.name}
                 <button
                   type="button"
-                  onClick={() => onBankAccountRemove(accountId)}
+                  onClick={() => onPaymentGatewayChange('')}
                   className="ml-1 hover:text-destructive"
                 >
                   <X className="w-3 h-3" />
                 </button>
               </Badge>
-            ) : null;
-          })}
-        </div>
-        <Select onValueChange={onBankAccountAdd}>
-          <SelectTrigger>
-            <SelectValue placeholder="Add bank account" />
-          </SelectTrigger>
-          <SelectContent>
-            {bankAccounts.map((account: any) => (
-              <SelectItem 
-                key={account.id} 
-                value={account.id}
-                disabled={selectedBankAccounts.includes(account.id)}
-              >
-                {account.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {bankAccounts.map((account: any) => (
-            <Card key={account.id}>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2">
-                  <Wallet className="w-4 h-4" />
-                  <h4 className="font-medium">{account.name}</h4>
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">{account.advantage}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <Label>Payment Gateway</Label>
-        {selectedGateway && (
-          <div className="flex flex-wrap gap-2 mb-2">
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <CreditCard className="w-3 h-3" />
-              {paymentGateways.find((g: any) => g.id === selectedGateway)?.name}
-              <button
-                type="button"
-                onClick={() => onPaymentGatewayChange('')}
-                className="ml-1 hover:text-destructive"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </Badge>
-          </div>
-        )}
-        <Select onValueChange={onPaymentGatewayChange} value={selectedGateway || undefined}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select payment gateway" />
-          </SelectTrigger>
-          <SelectContent>
-            {paymentGateways.map((gateway: any) => (
-              <SelectItem key={gateway.id} value={gateway.id}>
-                {gateway.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {paymentGateways.map((gateway: any) => (
-            <Card key={gateway.id}>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2">
-                  <CreditCard className="w-4 h-4" />
-                  <h4 className="font-medium">{gateway.name}</h4>
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">{gateway.advantage}</p>
-              </CardContent>
-            </Card>
-          ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
