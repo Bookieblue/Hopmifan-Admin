@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -6,46 +6,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
-import { toast } from "sonner";
+import { useDocuments } from "@/contexts/DocumentContext";
 
 export default function TemplateSettings() {
+  const { enabledDocuments, toggleDocument } = useDocuments();
   const [selectedDocument, setSelectedDocument] = useState("invoices");
-  const [enabledDocuments, setEnabledDocuments] = useState({
-    invoices: true,
-    estimates: true,
-    receipts: true
-  });
   const [templateContent, setTemplateContent] = useState({
     headerText: "INVOICE",
     footerText: "Thank you for your business",
     termsAndConditions: "Payment is due within 30 days",
     notesTemplate: "Please include invoice number in payment reference"
   });
-
-  const handleToggleDocument = (documentType: keyof typeof enabledDocuments) => {
-    // Count how many documents are currently enabled
-    const enabledCount = Object.values(enabledDocuments).filter(Boolean).length;
-    
-    // If trying to disable the last enabled document, prevent it
-    if (enabledCount === 1 && enabledDocuments[documentType]) {
-      toast.error("At least one document type must remain enabled");
-      return;
-    }
-
-    setEnabledDocuments(prev => ({
-      ...prev,
-      [documentType]: !prev[documentType]
-    }));
-
-    // If disabling the currently selected document, switch to the first enabled one
-    if (documentType === selectedDocument && enabledDocuments[documentType]) {
-      const nextEnabled = Object.entries(enabledDocuments)
-        .find(([key, value]) => key !== documentType && value);
-      if (nextEnabled) {
-        setSelectedDocument(nextEnabled[0]);
-      }
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -88,7 +59,7 @@ export default function TemplateSettings() {
               </div>
               <Switch 
                 checked={enabledDocuments.invoices}
-                onCheckedChange={() => handleToggleDocument('invoices')}
+                onCheckedChange={() => toggleDocument('invoices')}
               />
             </div>
 
@@ -99,7 +70,7 @@ export default function TemplateSettings() {
               </div>
               <Switch 
                 checked={enabledDocuments.estimates}
-                onCheckedChange={() => handleToggleDocument('estimates')}
+                onCheckedChange={() => toggleDocument('estimates')}
               />
             </div>
 
@@ -110,7 +81,7 @@ export default function TemplateSettings() {
               </div>
               <Switch 
                 checked={enabledDocuments.receipts}
-                onCheckedChange={() => handleToggleDocument('receipts')}
+                onCheckedChange={() => toggleDocument('receipts')}
               />
             </div>
           </div>

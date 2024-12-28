@@ -27,14 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-
-interface SidebarProps {
-  enabledDocuments: {
-    invoices: boolean;
-    estimates: boolean;
-    receipts: boolean;
-  };
-}
+import { useDocuments } from "@/contexts/DocumentContext";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Overview", path: "/" },
@@ -57,12 +50,13 @@ const businesses = [
   { id: 3, name: "Design Studio" },
 ];
 
-export function Sidebar({ enabledDocuments }: SidebarProps) {
+export function Sidebar() {
   const location = useLocation();
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(businesses[0]);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const { enabledDocuments } = useDocuments();
 
   const handleBusinessChange = (business: typeof businesses[0]) => {
     setSelectedBusiness(business);
