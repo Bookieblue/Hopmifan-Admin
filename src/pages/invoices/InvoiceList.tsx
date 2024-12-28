@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, MoreHorizontal, CalendarDays } from "lucide-react";
+import { Plus, Search, MoreHorizontal, CalendarDays, Copy, Trash2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -72,8 +72,38 @@ const InvoiceList = () => {
   const handleDelete = (invoiceId: string) => {
     setInvoices(invoices.filter(invoice => invoice.id !== invoiceId));
     toast({
-      title: "Invoice deleted",
-      description: `Invoice ${invoiceId} has been deleted successfully.`,
+      description: `Invoice ${invoiceId} has been deleted successfully.`
+    });
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedInvoices.length === 0) return;
+    
+    setInvoices(invoices.filter(invoice => !selectedInvoices.includes(invoice.id)));
+    toast({
+      description: `${selectedInvoices.length} invoice(s) have been deleted successfully.`
+    });
+    setSelectedInvoices([]);
+  };
+
+  const handleDuplicate = (invoiceId: string) => {
+    const originalInvoice = invoices.find(inv => inv.id === invoiceId);
+    if (!originalInvoice) return;
+
+    const newInvoice = {
+      ...originalInvoice,
+      id: `${originalInvoice.id}-copy`,
+      status: "pending",
+      date: new Date().toLocaleDateString('en-US', { 
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      })
+    };
+
+    setInvoices([newInvoice, ...invoices]);
+    toast({
+      description: `Invoice ${invoiceId} has been duplicated successfully.`
     });
   };
 
@@ -123,11 +153,6 @@ const InvoiceList = () => {
     invoice.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
     invoice.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  // Add navigation handler
-  const handleRowClick = (invoiceId: string) => {
-    navigate(`/invoices/${invoiceId}`);
-  };
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
@@ -183,6 +208,19 @@ const InvoiceList = () => {
       </div>
 
       <div className="bg-white rounded-lg border">
+        {selectedInvoices.length > 0 && (
+          <div className="p-4 border-b bg-gray-50">
+            <Button 
+              variant="destructive" 
+              size="sm"
+              onClick={handleBulkDelete}
+              className="flex items-center gap-2"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete Selected ({selectedInvoices.length})
+            </Button>
+          </div>
+        )}
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -207,12 +245,11 @@ const InvoiceList = () => {
                   key={invoice.id} 
                   className="border-b last:border-b-0 hover:bg-gray-50 cursor-pointer"
                   onClick={(e) => {
-                    // Prevent navigation when clicking on checkbox or actions
                     if (
                       !(e.target as HTMLElement).closest('.checkbox-cell') &&
                       !(e.target as HTMLElement).closest('.actions-cell')
                     ) {
-                      handleRowClick(invoice.id);
+                      navigate(`/invoices/${invoice.id}`);
                     }
                   }}
                 >
@@ -250,6 +287,10 @@ const InvoiceList = () => {
                         <Link to={`/invoices/${invoice.id}/edit`}>
                           <DropdownMenuItem>Edit</DropdownMenuItem>
                         </Link>
+                        <DropdownMenuItem onClick={() => handleDuplicate(invoice.id)}>
+                          <Copy className="h-4 w-4 mr-2" />
+                          Duplicate
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleShare(invoice.id)}>
                           Share
                         </DropdownMenuItem>
