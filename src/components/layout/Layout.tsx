@@ -32,7 +32,9 @@ export function Layout() {
                   </button>
                 </SheetTrigger>
                 <SheetContent side="left" className="p-0 w-[280px]">
-                  <Sidebar />
+                  <div className="h-full overflow-y-auto">
+                    <Sidebar />
+                  </div>
                 </SheetContent>
               </Sheet>
             </div>
