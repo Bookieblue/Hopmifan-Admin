@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -24,7 +25,7 @@ export const BusinessLocationInfo = ({
   operationType,
 }: BusinessLocationInfoProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="space-y-6">
       <FormField
         control={form.control}
         name="operationType"
@@ -35,7 +36,7 @@ export const BusinessLocationInfo = ({
               <RadioGroup
                 onValueChange={field.onChange}
                 defaultValue={field.value}
-                className="flex flex-col space-y-1"
+                className="flex space-x-4"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="physical" id="physical" />
@@ -53,26 +54,77 @@ export const BusinessLocationInfo = ({
       />
 
       {operationType === "physical" && (
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Business Address</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Enter your business address"
-                  className="min-h-[100px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Business Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter street address" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Country</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {countries.map((country) => (
+                      <SelectItem key={country} value={country}>
+                        {country}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="state"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>State</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter state" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="postalCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Postal Code</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter postal code" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
       )}
 
-      <div className="space-y-2 col-span-full">
+      <div className="space-y-2">
         <Label>Target Countries</Label>
         <Select onValueChange={handleCountrySelect}>
           <SelectTrigger>
@@ -109,7 +161,7 @@ export const BusinessLocationInfo = ({
         control={form.control}
         name="description"
         render={({ field }) => (
-          <FormItem className="col-span-full">
+          <FormItem>
             <FormLabel>Business Description</FormLabel>
             <FormControl>
               <Textarea

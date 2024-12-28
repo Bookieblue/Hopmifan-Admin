@@ -10,15 +10,20 @@ import { BusinessBasicInfo } from "@/components/onboarding/BusinessBasicInfo";
 import { BusinessContactInfo } from "@/components/onboarding/BusinessContactInfo";
 import { BusinessLocationInfo } from "@/components/onboarding/BusinessLocationInfo";
 import { businessTypes, countries } from "@/lib/constants";
+import { Image } from "lucide-react";
 
 const formSchema = z.object({
   businessName: z.string().min(2, "Business name must be at least 2 characters"),
-  businessType: z.enum(["freelancing", "local", "corporate", "other"]),
+  businessType: z.enum(["freelancing", "local", "corporate"]),
+  businessLocation: z.string().min(1, "Please select a business location"),
   operationType: z.enum(["physical", "remote"]),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   logo: z.any().optional(),
   address: z.string().optional(),
+  country: z.string().optional(),
+  state: z.string().optional(),
+  postalCode: z.string().optional(),
   description: z.string().min(20, "Description must be at least 20 characters"),
 });
 
@@ -34,6 +39,7 @@ const BusinessOnboarding = () => {
       email: "",
       phone: "",
       businessType: "freelancing",
+      businessLocation: "",
       operationType: "remote",
       description: "",
     },
@@ -83,12 +89,13 @@ const BusinessOnboarding = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl w-full space-y-8 bg-white p-8 rounded-lg shadow">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Business Information
+        <div className="flex flex-col items-center">
+          <Image className="w-12 h-12 text-primary mb-4" />
+          <h2 className="text-center text-3xl font-extrabold text-gray-900">
+            Welcome to Cordlo Invoice
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Let's get your business set up
+            Let's set up your business profile to get started with seamless invoicing
           </p>
         </div>
 
