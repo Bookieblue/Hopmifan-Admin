@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, SlidersHorizontal, Eye, Pencil, Trash } from "lucide-react";
+import { Plus, Search, MoreHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -10,170 +10,140 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const InvoiceList = () => {
   const [invoices, setInvoices] = useState([
     { 
-      id: "045",
-      customer: "Sophie Shonia",
-      amount: "₦4700.00",
-      status: "unpaid",
-      type: "one-time",
-      date: "Sep, 11, 2024"
+      id: "INV-2024-001",
+      customer: "Acme Corporation",
+      amount: "₦2,850.00",
+      status: "pending",
+      date: "15 Mar 2024"
     },
     { 
-      id: "046",
-      customer: "Johnson LTD",
-      amount: "₦4700.00",
+      id: "INV-2024-002",
+      customer: "TechStart Solutions",
+      amount: "₦1,590.00",
       status: "paid",
-      type: "one-time",
-      date: "Sep, 11, 2024"
-    },
-    { 
-      id: "047",
-      customer: "Atlantis Limited",
-      amount: "₦4700.00",
-      status: "paid",
-      type: "one-time",
-      date: "Sep, 11, 2024"
-    },
-    { 
-      id: "048",
-      customer: "Mary Helen",
-      amount: "₦4700.00",
-      status: "overdue",
-      type: "one-time",
-      date: "Sep, 11, 2024"
+      date: "14 Mar 2024"
     }
   ]);
 
-  const statusTabs = ["All", "Paid", "Pending", "Overdue"];
-  const [activeTab, setActiveTab] = useState("All");
+  const [selectedInvoices, setSelectedInvoices] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleDelete = (id: string) => {
-    setInvoices(invoices.filter(invoice => invoice.id !== id));
+  const handleSelectInvoice = (invoiceId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedInvoices([...selectedInvoices, invoiceId]);
+    } else {
+      setSelectedInvoices(selectedInvoices.filter(id => id !== invoiceId));
+    }
   };
 
-  const filteredInvoices = invoices.filter(invoice => {
-    const matchesSearch = invoice.customer.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = activeTab === "All" || 
-      invoice.status.toLowerCase() === activeTab.toLowerCase();
-    return matchesSearch && matchesStatus;
-  });
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedInvoices(invoices.map(invoice => invoice.id));
+    } else {
+      setSelectedInvoices([]);
+    }
+  };
+
+  const filteredInvoices = invoices.filter(invoice =>
+    invoice.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    invoice.id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div className="p-4 max-w-[800px] mx-auto">
+    <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">All Invoices</h1>
+        <h1 className="text-2xl font-bold">Invoices</h1>
         <Link to="/invoices/create">
-          <Button size="icon" className="rounded-full w-12 h-12 bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-6 w-6" />
+          <Button size="default" className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-4 w-4 mr-2" />
+            New Invoice
           </Button>
         </Link>
       </div>
 
-      <div className="space-y-4">
+      <div className="mb-6">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
           <Input 
-            placeholder="Search" 
-            className="pl-10 bg-white rounded-full border-gray-200"
+            placeholder="Search invoices..." 
+            className="pl-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="absolute right-2 top-1/2 transform -translate-y-1/2"
-          >
-            <SlidersHorizontal className="h-4 w-4" />
-          </Button>
         </div>
+      </div>
 
-        <div className="flex space-x-6 border-b">
-          {statusTabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={cn(
-                "pb-2 px-1",
-                activeTab === tab 
-                  ? "border-b-2 border-blue-600 text-blue-600" 
-                  : "text-gray-500"
-              )}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        <div className="space-y-4">
-          {filteredInvoices.map((invoice) => (
-            <div 
-              key={`${invoice.customer}-${invoice.id}`}
-              className="p-4 bg-white rounded-lg"
-            >
-              <div className="flex justify-between items-start">
-                <h3 className="font-semibold text-lg">{invoice.customer}</h3>
-                <div className="md:flex items-center gap-4 hidden">
-                  <span className="text-lg font-semibold">{invoice.amount}</span>
-                  <span className={cn(
-                    "px-3 py-1 rounded-full text-sm",
-                    invoice.status === "paid" && "bg-green-100 text-green-800",
-                    invoice.status === "unpaid" && "bg-orange-100 text-orange-800",
-                    invoice.status === "overdue" && "bg-red-100 text-red-800"
-                  )}>
-                    {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-                  </span>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <Link to={`/invoices/${invoice.id}`}>
-                        <DropdownMenuItem>
-                          <Eye className="mr-2 h-4 w-4" />
-                          View
+      <div className="bg-white rounded-lg border">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="px-4 py-3 text-left">
+                  <Checkbox
+                    checked={selectedInvoices.length === invoices.length}
+                    onCheckedChange={handleSelectAll}
+                  />
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Invoice #</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Client</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Date</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Amount</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Status</th>
+                <th className="px-4 py-3 text-right text-sm font-medium text-gray-500">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredInvoices.map((invoice) => (
+                <tr key={invoice.id} className="border-b last:border-b-0">
+                  <td className="px-4 py-3">
+                    <Checkbox
+                      checked={selectedInvoices.includes(invoice.id)}
+                      onCheckedChange={(checked) => handleSelectInvoice(invoice.id, checked as boolean)}
+                    />
+                  </td>
+                  <td className="px-4 py-3 text-sm font-medium">{invoice.id}</td>
+                  <td className="px-4 py-3 text-sm">{invoice.customer}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500">{invoice.date}</td>
+                  <td className="px-4 py-3 text-sm font-medium">{invoice.amount}</td>
+                  <td className="px-4 py-3">
+                    <span className={cn(
+                      "px-2.5 py-1 rounded-full text-xs font-medium",
+                      invoice.status === "paid" && "bg-green-100 text-green-800",
+                      invoice.status === "pending" && "bg-orange-100 text-orange-800",
+                      invoice.status === "overdue" && "bg-red-100 text-red-800"
+                    )}>
+                      {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <Link to={`/invoices/${invoice.id}`}>
+                          <DropdownMenuItem>View</DropdownMenuItem>
+                        </Link>
+                        <Link to={`/invoices/${invoice.id}/edit`}>
+                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                        </Link>
+                        <DropdownMenuItem className="text-red-600">
+                          Delete
                         </DropdownMenuItem>
-                      </Link>
-                      <Link to={`/invoices/${invoice.id}/edit`}>
-                        <DropdownMenuItem>
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                      </Link>
-                      <DropdownMenuItem onClick={() => handleDelete(invoice.id)} className="text-red-600">
-                        <Trash className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-500 text-sm">
-                <div className="space-x-2">
-                  <span>{invoice.type}</span>
-                  <span>•</span>
-                  <span>{invoice.date}</span>
-                </div>
-                <div className="md:hidden flex items-center space-x-2">
-                  <span className="text-lg font-semibold">{invoice.amount}</span>
-                  <span className={cn(
-                    "px-3 py-1 rounded-full text-sm",
-                    invoice.status === "paid" && "bg-green-100 text-green-800",
-                    invoice.status === "unpaid" && "bg-orange-100 text-orange-800",
-                    invoice.status === "overdue" && "bg-red-100 text-red-800"
-                  )}>
-                    {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
