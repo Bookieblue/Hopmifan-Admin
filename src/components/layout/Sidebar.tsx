@@ -38,7 +38,6 @@ const menuItems = [
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
-// Mock data for businesses - in a real app, this would come from an API
 const businesses = [
   { id: 1, name: "Acme Corp" },
   { id: 2, name: "TechStart Inc" },
@@ -53,17 +52,15 @@ export function Sidebar() {
 
   const handleBusinessChange = (business: typeof businesses[0]) => {
     setSelectedBusiness(business);
-    // Here you would typically trigger a context update or API call
     console.log("Switched to business:", business.name);
   };
 
   const handleAddBusiness = () => {
-    // Here you would typically navigate to a new business creation form
     console.log("Add new business clicked");
   };
 
   return (
-    <div className="h-screen w-64 bg-[#F9FAFB] border-r border-gray-100 p-6 fixed left-0 top-0 flex flex-col font-inter">
+    <div className="h-full bg-[#F9FAFB] border-r border-gray-100 p-6 flex flex-col font-inter">
       <div className="mb-4">
         <Link to="/" className="flex items-center">
           <div className="flex items-center gap-2">
