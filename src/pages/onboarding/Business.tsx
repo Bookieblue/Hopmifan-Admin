@@ -69,8 +69,14 @@ const BusinessOnboarding = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      // TODO: Implement actual API call
-      console.log({ ...values, targetCountries: selectedCountries });
+      // Store form data in localStorage
+      const formData = {
+        ...values,
+        logo: logoPreview,
+        targetCountries: selectedCountries,
+      };
+      localStorage.setItem('businessData', JSON.stringify(formData));
+      
       toast({
         title: "Success",
         description: "Business information saved successfully",
