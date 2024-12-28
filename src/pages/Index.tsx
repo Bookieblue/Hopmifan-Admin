@@ -40,27 +40,6 @@ const data = {
   ],
 };
 
-const recentPayments = [
-  {
-    type: "Received",
-    description: "Payment from TechCorp",
-    amount: 150000,
-    date: "2024-03-15"
-  },
-  {
-    type: "Received",
-    description: "Payment from Design Co",
-    amount: 280000,
-    date: "2024-03-14"
-  },
-  {
-    type: "Received",
-    description: "Payment from Marketing Inc",
-    amount: 320000,
-    date: "2024-03-12"
-  }
-];
-
 const recentActivities = [
   {
     type: "Payment Received",
@@ -153,11 +132,7 @@ export default function Index() {
 
       <StatsGrid />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentActivity 
-          activities={recentPayments}
-          title="Recent Payments"
-        />
+      <div className="grid grid-cols-1">
         <RecentActivity 
           activities={recentActivities}
           title="Recent Activities"

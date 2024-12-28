@@ -1,4 +1,4 @@
-import { CheckCircle2 } from "lucide-react";
+import { CircleIcon } from "lucide-react";
 
 interface ActivityItem {
   type: string;
@@ -21,7 +21,7 @@ export function RecentActivity({ activities, title }: RecentActivityProps) {
           <div key={index} className="flex items-center justify-between py-4 border-b last:border-0">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <CircleIcon className="h-4 w-4 text-gray-500" />
                 <h4 className="font-medium">{activity.type}</h4>
               </div>
               <p className="text-sm text-muted-foreground">{activity.description}</p>
