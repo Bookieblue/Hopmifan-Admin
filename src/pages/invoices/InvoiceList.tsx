@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Search, SlidersHorizontal } from "lucide-react";
@@ -5,7 +6,6 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const InvoiceList = () => {
-  // Placeholder data - in a real app, this would come from your backend
   const invoices = [
     { 
       id: "045",
@@ -42,7 +42,8 @@ const InvoiceList = () => {
   ];
 
   const statusTabs = ["All", "Paid", "Pending", "Overdue"];
-  const [activeTab, setActiveTab] = React.useState("All");
+
+  const [activeTab, setActiveTab] = useState("All");
 
   return (
     <div className="p-4 max-w-[800px] mx-auto">
