@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   FileText,
@@ -29,6 +29,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { useDocuments } from "@/contexts/DocumentContext";
 
+// Mock data for businesses - in a real app, this would come from an API
+const businesses = [
+  { id: 1, name: "Acme Corp" },
+  { id: 2, name: "TechStart Inc" },
+  { id: 3, name: "Design Studio" },
+];
+
 const menuItems = [
   { icon: LayoutDashboard, label: "Overview", path: "/" },
   { icon: FileText, label: "Invoices", path: "/invoices", type: "invoices" },
@@ -43,15 +50,9 @@ const accountMenuItems = [
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
-// Mock data for businesses - in a real app, this would come from an API
-const businesses = [
-  { id: 1, name: "Acme Corp" },
-  { id: 2, name: "TechStart Inc" },
-  { id: 3, name: "Design Studio" },
-];
-
 export function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(businesses[0]);
@@ -64,7 +65,7 @@ export function Sidebar() {
   };
 
   const handleAddBusiness = () => {
-    console.log("Add new business clicked");
+    navigate("/onboarding/business");
   };
 
   const toggleAccount = () => {
