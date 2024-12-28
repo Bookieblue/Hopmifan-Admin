@@ -33,29 +33,32 @@ export default function TemplateSettings() {
     return () => clearTimeout(saveTimeout);
   }, [templateContent, colors]);
 
+  const DocumentTypeSelector = () => (
+    <Select 
+      value={selectedDocument} 
+      onValueChange={setSelectedDocument}
+    >
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select document type" />
+      </SelectTrigger>
+      <SelectContent>
+        {enabledDocuments.invoices && (
+          <SelectItem value="invoices">Invoices</SelectItem>
+        )}
+        {enabledDocuments.estimates && (
+          <SelectItem value="estimates">Estimates</SelectItem>
+        )}
+        {enabledDocuments.receipts && (
+          <SelectItem value="receipts">Receipts</SelectItem>
+        )}
+      </SelectContent>
+    </Select>
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <h2 className="text-2xl font-semibold tracking-tight">Template Settings</h2>
-        <Select 
-          value={selectedDocument} 
-          onValueChange={setSelectedDocument}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select document type" />
-          </SelectTrigger>
-          <SelectContent>
-            {enabledDocuments.invoices && (
-              <SelectItem value="invoices">Invoices</SelectItem>
-            )}
-            {enabledDocuments.estimates && (
-              <SelectItem value="estimates">Estimates</SelectItem>
-            )}
-            {enabledDocuments.receipts && (
-              <SelectItem value="receipts">Receipts</SelectItem>
-            )}
-          </SelectContent>
-        </Select>
       </div>
 
       <Tabs defaultValue="document-types" className="space-y-4">
@@ -103,6 +106,11 @@ export default function TemplateSettings() {
         </TabsContent>
 
         <TabsContent value="design" className="space-y-6">
+          <div className="mb-6">
+            <label className="text-sm font-medium mb-2 block">Select Document Type</label>
+            <DocumentTypeSelector />
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="p-4 border-2 border-blue-500 rounded-lg">
               <h3 className="font-medium mb-2">Modern</h3>
@@ -158,6 +166,11 @@ export default function TemplateSettings() {
         </TabsContent>
 
         <TabsContent value="content" className="space-y-4">
+          <div className="mb-6">
+            <label className="text-sm font-medium mb-2 block">Select Document Type</label>
+            <DocumentTypeSelector />
+          </div>
+
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Header Text</label>
