@@ -9,6 +9,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import InvoiceList from "./pages/invoices/InvoiceList";
 import CreateInvoice from "./pages/invoices/CreateInvoice";
 import ViewInvoice from "./pages/invoices/ViewInvoice";
+import EditInvoice from "./pages/invoices/EditInvoice";
 import EstimateList from "./pages/estimates/EstimateList";
 import CreateEstimate from "./pages/estimates/CreateEstimate";
 import ViewEstimate from "./pages/estimates/ViewEstimate";
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/invoices" element={<InvoiceList />} />
             <Route path="/invoices/create" element={<CreateInvoice />} />
             <Route path="/invoices/:id" element={<ViewInvoice />} />
+            <Route path="/invoices/:id/edit" element={<EditInvoice />} />
             <Route path="/estimates" element={<EstimateList />} />
             <Route path="/estimates/create" element={<CreateEstimate />} />
             <Route path="/estimates/:id" element={<ViewEstimate />} />
