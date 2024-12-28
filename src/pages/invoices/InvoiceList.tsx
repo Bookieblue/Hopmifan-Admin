@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Search, MoreHorizontal, CalendarDays } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const InvoiceList = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [invoices, setInvoices] = useState([
     { 
       id: "INV-2024-001",
@@ -123,6 +124,11 @@ const InvoiceList = () => {
     invoice.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Add navigation handler
+  const handleRowClick = (invoiceId: string) => {
+    navigate(`/invoices/${invoiceId}`);
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
       <div className="flex justify-between items-center mb-6">
@@ -197,8 +203,20 @@ const InvoiceList = () => {
             </thead>
             <tbody>
               {filteredInvoices.map((invoice) => (
-                <tr key={invoice.id} className="border-b last:border-b-0">
-                  <td className="px-4 py-3">
+                <tr 
+                  key={invoice.id} 
+                  className="border-b last:border-b-0 hover:bg-gray-50 cursor-pointer"
+                  onClick={(e) => {
+                    // Prevent navigation when clicking on checkbox or actions
+                    if (
+                      !(e.target as HTMLElement).closest('.checkbox-cell') &&
+                      !(e.target as HTMLElement).closest('.actions-cell')
+                    ) {
+                      handleRowClick(invoice.id);
+                    }
+                  }}
+                >
+                  <td className="px-4 py-3 checkbox-cell">
                     <Checkbox
                       checked={selectedInvoices.includes(invoice.id)}
                       onCheckedChange={(checked) => handleSelectInvoice(invoice.id, checked as boolean)}
@@ -218,7 +236,7 @@ const InvoiceList = () => {
                       {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-right actions-cell">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm">

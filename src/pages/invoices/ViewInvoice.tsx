@@ -39,7 +39,7 @@ export default function ViewInvoice() {
     onAfterPrint: () => console.log('Printed successfully'),
     pageStyle: "@page { size: auto; margin: 20mm }",
     onPrintError: (error) => console.error('Failed to print:', error),
-    content: () => printRef.current,
+    print: () => printRef.current,
   });
 
   return (
