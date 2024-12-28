@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Eye, Pencil, Download, Plus, Search, Trash2, Filter } from "lucide-react";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, Search, Filter, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ReceiptRow } from "@/components/receipts/ReceiptRow";
 
 // Mock data for the receipts list with added status and type
 const receipts = [
@@ -85,33 +86,11 @@ export default function ReceiptList() {
   };
 
   const handleBulkDelete = () => {
-    // In a real app, this would make an API call to delete the selected receipts
     toast({
       title: "Receipts deleted",
       description: `${selectedReceipts.length} receipt(s) have been deleted.`,
     });
     setSelectedReceipts([]);
-  };
-
-  const handleDownload = (receiptId: string) => {
-    // In a real app, this would trigger the download of the receipt
-    toast({
-      title: "Download started",
-      description: `Receipt ${receiptId} is being downloaded.`,
-    });
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "paid":
-        return "bg-green-100 text-green-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "overdue":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
   };
 
   return (
@@ -212,58 +191,20 @@ export default function ReceiptList() {
                   aria-label="Select all receipts"
                 />
               </TableHead>
-              <TableHead>Receipt #</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>Details</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Type</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredReceipts.map((receipt) => (
-              <TableRow key={receipt.id}>
-                <TableCell>
-                  <Checkbox
-                    checked={selectedReceipts.includes(receipt.id)}
-                    onCheckedChange={(checked) => handleSelectReceipt(receipt.id, checked as boolean)}
-                    aria-label={`Select receipt ${receipt.id}`}
-                  />
-                </TableCell>
-                <TableCell>{receipt.id}</TableCell>
-                <TableCell>{receipt.client}</TableCell>
-                <TableCell>{receipt.date}</TableCell>
-                <TableCell>{receipt.amount}</TableCell>
-                <TableCell>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(receipt.status)}`}>
-                    {receipt.status.charAt(0).toUpperCase() + receipt.status.slice(1)}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <span className="capitalize">{receipt.type}</span>
-                </TableCell>
-                <TableCell className="text-right space-x-2">
-                  <Link to={`/receipts/${receipt.id}`}>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                  </Link>
-                  <Link to={`/receipts/${receipt.id}/edit`}>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Pencil className="w-4 h-4" />
-                    </Button>
-                  </Link>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8"
-                    onClick={() => handleDownload(receipt.id)}
-                  >
-                    <Download className="w-4 h-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
+              <ReceiptRow
+                key={receipt.id}
+                receipt={receipt}
+                isSelected={selectedReceipts.includes(receipt.id)}
+                onSelect={handleSelectReceipt}
+              />
             ))}
           </TableBody>
         </Table>
