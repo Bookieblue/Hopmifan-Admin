@@ -27,8 +27,10 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
     
     // If trying to disable the last enabled document, prevent it and show toast
     if (enabledCount === 1 && enabledDocuments[documentType]) {
-      toast.error("At least one document type must remain enabled", {
-        description: "You cannot disable all document types."
+      toast("At least one document type must remain enabled", {
+        description: "You cannot disable all document types.",
+        duration: 3000,
+        style: { backgroundColor: '#fee2e2', color: '#dc2626' }
       });
       return;
     }
