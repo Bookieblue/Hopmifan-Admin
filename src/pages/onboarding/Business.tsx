@@ -16,7 +16,7 @@ const formSchema = z.object({
   businessType: z.enum(["freelancing", "local", "corporate"]),
   businessLocation: z.string().min(1, "Please select a business location"),
   operationType: z.enum(["physical", "remote"]),
-  email: z.string().email("Invalid email address"),
+  email: z.string().email("Invalid email address").optional(),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   logo: z.any().optional(),
   address: z.string().optional(),
