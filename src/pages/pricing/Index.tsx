@@ -14,7 +14,7 @@ const PricingPage = () => {
         "Unlimited Clients",
         "Email Reminders",
       ],
-      buttonText: "Sign Up",
+      buttonText: "Select Plan",
       buttonVariant: "default" as const,
     },
     {
@@ -29,7 +29,7 @@ const PricingPage = () => {
         "API Access & Automations",
         "Payment Gateways Integration",
       ],
-      buttonText: "Try For Free",
+      buttonText: "Select Plan",
       buttonVariant: "default" as const,
     },
     {
@@ -48,69 +48,58 @@ const PricingPage = () => {
         "Recurring Invoices & Expenses",
         "Payment Gateways Integration",
       ],
-      buttonText: "Try For Free",
+      buttonText: "Select Plan",
       buttonVariant: "default" as const,
     },
   ];
 
   return (
-    <>
-      <header className="bg-[#0F2937] text-white py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+    <div className="container relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-1 lg:px-0">
+      <div className="lg:p-8">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <div className="flex flex-col space-y-2 text-center mb-8">
+            <h1 className="text-2xl font-semibold tracking-tight">
               Choose Your Plan
             </h1>
-            <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
-              Select the perfect plan for your business needs. Start with our free
-              tier and upgrade as you grow.
+            <p className="text-sm text-muted-foreground">
+              Select the perfect plan for your business needs
             </p>
           </div>
-        </div>
-      </header>
 
-      <div className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-4xl font-bold mb-4">Simple & Affordable Pricing.</h2>
-          <p className="text-lg text-gray-600">
-            We offer completely transparent and affordable pricing packages that can
-            easily scale with your business needs and requirements.
-          </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {pricingTiers.map((tier) => (
-            <Card key={tier.name} className="flex flex-col h-full">
-              <CardHeader>
-                <CardTitle className="text-2xl font-semibold">
-                  {tier.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1 flex flex-col">
-                <div className="mb-8">
-                  <span className="text-4xl font-bold">₦{tier.price}</span>
-                  <span className="text-gray-500 ml-2">{tier.period}</span>
-                </div>
-                <ul className="space-y-4 mb-8 flex-1">
-                  {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2">
-                      <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  variant={tier.buttonVariant}
-                  className="w-full bg-[#0F2937] hover:bg-[#1a3c4e] text-white"
-                >
-                  {tier.buttonText}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto w-full">
+            {pricingTiers.map((tier) => (
+              <Card key={tier.name} className="flex flex-col h-full">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-semibold">
+                    {tier.name}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col">
+                  <div className="mb-8">
+                    <span className="text-4xl font-bold">₦{tier.price}</span>
+                    <span className="text-gray-500 ml-2">{tier.period}</span>
+                  </div>
+                  <ul className="space-y-4 mb-8 flex-1">
+                    {tier.features.map((feature) => (
+                      <li key={feature} className="flex items-center gap-2">
+                        <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                        <span className="text-gray-700">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    variant="default"
+                    className="w-full bg-primary hover:bg-primary/90 transition-colors duration-200"
+                  >
+                    Select Plan
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
