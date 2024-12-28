@@ -10,16 +10,6 @@ export default function ViewInvoice() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const printRef = useRef<HTMLDivElement>(null);
 
-  const handlePrint = useReactToPrint({
-    documentTitle: `Invoice-${invoice.id}`,
-    onAfterPrint: () => console.log('Printed successfully'),
-    removeAfterPrint: true,
-    pageStyle: "@page { size: auto; margin: 20mm }",
-    onPrintError: (error) => console.error('Failed to print:', error),
-    copyStyles: true,
-    trigger: () => printRef.current,
-  });
-
   const invoice = {
     id: "INV-001",
     date: "2024-03-15",
@@ -43,6 +33,15 @@ export default function ViewInvoice() {
     notes: "Payment received with thanks",
     terms: "All sales are final"
   };
+
+  const handlePrint = useReactToPrint({
+    documentTitle: `Invoice-${invoice.id}`,
+    onAfterPrint: () => console.log('Printed successfully'),
+    pageStyle: "@page { size: auto; margin: 20mm }",
+    onPrintError: (error) => console.error('Failed to print:', error),
+    copyStyles: true,
+    content: () => printRef.current,
+  });
 
   return (
     <div className="p-4 md:p-6 max-w-[1000px] mx-auto">
