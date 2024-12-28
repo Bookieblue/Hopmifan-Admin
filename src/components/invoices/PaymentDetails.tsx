@@ -14,6 +14,7 @@ interface PaymentDetailsProps {
   onBankAccountAdd: (accountId: string) => void;
   onBankAccountRemove: (accountId: string) => void;
   onPaymentGatewayChange: (gatewayId: string) => void;
+  onCustomerSelect: (customer: any) => void;
 }
 
 export const PaymentDetails = ({ 
@@ -21,13 +22,23 @@ export const PaymentDetails = ({
   selectedGateway,
   onBankAccountAdd,
   onBankAccountRemove,
-  onPaymentGatewayChange 
+  onPaymentGatewayChange,
+  onCustomerSelect
 }: PaymentDetailsProps) => {
   const [bankAccounts, setBankAccounts] = useState([]);
   const [paymentGateways, setPaymentGateways] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [includeBillingAddress, setIncludeBillingAddress] = useState(false);
+  const [newCustomer, setNewCustomer] = useState({
+    name: "",
+    email: "",
+    street: "",
+    country: "",
+    state: "",
+    postalCode: "",
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     // In a real app, this would fetch from your API
@@ -54,6 +65,29 @@ export const PaymentDetails = ({
     customer.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleCustomerSelect = (customer: any) => {
+    onCustomerSelect(customer);
+    setSearchTerm("");
+  };
+
+  const handleAddNewCustomer = () => {
+    const customer = {
+      id: Date.now().toString(),
+      ...newCustomer,
+    };
+    setCustomers(prev => [...prev, customer]);
+    onCustomerSelect(customer);
+    setNewCustomer({
+      name: "",
+      email: "",
+      street: "",
+      country: "",
+      state: "",
+      postalCode: "",
+    });
+    setIsDialogOpen(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -66,7 +100,7 @@ export const PaymentDetails = ({
               onChange={(e) => setSearchTerm(e.target.value)}
               className="flex-1"
             />
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                   <UserPlus className="w-4 h-4 mr-2" />
@@ -80,11 +114,20 @@ export const PaymentDetails = ({
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label>Name</Label>
-                    <Input placeholder="Enter customer name" />
+                    <Input 
+                      placeholder="Enter customer name"
+                      value={newCustomer.name}
+                      onChange={(e) => setNewCustomer(prev => ({ ...prev, name: e.target.value }))}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Email</Label>
-                    <Input type="email" placeholder="Enter customer email" />
+                    <Input 
+                      type="email" 
+                      placeholder="Enter customer email"
+                      value={newCustomer.email}
+                      onChange={(e) => setNewCustomer(prev => ({ ...prev, email: e.target.value }))}
+                    />
                   </div>
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -95,20 +138,54 @@ export const PaymentDetails = ({
                     <Label htmlFor="billing-address">Include Billing Address</Label>
                   </div>
                   {includeBillingAddress && (
-                    <div className="space-y-2">
-                      <Label>Billing Address</Label>
-                      <Input placeholder="Enter billing address" />
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Street Address</Label>
+                        <Input 
+                          placeholder="Enter street address"
+                          value={newCustomer.street}
+                          onChange={(e) => setNewCustomer(prev => ({ ...prev, street: e.target.value }))}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Country</Label>
+                        <Input 
+                          placeholder="Enter country"
+                          value={newCustomer.country}
+                          onChange={(e) => setNewCustomer(prev => ({ ...prev, country: e.target.value }))}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>State</Label>
+                        <Input 
+                          placeholder="Enter state"
+                          value={newCustomer.state}
+                          onChange={(e) => setNewCustomer(prev => ({ ...prev, state: e.target.value }))}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Postal Code</Label>
+                        <Input 
+                          placeholder="Enter postal code"
+                          value={newCustomer.postalCode}
+                          onChange={(e) => setNewCustomer(prev => ({ ...prev, postalCode: e.target.value }))}
+                        />
+                      </div>
                     </div>
                   )}
-                  <Button className="w-full">Add Customer</Button>
+                  <Button className="w-full" onClick={handleAddNewCustomer}>Add Customer</Button>
                 </div>
               </DialogContent>
             </Dialog>
           </div>
-          {searchTerm && (
+          {searchTerm && filteredCustomers.length > 0 && (
             <div className="mt-2 border rounded-md divide-y">
               {filteredCustomers.map((customer: any) => (
-                <div key={customer.id} className="p-2 hover:bg-accent cursor-pointer">
+                <div 
+                  key={customer.id} 
+                  className="p-2 hover:bg-accent cursor-pointer"
+                  onClick={() => handleCustomerSelect(customer)}
+                >
                   <div className="font-medium">{customer.name}</div>
                   <div className="text-sm text-muted-foreground">{customer.email}</div>
                 </div>

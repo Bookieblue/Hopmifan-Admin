@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,7 @@ interface InvoiceItem {
 }
 
 export default function CreateInvoice() {
+  const navigate = useNavigate();
   const [invoiceId, setInvoiceId] = useState(generateInvoiceId());
   const [dueDate, setDueDate] = useState("");
   const [paymentType, setPaymentType] = useState<"one-time" | "recurring">("one-time");
@@ -27,6 +28,23 @@ export default function CreateInvoice() {
   const [items, setItems] = useState<InvoiceItem[]>([]);
   const [notes, setNotes] = useState("");
   const [termsAndConditions, setTermsAndConditions] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+
+  useEffect(() => {
+    // Fetch template content from settings
+    const fetchTemplateContent = async () => {
+      // In a real app, this would be an API call
+      const templateContent = {
+        notesTemplate: "Please include invoice number in payment reference",
+        termsAndConditions: "Payment is due within 30 days"
+      };
+      
+      setNotes(templateContent.notesTemplate);
+      setTermsAndConditions(templateContent.termsAndConditions);
+    };
+
+    fetchTemplateContent();
+  }, []);
 
   const handleSubmit = async (status: 'draft' | 'published') => {
     try {
@@ -40,6 +58,7 @@ export default function CreateInvoice() {
         notes,
         termsAndConditions,
         status,
+        customer: selectedCustomer,
         total: items.reduce((sum, item) => sum + item.amount, 0)
       };
 
@@ -51,32 +70,18 @@ export default function CreateInvoice() {
           : "Invoice created successfully"
       );
       
-      // navigate('/invoices');
+      navigate('/invoices');
     } catch (error) {
       toast.error("Failed to create invoice");
     }
   };
 
-  const handleBankAccountAdd = (accountId: string) => {
-    setSelectedBankAccounts(prev => [...prev, accountId]);
-  };
-
-  const handleBankAccountRemove = (accountId: string) => {
-    setSelectedBankAccounts(prev => prev.filter(id => id !== accountId));
-  };
-
-  const handlePaymentGatewayChange = (gatewayId: string) => {
-    setSelectedGateway(gatewayId || null);
-  };
-
   return (
     <div className="p-6 max-w-[1000px] mx-auto">
       <div className="flex items-center gap-4 mb-8">
-        <Link to="/invoices">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
+        <Button variant="ghost" size="icon" onClick={() => navigate("/invoices")}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
         <h1 className="text-2xl font-semibold">Create Invoice</h1>
       </div>
 
@@ -95,9 +100,10 @@ export default function CreateInvoice() {
             <PaymentDetails
               selectedBankAccounts={selectedBankAccounts}
               selectedGateway={selectedGateway}
-              onBankAccountAdd={handleBankAccountAdd}
-              onBankAccountRemove={handleBankAccountRemove}
-              onPaymentGatewayChange={handlePaymentGatewayChange}
+              onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
+              onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
+              onPaymentGatewayChange={setSelectedGateway}
+              onCustomerSelect={setSelectedCustomer}
             />
 
             <div className="mt-8">
