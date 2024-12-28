@@ -2,11 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Download, Pencil, Printer } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useRef } from "react";
+import { useReactToPrint } from "react-to-print";
+import { toast } from "sonner";
 
 export default function ViewReceipt() {
+  const printRef = useRef<HTMLDivElement>(null);
+
   const receipt = {
     id: "RCP-001",
     date: "2024-03-15",
+    paymentMethod: "Bank Transfer",
     client: {
       name: "Global Inc",
       email: "accounts@global.com",
@@ -25,11 +31,17 @@ export default function ViewReceipt() {
     tax: "₦99.90",
     total: "₦1,098.90",
     notes: "Payment received with thanks",
-    terms: "All sales are final"
+    paymentReference: "REF123456"
   };
 
+  const handlePrint = useReactToPrint({
+    documentTitle: `Receipt-${receipt.id}`,
+    onAfterPrint: () => console.log('Printed successfully'),
+    content: () => printRef.current,
+  } as any);
+
   return (
-    <div className="p-6 max-w-[1000px] mx-auto">
+    <div className="p-4 md:p-6 max-w-[1000px] mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <Link to="/receipts">
@@ -37,103 +49,100 @@ export default function ViewReceipt() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <h1 className="text-xl sm:text-2xl font-semibold">Receipt #{receipt.id}</h1>
+          <h1 className="text-xl md:text-2xl font-semibold">Receipt #{receipt.id}</h1>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" className="gap-2 text-sm" size="sm">
+          <Button 
+            variant="outline" 
+            className="gap-2" 
+            onClick={() => handlePrint()}
+          >
             <Printer className="w-4 h-4" />
-            <span className="hidden sm:inline">Print</span>
-          </Button>
-          <Button variant="outline" className="gap-2 text-sm" size="sm">
-            <Download className="w-4 h-4" />
-            <span className="hidden sm:inline">Download</span>
+            Print
           </Button>
           <Link to={`/receipts/${receipt.id}/edit`}>
-            <Button className="gap-2 text-sm" size="sm">
+            <Button className="gap-2">
               <Pencil className="w-4 h-4" />
-              <span className="hidden sm:inline">Edit</span>
+              Edit
             </Button>
           </Link>
         </div>
       </div>
 
-      <Card className="overflow-hidden">
-        <CardContent className="p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row justify-between gap-4 mb-8">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-blue-600">Cordlo Invoice</h2>
+      <div ref={printRef}>
+        <Card>
+          <CardContent className="p-4 md:p-6">
+            <div className="flex flex-col md:flex-row md:justify-between gap-4 mb-8">
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold text-blue-600">Payment Receipt</h2>
+              </div>
+              <div className="text-left md:text-right">
+                <h3 className="text-lg md:text-xl font-semibold">RECEIPT #{receipt.id}</h3>
+                <p className="text-gray-600">Date: {receipt.date}</p>
+                <p className="text-gray-600">Payment Method: {receipt.paymentMethod}</p>
+                <p className="text-gray-600">Reference: {receipt.paymentReference}</p>
+              </div>
             </div>
-            <div className="text-left sm:text-right">
-              <h3 className="text-lg sm:text-xl font-semibold">RECEIPT #{receipt.id}</h3>
-              <p className="text-gray-600">Date: {receipt.date}</p>
-            </div>
-          </div>
 
-          <div className="mb-8">
-            <h4 className="font-medium text-gray-600 mb-2">Bill To:</h4>
-            <div className="space-y-1">
-              <p className="font-medium">{receipt.client.name}</p>
-              <p>{receipt.client.email}</p>
-              <p>{receipt.client.phone}</p>
-              <p>{receipt.client.address}</p>
+            <div className="mb-8">
+              <h4 className="font-medium text-gray-600 mb-2">Received From:</h4>
+              <div className="space-y-1">
+                <p className="font-medium">{receipt.client.name}</p>
+                <p>{receipt.client.email}</p>
+                <p>{receipt.client.phone}</p>
+                <p>{receipt.client.address}</p>
+              </div>
             </div>
-          </div>
 
-          <div className="mb-8 overflow-x-auto">
-            <table className="w-full min-w-[500px]">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-2">Description</th>
-                  <th className="text-center py-2">Quantity</th>
-                  <th className="text-right py-2">Price</th>
-                  <th className="text-right py-2">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {receipt.items.map((item, index) => (
-                  <tr key={index} className="border-b">
-                    <td className="py-2">{item.description}</td>
-                    <td className="text-center py-2">{item.quantity}</td>
-                    <td className="text-right py-2">{item.price}</td>
-                    <td className="text-right py-2">{item.amount}</td>
+            <div className="mb-8 overflow-x-auto">
+              <table className="w-full min-w-[600px]">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2">Description</th>
+                    <th className="text-center py-2">Quantity</th>
+                    <th className="text-right py-2">Price</th>
+                    <th className="text-right py-2">Amount</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {receipt.items.map((item, index) => (
+                    <tr key={index} className="border-b">
+                      <td className="py-2">{item.description}</td>
+                      <td className="text-center py-2">{item.quantity}</td>
+                      <td className="text-right py-2">{item.price}</td>
+                      <td className="text-right py-2">{item.amount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          <div className="flex justify-end mb-8">
-            <div className="w-full sm:w-72">
-              <div className="flex justify-between py-2">
-                <span>Subtotal:</span>
-                <span>{receipt.subtotal}</span>
-              </div>
-              <div className="flex justify-between py-2">
-                <span>Tax (10%):</span>
-                <span>{receipt.tax}</span>
-              </div>
-              <div className="flex justify-between py-2 font-semibold">
-                <span>Total:</span>
-                <span>{receipt.total}</span>
+            <div className="flex justify-end mb-8">
+              <div className="w-full md:w-72">
+                <div className="flex justify-between py-2">
+                  <span>Subtotal:</span>
+                  <span>{receipt.subtotal}</span>
+                </div>
+                <div className="flex justify-between py-2">
+                  <span>Tax (10%):</span>
+                  <span>{receipt.tax}</span>
+                </div>
+                <div className="flex justify-between py-2 font-semibold">
+                  <span>Total Paid:</span>
+                  <span>{receipt.total}</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {receipt.notes && (
-            <div className="mb-4">
-              <h4 className="font-medium mb-2">Notes</h4>
-              <p className="text-gray-600">{receipt.notes}</p>
-            </div>
-          )}
-
-          {receipt.terms && (
-            <div>
-              <h4 className="font-medium mb-2">Terms & Conditions</h4>
-              <p className="text-gray-600">{receipt.terms}</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            {receipt.notes && (
+              <div className="mb-4">
+                <h4 className="font-medium mb-2">Notes</h4>
+                <p className="text-gray-600">{receipt.notes}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
