@@ -19,7 +19,7 @@ export const BusinessBasicInfo = ({
 }: BusinessBasicInfoProps) => {
   return (
     <div className="space-y-6">
-      <div className="flex flex-col items-start space-y-4">
+      <div className="flex flex-col items-center space-y-4">
         <Label className="text-sm text-gray-600">Business Logo</Label>
         <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary relative overflow-hidden">
           <input
@@ -61,7 +61,7 @@ export const BusinessBasicInfo = ({
         )}
       />
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FormField
           control={form.control}
           name="businessType"

@@ -36,7 +36,7 @@ export const BusinessLocationInfo = ({
               <RadioGroup
                 onValueChange={field.onChange}
                 defaultValue={field.value}
-                className="flex space-x-4"
+                className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="physical" id="physical" />
@@ -54,7 +54,7 @@ export const BusinessLocationInfo = ({
       />
 
       {operationType === "physical" && (
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
             name="address"
