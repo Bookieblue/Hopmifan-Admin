@@ -14,6 +14,7 @@ import {
   ChevronDown,
   Building2,
   Plus,
+  ChevronRight,
 } from "lucide-react";
 import { SupportModal } from "../modals/SupportModal";
 import { FeedbackModal } from "../modals/FeedbackModal";
@@ -33,6 +34,9 @@ const menuItems = [
   { icon: FileText, label: "Estimates", path: "/estimates" },
   { icon: Receipt, label: "Receipts", path: "/receipts" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
+];
+
+const accountMenuItems = [
   { icon: Users, label: "Customers", path: "/customers" },
   { icon: BarChart, label: "Reports", path: "/reports" },
   { icon: Settings, label: "Settings", path: "/settings" },
@@ -50,16 +54,19 @@ export function Sidebar() {
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(businesses[0]);
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
 
   const handleBusinessChange = (business: typeof businesses[0]) => {
     setSelectedBusiness(business);
-    // Here you would typically trigger a context update or API call
     console.log("Switched to business:", business.name);
   };
 
   const handleAddBusiness = () => {
-    // Here you would typically navigate to a new business creation form
     console.log("Add new business clicked");
+  };
+
+  const toggleAccount = () => {
+    setIsAccountOpen(!isAccountOpen);
   };
 
   return (
@@ -136,6 +143,63 @@ export function Sidebar() {
             </Link>
           );
         })}
+
+        {/* Account Menu with Dropdown */}
+        <div className="relative">
+          <button
+            onClick={toggleAccount}
+            className={cn(
+              "w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+              isAccountOpen
+                ? "bg-blue-50 text-blue-600"
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <Users className={cn("w-5 h-5", isAccountOpen ? "text-blue-600" : "text-gray-500")} />
+              <span>Account</span>
+            </div>
+            <ChevronRight
+              className={cn(
+                "w-4 h-4 transition-transform",
+                isAccountOpen ? "rotate-90" : ""
+              )}
+            />
+          </button>
+
+          {/* Account Submenu */}
+          <div
+            className={cn(
+              "pl-4 space-y-1 overflow-hidden transition-all duration-200",
+              isAccountOpen ? "max-h-[500px] mt-1" : "max-h-0"
+            )}
+          >
+            {accountMenuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  )}
+                >
+                  <Icon
+                    className={cn(
+                      "w-5 h-5",
+                      isActive ? "text-blue-600" : "text-gray-500"
+                    )}
+                  />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
       </nav>
 
       <div className="mt-auto space-y-1">
