@@ -4,10 +4,52 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Search } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+
+const currencies = [
+  { code: "NGN", symbol: "₦", name: "Nigerian Naira" },
+  { code: "USD", symbol: "$", name: "US Dollar" },
+  { code: "EUR", symbol: "€", name: "Euro" },
+  { code: "GBP", symbol: "£", name: "British Pound" },
+];
+
+const mockCustomers = [
+  { id: "1", name: "Acme Corp", email: "contact@acme.com" },
+  { id: "2", name: "TechStart", email: "info@techstart.com" },
+];
 
 export default function CreateInvoice() {
+  const { toast } = useToast();
+  const [selectedCurrency, setSelectedCurrency] = useState("NGN");
+  const [customerSearch, setCustomerSearch] = useState("");
+  const [showNewCustomerModal, setShowNewCustomerModal] = useState(false);
+  const [newCustomer, setNewCustomer] = useState({ name: "", email: "", phone: "" });
+
+  const filteredCustomers = mockCustomers.filter(customer =>
+    customer.name.toLowerCase().includes(customerSearch.toLowerCase()) ||
+    customer.email.toLowerCase().includes(customerSearch.toLowerCase())
+  );
+
+  const handleAddCustomer = () => {
+    // Here you would typically make an API call to add the customer
+    toast({
+      title: "Customer added",
+      description: "New customer has been added successfully.",
+    });
+    setShowNewCustomerModal(false);
+    setNewCustomer({ name: "", email: "", phone: "" });
+  };
+
   return (
     <div className="p-6 max-w-[1000px] mx-auto">
       <div className="flex items-center gap-4 mb-8">
@@ -32,12 +74,63 @@ export default function CreateInvoice() {
                 <Input id="date" type="date" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="clientName">Client Name</Label>
-                <Input id="clientName" placeholder="Enter client name" />
+                <Label>Currency</Label>
+                <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencies.map((currency) => (
+                      <SelectItem key={currency.code} value={currency.code}>
+                        {currency.symbol} - {currency.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="clientEmail">Client Email</Label>
-                <Input id="clientEmail" type="email" placeholder="client@example.com" />
+                <Label>Customer</Label>
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+                    <Input
+                      placeholder="Search customers..."
+                      value={customerSearch}
+                      onChange={(e) => setCustomerSearch(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  {customerSearch && (
+                    <Card>
+                      <CardContent className="p-2">
+                        {filteredCustomers.map((customer) => (
+                          <Button
+                            key={customer.id}
+                            variant="ghost"
+                            className="w-full justify-start"
+                            onClick={() => {
+                              // Handle customer selection
+                              setCustomerSearch("");
+                            }}
+                          >
+                            <div className="text-left">
+                              <div>{customer.name}</div>
+                              <div className="text-sm text-gray-500">{customer.email}</div>
+                            </div>
+                          </Button>
+                        ))}
+                        <Button
+                          variant="outline"
+                          className="w-full mt-2"
+                          onClick={() => setShowNewCustomerModal(true)}
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add New Customer
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -118,6 +211,47 @@ export default function CreateInvoice() {
           <Button type="submit">Create Invoice</Button>
         </div>
       </form>
+
+      <Dialog open={showNewCustomerModal} onOpenChange={setShowNewCustomerModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Customer</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Business Name</Label>
+              <Input
+                value={newCustomer.name}
+                onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
+                placeholder="Enter business name"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Email Address</Label>
+              <Input
+                type="email"
+                value={newCustomer.email}
+                onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+                placeholder="Enter email address"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Phone Number</Label>
+              <Input
+                value={newCustomer.phone}
+                onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
+                placeholder="Enter phone number"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowNewCustomerModal(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleAddCustomer}>Add Customer</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

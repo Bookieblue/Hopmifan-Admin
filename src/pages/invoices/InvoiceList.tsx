@@ -19,8 +19,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DatePicker } from "@/components/ui/date-picker";
+import { useToast } from "@/hooks/use-toast";
 
 const InvoiceList = () => {
+  const { toast } = useToast();
   const [invoices, setInvoices] = useState([
     { 
       id: "INV-2024-001",
@@ -42,6 +44,8 @@ const InvoiceList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<string>("");
 
   const handleSelectInvoice = (invoiceId: string, checked: boolean) => {
     if (checked) {
@@ -62,6 +66,56 @@ const InvoiceList = () => {
   const handleResetFilter = () => {
     setStartDate(undefined);
     setEndDate(undefined);
+  };
+
+  const handleDelete = (invoiceId: string) => {
+    setInvoices(invoices.filter(invoice => invoice.id !== invoiceId));
+    toast({
+      title: "Invoice deleted",
+      description: `Invoice ${invoiceId} has been deleted successfully.`,
+    });
+  };
+
+  const handleShare = (invoiceId: string) => {
+    setSelectedInvoiceId(invoiceId);
+    setShareDialogOpen(true);
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/invoices/${selectedInvoiceId}`);
+    toast({
+      title: "Link copied",
+      description: "Invoice link has been copied to clipboard.",
+    });
+    setShareDialogOpen(false);
+  };
+
+  const handleDownload = (format: 'pdf' | 'jpg') => {
+    toast({
+      title: "Download started",
+      description: `Invoice is being downloaded as ${format.toUpperCase()}.`,
+    });
+    setShareDialogOpen(false);
+  };
+
+  const handleShareSocial = (platform: string) => {
+    const url = `${window.location.origin}/invoices/${selectedInvoiceId}`;
+    let shareUrl = '';
+    
+    switch (platform) {
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`;
+        break;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        break;
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        break;
+    }
+    
+    window.open(shareUrl, '_blank');
+    setShareDialogOpen(false);
   };
 
   const filteredInvoices = invoices.filter(invoice =>
@@ -178,7 +232,13 @@ const InvoiceList = () => {
                         <Link to={`/invoices/${invoice.id}/edit`}>
                           <DropdownMenuItem>Edit</DropdownMenuItem>
                         </Link>
-                        <DropdownMenuItem className="text-red-600">
+                        <DropdownMenuItem onClick={() => handleShare(invoice.id)}>
+                          Share
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => handleDelete(invoice.id)}
+                          className="text-red-600"
+                        >
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -190,6 +250,60 @@ const InvoiceList = () => {
           </table>
         </div>
       </div>
+
+      <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Share Invoice</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start" 
+              onClick={handleCopyLink}
+            >
+              Copy Invoice Link
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start" 
+              onClick={() => handleDownload('pdf')}
+            >
+              Download as PDF
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start" 
+              onClick={() => handleDownload('jpg')}
+            >
+              Download as JPG
+            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => handleShareSocial('twitter')}
+              >
+                Twitter
+              </Button>
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => handleShareSocial('linkedin')}
+              >
+                LinkedIn
+              </Button>
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => handleShareSocial('facebook')}
+              >
+                Facebook
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
