@@ -6,6 +6,7 @@ import {
   Receipt,
   CreditCard,
   Users,
+  BarChart,
   Settings,
   LogOut,
   MessageSquare,
@@ -39,6 +40,7 @@ const menuItems = [
 
 const accountMenuItems = [
   { icon: Users, label: "Customers", path: "/customers" },
+  { icon: BarChart, label: "Reports", path: "/reports" },
   { icon: Subscription, label: "Subscription", path: "/subscription" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];

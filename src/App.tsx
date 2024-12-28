@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { Layout } from "./components/layout/Layout";
+import Reports from "./pages/reports/Index";
 import Dashboard from "./pages/dashboard/Index";
 import Invoices from "./pages/invoices/Index";
 import Estimates from "./pages/estimates/Index";
@@ -16,6 +17,7 @@ function App() {
         <Route path="/estimates" element={<Estimates />} />
         <Route path="/receipts" element={<Receipts />} />
         <Route path="/customers" element={<Customers />} />
+        <Route path="/reports" element={<Reports />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
     </Routes>
