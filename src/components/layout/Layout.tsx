@@ -17,6 +17,13 @@ export function Layout() {
     logo: null // Set to null to test the fallback letter
   };
 
+  // Mock enabled documents state - in a real app, this would come from a context or state management
+  const enabledDocuments = {
+    invoices: true,
+    estimates: true,
+    receipts: true
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50 font-inter">
       {isMobile ? (
@@ -32,7 +39,7 @@ export function Layout() {
                   </SheetTrigger>
                   <SheetContent side="left" className="p-0 w-[280px]">
                     <div className="h-full overflow-y-auto">
-                      <Sidebar />
+                      <Sidebar enabledDocuments={enabledDocuments} />
                     </div>
                   </SheetContent>
                 </Sheet>
@@ -70,7 +77,7 @@ export function Layout() {
         </>
       ) : (
         <>
-          <Sidebar />
+          <Sidebar enabledDocuments={enabledDocuments} />
           <main className="flex-1 ml-64 p-4 md:p-8 overflow-x-hidden">
             <div className="max-w-7xl mx-auto">
               <Outlet />

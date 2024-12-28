@@ -28,11 +28,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
+interface SidebarProps {
+  enabledDocuments: {
+    invoices: boolean;
+    estimates: boolean;
+    receipts: boolean;
+  };
+}
+
 const menuItems = [
   { icon: LayoutDashboard, label: "Overview", path: "/" },
-  { icon: FileText, label: "Invoices", path: "/invoices" },
-  { icon: FileText, label: "Estimates", path: "/estimates" },
-  { icon: Receipt, label: "Receipts", path: "/receipts" },
+  { icon: FileText, label: "Invoices", path: "/invoices", type: "invoices" },
+  { icon: FileText, label: "Estimates", path: "/estimates", type: "estimates" },
+  { icon: Receipt, label: "Receipts", path: "/receipts", type: "receipts" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
 ];
 
@@ -49,7 +57,7 @@ const businesses = [
   { id: 3, name: "Design Studio" },
 ];
 
-export function Sidebar() {
+export function Sidebar({ enabledDocuments }: SidebarProps) {
   const location = useLocation();
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
@@ -68,6 +76,12 @@ export function Sidebar() {
   const toggleAccount = () => {
     setIsAccountOpen(!isAccountOpen);
   };
+
+  // Filter menu items based on enabled documents
+  const filteredMenuItems = menuItems.filter(item => {
+    if (!item.type) return true; // Keep items without a type (Overview, Payments)
+    return enabledDocuments[item.type as keyof typeof enabledDocuments];
+  });
 
   return (
     <div className="h-screen w-64 bg-[#F9FAFB] border-r border-gray-100 p-6 fixed left-0 top-0 flex flex-col font-inter">
@@ -119,7 +133,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-1">
-        {menuItems.map((item) => {
+        {filteredMenuItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
           return (
