@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Download, Pencil, Printer } from "lucide-react";
+import { ArrowLeft, Pencil, Printer } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import { toast } from "sonner";
 
@@ -13,6 +13,7 @@ export default function ViewReceipt() {
     id: "RCP-001",
     date: "2024-03-15",
     paymentMethod: "Bank Transfer",
+    paymentReference: "REF123456",
     client: {
       name: "Global Inc",
       email: "accounts@global.com",
@@ -30,15 +31,15 @@ export default function ViewReceipt() {
     subtotal: "₦999.00",
     tax: "₦99.90",
     total: "₦1,098.90",
-    notes: "Payment received with thanks",
-    paymentReference: "REF123456"
+    notes: "Payment received with thanks"
   };
 
   const handlePrint = useReactToPrint({
+    content: () => printRef.current,
     documentTitle: `Receipt-${receipt.id}`,
     onAfterPrint: () => console.log('Printed successfully'),
-    content: () => printRef.current,
-  } as any);
+    removeAfterPrint: true
+  });
 
   return (
     <div className="p-4 md:p-6 max-w-[1000px] mx-auto">
@@ -51,7 +52,7 @@ export default function ViewReceipt() {
           </Link>
           <h1 className="text-xl md:text-2xl font-semibold">Receipt #{receipt.id}</h1>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button 
             variant="outline" 
             className="gap-2" 

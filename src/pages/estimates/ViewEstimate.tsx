@@ -1,13 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Download, Pencil, Printer, Share2 } from "lucide-react";
+import { ArrowLeft, Pencil, Printer, Share2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { useState, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
+import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
 import { toast } from "sonner";
-
-type EstimateStatus = "draft" | "sent" | "accepted" | "declined";
 
 export default function ViewEstimate() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -16,8 +15,8 @@ export default function ViewEstimate() {
   const estimate = {
     id: "EST-001",
     date: "2024-03-15",
-    status: "draft" as EstimateStatus,
     validUntil: "2024-04-15",
+    status: "pending" as InvoiceStatus,
     client: {
       name: "Global Inc",
       email: "accounts@global.com",
@@ -28,26 +27,27 @@ export default function ViewEstimate() {
       {
         description: "Consulting Services",
         quantity: 1,
-        price: "₦1,500.00",
-        amount: "₦1,500.00"
+        price: "₦999.00",
+        amount: "₦999.00"
       }
     ],
-    subtotal: "₦1,500.00",
-    tax: "₦150.00",
-    total: "₦1,650.00",
+    subtotal: "₦999.00",
+    tax: "₦99.90",
+    total: "₦1,098.90",
     notes: "This estimate is valid for 30 days",
-    terms: "50% payment required to begin work"
+    terms: "Subject to terms and conditions"
   };
 
   const handlePrint = useReactToPrint({
+    content: () => printRef.current,
     documentTitle: `Estimate-${estimate.id}`,
     onAfterPrint: () => console.log('Printed successfully'),
-    content: () => printRef.current,
-  } as any);
+    removeAfterPrint: true
+  });
 
-  const handleStatusChange = (newStatus: EstimateStatus) => {
+  const handleStatusChange = (newStatus: InvoiceStatus) => {
     console.log('Updating status to:', newStatus);
-    toast(`Estimate status updated to ${newStatus}`);
+    toast.success(`Estimate status updated to ${newStatus}`);
   };
 
   return (
@@ -62,6 +62,10 @@ export default function ViewEstimate() {
           <h1 className="text-xl md:text-2xl font-semibold">Estimate #{estimate.id}</h1>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <InvoiceStatusSelect 
+            status={estimate.status} 
+            onStatusChange={handleStatusChange}
+          />
           <Button 
             variant="outline" 
             className="gap-2" 
@@ -98,7 +102,7 @@ export default function ViewEstimate() {
             </div>
 
             <div className="mb-8">
-              <h4 className="font-medium text-gray-600 mb-2">For:</h4>
+              <h4 className="font-medium text-gray-600 mb-2">Prepared For:</h4>
               <div className="space-y-1">
                 <p className="font-medium">{estimate.client.name}</p>
                 <p>{estimate.client.email}</p>
@@ -141,7 +145,7 @@ export default function ViewEstimate() {
                   <span>{estimate.tax}</span>
                 </div>
                 <div className="flex justify-between py-2 font-semibold">
-                  <span>Total:</span>
+                  <span>Estimated Total:</span>
                   <span>{estimate.total}</span>
                 </div>
               </div>
