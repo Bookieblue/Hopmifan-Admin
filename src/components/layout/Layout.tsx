@@ -24,14 +24,16 @@ export function Layout() {
               <Menu className="h-6 w-6" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-64">
+          <SheetContent side="left" className="p-0 w-72 sm:w-80">
             <Sidebar />
           </SheetContent>
         </Sheet>
       ) : (
-        <Sidebar />
+        <div className="w-64 shrink-0">
+          <Sidebar />
+        </div>
       )}
-      <main className={`flex-1 ${isMobile ? 'ml-0' : 'ml-64'} p-4 md:p-8 overflow-x-hidden`}>
+      <main className="flex-1 p-4 md:p-8 overflow-x-hidden">
         <div className="max-w-7xl mx-auto">
           <Outlet />
         </div>
