@@ -53,7 +53,7 @@ export default function SignUp() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="w-full p-6 flex justify-between items-center border-b">
+      <header className="w-full p-6 flex justify-between items-center">
         <Link to="/" className="flex items-center">
           <img 
             src="/lovable-uploads/43d04b44-fc73-46eb-8543-89f240871e1d.png" 
