@@ -95,7 +95,10 @@ export default function EditInvoice() {
           status={status} 
           onStatusChange={(newStatus) => {
             setStatus(newStatus);
-            toast.success(`Invoice status updated to ${newStatus}`);
+            toast({
+              title: "Status Updated",
+              description: `Invoice status updated to ${newStatus}`,
+            });
           }}
         />
       </div>

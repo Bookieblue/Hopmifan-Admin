@@ -40,15 +40,17 @@ export default function ViewInvoice() {
   const handlePrint = useReactToPrint({
     documentTitle: `Invoice-${invoice.id}`,
     onAfterPrint: () => console.log('Printed successfully'),
-    pageStyle: "@page { size: auto; margin: 20mm }",
     onPrintError: (error) => console.error('Failed to print:', error),
-    content: () => printRef.current,
+    reactToPrintElement: () => printRef.current,
   });
 
   const handleStatusChange = (newStatus: InvoiceStatus) => {
     // In a real app, this would make an API call to update the status
     console.log('Updating status to:', newStatus);
-    toast.success(`Invoice status updated to ${newStatus}`);
+    toast({
+      title: "Status Updated",
+      description: `Invoice status updated to ${newStatus}`,
+    });
   };
 
   return (
