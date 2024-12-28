@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Search, Filter, Trash2 } from "lucide-react";
+import { Table, TableBody } from "@/components/ui/table";
+import { Plus, Search, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -22,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ReceiptRow } from "@/components/receipts/ReceiptRow";
+import { ReceiptTableHeader } from "@/components/receipts/ReceiptTableHeader";
 
 // Mock data for the receipts list with added status and type
 const receipts = [
@@ -85,39 +85,19 @@ export default function ReceiptList() {
     }
   };
 
-  const handleBulkDelete = () => {
-    toast({
-      title: "Receipts deleted",
-      description: `${selectedReceipts.length} receipt(s) have been deleted.`,
-    });
-    setSelectedReceipts([]);
-  };
-
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-8 px-6">
+      <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold">Receipts</h1>
-        <div className="flex gap-2">
-          {selectedReceipts.length > 0 && (
-            <Button
-              variant="destructive"
-              onClick={handleBulkDelete}
-              className="gap-2"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete Selected
-            </Button>
-          )}
-          <Link to="/receipts/create">
-            <Button className="gap-2">
-              <Plus className="w-4 h-4" />
-              Create Receipt
-            </Button>
-          </Link>
-        </div>
+        <Link to="/receipts/create">
+          <Button className="gap-2">
+            <Plus className="w-4 h-4" />
+            Create Receipt
+          </Button>
+        </Link>
       </div>
 
-      <div className="mb-6 px-6">
+      <div className="mb-6">
         <div className="flex gap-2 items-center">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
@@ -182,21 +162,10 @@ export default function ReceiptList() {
 
       <div className="bg-white rounded-lg border">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[50px]">
-                <Checkbox
-                  checked={selectedReceipts.length === filteredReceipts.length && filteredReceipts.length > 0}
-                  onCheckedChange={handleSelectAll}
-                  aria-label="Select all receipts"
-                />
-              </TableHead>
-              <TableHead>Details</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+          <ReceiptTableHeader 
+            onSelectAll={handleSelectAll}
+            isAllSelected={selectedReceipts.length === filteredReceipts.length && filteredReceipts.length > 0}
+          />
           <TableBody>
             {filteredReceipts.map((receipt) => (
               <ReceiptRow

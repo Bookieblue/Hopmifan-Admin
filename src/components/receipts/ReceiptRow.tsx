@@ -56,53 +56,53 @@ export function ReceiptRow({ receipt, isSelected, onSelect }: ReceiptRowProps) {
   };
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger>
-        <TableRow>
-          <TableCell>
-            <Checkbox
-              checked={isSelected}
-              onCheckedChange={(checked) => onSelect(receipt.id, checked as boolean)}
-              aria-label={`Select receipt ${receipt.id}`}
-            />
-          </TableCell>
-          <TableCell>
-            <div className="space-y-1">
-              <div className="font-medium">{receipt.client}</div>
-              <div className="text-sm text-muted-foreground">
-                {receipt.type} • {format(new Date(receipt.date), "MMM d, yyyy")}
-              </div>
-            </div>
-          </TableCell>
-          <TableCell>{receipt.amount}</TableCell>
-          <TableCell>
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                receipt.status
-              )}`}
-            >
-              {receipt.status.charAt(0).toUpperCase() + receipt.status.slice(1)}
-            </span>
-          </TableCell>
-          <TableCell className="text-right">
+    <TableRow>
+      <TableCell className="w-[50px]">
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={(checked) => onSelect(receipt.id, checked as boolean)}
+          aria-label={`Select receipt ${receipt.id}`}
+        />
+      </TableCell>
+      <TableCell className="w-[40%]">
+        <div className="space-y-1">
+          <div className="font-medium">{receipt.client}</div>
+          <div className="text-sm text-muted-foreground">
+            {receipt.type} • {format(new Date(receipt.date), "MMM d, yyyy")}
+          </div>
+        </div>
+      </TableCell>
+      <TableCell className="w-[20%]">{receipt.amount}</TableCell>
+      <TableCell className="w-[20%]">
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+            receipt.status
+          )}`}
+        >
+          {receipt.status.charAt(0).toUpperCase() + receipt.status.slice(1)}
+        </span>
+      </TableCell>
+      <TableCell className="w-[10%] text-right">
+        <ContextMenu>
+          <ContextMenuTrigger>
             <Button variant="ghost" size="icon" className="h-8 w-8">
               <MoreVertical className="h-4 w-4" />
             </Button>
-          </TableCell>
-        </TableRow>
-      </ContextMenuTrigger>
-      <ContextMenuContent>
-        <Link to={`/receipts/${receipt.id}`}>
-          <ContextMenuItem>View Receipt</ContextMenuItem>
-        </Link>
-        <Link to={`/receipts/${receipt.id}/edit`}>
-          <ContextMenuItem>Edit Receipt</ContextMenuItem>
-        </Link>
-        <ContextMenuItem onClick={handleDownload}>Download</ContextMenuItem>
-        <ContextMenuItem onClick={handleDelete} className="text-red-600">
-          Delete
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+          </ContextMenuTrigger>
+          <ContextMenuContent>
+            <Link to={`/receipts/${receipt.id}`}>
+              <ContextMenuItem>View Receipt</ContextMenuItem>
+            </Link>
+            <Link to={`/receipts/${receipt.id}/edit`}>
+              <ContextMenuItem>Edit Receipt</ContextMenuItem>
+            </Link>
+            <ContextMenuItem onClick={handleDownload}>Download</ContextMenuItem>
+            <ContextMenuItem onClick={handleDelete} className="text-red-600">
+              Delete
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
+      </TableCell>
+    </TableRow>
   );
 }
