@@ -11,7 +11,13 @@ export default function ViewInvoice() {
   const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useReactToPrint({
-    content: () => printRef.current,
+    documentTitle: `Invoice-${invoice.id}`,
+    onAfterPrint: () => console.log('Printed successfully'),
+    removeAfterPrint: true,
+    pageStyle: "@page { size: auto; margin: 20mm }",
+    onPrintError: (error) => console.error('Failed to print:', error),
+    copyStyles: true,
+    trigger: () => printRef.current,
   });
 
   const invoice = {
@@ -50,7 +56,11 @@ export default function ViewInvoice() {
           <h1 className="text-xl md:text-2xl font-semibold">Invoice #{invoice.id}</h1>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" className="gap-2" onClick={handlePrint}>
+          <Button 
+            variant="outline" 
+            className="gap-2" 
+            onClick={() => handlePrint()}
+          >
             <Printer className="w-4 h-4" />
             Print
           </Button>
