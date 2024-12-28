@@ -101,8 +101,6 @@ const InvoiceList = () => {
               </div>
               <div className="flex justify-between items-center text-gray-500 text-sm">
                 <div className="space-x-2">
-                  <span>#{invoice.id}</span>
-                  <span>•</span>
                   <span>{invoice.type}</span>
                   <span>•</span>
                   <span>{invoice.date}</span>
