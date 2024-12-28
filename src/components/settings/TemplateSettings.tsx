@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -6,9 +6,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 
 export default function TemplateSettings() {
   const [selectedDocument, setSelectedDocument] = useState("invoices");
+  const [enabledDocuments, setEnabledDocuments] = useState({
+    invoices: true,
+    estimates: true,
+    receipts: true
+  });
   const [templateContent, setTemplateContent] = useState({
     headerText: "INVOICE",
     footerText: "Thank you for your business",
@@ -16,18 +22,52 @@ export default function TemplateSettings() {
     notesTemplate: "Please include invoice number in payment reference"
   });
 
+  const handleToggleDocument = (documentType: keyof typeof enabledDocuments) => {
+    // Count how many documents are currently enabled
+    const enabledCount = Object.values(enabledDocuments).filter(Boolean).length;
+    
+    // If trying to disable the last enabled document, prevent it
+    if (enabledCount === 1 && enabledDocuments[documentType]) {
+      toast.error("At least one document type must remain enabled");
+      return;
+    }
+
+    setEnabledDocuments(prev => ({
+      ...prev,
+      [documentType]: !prev[documentType]
+    }));
+
+    // If disabling the currently selected document, switch to the first enabled one
+    if (documentType === selectedDocument && enabledDocuments[documentType]) {
+      const nextEnabled = Object.entries(enabledDocuments)
+        .find(([key, value]) => key !== documentType && value);
+      if (nextEnabled) {
+        setSelectedDocument(nextEnabled[0]);
+      }
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold tracking-tight">Template Settings</h2>
-        <Select value={selectedDocument} onValueChange={setSelectedDocument}>
+        <Select 
+          value={selectedDocument} 
+          onValueChange={setSelectedDocument}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select document type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="invoices">Invoices</SelectItem>
-            <SelectItem value="estimates">Estimates</SelectItem>
-            <SelectItem value="receipts">Receipts</SelectItem>
+            {enabledDocuments.invoices && (
+              <SelectItem value="invoices">Invoices</SelectItem>
+            )}
+            {enabledDocuments.estimates && (
+              <SelectItem value="estimates">Estimates</SelectItem>
+            )}
+            {enabledDocuments.receipts && (
+              <SelectItem value="receipts">Receipts</SelectItem>
+            )}
           </SelectContent>
         </Select>
       </div>
@@ -46,7 +86,10 @@ export default function TemplateSettings() {
                 <h3 className="font-medium">Invoices</h3>
                 <p className="text-sm text-gray-500">Create and manage invoices for your clients</p>
               </div>
-              <Switch defaultChecked />
+              <Switch 
+                checked={enabledDocuments.invoices}
+                onCheckedChange={() => handleToggleDocument('invoices')}
+              />
             </div>
 
             <div className="flex items-center justify-between p-4 bg-white rounded-lg border">
@@ -54,7 +97,10 @@ export default function TemplateSettings() {
                 <h3 className="font-medium">Estimates</h3>
                 <p className="text-sm text-gray-500">Send professional estimates to potential clients</p>
               </div>
-              <Switch defaultChecked />
+              <Switch 
+                checked={enabledDocuments.estimates}
+                onCheckedChange={() => handleToggleDocument('estimates')}
+              />
             </div>
 
             <div className="flex items-center justify-between p-4 bg-white rounded-lg border">
@@ -62,7 +108,10 @@ export default function TemplateSettings() {
                 <h3 className="font-medium">Receipts</h3>
                 <p className="text-sm text-gray-500">Generate receipts for completed payments</p>
               </div>
-              <Switch defaultChecked />
+              <Switch 
+                checked={enabledDocuments.receipts}
+                onCheckedChange={() => handleToggleDocument('receipts')}
+              />
             </div>
           </div>
         </TabsContent>
@@ -137,6 +186,7 @@ export default function TemplateSettings() {
             <Button>Save Changes</Button>
           </div>
         </TabsContent>
+
       </Tabs>
     </div>
   );
