@@ -30,39 +30,41 @@ export default function ViewReceipt() {
 
   return (
     <div className="p-6 max-w-[1000px] mx-auto">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <Link to="/receipts">
             <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-4 h-4" />
+              <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <h1 className="text-2xl font-semibold">Receipt #{receipt.id}</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold">Receipt #{receipt.id}</h1>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" className="gap-2 text-sm" size="sm">
             <Printer className="w-4 h-4" />
-            Print
+            <span className="hidden sm:inline">Print</span>
           </Button>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2 text-sm" size="sm">
             <Download className="w-4 h-4" />
-            Download
+            <span className="hidden sm:inline">Download</span>
           </Button>
-          <Button className="gap-2">
-            <Pencil className="w-4 h-4" />
-            Edit
-          </Button>
+          <Link to={`/receipts/${receipt.id}/edit`}>
+            <Button className="gap-2 text-sm" size="sm">
+              <Pencil className="w-4 h-4" />
+              <span className="hidden sm:inline">Edit</span>
+            </Button>
+          </Link>
         </div>
       </div>
 
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex justify-between mb-8">
+      <Card className="overflow-hidden">
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row justify-between gap-4 mb-8">
             <div>
-              <h2 className="text-2xl font-bold text-blue-600">Cordlo Invoice</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-blue-600">Cordlo Invoice</h2>
             </div>
-            <div className="text-right">
-              <h3 className="text-xl font-semibold">RECEIPT #{receipt.id}</h3>
+            <div className="text-left sm:text-right">
+              <h3 className="text-lg sm:text-xl font-semibold">RECEIPT #{receipt.id}</h3>
               <p className="text-gray-600">Date: {receipt.date}</p>
             </div>
           </div>
@@ -77,8 +79,8 @@ export default function ViewReceipt() {
             </div>
           </div>
 
-          <div className="mb-8">
-            <table className="w-full">
+          <div className="mb-8 overflow-x-auto">
+            <table className="w-full min-w-[500px]">
               <thead>
                 <tr className="border-b">
                   <th className="text-left py-2">Description</th>
@@ -101,7 +103,7 @@ export default function ViewReceipt() {
           </div>
 
           <div className="flex justify-end mb-8">
-            <div className="w-72">
+            <div className="w-full sm:w-72">
               <div className="flex justify-between py-2">
                 <span>Subtotal:</span>
                 <span>{receipt.subtotal}</span>
