@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
 
 const currencies = [
   { code: "NGN", symbol: "₦", name: "Nigerian Naira" },
@@ -35,6 +36,7 @@ export default function EditInvoice() {
   const [customerSearch, setCustomerSearch] = useState("");
   const [showNewCustomerModal, setShowNewCustomerModal] = useState(false);
   const [newCustomer, setNewCustomer] = useState({ name: "", email: "", phone: "" });
+  const [status, setStatus] = useState<InvoiceStatus>("pending");
 
   // Mock data for demonstration - in a real app, fetch this from your backend
   const [invoice, setInvoice] = useState({
@@ -80,13 +82,22 @@ export default function EditInvoice() {
 
   return (
     <div className="p-6 max-w-[1000px] mx-auto">
-      <div className="flex items-center gap-4 mb-8">
-        <Link to="/invoices">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <h1 className="text-2xl font-semibold">Edit Invoice #{id}</h1>
+      <div className="flex items-center justify-between gap-4 mb-8">
+        <div className="flex items-center gap-4">
+          <Link to="/invoices">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-semibold">Edit Invoice #{id}</h1>
+        </div>
+        <InvoiceStatusSelect 
+          status={status} 
+          onStatusChange={(newStatus) => {
+            setStatus(newStatus);
+            toast.success(`Invoice status updated to ${newStatus}`);
+          }}
+        />
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">

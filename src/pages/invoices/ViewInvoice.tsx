@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { useState, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
+import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
+import { toast } from "sonner";
 
 export default function ViewInvoice() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -13,6 +15,7 @@ export default function ViewInvoice() {
   const invoice = {
     id: "INV-001",
     date: "2024-03-15",
+    status: "pending" as InvoiceStatus,
     client: {
       name: "Global Inc",
       email: "accounts@global.com",
@@ -39,8 +42,14 @@ export default function ViewInvoice() {
     onAfterPrint: () => console.log('Printed successfully'),
     pageStyle: "@page { size: auto; margin: 20mm }",
     onPrintError: (error) => console.error('Failed to print:', error),
-    print: () => printRef.current,
+    content: () => printRef.current,
   });
+
+  const handleStatusChange = (newStatus: InvoiceStatus) => {
+    // In a real app, this would make an API call to update the status
+    console.log('Updating status to:', newStatus);
+    toast.success(`Invoice status updated to ${newStatus}`);
+  };
 
   return (
     <div className="p-4 md:p-6 max-w-[1000px] mx-auto">
@@ -53,7 +62,11 @@ export default function ViewInvoice() {
           </Link>
           <h1 className="text-xl md:text-2xl font-semibold">Invoice #{invoice.id}</h1>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <InvoiceStatusSelect 
+            status={invoice.status} 
+            onStatusChange={handleStatusChange}
+          />
           <Button 
             variant="outline" 
             className="gap-2" 

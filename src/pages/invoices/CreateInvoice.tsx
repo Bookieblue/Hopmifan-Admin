@@ -9,6 +9,7 @@ import { InvoiceHeader } from "@/components/invoices/InvoiceHeader";
 import { PaymentDetails } from "@/components/invoices/PaymentDetails";
 import { InvoiceItems } from "@/components/invoices/InvoiceItems";
 import { generateInvoiceId } from "@/lib/utils";
+import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
 
 interface InvoiceItem {
   id: string;
@@ -29,6 +30,7 @@ export default function CreateInvoice() {
   const [notes, setNotes] = useState("");
   const [termsAndConditions, setTermsAndConditions] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [status, setStatus] = useState<InvoiceStatus>("draft");
 
   useEffect(() => {
     // Fetch template content from settings
@@ -78,11 +80,17 @@ export default function CreateInvoice() {
 
   return (
     <div className="p-6 max-w-[1000px] mx-auto">
-      <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/invoices")}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <h1 className="text-2xl font-semibold">Create Invoice</h1>
+      <div className="flex items-center justify-between gap-4 mb-8">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => navigate("/invoices")}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-2xl font-semibold">Create Invoice</h1>
+        </div>
+        <InvoiceStatusSelect 
+          status={status} 
+          onStatusChange={setStatus}
+        />
       </div>
 
       <form className="space-y-8">
