@@ -1,8 +1,8 @@
-import { Card } from "@/components/ui/card";
-import { TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { useState } from "react";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { AreaChart, Area, XAxis, YAxis } from "recharts";
+import { StatsGrid } from "@/components/dashboard/StatsGrid";
+import { RecentActivity } from "@/components/dashboard/RecentActivity";
 
 const data = {
   "1W": [
@@ -98,15 +98,15 @@ export default function Index() {
         <p className="text-muted-foreground">Your earnings over the last 6 months</p>
         <div className="text-4xl font-bold">₦30,345,421.00</div>
         
-        <div className="flex gap-4 items-center">
+        <div className="flex flex-wrap gap-2 items-center">
           {Object.keys(data).map((range) => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
               className={`text-sm font-medium ${
                 timeRange === range
-                  ? "bg-accent"
-                  : "hover:bg-accent"
+                  ? "bg-accent text-accent-foreground"
+                  : "hover:bg-accent hover:text-accent-foreground"
               } px-3 py-1 rounded-md transition-colors`}
             >
               {range}
@@ -126,7 +126,7 @@ export default function Index() {
               },
             }}
           >
-            <AreaChart data={data[timeRange]}>
+            <AreaChart data={data[timeRange]} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
@@ -151,77 +151,17 @@ export default function Index() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-6 space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold">Payments Received</h3>
-            <TrendingUp className="text-green-500 h-5 w-5" />
-          </div>
-          <p className="text-2xl font-bold">₦1,250,000.00</p>
-          <p className="text-sm text-muted-foreground">15 payments this month</p>
-        </Card>
+      <StatsGrid />
 
-        <Card className="p-6 space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold">Unpaid Invoices</h3>
-            <AlertCircle className="text-orange-500 h-5 w-5" />
-          </div>
-          <p className="text-2xl font-bold">₦450,000.00</p>
-          <p className="text-sm text-muted-foreground">8 pending invoices</p>
-        </Card>
-
-        <Card className="p-6 space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold">Overdue Invoices</h3>
-            <AlertCircle className="text-red-500 h-5 w-5" />
-          </div>
-          <p className="text-2xl font-bold">₦180,000.00</p>
-          <p className="text-sm text-muted-foreground">3 overdue invoices</p>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-6">
-          <h2 className="text-2xl font-semibold">Recent Payments</h2>
-          <div className="space-y-4">
-            {recentPayments.map((payment, index) => (
-              <div key={index} className="flex items-center justify-between py-4 border-b last:border-0">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    <h4 className="font-medium">{payment.type}</h4>
-                  </div>
-                  <p className="text-sm text-muted-foreground">{payment.description}</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold">₦{payment.amount.toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground">{payment.date}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <h2 className="text-2xl font-semibold">Recent Activities</h2>
-          <div className="space-y-4">
-            {recentActivities.map((activity, index) => (
-              <div key={index} className="flex items-center justify-between py-4 border-b last:border-0">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    <h4 className="font-medium">{activity.type}</h4>
-                  </div>
-                  <p className="text-sm text-muted-foreground">{activity.description}</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold">₦{activity.amount.toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground">{activity.date}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentActivity 
+          activities={recentPayments}
+          title="Recent Payments"
+        />
+        <RecentActivity 
+          activities={recentActivities}
+          title="Recent Activities"
+        />
       </div>
     </div>
   );
