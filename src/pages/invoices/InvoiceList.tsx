@@ -8,7 +8,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useToast } from "@/hooks/use-toast";
@@ -24,7 +24,7 @@ const InvoiceList = () => {
       amount: "₦2,850.00",
       status: "pending",
       date: "2024-03-15",
-      type: "One-time"
+      type: "one-time"
     },
     { 
       id: "INV-2346",
@@ -32,7 +32,7 @@ const InvoiceList = () => {
       amount: "₦1,590.00",
       status: "paid",
       date: "2024-03-14",
-      type: "Recurring"
+      type: "recurring"
     }
   ]);
 
@@ -41,171 +41,163 @@ const InvoiceList = () => {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
-  const [selectedInvoiceForShare, setSelectedInvoiceForShare] = useState<string | null>(null);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<string>("");
+
+  const handleSelectInvoice = (invoiceId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedInvoices([...selectedInvoices, invoiceId]);
+    } else {
+      setSelectedInvoices(selectedInvoices.filter(id => id !== invoiceId));
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedInvoices(invoices.map(invoice => invoice.id));
+    } else {
+      setSelectedInvoices([]);
+    }
+  };
+
+  const handleResetFilter = () => {
+    setStartDate(undefined);
+    setEndDate(undefined);
+  };
+
+  const handleDelete = (invoiceId: string) => {
+    setInvoices(invoices.filter(invoice => invoice.id !== invoiceId));
+    toast({
+      description: `Invoice ${invoiceId} has been deleted successfully.`
+    });
+  };
 
   const handleBulkDelete = () => {
     setInvoices(invoices.filter(invoice => !selectedInvoices.includes(invoice.id)));
+    toast({
+      description: `${selectedInvoices.length} invoices have been deleted successfully.`
+    });
     setSelectedInvoices([]);
+  };
+
+  const handleDuplicate = (invoiceId: string) => {
+    const originalInvoice = invoices.find(inv => inv.id === invoiceId);
+    if (!originalInvoice) return;
+
+    const newId = `INV-${Math.floor(Math.random() * 9000) + 1000}`;
+    const newInvoice = {
+      ...originalInvoice,
+      id: newId,
+      status: "pending",
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    setInvoices([newInvoice, ...invoices]);
     toast({
-      title: "Success",
-      description: "Selected invoices have been deleted",
+      description: `Invoice ${invoiceId} has been duplicated successfully.`
     });
   };
 
-  const handleDelete = (id: string) => {
-    setInvoices(invoices.filter(invoice => invoice.id !== id));
-    toast({
-      title: "Success",
-      description: "Invoice has been deleted",
-    });
-  };
-
-  const handleDuplicate = (id: string) => {
-    const invoiceToDuplicate = invoices.find(invoice => invoice.id === id);
-    if (invoiceToDuplicate) {
-      const duplicatedInvoice = {
-        ...invoiceToDuplicate,
-        id: `INV-${Math.random().toString(36).substr(2, 9)}`,
-      };
-      setInvoices([...invoices, duplicatedInvoice]);
-      toast({
-        title: "Success",
-        description: "Invoice has been duplicated",
-      });
-    }
-  };
-
-  const handleShare = (id: string) => {
-    setSelectedInvoiceForShare(id);
+  const handleShare = (invoiceId: string) => {
+    setSelectedInvoiceId(invoiceId);
     setShareDialogOpen(true);
   };
 
-  const handleCopyLink = () => {
-    // Implementation for copying link
-    toast({
-      title: "Success",
-      description: "Link copied to clipboard",
-    });
-  };
-
-  const handleDownload = (format: string) => {
-    // Implementation for downloading
-    toast({
-      title: "Success",
-      description: `Invoice downloaded as ${format}`,
-    });
-  };
-
-  const handleShareSocial = (platform: string) => {
-    // Implementation for social sharing
-    toast({
-      title: "Success",
-      description: `Shared on ${platform}`,
-    });
-  };
-
-  const handleDateFilter = () => {
+  const filteredInvoices = invoices.filter(invoice => {
+    let matchesSearch = invoice.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       invoice.id.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    let matchesDateRange = true;
     if (startDate && endDate) {
-      const filteredInvoices = invoices.filter(invoice => {
-        const invoiceDate = new Date(invoice.date);
-        return invoiceDate >= startDate && invoiceDate <= endDate;
-      });
-      setInvoices(filteredInvoices);
+      const invoiceDate = new Date(invoice.date);
+      matchesDateRange = invoiceDate >= startDate && invoiceDate <= endDate;
     }
-  };
+    
+    return matchesSearch && matchesDateRange;
+  });
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <div className="flex gap-4">
-          <Input
-            placeholder="Search invoices..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full sm:w-[300px]"
-          />
+    <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+        <h1 className="text-2xl font-bold">Invoices</h1>
+        <Link to="/invoices/create">
+          <Button size="default" className="w-full md:w-auto bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-4 w-4 mr-2" />
+            New Invoice
+          </Button>
+        </Link>
+      </div>
+
+      <div className="mb-6">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+            <Input 
+              placeholder="Search invoices..." 
+              className="pl-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <CalendarDays className="w-4 h-4" />
-                Filter by date
+              <Button variant="outline" className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4" />
+                Filter by Date
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Filter by date range</DialogTitle>
+                <DialogTitle>Filter by Date Range</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <label>Start Date</label>
-                  <DatePicker
-                    selected={startDate}
-                    onSelect={setStartDate}
-                  />
+                  <label className="text-sm font-medium">From Date</label>
+                  <DatePicker date={startDate} setDate={setStartDate} />
                 </div>
                 <div className="space-y-2">
-                  <label>End Date</label>
-                  <DatePicker
-                    selected={endDate}
-                    onSelect={setEndDate}
-                  />
+                  <label className="text-sm font-medium">To Date</label>
+                  <DatePicker date={endDate} setDate={setEndDate} />
                 </div>
-                <Button onClick={handleDateFilter} className="w-full">
-                  Apply Filter
-                </Button>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={handleResetFilter}>Reset Filter</Button>
+                  <Button onClick={() => {}}>Apply Filter</Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
         </div>
-
-        <div className="flex gap-4">
-          {selectedInvoices.length > 0 && (
-            <Button
-              variant="outline"
-              className="gap-2"
-              onClick={handleBulkDelete}
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete Selected
-            </Button>
-          )}
-          <Link to="/invoices/create">
-            <Button className="gap-2">
-              <Plus className="w-4 h-4" />
-              Create Invoice
-            </Button>
-          </Link>
-        </div>
       </div>
 
-      <InvoiceTable
-        invoices={invoices}
-        selectedInvoices={selectedInvoices}
-        onSelectInvoice={(id, checked) => {
-          if (checked) {
-            setSelectedInvoices([...selectedInvoices, id]);
-          } else {
-            setSelectedInvoices(selectedInvoices.filter(i => i !== id));
-          }
-        }}
-        onSelectAll={(checked) => {
-          if (checked) {
-            setSelectedInvoices(invoices.map(invoice => invoice.id));
-          } else {
-            setSelectedInvoices([]);
-          }
-        }}
-        onDelete={handleDelete}
-        onDuplicate={handleDuplicate}
-        onShare={handleShare}
-      />
+      <div className="bg-white rounded-lg border">
+        {selectedInvoices.length > 0 && (
+          <div className="p-4 border-b bg-gray-50">
+            <Button 
+              variant="destructive" 
+              size="sm"
+              onClick={handleBulkDelete}
+              className="flex items-center gap-2"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete Selected ({selectedInvoices.length})
+            </Button>
+          </div>
+        )}
+        
+        <InvoiceTable
+          invoices={filteredInvoices}
+          selectedInvoices={selectedInvoices}
+          onSelectInvoice={handleSelectInvoice}
+          onSelectAll={handleSelectAll}
+          onDelete={handleDelete}
+          onDuplicate={handleDuplicate}
+          onShare={handleShare}
+        />
+      </div>
 
-      <ShareModal
-        open={shareDialogOpen}
+      <ShareModal 
+        open={shareDialogOpen} 
         onOpenChange={setShareDialogOpen}
-        onCopyLink={handleCopyLink}
-        onDownload={handleDownload}
-        onShareSocial={handleShareSocial}
+        invoiceId={selectedInvoiceId}
       />
     </div>
   );
