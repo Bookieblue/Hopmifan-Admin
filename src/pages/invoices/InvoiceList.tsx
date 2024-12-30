@@ -1,19 +1,11 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, CalendarDays, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { DatePicker } from "@/components/ui/date-picker";
 import { useToast } from "@/hooks/use-toast";
 import { InvoiceTable } from "@/components/invoices/InvoiceTable";
 import { ShareModal } from "@/components/modals/ShareModal";
+import { InvoiceFilters } from "@/components/invoices/InvoiceFilters";
 
 const InvoiceList = () => {
   const { toast } = useToast();
@@ -127,46 +119,15 @@ const InvoiceList = () => {
         </Link>
       </div>
 
-      <div className="mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
-            <Input 
-              placeholder="Search invoices..." 
-              className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                <CalendarDays className="h-4 w-4" />
-                Filter by Date
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Filter by Date Range</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">From Date</label>
-                  <DatePicker date={startDate} setDate={setStartDate} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">To Date</label>
-                  <DatePicker date={endDate} setDate={setEndDate} />
-                </div>
-                <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={handleResetFilter}>Reset Filter</Button>
-                  <Button onClick={() => {}}>Apply Filter</Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
+      <InvoiceFilters
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        handleResetFilter={handleResetFilter}
+      />
 
       <div className="bg-white rounded-lg border">
         {selectedInvoices.length > 0 && (
