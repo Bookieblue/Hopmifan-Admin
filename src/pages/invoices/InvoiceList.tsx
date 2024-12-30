@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, CalendarDays } from "lucide-react";
+import { Plus, Search, CalendarDays, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Dialog,
@@ -13,6 +13,7 @@ import {
 import { DatePicker } from "@/components/ui/date-picker";
 import { useToast } from "@/hooks/use-toast";
 import { InvoiceTable } from "@/components/invoices/InvoiceTable";
+import { ShareModal } from "@/components/modals/ShareModal";
 
 const InvoiceList = () => {
   const { toast } = useToast();
@@ -66,6 +67,14 @@ const InvoiceList = () => {
     toast({
       description: `Invoice ${invoiceId} has been deleted successfully.`
     });
+  };
+
+  const handleBulkDelete = () => {
+    setInvoices(invoices.filter(invoice => !selectedInvoices.includes(invoice.id)));
+    toast({
+      description: `${selectedInvoices.length} invoices have been deleted successfully.`
+    });
+    setSelectedInvoices([]);
   };
 
   const handleDuplicate = (invoiceId: string) => {
@@ -178,59 +187,11 @@ const InvoiceList = () => {
         />
       </div>
 
-      <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Share Invoice</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <Button 
-              variant="outline" 
-              className="w-full justify-start" 
-              onClick={handleCopyLink}
-            >
-              Copy Invoice Link
-            </Button>
-            <Button 
-              variant="outline" 
-              className="w-full justify-start" 
-              onClick={() => handleDownload('pdf')}
-            >
-              Download as PDF
-            </Button>
-            <Button 
-              variant="outline" 
-              className="w-full justify-start" 
-              onClick={() => handleDownload('jpg')}
-            >
-              Download as JPG
-            </Button>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                className="flex-1"
-                onClick={() => handleShareSocial('twitter')}
-              >
-                Twitter
-              </Button>
-              <Button 
-                variant="outline" 
-                className="flex-1"
-                onClick={() => handleShareSocial('linkedin')}
-              >
-                LinkedIn
-              </Button>
-              <Button 
-                variant="outline" 
-                className="flex-1"
-                onClick={() => handleShareSocial('facebook')}
-              >
-                Facebook
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ShareModal 
+        open={shareDialogOpen} 
+        onOpenChange={setShareDialogOpen}
+        invoiceId={selectedInvoiceId}
+      />
     </div>
   );
 };
