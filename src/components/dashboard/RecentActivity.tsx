@@ -1,4 +1,13 @@
 import { CircleIcon } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface ActivityItem {
   type: string;
@@ -14,25 +23,29 @@ interface RecentActivityProps {
 
 export function RecentActivity({ activities, title }: RecentActivityProps) {
   return (
-    <div className="space-y-6">
+    <Card className="space-y-6 p-6">
       <h2 className="text-2xl font-semibold">{title}</h2>
-      <div className="space-y-4">
-        {activities.map((activity, index) => (
-          <div key={index} className="flex items-center justify-between py-4 border-b last:border-0">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <CircleIcon className="h-4 w-4 text-gray-500" />
-                <h4 className="font-medium">{activity.type}</h4>
-              </div>
-              <p className="text-sm text-muted-foreground">{activity.description}</p>
-            </div>
-            <div className="text-right">
-              <p className="font-semibold">₦{activity.amount.toLocaleString()}</p>
-              <p className="text-sm text-muted-foreground">{activity.date}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+      <Table>
+        <TableBody>
+          {activities.map((activity, index) => (
+            <TableRow key={index}>
+              <TableCell className="w-[60%]">
+                <div className="flex items-center gap-2">
+                  <CircleIcon className="h-2 w-2 text-gray-500" />
+                  <div>
+                    <div className="font-medium">{activity.type}</div>
+                    <div className="text-sm text-muted-foreground">{activity.description}</div>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell className="text-right">
+                <div className="font-semibold">₦{activity.amount.toLocaleString()}</div>
+                <div className="text-sm text-muted-foreground">{activity.date}</div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
   );
 }
