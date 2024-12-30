@@ -19,18 +19,20 @@ const InvoiceList = () => {
   const { toast } = useToast();
   const [invoices, setInvoices] = useState([
     { 
-      id: "INV-2024-001",
+      id: "INV-2345",
       customer: "Acme Corporation",
       amount: "₦2,850.00",
       status: "pending",
-      date: "15 Mar 2024"
+      date: "2024-03-15",
+      type: "one-time"
     },
     { 
-      id: "INV-2024-002",
+      id: "INV-2346",
       customer: "TechStart Solutions",
       amount: "₦1,590.00",
       status: "paid",
-      date: "14 Mar 2024"
+      date: "2024-03-14",
+      type: "recurring"
     }
   ]);
 
@@ -81,15 +83,12 @@ const InvoiceList = () => {
     const originalInvoice = invoices.find(inv => inv.id === invoiceId);
     if (!originalInvoice) return;
 
+    const newId = `INV-${Math.floor(Math.random() * 9000) + 1000}`;
     const newInvoice = {
       ...originalInvoice,
-      id: `${originalInvoice.id}-copy`,
+      id: newId,
       status: "pending",
-      date: new Date().toLocaleDateString('en-US', { 
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      })
+      date: new Date().toISOString().split('T')[0]
     };
 
     setInvoices([newInvoice, ...invoices]);
@@ -103,10 +102,18 @@ const InvoiceList = () => {
     setShareDialogOpen(true);
   };
 
-  const filteredInvoices = invoices.filter(invoice =>
-    invoice.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    invoice.id.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredInvoices = invoices.filter(invoice => {
+    let matchesSearch = invoice.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       invoice.id.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    let matchesDateRange = true;
+    if (startDate && endDate) {
+      const invoiceDate = new Date(invoice.date);
+      matchesDateRange = invoiceDate >= startDate && invoiceDate <= endDate;
+    }
+    
+    return matchesSearch && matchesDateRange;
+  });
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
@@ -153,7 +160,7 @@ const InvoiceList = () => {
                 </div>
                 <div className="flex justify-end gap-2">
                   <Button variant="outline" onClick={handleResetFilter}>Reset Filter</Button>
-                  <Button>Apply Filter</Button>
+                  <Button onClick={() => {}}>Apply Filter</Button>
                 </div>
               </div>
             </DialogContent>

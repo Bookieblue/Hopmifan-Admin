@@ -16,6 +16,7 @@ interface InvoiceCardProps {
     amount: string;
     status: string;
     date: string;
+    type?: 'one-time' | 'recurring';
   };
   onDelete: (id: string) => void;
   onDuplicate: (id: string) => void;
@@ -23,28 +24,41 @@ interface InvoiceCardProps {
 }
 
 export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: InvoiceCardProps) => {
+  const formattedId = invoice.id.replace('INV-2024-', '');
+  const formattedDate = new Date(invoice.date).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+
   return (
     <div className="bg-white p-4 rounded-lg border shadow-sm">
-      <div className="flex justify-between items-start mb-2">
+      <div className="flex justify-between items-start">
         <h3 className="font-medium text-base md:text-lg">{invoice.customer}</h3>
-        <span className="font-semibold text-base md:text-lg">{invoice.amount}</span>
+        <div className="text-right">
+          <span className="font-semibold text-base md:text-lg">{invoice.amount}</span>
+          <div className="mt-1">
+            <span className={cn(
+              "px-2.5 py-1 rounded-full text-xs font-medium",
+              invoice.status === "paid" && "bg-green-100 text-green-800",
+              invoice.status === "pending" && "bg-orange-100 text-orange-800",
+              invoice.status === "overdue" && "bg-red-100 text-red-800"
+            )}>
+              {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
+            </span>
+          </div>
+        </div>
       </div>
       
-      <div className="space-y-2 mb-4">
-        <p className="text-sm text-gray-600">Invoice #{invoice.id}</p>
-        <p className="text-sm text-gray-600">{invoice.date}</p>
+      <div className="mt-2 text-sm text-gray-600">
+        <span>#{formattedId}</span>
+        <span className="mx-2">•</span>
+        <span>{invoice.type || 'one-time'}</span>
+        <span className="mx-2">•</span>
+        <span>{formattedDate}</span>
       </div>
       
-      <div className="flex justify-between items-center">
-        <span className={cn(
-          "px-2.5 py-1 rounded-full text-xs font-medium",
-          invoice.status === "paid" && "bg-green-100 text-green-800",
-          invoice.status === "pending" && "bg-orange-100 text-orange-800",
-          invoice.status === "overdue" && "bg-red-100 text-red-800"
-        )}>
-          {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-        </span>
-        
+      <div className="flex justify-end mt-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm">
