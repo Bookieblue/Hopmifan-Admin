@@ -38,7 +38,7 @@ export default function ViewInvoice() {
   };
 
   const handlePrint = useReactToPrint({
-    documentElement: () => printRef.current,
+    content: () => printRef.current,
     documentTitle: `Invoice-${invoice.id}`,
     onAfterPrint: () => console.log('Printed successfully'),
     removeAfterPrint: true

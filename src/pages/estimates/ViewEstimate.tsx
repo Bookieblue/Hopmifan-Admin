@@ -39,7 +39,7 @@ export default function ViewEstimate() {
   };
 
   const handlePrint = useReactToPrint({
-    documentElement: () => printRef.current,
+    content: () => printRef.current,
     documentTitle: `Estimate-${estimate.id}`,
     onAfterPrint: () => console.log('Printed successfully'),
     removeAfterPrint: true

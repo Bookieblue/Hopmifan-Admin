@@ -35,7 +35,7 @@ export default function ViewReceipt() {
   };
 
   const handlePrint = useReactToPrint({
-    documentElement: () => printRef.current,
+    content: () => printRef.current,
     documentTitle: `Receipt-${receipt.id}`,
     onAfterPrint: () => console.log('Printed successfully'),
     removeAfterPrint: true
