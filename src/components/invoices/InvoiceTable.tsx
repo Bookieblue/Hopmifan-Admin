@@ -19,6 +19,7 @@ interface InvoiceTableProps {
     amount: string;
     status: string;
     date: string;
+    type?: 'one-time' | 'recurring';
   }>;
   selectedInvoices: string[];
   onSelectInvoice: (id: string, checked: boolean) => void;
@@ -38,6 +39,14 @@ export const InvoiceTable = ({
   onShare
 }: InvoiceTableProps) => {
   const isMobile = useIsMobile();
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
 
   if (isMobile) {
     return (
@@ -67,7 +76,6 @@ export const InvoiceTable = ({
           </th>
           <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Invoice #</th>
           <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Client</th>
-          <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Date</th>
           <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Amount</th>
           <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Status</th>
           <th className="px-4 py-3 text-right text-sm font-medium text-gray-500">Actions</th>
@@ -83,8 +91,14 @@ export const InvoiceTable = ({
               />
             </td>
             <td className="px-4 py-3 text-sm font-medium">{invoice.id}</td>
-            <td className="px-4 py-3 text-sm">{invoice.customer}</td>
-            <td className="px-4 py-3 text-sm text-gray-500">{invoice.date}</td>
+            <td className="px-4 py-3">
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">{invoice.customer}</span>
+                <span className="text-sm text-gray-500">
+                  {invoice.type === 'one-time' ? 'One-time' : 'Recurring'}•{formatDate(invoice.date)}
+                </span>
+              </div>
+            </td>
             <td className="px-4 py-3 text-sm font-medium">{invoice.amount}</td>
             <td className="px-4 py-3">
               <span className={cn(

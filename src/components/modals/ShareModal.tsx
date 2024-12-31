@@ -13,12 +13,16 @@ import { toast } from "@/components/ui/use-toast";
 interface ShareModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  invoiceId: string;
+  invoiceId?: string;
+  estimateId?: string;
+  receiptId?: string;
 }
 
-export function ShareModal({ open, onOpenChange, invoiceId }: ShareModalProps) {
+export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptId }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
-  const shareUrl = `${window.location.origin}/invoices/${invoiceId}`;
+  const id = invoiceId || estimateId || receiptId;
+  const type = invoiceId ? 'invoices' : estimateId ? 'estimates' : 'receipts';
+  const shareUrl = `${window.location.origin}/${type}/${id}`;
 
   const handleCopyLink = async () => {
     try {
@@ -39,7 +43,7 @@ export function ShareModal({ open, onOpenChange, invoiceId }: ShareModalProps) {
   };
 
   const handleEmailShare = () => {
-    const subject = `Invoice ${invoiceId}`;
+    const subject = `Invoice ${id}`;
     const body = `View invoice here: ${shareUrl}`;
     window.location.href = `mailto:?subject=${encodeURIComponent(
       subject

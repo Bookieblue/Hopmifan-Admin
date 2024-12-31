@@ -75,10 +75,9 @@ const InvoiceList = () => {
     const originalInvoice = invoices.find(inv => inv.id === invoiceId);
     if (!originalInvoice) return;
 
-    const newId = `INV-${Math.floor(Math.random() * 9000) + 1000}`;
     const newInvoice = {
       ...originalInvoice,
-      id: newId,
+      id: `INV-${Math.floor(Math.random() * 9000) + 1000}`,
       status: "pending",
       date: new Date().toISOString().split('T')[0]
     };
