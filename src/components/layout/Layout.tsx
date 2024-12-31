@@ -64,7 +64,7 @@ export function Layout() {
                 </div>
               </div>
             </header>
-            <main className="flex-1 p-4 md:p-8 mt-16 overflow-x-hidden">
+            <main className="flex-1 p-4 md:p-8 mt-16 overflow-x-hidden bg-white">
               <div className="max-w-7xl mx-auto">
                 <Outlet />
               </div>
@@ -73,7 +73,7 @@ export function Layout() {
         ) : (
           <>
             <Sidebar />
-            <main className="flex-1 ml-64 p-4 md:p-8 overflow-x-hidden">
+            <main className="flex-1 ml-64 p-4 md:p-8 overflow-x-hidden bg-white">
               <div className="max-w-7xl mx-auto">
                 <Outlet />
               </div>
