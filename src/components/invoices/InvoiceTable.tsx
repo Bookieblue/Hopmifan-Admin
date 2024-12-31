@@ -50,7 +50,7 @@ export const InvoiceTable = ({
 
   if (isMobile) {
     return (
-      <div className="space-y-4">
+      <div className="-mx-4">
         {invoices.map((invoice) => (
           <InvoiceCard
             key={invoice.id}

@@ -16,7 +16,7 @@ const InvoiceList = () => {
       amount: "₦2,850.00",
       status: "pending",
       date: "2024-03-15",
-      type: "one-time"
+      type: "one-time" as const
     },
     { 
       id: "INV-2346",
@@ -24,7 +24,7 @@ const InvoiceList = () => {
       amount: "₦1,590.00",
       status: "paid",
       date: "2024-03-14",
-      type: "recurring"
+      type: "recurring" as const
     }
   ]);
 
