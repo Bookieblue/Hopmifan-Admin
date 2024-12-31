@@ -33,20 +33,20 @@ export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: Invoice
   const type = invoice.type === 'one-time' ? 'One-time' : 'Recurring';
 
   return (
-    <div className="px-4 py-6 border-b last:border-b-0 md:m-4 md:border md:rounded-lg md:shadow-sm">
-      <div className="flex items-start justify-between">
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-medium text-base md:text-lg">{invoice.customer}</h3>
-            <div className="mt-1 text-sm text-gray-600">
-              <span>{type}</span>
-              <span className="mx-2">•</span>
-              <span>{formattedDate}</span>
-            </div>
+    <div className="px-4 py-6 border-b last:border-b-0">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="font-medium text-base md:text-lg">{invoice.customer}</h3>
+          <div className="mt-1 text-sm text-gray-600">
+            <span>{type}</span>
+            <span className="mx-2">•</span>
+            <span>{formattedDate}</span>
           </div>
-          
-          <div className="space-y-2">
-            <span className="font-semibold text-base md:text-lg block">{invoice.amount}</span>
+        </div>
+
+        <div className="flex items-start gap-4">
+          <div className="text-right">
+            <span className="font-semibold text-base md:text-lg block mb-2">{invoice.amount}</span>
             <span className={cn(
               "px-2.5 py-1 rounded-full text-xs font-medium inline-block",
               invoice.status === "paid" && "bg-green-100 text-green-800",
@@ -56,11 +56,11 @@ export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: Invoice
               {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
             </span>
           </div>
-        </div>
 
-        <Button variant="ghost" size="sm" className="-mt-1 -mr-2">
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
+          <Button variant="ghost" size="sm" className="-mt-1 -mr-2">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
       
       <DropdownMenu>
