@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { MoreHorizontal } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -57,37 +57,35 @@ export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: Invoice
             </span>
           </div>
 
-          <Button variant="ghost" size="sm" className="-mt-1 -mr-2">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="-mt-1">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <Link to={`/invoices/${invoice.id}`}>
+                <DropdownMenuItem>View</DropdownMenuItem>
+              </Link>
+              <Link to={`/invoices/${invoice.id}/edit`}>
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem onClick={() => onDuplicate(invoice.id)}>
+                Duplicate
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onShare(invoice.id)}>
+                Share
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => onDelete(invoice.id)}
+                className="text-red-600"
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
-      
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <span className="sr-only">Open menu</span>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <Link to={`/invoices/${invoice.id}`}>
-            <DropdownMenuItem>View</DropdownMenuItem>
-          </Link>
-          <Link to={`/invoices/${invoice.id}/edit`}>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-          </Link>
-          <DropdownMenuItem onClick={() => onDuplicate(invoice.id)}>
-            Duplicate
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onShare(invoice.id)}>
-            Share
-          </DropdownMenuItem>
-          <DropdownMenuItem 
-            onClick={() => onDelete(invoice.id)}
-            className="text-red-600"
-          >
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
     </div>
   );
 };
