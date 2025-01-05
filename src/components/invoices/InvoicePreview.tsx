@@ -10,7 +10,6 @@ import {
 import { ShareModal } from "@/components/modals/ShareModal";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
 
 interface InvoicePreviewProps {
   invoice: {
@@ -39,7 +38,6 @@ interface InvoicePreviewProps {
 
 export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: InvoicePreviewProps) {
   const [shareModalOpen, setShareModalOpen] = useState(false);
-  const navigate = useNavigate();
   const currencySymbol = selectedCurrency === 'NGN' ? '₦' : selectedCurrency;
   
   const handleDownload = (format: 'pdf' | 'jpg') => {
@@ -54,11 +52,10 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
   };
 
   const handlePaymentPage = () => {
-    if (selectedGateway && invoice.number) {
-      navigate(`/payment/${invoice.number}`);
+    if (selectedGateway) {
       toast.success("Redirecting to payment page");
-    } else {
-      toast.error("Please select a payment gateway first");
+      // In a real implementation, this would redirect to the payment gateway
+      window.open(`/payment/${invoice.number}`, '_blank');
     }
   };
 
