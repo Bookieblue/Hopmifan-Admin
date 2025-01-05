@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { UserPlus, PenSquare } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { BillingAddressForm } from "./BillingAddressForm";
 
@@ -21,9 +21,26 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
   const [includeBillingAddress, setIncludeBillingAddress] = useState(false);
   const { toast } = useToast();
   
+  // Initialize with some example customers
   const [customers, setCustomers] = useState([
-    { id: '1', name: "Customer 1", email: "customer1@example.com" },
-    { id: '2', name: "Customer 2", email: "customer2@example.com" }
+    { 
+      id: '1', 
+      name: "Acme Corp", 
+      email: "billing@acme.com",
+      street: "123 Business Ave",
+      country: "Nigeria",
+      state: "Lagos",
+      postalCode: "100001"
+    },
+    { 
+      id: '2', 
+      name: "TechStart Solutions", 
+      email: "finance@techstart.com",
+      street: "456 Innovation Way",
+      country: "Nigeria",
+      state: "Abuja",
+      postalCode: "900001"
+    }
   ]);
 
   const [newCustomer, setNewCustomer] = useState({
@@ -65,7 +82,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
     setCustomers(prev => [...prev, customer]);
     
     // Select the newly added customer
-    onCustomerSelect(customer);
+    handleCustomerSelect(customer);
     
     // Reset form and close dialog
     setNewCustomer({
@@ -77,7 +94,6 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
       postalCode: "",
     });
     setIsDialogOpen(false);
-    setIsSearchMode(false);
     
     toast({
       title: "Success",
@@ -89,7 +105,9 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
     setNewCustomer(prev => ({ ...prev, [field]: value }));
   };
 
-  if (!isSearchMode && initialCustomer) {
+  // Show selected customer card if a customer is selected and not in search mode
+  if (!isSearchMode && (initialCustomer || selectedCustomer)) {
+    const displayCustomer = initialCustomer || selectedCustomer;
     return (
       <div className="space-y-2">
         <div className="flex items-center justify-between">
@@ -106,11 +124,11 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-1">
-              <div className="font-medium">{initialCustomer.name}</div>
-              <div className="text-sm text-muted-foreground">{initialCustomer.email}</div>
-              {initialCustomer.street && (
+              <div className="font-medium">{displayCustomer.name}</div>
+              <div className="text-sm text-muted-foreground">{displayCustomer.email}</div>
+              {displayCustomer.street && (
                 <div className="text-sm text-muted-foreground">
-                  {initialCustomer.street}, {initialCustomer.state} {initialCustomer.postalCode}
+                  {displayCustomer.street}, {displayCustomer.state} {displayCustomer.postalCode}
                 </div>
               )}
             </div>
@@ -187,6 +205,11 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
             >
               <div className="font-medium">{customer.name}</div>
               <div className="text-sm text-muted-foreground">{customer.email}</div>
+              {customer.street && (
+                <div className="text-sm text-muted-foreground">
+                  {customer.street}, {customer.state} {customer.postalCode}
+                </div>
+              )}
             </div>
           ))}
         </div>
