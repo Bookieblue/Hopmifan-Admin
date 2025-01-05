@@ -11,14 +11,6 @@ import { InvoiceItems } from "@/components/invoices/InvoiceItems";
 import { generateInvoiceId } from "@/lib/utils";
 import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
 
-interface InvoiceItem {
-  id: string;
-  description: string;
-  quantity: number;
-  price: number;
-  amount: number;
-}
-
 export default function CreateInvoice() {
   const navigate = useNavigate();
   const [invoiceId, setInvoiceId] = useState(generateInvoiceId());
@@ -31,6 +23,16 @@ export default function CreateInvoice() {
   const [termsAndConditions, setTermsAndConditions] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [status, setStatus] = useState<InvoiceStatus>("draft");
+  const [selectedCurrency, setSelectedCurrency] = useState("NGN");
+  const [invoice, setInvoice] = useState({
+    number: invoiceId,
+    date: new Date().toISOString().split('T')[0],
+    currency: selectedCurrency,
+    customer: null,
+    items: [],
+    notes: "",
+    terms: ""
+  });
 
   useEffect(() => {
     // Fetch template content from settings
@@ -112,7 +114,10 @@ export default function CreateInvoice() {
               onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
               onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
               onPaymentGatewayChange={setSelectedGateway}
-              onCustomerSelect={setSelectedCustomer}
+              selectedCurrency={selectedCurrency}
+              onCurrencyChange={setSelectedCurrency}
+              invoice={invoice}
+              onInvoiceChange={setInvoice}
             />
 
             <div className="mt-8">

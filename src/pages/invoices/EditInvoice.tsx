@@ -16,6 +16,8 @@ export default function EditInvoice() {
   const [selectedCurrency, setSelectedCurrency] = useState("NGN");
   const [status, setStatus] = useState<InvoiceStatus>("pending");
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedBankAccounts, setSelectedBankAccounts] = useState<string[]>([]);
+  const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
   const [invoiceId, setInvoiceId] = useState(id || "");
   const [dueDate, setDueDate] = useState("");
   const [paymentType, setPaymentType] = useState<"one-time" | "recurring">("one-time");
@@ -88,6 +90,11 @@ export default function EditInvoice() {
                 />
 
                 <PaymentDetails
+                  selectedBankAccounts={selectedBankAccounts}
+                  selectedGateway={selectedGateway}
+                  onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
+                  onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
+                  onPaymentGatewayChange={setSelectedGateway}
                   selectedCurrency={selectedCurrency}
                   onCurrencyChange={setSelectedCurrency}
                   invoice={invoice}
