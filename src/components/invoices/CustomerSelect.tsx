@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { UserPlus, PenSquare } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
+import { BillingAddressForm } from "./BillingAddressForm";
 
 interface CustomerSelectProps {
   onCustomerSelect: (customer: any) => void;
@@ -65,6 +66,10 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
       title: "Success",
       description: "New customer added successfully",
     });
+  };
+
+  const handleNewCustomerFieldChange = (field: string, value: string) => {
+    setNewCustomer(prev => ({ ...prev, [field]: value }));
   };
 
   if (!isSearchMode && (initialCustomer || customers.find(c => c.id === initialCustomer?.id))) {
@@ -126,7 +131,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
                 <Input 
                   placeholder="Enter customer name"
                   value={newCustomer.name}
-                  onChange={(e) => setNewCustomer(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) => handleNewCustomerFieldChange('name', e.target.value)}
                 />
               </div>
               <div className="space-y-2">
@@ -135,7 +140,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
                   type="email" 
                   placeholder="Enter customer email"
                   value={newCustomer.email}
-                  onChange={(e) => setNewCustomer(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) => handleNewCustomerFieldChange('email', e.target.value)}
                 />
               </div>
               <div className="flex items-center space-x-2">
@@ -147,40 +152,10 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
                 <Label htmlFor="billing-address">Include Billing Address</Label>
               </div>
               {includeBillingAddress && (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Street Address</Label>
-                    <Input 
-                      placeholder="Enter street address"
-                      value={newCustomer.street}
-                      onChange={(e) => setNewCustomer(prev => ({ ...prev, street: e.target.value }))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Country</Label>
-                    <Input 
-                      placeholder="Enter country"
-                      value={newCustomer.country}
-                      onChange={(e) => setNewCustomer(prev => ({ ...prev, country: e.target.value }))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>State</Label>
-                    <Input 
-                      placeholder="Enter state"
-                      value={newCustomer.state}
-                      onChange={(e) => setNewCustomer(prev => ({ ...prev, state: e.target.value }))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Postal Code</Label>
-                    <Input 
-                      placeholder="Enter postal code"
-                      value={newCustomer.postalCode}
-                      onChange={(e) => setNewCustomer(prev => ({ ...prev, postalCode: e.target.value }))}
-                    />
-                  </div>
-                </div>
+                <BillingAddressForm 
+                  newCustomer={newCustomer}
+                  onChange={handleNewCustomerFieldChange}
+                />
               )}
               <Button className="w-full" onClick={handleAddNewCustomer}>Add Customer</Button>
             </div>
