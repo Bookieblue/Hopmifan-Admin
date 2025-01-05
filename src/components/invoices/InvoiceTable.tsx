@@ -50,31 +50,33 @@ export const InvoiceTable = ({
   };
 
   const handleRowClick = (e: React.MouseEvent, invoiceId: string) => {
-    // Don't navigate if clicking checkbox or actions
+    // Don't navigate if clicking checkbox, actions, or dropdown items
     if (
       (e.target as HTMLElement).closest('.checkbox-cell') ||
-      (e.target as HTMLElement).closest('.actions-cell')
+      (e.target as HTMLElement).closest('.actions-cell') ||
+      (e.target as HTMLElement).closest('[role="menuitem"]')
     ) {
       return;
     }
-    navigate(`/invoices/${invoiceId}/edit`);
+    navigate(`/invoices/${invoiceId}`);
+  };
+
+  const handleAction = (e: React.MouseEvent, action: () => void) => {
+    e.stopPropagation();
+    action();
   };
 
   if (isMobile) {
     return (
       <div className="-mx-4">
         {invoices.map((invoice) => (
-          <div 
+          <InvoiceCard
             key={invoice.id}
-            onClick={(e) => handleRowClick(e, invoice.id)}
-          >
-            <InvoiceCard
-              invoice={invoice}
-              onDelete={onDelete}
-              onDuplicate={onDuplicate}
-              onShare={onShare}
-            />
-          </div>
+            invoice={invoice}
+            onDelete={onDelete}
+            onDuplicate={onDuplicate}
+            onShare={onShare}
+          />
         ))}
       </div>
     );
@@ -108,6 +110,7 @@ export const InvoiceTable = ({
               <Checkbox
                 checked={selectedInvoices.includes(invoice.id)}
                 onCheckedChange={(checked) => onSelectInvoice(invoice.id, checked as boolean)}
+                onClick={(e) => e.stopPropagation()}
               />
             </td>
             <td className="px-4 py-3 text-sm font-medium">{invoice.id}</td>
@@ -132,26 +135,30 @@ export const InvoiceTable = ({
             </td>
             <td className="px-4 py-3 text-right actions-cell">
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                   <Button variant="ghost" size="sm">
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                   <Link to={`/invoices/${invoice.id}`}>
-                    <DropdownMenuItem>View</DropdownMenuItem>
+                    <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                      View
+                    </DropdownMenuItem>
                   </Link>
                   <Link to={`/invoices/${invoice.id}/edit`}>
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                      Edit
+                    </DropdownMenuItem>
                   </Link>
-                  <DropdownMenuItem onClick={() => onDuplicate(invoice.id)}>
+                  <DropdownMenuItem onSelect={(e) => handleAction(e as any, () => onDuplicate(invoice.id))}>
                     Duplicate
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onShare(invoice.id)}>
+                  <DropdownMenuItem onSelect={(e) => handleAction(e as any, () => onShare(invoice.id))}>
                     Share
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => onDelete(invoice.id)}
+                    onSelect={(e) => handleAction(e as any, () => onDelete(invoice.id))}
                     className="text-red-600"
                   >
                     Delete

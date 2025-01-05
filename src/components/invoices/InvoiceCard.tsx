@@ -35,10 +35,19 @@ export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: Invoice
   const type = invoice.type === 'one-time' ? 'One-time' : 'Recurring';
 
   const handleCardClick = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('button')) {
+    // Don't navigate if clicking on a button or dropdown
+    if (
+      (e.target as HTMLElement).closest('button') ||
+      (e.target as HTMLElement).closest('[role="menuitem"]')
+    ) {
       return;
     }
-    navigate(`/invoices/${invoice.id}/edit`);
+    navigate(`/invoices/${invoice.id}`);
+  };
+
+  const handleAction = (e: React.MouseEvent, action: () => void) => {
+    e.stopPropagation();
+    action();
   };
 
   return (
@@ -70,26 +79,30 @@ export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: Invoice
           </div>
 
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
               <Button variant="ghost" size="sm" className="-mt-1">
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
               <Link to={`/invoices/${invoice.id}`}>
-                <DropdownMenuItem>View</DropdownMenuItem>
+                <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                  View
+                </DropdownMenuItem>
               </Link>
               <Link to={`/invoices/${invoice.id}/edit`}>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                  Edit
+                </DropdownMenuItem>
               </Link>
-              <DropdownMenuItem onClick={() => onDuplicate(invoice.id)}>
+              <DropdownMenuItem onSelect={(e) => handleAction(e as any, () => onDuplicate(invoice.id))}>
                 Duplicate
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onShare(invoice.id)}>
+              <DropdownMenuItem onSelect={(e) => handleAction(e as any, () => onShare(invoice.id))}>
                 Share
               </DropdownMenuItem>
               <DropdownMenuItem 
-                onClick={() => onDelete(invoice.id)}
+                onSelect={(e) => handleAction(e as any, () => onDelete(invoice.id))}
                 className="text-red-600"
               >
                 Delete
