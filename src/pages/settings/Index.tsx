@@ -3,7 +3,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import BusinessSettings from "@/components/settings/BusinessSettings";
 import TemplateSettings from "@/components/settings/TemplateSettings";
 import PaymentSettings from "@/components/settings/PaymentSettings";
-import ReminderSettings from "@/components/settings/ReminderSettings";
 import TeamSettings from "@/components/settings/TeamSettings";
 import AccountTabs from "@/components/settings/AccountTabs";
 
@@ -19,7 +18,6 @@ export default function Settings() {
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="templates">Templates</TabsTrigger>
           <TabsTrigger value="payment">Payment</TabsTrigger>
-          <TabsTrigger value="reminders">Reminders</TabsTrigger>
           <TabsTrigger value="members">Members</TabsTrigger>
         </TabsList>
 
@@ -43,14 +41,6 @@ export default function Settings() {
           <Card>
             <CardContent className="pt-6">
               <PaymentSettings />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="reminders">
-          <Card>
-            <CardContent className="pt-6">
-              <ReminderSettings />
             </CardContent>
           </Card>
         </TabsContent>
