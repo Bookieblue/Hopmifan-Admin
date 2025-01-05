@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Invoices from "./pages/invoices/Invoices";
-import CreateInvoice from "./pages/invoices/CreateInvoice";
-import EditInvoice from "./pages/invoices/EditInvoice";
-import PaymentHistory from "./pages/payments/Index";
-import PaymentPage from "./pages/payments/PaymentPage";
+import Home from "@/pages/Index";
+import Invoices from "@/pages/invoices/InvoiceList";
+import CreateInvoice from "@/pages/invoices/CreateInvoice";
+import EditInvoice from "@/pages/invoices/EditInvoice";
+import PaymentHistory from "@/pages/payments/Index";
+import PaymentPage from "@/pages/payments/PaymentPage";
 
 function App() {
   return (
