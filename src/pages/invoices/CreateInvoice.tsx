@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, FileText, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { InvoiceHeader } from "@/components/invoices/InvoiceHeader";
 import { PaymentDetails } from "@/components/invoices/PaymentDetails";
@@ -12,6 +12,7 @@ import { InvoicePreview } from "@/components/invoices/InvoicePreview";
 import { generateInvoiceId } from "@/lib/utils";
 import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
 import type { InvoiceItem } from "@/types/invoice";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export default function CreateInvoice() {
   const navigate = useNavigate();
@@ -21,11 +22,14 @@ export default function CreateInvoice() {
   const [selectedBankAccounts, setSelectedBankAccounts] = useState<string[]>([]);
   const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
   const [items, setItems] = useState<InvoiceItem[]>([]);
-  const [notes, setNotes] = useState("");
-  const [termsAndConditions, setTermsAndConditions] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [status, setStatus] = useState<InvoiceStatus>("draft");
   const [selectedCurrency, setSelectedCurrency] = useState("NGN");
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
+  const [isFooterOpen, setIsFooterOpen] = useState(false);
+  const [isAttachmentsOpen, setIsAttachmentsOpen] = useState(false);
+  
   const [invoice, setInvoice] = useState({
     number: invoiceId,
     date: new Date().toISOString().split('T')[0],
@@ -51,8 +55,11 @@ export default function CreateInvoice() {
         termsAndConditions: "Payment is due within 30 days"
       };
       
-      setNotes(templateContent.notesTemplate);
-      setTermsAndConditions(templateContent.termsAndConditions);
+      setInvoice(prev => ({
+        ...prev,
+        notes: templateContent.notesTemplate,
+        terms: templateContent.termsAndConditions
+      }));
     };
 
     fetchTemplateContent();
@@ -66,11 +73,9 @@ export default function CreateInvoice() {
       date: new Date().toISOString().split('T')[0],
       currency: selectedCurrency,
       customer: selectedCustomer,
-      items: items,
-      notes: notes,
-      terms: termsAndConditions
+      items: items
     }));
-  }, [invoiceId, selectedCurrency, selectedCustomer, items, notes, termsAndConditions]);
+  }, [invoiceId, selectedCurrency, selectedCustomer, items]);
 
   const handleSubmit = async (status: 'draft' | 'published') => {
     try {
@@ -81,8 +86,8 @@ export default function CreateInvoice() {
         bankAccounts: selectedBankAccounts,
         paymentGateway: selectedGateway,
         items,
-        notes,
-        termsAndConditions,
+        notes: invoice.notes,
+        terms: invoice.terms,
         status,
         customer: selectedCustomer,
         total: items.reduce((sum, item) => sum + item.amount, 0)
@@ -139,8 +144,6 @@ export default function CreateInvoice() {
                 onPaymentGatewayChange={setSelectedGateway}
                 selectedCurrency={selectedCurrency}
                 onCurrencyChange={setSelectedCurrency}
-                invoice={invoice}
-                onInvoiceChange={setInvoice}
               />
 
               <div className="mt-8">
@@ -151,24 +154,80 @@ export default function CreateInvoice() {
                 />
               </div>
 
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Notes</label>
-                  <Textarea
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Add any notes..."
-                  />
-                </div>
+              <div className="space-y-4">
+                <Collapsible open={isNotesOpen} onOpenChange={setIsNotesOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="outline" className="w-full flex justify-between">
+                      <span className="flex items-center gap-2">
+                        <FileText className="w-4 h-4" />
+                        Notes
+                      </span>
+                      {isNotesOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-4">
+                    <Textarea
+                      value={invoice.notes}
+                      onChange={(e) => setInvoice(prev => ({ ...prev, notes: e.target.value }))}
+                      placeholder="Add notes..."
+                    />
+                  </CollapsibleContent>
+                </Collapsible>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Terms & Conditions</label>
-                  <Textarea
-                    value={termsAndConditions}
-                    onChange={(e) => setTermsAndConditions(e.target.value)}
-                    placeholder="Add terms and conditions..."
-                  />
-                </div>
+                <Collapsible open={isTermsOpen} onOpenChange={setIsTermsOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="outline" className="w-full flex justify-between">
+                      <span className="flex items-center gap-2">
+                        <FileText className="w-4 h-4" />
+                        Terms & Conditions
+                      </span>
+                      {isTermsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-4">
+                    <Textarea
+                      value={invoice.terms}
+                      onChange={(e) => setInvoice(prev => ({ ...prev, terms: e.target.value }))}
+                      placeholder="Add terms and conditions..."
+                    />
+                  </CollapsibleContent>
+                </Collapsible>
+
+                <Collapsible open={isFooterOpen} onOpenChange={setIsFooterOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="outline" className="w-full flex justify-between">
+                      <span className="flex items-center gap-2">
+                        <FileText className="w-4 h-4" />
+                        Footer
+                      </span>
+                      {isFooterOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-4">
+                    <Textarea
+                      placeholder="Add footer text..."
+                      onChange={(e) => setInvoice(prev => ({ ...prev, footer: e.target.value }))}
+                    />
+                  </CollapsibleContent>
+                </Collapsible>
+
+                <Collapsible open={isAttachmentsOpen} onOpenChange={setIsAttachmentsOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="outline" className="w-full flex justify-between">
+                      <span className="flex items-center gap-2">
+                        <FileText className="w-4 h-4" />
+                        Attachments
+                      </span>
+                      {isAttachmentsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-4">
+                    <Button variant="outline" className="w-full">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Attachment
+                    </Button>
+                  </CollapsibleContent>
+                </Collapsible>
               </div>
             </CardContent>
           </Card>
