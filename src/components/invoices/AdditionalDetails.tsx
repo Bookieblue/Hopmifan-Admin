@@ -43,7 +43,6 @@ export const AdditionalDetails = ({
     {
       id: 'payment-methods',
       title: 'Payment Methods',
-      description: 'Configure accepted payment methods and bank accounts for this invoice',
       icon: Wallet,
       isOpen: isPaymentMethodsOpen,
       setIsOpen: setIsPaymentMethodsOpen,
@@ -68,7 +67,6 @@ export const AdditionalDetails = ({
     {
       id: 'notes',
       title: 'Notes',
-      description: 'Add any additional notes or information for your customer',
       icon: FileText,
       isOpen: isNotesOpen,
       setIsOpen: setIsNotesOpen,
@@ -84,7 +82,6 @@ export const AdditionalDetails = ({
     {
       id: 'terms',
       title: 'Terms & Conditions',
-      description: 'Specify the terms and conditions for this invoice',
       icon: FileText,
       isOpen: isTermsOpen,
       setIsOpen: setIsTermsOpen,
@@ -100,7 +97,6 @@ export const AdditionalDetails = ({
     {
       id: 'footer',
       title: 'Footer',
-      description: 'Add a custom footer message to appear at the bottom of your invoice',
       icon: FileText,
       isOpen: isFooterOpen,
       setIsOpen: setIsFooterOpen,
@@ -118,22 +114,17 @@ export const AdditionalDetails = ({
   return (
     <div className="space-y-6 p-6">
       <h3 className="text-xl font-semibold">Additional Details</h3>
-      <div className="grid gap-6">
+      <div className="grid gap-4">
         {sections.map((section) => (
           <Card 
             key={section.id} 
-            className="border rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md p-6"
+            className="border rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md"
           >
             <Collapsible open={section.isOpen} onOpenChange={section.setIsOpen}>
-              <div className="flex items-center justify-between w-full">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <section.icon className="w-5 h-5" />
-                    <h4 className="text-lg font-medium">{section.title}</h4>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1 pr-8 line-clamp-2">
-                    {section.description}
-                  </p>
+              <div className="flex items-center justify-between w-full px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <section.icon className="w-5 h-5" />
+                  <h4 className="text-lg font-medium">{section.title}</h4>
                 </div>
                 <Switch
                   checked={section.isOpen}
@@ -142,7 +133,7 @@ export const AdditionalDetails = ({
                 />
               </div>
               <CollapsibleContent>
-                <div className="mt-6 pt-4 border-t bg-accent/5 rounded-lg">
+                <div className="px-4 pb-4">
                   {section.content}
                 </div>
               </CollapsibleContent>
