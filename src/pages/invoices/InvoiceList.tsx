@@ -186,17 +186,19 @@ const InvoiceList = () => {
   });
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
-      <InvoiceListHeader />
-      <InvoiceFilters
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-        handleResetFilter={handleResetFilter}
-      />
+    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+      <div className="px-4">
+        <InvoiceListHeader />
+        <InvoiceFilters
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          handleResetFilter={handleResetFilter}
+        />
+      </div>
 
       <div className="bg-white md:rounded-lg md:border">
         <InvoiceTable
