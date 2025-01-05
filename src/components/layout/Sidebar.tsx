@@ -12,6 +12,7 @@ import {
 import { SupportModal } from "../modals/SupportModal";
 import { FeedbackModal } from "../modals/FeedbackModal";
 import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,6 +38,7 @@ interface SidebarProps {
 
 export function Sidebar({ onCollapse }: SidebarProps) {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(businesses[0]);
@@ -58,14 +60,18 @@ export function Sidebar({ onCollapse }: SidebarProps) {
   };
 
   const toggleSidebar = () => {
-    const newCollapsedState = !isCollapsed;
-    setIsCollapsed(newCollapsedState);
-    onCollapse?.(newCollapsedState);
+    if (!isMobile) {
+      const newCollapsedState = !isCollapsed;
+      setIsCollapsed(newCollapsedState);
+      onCollapse?.(newCollapsedState);
+    }
   };
 
   useEffect(() => {
-    onCollapse?.(isCollapsed);
-  }, [isCollapsed, onCollapse]);
+    if (!isMobile) {
+      onCollapse?.(isCollapsed);
+    }
+  }, [isCollapsed, onCollapse, isMobile]);
 
   return (
     <div 
@@ -85,18 +91,20 @@ export function Sidebar({ onCollapse }: SidebarProps) {
             )}
           </div>
         </Link>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="p-1"
-          onClick={toggleSidebar}
-        >
-          {isCollapsed ? (
-            <PanelLeft className="h-4 w-4" />
-          ) : (
-            <PanelLeftClose className="h-4 w-4" />
-          )}
-        </Button>
+        {!isMobile && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="p-1"
+            onClick={toggleSidebar}
+          >
+            {isCollapsed ? (
+              <PanelLeft className="h-4 w-4" />
+            ) : (
+              <PanelLeftClose className="h-4 w-4" />
+            )}
+          </Button>
+        )}
       </div>
 
       <div className="p-4">

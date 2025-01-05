@@ -20,7 +20,9 @@ export function Layout() {
   };
 
   const handleSidebarCollapse = (collapsed: boolean) => {
-    setIsCollapsed(collapsed);
+    if (!isMobile) {
+      setIsCollapsed(collapsed);
+    }
   };
 
   return (
