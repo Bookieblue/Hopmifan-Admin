@@ -64,123 +64,116 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-medium mb-4">Items</h3>
-      
+      <div className="grid grid-cols-12 gap-6 px-6 py-4 bg-muted/50 rounded-lg">
+        <div className="col-span-4">
+          <Label className="text-sm font-medium">Description</Label>
+        </div>
+        <div className="col-span-1">
+          <Label className="text-sm font-medium">Qty</Label>
+        </div>
+        <div className="col-span-2">
+          <Label className="text-sm font-medium">Price</Label>
+        </div>
+        <div className="col-span-1">
+          <Label className="text-sm font-medium">Tax %</Label>
+        </div>
+        <div className="col-span-1">
+          <Label className="text-sm font-medium">Disc %</Label>
+        </div>
+        <div className="col-span-2">
+          <Label className="text-sm font-medium">Amount</Label>
+        </div>
+      </div>
+
       {items.map((item) => (
         <Card key={item.id} className="border shadow-sm">
           <CardContent className="p-6">
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor={`description-${item.id}`}>Description</Label>
+            <div className="grid grid-cols-12 gap-6 items-start">
+              <div className="col-span-4 space-y-4">
+                <Input
+                  value={item.description}
+                  onChange={(e) => updateItem(item.id, 'description', e.target.value)}
+                  placeholder="Enter item description"
+                  className="w-full"
+                />
+                <div className="flex items-center gap-3">
                   <Input
-                    id={`description-${item.id}`}
-                    value={item.description}
-                    onChange={(e) => updateItem(item.id, 'description', e.target.value)}
-                    placeholder="Enter item description"
-                    className="w-full"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id={`image-${item.id}`}
+                    onChange={(e) => handleImageUpload(item.id, e)}
                   />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>Item Image</Label>
-                  <div className="flex items-center gap-3">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      id={`image-${item.id}`}
-                      onChange={(e) => handleImageUpload(item.id, e)}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-9"
-                      onClick={() => document.getElementById(`image-${item.id}`)?.click()}
-                    >
-                      <ImagePlus className="w-4 h-4 mr-2" />
-                      {item.image ? 'Change Image' : 'Add Image'}
-                    </Button>
-                    {item.image && (
-                      <span className="text-sm text-muted-foreground truncate max-w-[150px]">
-                        {item.image.name}
-                      </span>
-                    )}
-                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-9"
+                    onClick={() => document.getElementById(`image-${item.id}`)?.click()}
+                  >
+                    <ImagePlus className="w-4 h-4 mr-2" />
+                    {item.image ? 'Change Image' : 'Add Image'}
+                  </Button>
+                  {item.image && (
+                    <span className="text-sm text-muted-foreground truncate max-w-[150px]">
+                      {item.image.name}
+                    </span>
+                  )}
                 </div>
               </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor={`quantity-${item.id}`}>Quantity</Label>
-                  <Input
-                    id={`quantity-${item.id}`}
-                    type="number"
-                    value={item.quantity}
-                    onChange={(e) => updateItem(item.id, 'quantity', Number(e.target.value))}
-                    min={1}
-                    className="w-full"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor={`price-${item.id}`}>Price</Label>
-                  <Input
-                    id={`price-${item.id}`}
-                    type="number"
-                    value={item.price}
-                    onChange={(e) => updateItem(item.id, 'price', Number(e.target.value))}
-                    min={0}
-                    step="0.01"
-                    className="w-full"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor={`tax-${item.id}`}>Tax %</Label>
-                  <Input
-                    id={`tax-${item.id}`}
-                    type="number"
-                    value={item.tax}
-                    onChange={(e) => updateItem(item.id, 'tax', Number(e.target.value))}
-                    min={0}
-                    max={100}
-                    className="w-full"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor={`discount-${item.id}`}>Discount %</Label>
-                  <Input
-                    id={`discount-${item.id}`}
-                    type="number"
-                    value={item.discount}
-                    onChange={(e) => updateItem(item.id, 'discount', Number(e.target.value))}
-                    min={0}
-                    max={100}
-                    className="w-full"
-                  />
-                </div>
+              <div className="col-span-1">
+                <Input
+                  type="number"
+                  value={item.quantity}
+                  onChange={(e) => updateItem(item.id, 'quantity', Number(e.target.value))}
+                  min={1}
+                  className="w-full"
+                />
               </div>
-
-              <div className="flex items-center justify-between gap-6">
-                <div className="w-full max-w-[200px] space-y-2">
-                  <Label htmlFor={`amount-${item.id}`}>Amount</Label>
-                  <Input
-                    id={`amount-${item.id}`}
-                    type="number"
-                    value={item.amount}
-                    disabled
-                    className="w-full bg-muted"
-                  />
-                </div>
-
+              <div className="col-span-2">
+                <Input
+                  type="number"
+                  value={item.price}
+                  onChange={(e) => updateItem(item.id, 'price', Number(e.target.value))}
+                  min={0}
+                  step="0.01"
+                  className="w-full"
+                />
+              </div>
+              <div className="col-span-1">
+                <Input
+                  type="number"
+                  value={item.tax}
+                  onChange={(e) => updateItem(item.id, 'tax', Number(e.target.value))}
+                  min={0}
+                  max={100}
+                  className="w-full"
+                />
+              </div>
+              <div className="col-span-1">
+                <Input
+                  type="number"
+                  value={item.discount}
+                  onChange={(e) => updateItem(item.id, 'discount', Number(e.target.value))}
+                  min={0}
+                  max={100}
+                  className="w-full"
+                />
+              </div>
+              <div className="col-span-2">
+                <Input
+                  type="number"
+                  value={item.amount}
+                  disabled
+                  className="w-full bg-muted"
+                />
+              </div>
+              <div className="col-span-1 flex justify-center">
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 text-destructive hover:text-destructive/90 self-end"
+                  className="h-9 w-9 text-destructive hover:text-destructive/90"
                   onClick={() => removeItem(item.id)}
                   disabled={items.length === 1}
                 >
