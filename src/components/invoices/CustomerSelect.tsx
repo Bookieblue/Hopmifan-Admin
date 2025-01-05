@@ -80,7 +80,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
           <Label>Customer</Label>
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={() => setIsSearchMode(true)}
             className="h-8 w-8 p-0"
           >
@@ -116,9 +116,8 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
         />
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              <UserPlus className="w-4 h-4 mr-2" />
-              New Customer
+            <Button variant="outline" size="icon" className="h-10 w-10">
+              <UserPlus className="h-4 w-4" />
             </Button>
           </DialogTrigger>
           <DialogContent>

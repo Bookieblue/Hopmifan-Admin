@@ -116,10 +116,6 @@ export default function CreateInvoice() {
           </Button>
           <h1 className="text-2xl font-semibold">Create Invoice</h1>
         </div>
-        <InvoiceStatusSelect 
-          status={status} 
-          onStatusChange={setStatus}
-        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -155,6 +151,8 @@ export default function CreateInvoice() {
               </div>
 
               <div className="space-y-4">
+                <h3 className="text-lg font-medium">Additional Details</h3>
+                
                 <Collapsible open={isNotesOpen} onOpenChange={setIsNotesOpen}>
                   <CollapsibleTrigger asChild>
                     <Button variant="outline" className="w-full flex justify-between">
@@ -228,6 +226,13 @@ export default function CreateInvoice() {
                     </Button>
                   </CollapsibleContent>
                 </Collapsible>
+
+                <div className="mt-4">
+                  <InvoiceStatusSelect 
+                    status={status} 
+                    onStatusChange={setStatus}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>

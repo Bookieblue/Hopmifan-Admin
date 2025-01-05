@@ -15,7 +15,7 @@ interface PaymentDetailsProps {
 }
 
 export const PaymentDetails = ({ 
-  selectedBankAccounts = [],
+  selectedBankAccounts,
   selectedGateway,
   onBankAccountAdd,
   onBankAccountRemove,
