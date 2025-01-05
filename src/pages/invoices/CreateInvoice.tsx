@@ -103,6 +103,7 @@ export default function CreateInvoice() {
               onInvoiceIdChange={setInvoiceId}
               onDueDateChange={setDueDate}
               onPaymentTypeChange={setPaymentType}
+              onCustomerSelect={setSelectedCustomer}
             />
 
             <PaymentDetails
