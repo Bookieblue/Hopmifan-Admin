@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 import {
   LayoutGrid,
   FileText,
-  Receipt,
   CreditCard,
   Users,
   Settings,
@@ -13,8 +12,6 @@ import {
 const menuItems = [
   { icon: LayoutGrid, label: "Overview", path: "/" },
   { icon: FileText, label: "Invoices", path: "/invoices", type: "invoices" },
-  { icon: FileText, label: "Estimates", path: "/estimates", type: "estimates" },
-  { icon: Receipt, label: "Receipts", path: "/receipts", type: "receipts" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
 ];
 
