@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { InvoiceTable } from "@/components/invoices/InvoiceTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { InvoiceFilters } from "@/components/invoices/InvoiceFilters";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const InvoiceList = () => {
   const { toast } = useToast();
@@ -34,6 +35,7 @@ const InvoiceList = () => {
   const [endDate, setEndDate] = useState<Date>();
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string>("");
+  const [bulkAction, setBulkAction] = useState<string>("");
 
   const handleSelectInvoice = (invoiceId: string, checked: boolean) => {
     if (checked) {
@@ -69,6 +71,77 @@ const InvoiceList = () => {
       description: `${selectedInvoices.length} invoices have been deleted successfully.`
     });
     setSelectedInvoices([]);
+    setBulkAction("");
+  };
+
+  const handleBulkDuplicate = () => {
+    const newInvoices = [...invoices];
+    selectedInvoices.forEach(id => {
+      const originalInvoice = invoices.find(inv => inv.id === id);
+      if (originalInvoice) {
+        const newInvoice = {
+          ...originalInvoice,
+          id: `INV-${Math.floor(Math.random() * 9000) + 1000}`,
+          status: "pending",
+          date: new Date().toISOString().split('T')[0]
+        };
+        newInvoices.push(newInvoice);
+      }
+    });
+    setInvoices(newInvoices);
+    toast({
+      description: `${selectedInvoices.length} invoices have been duplicated successfully.`
+    });
+    setSelectedInvoices([]);
+    setBulkAction("");
+  };
+
+  const handleBulkExport = () => {
+    const selectedInvoicesData = invoices.filter(invoice => 
+      selectedInvoices.includes(invoice.id)
+    );
+    
+    const csvContent = [
+      ["Invoice ID", "Customer", "Amount", "Status", "Date", "Type"],
+      ...selectedInvoicesData.map(invoice => [
+        invoice.id,
+        invoice.customer,
+        invoice.amount,
+        invoice.status,
+        invoice.date,
+        invoice.type
+      ])
+    ].map(row => row.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'invoices.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      description: `${selectedInvoices.length} invoices have been exported successfully.`
+    });
+    setSelectedInvoices([]);
+    setBulkAction("");
+  };
+
+  const handleBulkAction = () => {
+    switch (bulkAction) {
+      case "delete":
+        handleBulkDelete();
+        break;
+      case "duplicate":
+        handleBulkDuplicate();
+        break;
+      case "export":
+        handleBulkExport();
+        break;
+    }
   };
 
   const handleDuplicate = (invoiceId: string) => {
@@ -129,20 +202,6 @@ const InvoiceList = () => {
       />
 
       <div className="bg-white rounded-lg border">
-        {selectedInvoices.length > 0 && (
-          <div className="p-4 border-b bg-gray-50">
-            <Button 
-              variant="destructive" 
-              size="sm"
-              onClick={handleBulkDelete}
-              className="flex items-center gap-2"
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete Selected ({selectedInvoices.length})
-            </Button>
-          </div>
-        )}
-        
         <InvoiceTable
           invoices={filteredInvoices}
           selectedInvoices={selectedInvoices}
@@ -152,6 +211,28 @@ const InvoiceList = () => {
           onDuplicate={handleDuplicate}
           onShare={handleShare}
         />
+
+        {selectedInvoices.length > 0 && (
+          <div className="p-4 border-t bg-gray-50 flex items-center gap-4">
+            <Select value={bulkAction} onValueChange={setBulkAction}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Select bulk action" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="delete">Delete Selected</SelectItem>
+                <SelectItem value="duplicate">Duplicate Selected</SelectItem>
+                <SelectItem value="export">Export as CSV</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button 
+              onClick={handleBulkAction}
+              disabled={!bulkAction}
+              className="ml-2"
+            >
+              Proceed
+            </Button>
+          </div>
+        )}
       </div>
 
       <ShareModal 
