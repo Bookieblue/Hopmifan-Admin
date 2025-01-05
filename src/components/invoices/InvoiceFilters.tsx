@@ -45,7 +45,7 @@ export const InvoiceFilters = ({
           <DialogTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2 px-3 md:px-4 whitespace-nowrap">
               <CalendarDays className="h-4 w-4" />
-              Filter by Date
+              Filter
             </Button>
           </DialogTrigger>
           <DialogContent>

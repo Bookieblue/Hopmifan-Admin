@@ -6,9 +6,11 @@ import { InvoiceFilters } from "@/components/invoices/InvoiceFilters";
 import { InvoiceListHeader } from "@/components/invoices/InvoiceListHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const InvoiceList = () => {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [invoices, setInvoices] = useState([
     { 
       id: "INV-2345",
@@ -65,6 +67,7 @@ const InvoiceList = () => {
   };
 
   const handleBulkDelete = () => {
+    if (selectedInvoices.length === 0) return;
     setInvoices(invoices.filter(invoice => !selectedInvoices.includes(invoice.id)));
     toast({
       description: `${selectedInvoices.length} invoices have been deleted successfully.`
@@ -74,6 +77,7 @@ const InvoiceList = () => {
   };
 
   const handleBulkDuplicate = () => {
+    if (selectedInvoices.length === 0) return;
     const newInvoices = [...invoices];
     selectedInvoices.forEach(id => {
       const originalInvoice = invoices.find(inv => inv.id === id);
@@ -96,6 +100,7 @@ const InvoiceList = () => {
   };
 
   const handleBulkExport = () => {
+    if (selectedInvoices.length === 0) return;
     const selectedInvoicesData = invoices.filter(invoice => 
       selectedInvoices.includes(invoice.id)
     );
@@ -130,6 +135,8 @@ const InvoiceList = () => {
   };
 
   const handleBulkAction = () => {
+    if (!bulkAction || selectedInvoices.length === 0) return;
+    
     switch (bulkAction) {
       case "delete":
         handleBulkDelete();
@@ -202,7 +209,7 @@ const InvoiceList = () => {
           onShare={handleShare}
         />
 
-        {selectedInvoices.length > 0 && (
+        {selectedInvoices.length > 0 && !isMobile && (
           <div className="p-4 border-t bg-gray-50 flex items-center gap-4">
             <Select value={bulkAction} onValueChange={setBulkAction}>
               <SelectTrigger className="w-[200px]">
@@ -216,7 +223,7 @@ const InvoiceList = () => {
             </Select>
             <Button 
               onClick={handleBulkAction}
-              disabled={!bulkAction}
+              disabled={!bulkAction || selectedInvoices.length === 0}
               className="ml-2"
             >
               Proceed
