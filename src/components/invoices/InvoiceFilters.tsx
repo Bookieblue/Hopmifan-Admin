@@ -71,27 +71,29 @@ export const InvoiceFilters = ({
             </Button>
           </DialogTrigger>
           <DialogContent className="bg-[#F9FAFB] p-5 sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-semibold">Filter by Date Range</DialogTitle>
-            </DialogHeader>
-            <div className="bg-white rounded-lg p-5 mt-4 space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">From Date</label>
-                <DatePicker 
-                  date={tempStartDate} 
-                  setDate={setTempStartDate} 
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">To Date</label>
-                <DatePicker 
-                  date={tempEndDate} 
-                  setDate={setTempEndDate} 
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={handleReset}>Reset Filter</Button>
-                <Button onClick={handleApplyFilter}>Apply Filter</Button>
+            <div className="bg-white rounded-lg p-5">
+              <DialogHeader>
+                <DialogTitle className="text-lg font-semibold">Filter by Date Range</DialogTitle>
+              </DialogHeader>
+              <div className="mt-4 space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">From Date</label>
+                  <DatePicker 
+                    date={tempStartDate} 
+                    setDate={setTempStartDate} 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">To Date</label>
+                  <DatePicker 
+                    date={tempEndDate} 
+                    setDate={setTempEndDate} 
+                  />
+                </div>
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button variant="outline" onClick={handleReset}>Reset Filter</Button>
+                  <Button onClick={handleApplyFilter}>Apply Filter</Button>
+                </div>
               </div>
             </div>
           </DialogContent>
