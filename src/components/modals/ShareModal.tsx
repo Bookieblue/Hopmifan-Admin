@@ -14,7 +14,7 @@ import {
   Facebook,
   Twitter,
   Linkedin,
-  WhatsApp,
+  MessageCircle,
   Instagram
 } from "lucide-react";
 import { useState } from "react";
@@ -192,7 +192,7 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
               className="w-full"
               onClick={() => handleSocialShare('whatsapp')}
             >
-              <WhatsApp className="h-4 w-4" />
+              <MessageCircle className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
