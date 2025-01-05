@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronUp, Wallet, FileText } from "lucide-react";
@@ -6,6 +5,7 @@ import { useState } from "react";
 import { PaymentMethodSelect } from "./payment/PaymentMethodSelect";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
 
 interface AdditionalDetailsProps {
   selectedBankAccounts: string[];
@@ -112,16 +112,13 @@ export const AdditionalDetails = ({
   ];
 
   return (
-    <div className="space-y-6 p-6">
-      <h3 className="text-xl font-semibold">Additional Details</h3>
-      <div className="grid gap-4">
+    <div className="space-y-6">
+      <h3 className="text-xl font-semibold mb-4">Additional Details</h3>
+      <div className="divide-y divide-border">
         {sections.map((section) => (
-          <Card 
-            key={section.id} 
-            className="border rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md"
-          >
+          <div key={section.id} className="transition-all duration-200">
             <Collapsible open={section.isOpen} onOpenChange={section.setIsOpen}>
-              <div className="flex items-center justify-between w-full px-4 py-3">
+              <div className="flex items-center justify-between w-full py-3">
                 <div className="flex items-center gap-3">
                   <section.icon className="w-5 h-5" />
                   <h4 className="text-lg font-medium">{section.title}</h4>
@@ -133,12 +130,12 @@ export const AdditionalDetails = ({
                 />
               </div>
               <CollapsibleContent>
-                <div className="px-4 pb-4">
+                <div className="pb-4">
                   {section.content}
                 </div>
               </CollapsibleContent>
             </Collapsible>
-          </Card>
+          </div>
         ))}
       </div>
     </div>
