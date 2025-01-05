@@ -136,14 +136,6 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
               <Mail className="mr-2 h-4 w-4" />
               Share via Email
             </Button>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleCopyLink}
-            >
-              <Link2 className="mr-2 h-4 w-4" />
-              Copy Link
-            </Button>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
@@ -165,41 +157,46 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
             </Button>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             <Button
               variant="outline"
               className="w-full"
               onClick={() => handleSocialShare('facebook')}
             >
-              <Facebook className="h-4 w-4" />
+              <Facebook className="h-4 w-4 mr-2" />
+              Facebook
             </Button>
             <Button
               variant="outline"
               className="w-full"
               onClick={() => handleSocialShare('twitter')}
             >
-              <Twitter className="h-4 w-4" />
+              <Twitter className="h-4 w-4 mr-2" />
+              Twitter
             </Button>
             <Button
               variant="outline"
               className="w-full"
               onClick={() => handleSocialShare('linkedin')}
             >
-              <Linkedin className="h-4 w-4" />
+              <Linkedin className="h-4 w-4 mr-2" />
+              LinkedIn
             </Button>
             <Button
               variant="outline"
               className="w-full"
               onClick={() => handleSocialShare('whatsapp')}
             >
-              <MessageCircle className="h-4 w-4" />
+              <MessageCircle className="h-4 w-4 mr-2" />
+              WhatsApp
             </Button>
             <Button
               variant="outline"
               className="w-full"
               onClick={() => handleSocialShare('instagram')}
             >
-              <Instagram className="h-4 w-4" />
+              <Instagram className="h-4 w-4 mr-2" />
+              Instagram
             </Button>
           </div>
         </div>
