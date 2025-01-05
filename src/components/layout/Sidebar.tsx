@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { SupportModal } from "../modals/SupportModal";
 import { FeedbackModal } from "../modals/FeedbackModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,7 +31,11 @@ const businesses = [
   { id: 3, name: "Design Studio" },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onCollapse?: (collapsed: boolean) => void;
+}
+
+export function Sidebar({ onCollapse }: SidebarProps) {
   const navigate = useNavigate();
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
@@ -54,8 +58,14 @@ export function Sidebar() {
   };
 
   const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
+    const newCollapsedState = !isCollapsed;
+    setIsCollapsed(newCollapsedState);
+    onCollapse?.(newCollapsedState);
   };
+
+  useEffect(() => {
+    onCollapse?.(isCollapsed);
+  }, [isCollapsed, onCollapse]);
 
   return (
     <div 

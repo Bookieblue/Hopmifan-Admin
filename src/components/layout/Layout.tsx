@@ -11,11 +11,16 @@ import { DocumentProvider } from "@/contexts/DocumentContext";
 export function Layout() {
   const isMobile = useIsMobile();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   // Mock current business data - in a real app, this would come from a context or state management
   const currentBusiness = {
     name: "Acme Corp",
     logo: null // Set to null to test the fallback letter
+  };
+
+  const handleSidebarCollapse = (collapsed: boolean) => {
+    setIsCollapsed(collapsed);
   };
 
   return (
@@ -34,7 +39,7 @@ export function Layout() {
                     </SheetTrigger>
                     <SheetContent side="left" className="p-0 w-[280px]">
                       <div className="h-full overflow-y-auto">
-                        <Sidebar />
+                        <Sidebar onCollapse={handleSidebarCollapse} />
                       </div>
                     </SheetContent>
                   </Sheet>
@@ -72,8 +77,8 @@ export function Layout() {
           </>
         ) : (
           <>
-            <Sidebar />
-            <main className="flex-1 ml-64 p-4 md:p-8 overflow-x-hidden bg-white">
+            <Sidebar onCollapse={handleSidebarCollapse} />
+            <main className={`flex-1 p-4 md:p-8 overflow-x-hidden bg-white transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
               <div className="max-w-7xl mx-auto">
                 <Outlet />
               </div>
