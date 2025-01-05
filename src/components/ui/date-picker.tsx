@@ -20,7 +20,7 @@ interface DatePickerProps {
 
 export function DatePicker({ date, setDate }: DatePickerProps) {
   return (
-    <Popover>
+    <Popover modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -33,7 +33,7 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
           {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className="w-auto p-0 bg-white" align="start">
         <Calendar
           mode="single"
           selected={date}
