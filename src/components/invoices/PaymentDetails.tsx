@@ -15,6 +15,23 @@ interface PaymentDetailsProps {
   onBankAccountRemove: (accountId: string) => void;
   onPaymentGatewayChange: (gatewayId: string) => void;
   onCustomerSelect: (customer: any) => void;
+  selectedCurrency: string;
+  onCurrencyChange: (currency: string) => void;
+  invoice: {
+    number: string;
+    date: string;
+    currency: string;
+    customer: any;
+    items: Array<{
+      description: string;
+      quantity: number;
+      price: number;
+      amount: number;
+    }>;
+    notes: string;
+    terms: string;
+  };
+  onInvoiceChange: (invoice: any) => void;
 }
 
 export const PaymentDetails = ({ 
@@ -23,7 +40,11 @@ export const PaymentDetails = ({
   onBankAccountAdd,
   onBankAccountRemove,
   onPaymentGatewayChange,
-  onCustomerSelect
+  onCustomerSelect,
+  selectedCurrency,
+  onCurrencyChange,
+  invoice,
+  onInvoiceChange
 }: PaymentDetailsProps) => {
   const [bankAccounts, setBankAccounts] = useState([]);
   const [paymentGateways, setPaymentGateways] = useState([]);
@@ -41,7 +62,6 @@ export const PaymentDetails = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-    // In a real app, this would fetch from your API
     const mockBankAccounts = [
       { id: '1', name: "First Bank Account" },
       { id: '2', name: "Second Bank Account" }
@@ -91,6 +111,21 @@ export const PaymentDetails = ({
   return (
     <div className="space-y-6">
       <div className="space-y-4">
+        <div className="space-y-2">
+          <Label>Currency</Label>
+          <Select value={selectedCurrency} onValueChange={onCurrencyChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select currency" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="NGN">NGN (₦)</SelectItem>
+              <SelectItem value="USD">USD ($)</SelectItem>
+              <SelectItem value="EUR">EUR (€)</SelectItem>
+              <SelectItem value="GBP">GBP (£)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="space-y-2">
           <Label>Customer</Label>
           <div className="flex gap-2 items-center">
