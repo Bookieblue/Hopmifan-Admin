@@ -7,6 +7,7 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeft,
+  ChevronDown,
 } from "lucide-react";
 import { SupportModal } from "../modals/SupportModal";
 import { FeedbackModal } from "../modals/FeedbackModal";
@@ -131,7 +132,7 @@ export function Sidebar() {
 
       <SidebarNavigation
         isCollapsed={isCollapsed}
-        enabledDocuments={enabledDocuments}
+        enabledDocuments={enabledDocuments as Record<string, boolean>}
         isAccountOpen={isAccountOpen}
         toggleAccount={toggleAccount}
       />
