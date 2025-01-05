@@ -59,27 +59,37 @@ export const InvoiceFilters = ({
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog 
+          open={isOpen} 
+          onOpenChange={setIsOpen}
+          modal={true}
+        >
           <DialogTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2 px-3 md:px-4 whitespace-nowrap">
               <CalendarDays className="h-4 w-4" />
               Filter
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="bg-[#F9FAFB] p-5 sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Filter by Date Range</DialogTitle>
+              <DialogTitle className="text-lg font-semibold">Filter by Date Range</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <div className="bg-white rounded-lg p-5 mt-4 space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">From Date</label>
-                <DatePicker date={tempStartDate} setDate={setTempStartDate} />
+                <DatePicker 
+                  date={tempStartDate} 
+                  setDate={setTempStartDate} 
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">To Date</label>
-                <DatePicker date={tempEndDate} setDate={setTempEndDate} />
+                <DatePicker 
+                  date={tempEndDate} 
+                  setDate={setTempEndDate} 
+                />
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-2 pt-4">
                 <Button variant="outline" onClick={handleReset}>Reset Filter</Button>
                 <Button onClick={handleApplyFilter}>Apply Filter</Button>
               </div>
