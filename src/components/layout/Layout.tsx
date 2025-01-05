@@ -1,6 +1,6 @@
 import { Sidebar } from "./Sidebar";
 import { Toaster } from "@/components/ui/toaster";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -12,6 +12,10 @@ export function Layout() {
   const isMobile = useIsMobile();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const location = useLocation();
+  
+  // Check if current route is preview
+  const isPreviewRoute = location.pathname.includes('/preview');
   
   // Mock current business data - in a real app, this would come from a context or state management
   const currentBusiness = {
@@ -24,6 +28,22 @@ export function Layout() {
       setIsCollapsed(collapsed);
     }
   };
+
+  // If it's preview route, render without sidebar
+  if (isPreviewRoute) {
+    return (
+      <DocumentProvider>
+        <div className="flex min-h-screen bg-gray-50 font-inter">
+          <main className="flex-1 overflow-x-hidden bg-white">
+            <div className="max-w-7xl mx-auto">
+              <Outlet />
+            </div>
+          </main>
+          <Toaster />
+        </div>
+      </DocumentProvider>
+    );
+  }
 
   return (
     <DocumentProvider>
