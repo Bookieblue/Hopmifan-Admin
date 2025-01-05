@@ -18,7 +18,7 @@ export const PaymentDetails = ({
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
+        <div className="space-y-2">
           <Label>Payment Type</Label>
           <Select value={paymentType} onValueChange={(value: "one-time" | "recurring") => onPaymentTypeChange(value)}>
             <SelectTrigger>
@@ -31,13 +31,10 @@ export const PaymentDetails = ({
           </Select>
         </div>
         
-        <div>
-          <Label>Currency</Label>
-          <CurrencySelect
-            value={selectedCurrency}
-            onValueChange={onCurrencyChange}
-          />
-        </div>
+        <CurrencySelect
+          value={selectedCurrency}
+          onValueChange={onCurrencyChange}
+        />
       </div>
     </div>
   );

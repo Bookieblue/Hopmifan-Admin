@@ -115,36 +115,43 @@ export const AdditionalDetails = ({
   ];
 
   return (
-    <div className="space-y-4 p-4">
-      <h3 className="text-lg font-medium">Additional Details</h3>
-      {sections.map((section) => (
-        <Card key={section.id} className="border rounded-lg overflow-hidden">
-          <Collapsible open={section.isOpen} onOpenChange={section.setIsOpen}>
-            <CollapsibleTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className="w-full p-4 hover:bg-accent"
-                onClick={() => section.setIsOpen(!section.isOpen)}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex flex-col items-start text-left">
-                    <span className="flex items-center gap-2">
-                      <section.icon className="w-4 h-4" />
-                      {section.title}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {section.description}
-                    </span>
+    <div className="space-y-6 p-6">
+      <h3 className="text-xl font-semibold">Additional Details</h3>
+      <div className="grid gap-6">
+        {sections.map((section) => (
+          <Card 
+            key={section.id} 
+            className="border rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md"
+          >
+            <Collapsible open={section.isOpen} onOpenChange={section.setIsOpen}>
+              <CollapsibleTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  className="w-full p-6 hover:bg-accent/50 transition-colors"
+                  onClick={() => section.setIsOpen(!section.isOpen)}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex flex-col items-start text-left">
+                      <span className="flex items-center gap-3 text-lg font-medium">
+                        <section.icon className="w-5 h-5" />
+                        {section.title}
+                      </span>
+                      <span className="text-sm text-muted-foreground mt-1">
+                        {section.description}
+                      </span>
+                    </div>
                   </div>
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-6 pt-2 border-t bg-accent/5">
+                  {section.content}
                 </div>
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="p-4">
-              {section.content}
-            </CollapsibleContent>
-          </Collapsible>
-        </Card>
-      ))}
+              </CollapsibleContent>
+            </Collapsible>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
