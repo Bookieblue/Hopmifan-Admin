@@ -8,19 +8,20 @@ import { toast } from "sonner";
 
 interface CustomerSelectProps {
   onCustomerSelect: (customer: any) => void;
+  initialCustomer?: any;  // Added this line to fix the TypeScript error
 }
 
-export function CustomerSelect({ onCustomerSelect }: CustomerSelectProps) {
+export function CustomerSelect({ onCustomerSelect, initialCustomer }: CustomerSelectProps) {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    country: "",
+    name: initialCustomer?.name || "",
+    email: initialCustomer?.email || "",
+    phone: initialCustomer?.phone || "",
+    address: initialCustomer?.address || "",
+    city: initialCustomer?.city || "",
+    state: initialCustomer?.state || "",
+    zipCode: initialCustomer?.zipCode || "",
+    country: initialCustomer?.country || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
