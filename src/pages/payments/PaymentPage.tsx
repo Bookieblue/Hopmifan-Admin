@@ -3,15 +3,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
 
 export default function PaymentPage() {
   const { invoiceId } = useParams();
-
-  const handlePayment = () => {
-    window.location.href = "https://paystack.com/pay/afrika-mom-braids-store";
-    toast.success("Redirecting to Paystack payment page");
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -33,10 +27,7 @@ export default function PaymentPage() {
             </p>
             
             <div className="border-t pt-4">
-              <Button 
-                className="w-full"
-                onClick={handlePayment}
-              >
+              <Button className="w-full">
                 Proceed to Payment
               </Button>
             </div>
