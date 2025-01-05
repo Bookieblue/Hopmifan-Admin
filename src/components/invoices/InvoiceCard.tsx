@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,8 @@ interface InvoiceCardProps {
 }
 
 export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: InvoiceCardProps) => {
+  const navigate = useNavigate();
+  
   const formattedDate = new Date(invoice.date).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -32,8 +34,18 @@ export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: Invoice
 
   const type = invoice.type === 'one-time' ? 'One-time' : 'Recurring';
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    navigate(`/invoices/${invoice.id}/edit`);
+  };
+
   return (
-    <div className="md:border md:px-4 md:py-6 py-4 border-b last:border-b-0 px-4">
+    <div 
+      className="md:border md:px-4 md:py-6 py-4 border-b last:border-b-0 px-4 cursor-pointer hover:bg-gray-50"
+      onClick={handleCardClick}
+    >
       <div className="flex items-start justify-between gap-2 md:gap-6">
         <div className="flex-1 min-w-0">
           <h3 className="font-medium text-base md:text-lg truncate">{invoice.customer}</h3>

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -39,6 +39,7 @@ export const InvoiceTable = ({
   onShare
 }: InvoiceTableProps) => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -48,17 +49,32 @@ export const InvoiceTable = ({
     });
   };
 
+  const handleRowClick = (e: React.MouseEvent, invoiceId: string) => {
+    // Don't navigate if clicking checkbox or actions
+    if (
+      (e.target as HTMLElement).closest('.checkbox-cell') ||
+      (e.target as HTMLElement).closest('.actions-cell')
+    ) {
+      return;
+    }
+    navigate(`/invoices/${invoiceId}/edit`);
+  };
+
   if (isMobile) {
     return (
       <div className="-mx-4">
         {invoices.map((invoice) => (
-          <InvoiceCard
+          <div 
             key={invoice.id}
-            invoice={invoice}
-            onDelete={onDelete}
-            onDuplicate={onDuplicate}
-            onShare={onShare}
-          />
+            onClick={(e) => handleRowClick(e, invoice.id)}
+          >
+            <InvoiceCard
+              invoice={invoice}
+              onDelete={onDelete}
+              onDuplicate={onDuplicate}
+              onShare={onShare}
+            />
+          </div>
         ))}
       </div>
     );
@@ -83,7 +99,11 @@ export const InvoiceTable = ({
       </thead>
       <tbody>
         {invoices.map((invoice) => (
-          <tr key={invoice.id} className="border-b last:border-b-0 hover:bg-gray-50 cursor-pointer">
+          <tr 
+            key={invoice.id} 
+            className="border-b last:border-b-0 hover:bg-gray-50 cursor-pointer"
+            onClick={(e) => handleRowClick(e, invoice.id)}
+          >
             <td className="px-4 py-3 checkbox-cell">
               <Checkbox
                 checked={selectedInvoices.includes(invoice.id)}
