@@ -42,7 +42,7 @@ export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: Invoice
     ) {
       return;
     }
-    navigate(`/invoices/${invoice.id}`);
+    navigate(`/invoices/${invoice.id}/preview`);
   };
 
   const handleAction = (e: React.MouseEvent, action: () => void) => {
@@ -85,7 +85,7 @@ export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: Invoice
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-              <Link to={`/invoices/${invoice.id}`}>
+              <Link to={`/invoices/${invoice.id}/preview`}>
                 <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                   View
                 </DropdownMenuItem>
