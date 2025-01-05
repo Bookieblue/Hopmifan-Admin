@@ -31,9 +31,15 @@ export default function CreateInvoice() {
     date: new Date().toISOString().split('T')[0],
     currency: selectedCurrency,
     customer: null,
-    items: [],
-    notes: "",
-    terms: ""
+    items: [{
+      id: Math.random().toString(36).substr(2, 9),
+      description: "Service",
+      quantity: 1,
+      price: 1000,
+      amount: 1000
+    }],
+    notes: "Thank you for your business",
+    terms: "Net 30"
   });
 
   useEffect(() => {
