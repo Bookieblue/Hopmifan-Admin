@@ -21,7 +21,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
   const [includeBillingAddress, setIncludeBillingAddress] = useState(false);
   const { toast } = useToast();
   
-  const [customers] = useState([
+  const [customers, setCustomers] = useState([
     { id: '1', name: "Customer 1", email: "customer1@example.com" },
     { id: '2', name: "Customer 2", email: "customer2@example.com" }
   ]);
@@ -47,11 +47,27 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
   };
 
   const handleAddNewCustomer = () => {
+    if (!newCustomer.name || !newCustomer.email) {
+      toast({
+        title: "Error",
+        description: "Please fill in required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const customer = {
       id: Date.now().toString(),
       ...newCustomer,
     };
+
+    // Add the new customer to the customers list
+    setCustomers(prev => [...prev, customer]);
+    
+    // Select the newly added customer
     onCustomerSelect(customer);
+    
+    // Reset form and close dialog
     setNewCustomer({
       name: "",
       email: "",
@@ -62,6 +78,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
     });
     setIsDialogOpen(false);
     setIsSearchMode(false);
+    
     toast({
       title: "Success",
       description: "New customer added successfully",
@@ -72,8 +89,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
     setNewCustomer(prev => ({ ...prev, [field]: value }));
   };
 
-  if (!isSearchMode && (initialCustomer || customers.find(c => c.id === initialCustomer?.id))) {
-    const customer = initialCustomer || customers.find(c => c.id === initialCustomer?.id);
+  if (!isSearchMode && initialCustomer) {
     return (
       <div className="space-y-2">
         <div className="flex items-center justify-between">
@@ -90,11 +106,11 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-1">
-              <div className="font-medium">{customer.name}</div>
-              <div className="text-sm text-muted-foreground">{customer.email}</div>
-              {customer.street && (
+              <div className="font-medium">{initialCustomer.name}</div>
+              <div className="text-sm text-muted-foreground">{initialCustomer.email}</div>
+              {initialCustomer.street && (
                 <div className="text-sm text-muted-foreground">
-                  {customer.street}, {customer.state} {customer.postalCode}
+                  {initialCustomer.street}, {initialCustomer.state} {initialCustomer.postalCode}
                 </div>
               )}
             </div>
