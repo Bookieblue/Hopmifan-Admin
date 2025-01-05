@@ -1,9 +1,9 @@
-import { ImagePlus, Trash2, Edit, Plus } from "lucide-react";
+import { ImagePlus, Trash2, Edit, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import type { InvoiceItem } from "@/types/invoice";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
 
 interface InvoiceItemCardProps {
   item: InvoiceItem;
@@ -14,6 +14,7 @@ interface InvoiceItemCardProps {
 
 export const InvoiceItemCard = ({ item, onUpdate, onImageUpload, selectedCurrency }: InvoiceItemCardProps) => {
   const currencySymbol = selectedCurrency === 'NGN' ? '₦' : selectedCurrency;
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <Card className="border shadow-sm">
@@ -42,17 +43,33 @@ export const InvoiceItemCard = ({ item, onUpdate, onImageUpload, selectedCurrenc
           </div>
 
           <div className="flex-1">
-            <Input
-              value={item.description}
-              onChange={(e) => onUpdate(item.id, 'description', e.target.value)}
-              placeholder="Enter item description"
-              className="border-0 p-0 h-auto text-base font-medium focus-visible:ring-0"
-            />
-            <div className="space-y-1 mt-2 text-sm text-muted-foreground">
-              <p>Quantity: {item.quantity}</p>
-              <p>Tax: {item.tax}%</p>
-              <p>{currencySymbol}{item.price?.toLocaleString()}</p>
+            <div className="flex items-center gap-2">
+              <Input
+                value={item.description}
+                onChange={(e) => onUpdate(item.id, 'description', e.target.value)}
+                placeholder="Enter item description"
+                className="border-0 p-0 h-auto text-base font-medium focus-visible:ring-0"
+              />
+              <button
+                type="button"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                {isExpanded ? (
+                  <ChevronUp className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
+              </button>
             </div>
+            
+            {isExpanded && (
+              <div className="space-y-1 mt-2 text-sm text-muted-foreground">
+                <p>Quantity: {item.quantity}</p>
+                <p>Tax: {item.tax}%</p>
+                <p>{currencySymbol}{item.price?.toLocaleString()}</p>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
