@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { InvoiceItem } from "@/types/invoice";
 import { InvoiceItemCard } from "./InvoiceItemCard";
+import { useFormContext } from "react-hook-form";
 
 interface InvoiceItemsProps {
   items: InvoiceItem[];
@@ -12,8 +13,13 @@ interface InvoiceItemsProps {
 }
 
 export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
+  const form = useFormContext();
+  const businessType = form?.watch?.("businessType") || "freelancing";
+  
+  const defaultDescription = businessType === "freelancing" ? "Service 1" : "Product 1";
+
   const [newItem, setNewItem] = useState<Partial<InvoiceItem>>({
-    description: "",
+    description: defaultDescription,
     quantity: 1,
     price: 0,
     image: null
@@ -40,7 +46,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
 
     onItemsChange([...items, itemToAdd]);
     setNewItem({
-      description: "",
+      description: defaultDescription,
       quantity: 1,
       price: 0,
       image: null
@@ -92,7 +98,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                 className="mt-2"
               />
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 pr-4">
               <div className="flex-1">
                 <Label htmlFor="item-quantity">Quantity</Label>
                 <Input
