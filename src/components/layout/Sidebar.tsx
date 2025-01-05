@@ -24,6 +24,11 @@ import { Button } from "@/components/ui/button";
 import { useDocuments } from "@/contexts/DocumentContext";
 import { cn } from "@/lib/utils";
 import { SidebarNavigation } from "./SidebarNavigation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Mock data for businesses - in a real app, this would come from an API
 const businesses = [
@@ -92,18 +97,25 @@ export function Sidebar({ onCollapse }: SidebarProps) {
           </div>
         </Link>
         {!isMobile && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="p-1"
-            onClick={toggleSidebar}
-          >
-            {isCollapsed ? (
-              <PanelLeft className="h-4 w-4" />
-            ) : (
-              <PanelLeftClose className="h-4 w-4" />
-            )}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hover:bg-gray-100 transition-colors"
+                onClick={toggleSidebar}
+              >
+                {isCollapsed ? (
+                  <PanelLeft className="h-4 w-4 text-gray-600" />
+                ) : (
+                  <PanelLeftClose className="h-4 w-4 text-gray-600" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}</p>
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
 
