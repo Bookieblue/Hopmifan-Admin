@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface InvoicePreviewProps {
   invoice: {
@@ -17,6 +18,9 @@ interface InvoicePreviewProps {
     customer?: {
       name: string;
       email: string;
+      street?: string;
+      state?: string;
+      postalCode?: string;
     };
     items: Array<{
       description: string;
@@ -24,6 +28,9 @@ interface InvoicePreviewProps {
       price: number;
       amount: number;
     }>;
+    notes?: string;
+    terms?: string;
+    footer?: string;
   };
   selectedCurrency: string;
   selectedGateway?: string | null;
@@ -34,15 +41,30 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
   const currencySymbol = selectedCurrency === 'NGN' ? '₦' : selectedCurrency;
   
   const handleDownload = (format: 'pdf' | 'jpg') => {
-    // In a real app, this would trigger the actual download
-    console.log(`Downloading as ${format}`);
+    toast.success(`Downloading invoice as ${format.toUpperCase()}`);
+    // In a real implementation, this would trigger the actual download
+    const element = document.createElement('a');
+    element.href = '#';
+    element.download = `invoice-${invoice.number}.${format}`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  const handlePaymentPage = () => {
+    if (selectedGateway) {
+      toast.success("Redirecting to payment page");
+      // In a real implementation, this would redirect to the payment gateway
+      window.open(`/payment/${invoice.number}`, '_blank');
+    }
   };
 
   return (
     <div className="bg-[#F9FAFB] p-6 h-[calc(100vh-8rem)] overflow-y-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="space-y-4">
         <h2 className="text-lg font-semibold">Preview</h2>
-        <div className="flex gap-4">
+        
+        <div className="flex flex-wrap gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
@@ -70,7 +92,11 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
           </Button>
 
           {selectedGateway && (
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handlePaymentPage}
+            >
               <CreditCard className="h-4 w-4 mr-2" />
               Payment page
             </Button>
@@ -78,7 +104,7 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
         </div>
       </div>
 
-      <Card className="bg-white p-8">
+      <Card className="bg-white p-8 mt-4">
         <div className="space-y-6">
           <div className="flex justify-between items-start">
             <h2 className="text-2xl font-bold text-blue-600">Cordlo Invoice</h2>
@@ -90,11 +116,20 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
             </div>
           </div>
 
-          <div className="space-y-2">
-            <h3 className="font-semibold">Bill To:</h3>
-            <div>{invoice.customer?.name}</div>
-            <div>{invoice.customer?.email}</div>
-          </div>
+          {invoice.customer && (
+            <div className="space-y-2">
+              <h3 className="font-semibold">Bill To:</h3>
+              <div>{invoice.customer.name}</div>
+              <div>{invoice.customer.email}</div>
+              {invoice.customer.street && (
+                <div className="text-gray-600">
+                  {invoice.customer.street}
+                  {invoice.customer.state && `, ${invoice.customer.state}`}
+                  {invoice.customer.postalCode && ` ${invoice.customer.postalCode}`}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="mt-8">
             <table className="w-full">
@@ -118,7 +153,7 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
               </tbody>
               <tfoot>
                 <tr>
-                  <td colSpan={3} className="text-right pt-4 font-semibold">Subtotal:</td>
+                  <td colSpan={3} className="text-right pt-4 font-semibold">Total:</td>
                   <td className="text-right pt-4 font-semibold">
                     {currencySymbol}
                     {invoice.items.reduce((sum, item) => sum + item.amount, 0).toLocaleString()}
@@ -127,6 +162,26 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
               </tfoot>
             </table>
           </div>
+
+          {invoice.notes && (
+            <div className="mt-8 space-y-2">
+              <h3 className="font-semibold">Notes:</h3>
+              <p className="text-gray-600">{invoice.notes}</p>
+            </div>
+          )}
+
+          {invoice.terms && (
+            <div className="mt-4 space-y-2">
+              <h3 className="font-semibold">Terms & Conditions:</h3>
+              <p className="text-gray-600">{invoice.terms}</p>
+            </div>
+          )}
+
+          {invoice.footer && (
+            <div className="mt-8 pt-4 border-t text-center text-gray-500">
+              {invoice.footer}
+            </div>
+          )}
         </div>
       </Card>
 
