@@ -16,7 +16,7 @@ import {
   Linkedin,
   MessageCircle,
   Instagram,
-  Telegram
+  Send
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
@@ -195,7 +195,7 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
               className="w-full"
               onClick={() => handleSocialShare('telegram')}
             >
-              <Telegram className="h-4 w-4 mr-2" />
+              <Send className="h-4 w-4 mr-2" />
               Telegram
             </Button>
           </div>
