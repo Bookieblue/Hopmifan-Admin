@@ -4,9 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { UserPlus, PenSquare } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent } from "@/components/ui/card";
+import { CustomerCard } from "./CustomerCard";
 import { BillingAddressForm } from "./BillingAddressForm";
 
 interface CustomerSelectProps {
@@ -107,38 +107,19 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
   if (!isSearchMode && (initialCustomer || selectedCustomer)) {
     const displayCustomer = initialCustomer || selectedCustomer;
     return (
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label>Customer</Label>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsSearchMode(true)}
-            className="h-8 w-8 p-0"
-          >
-            <PenSquare className="h-4 w-4" />
-          </Button>
-        </div>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="space-y-1">
-              <div className="font-medium">{displayCustomer.name}</div>
-              <div className="text-sm text-muted-foreground">{displayCustomer.email}</div>
-              {displayCustomer.street && (
-                <div className="text-sm text-muted-foreground">
-                  {displayCustomer.street}, {displayCustomer.state} {displayCustomer.postalCode}
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="space-y-4">
+        <Label className="text-base font-medium">Customer</Label>
+        <CustomerCard 
+          customer={displayCustomer}
+          onEdit={() => setIsSearchMode(true)}
+        />
       </div>
     );
   }
 
   return (
-    <div className="space-y-2">
-      <Label>Customer</Label>
+    <div className="space-y-4">
+      <Label className="text-base font-medium">Customer</Label>
       <div className="flex gap-2 items-center">
         <Input
           placeholder="Search customers..."
@@ -152,11 +133,11 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
               <UserPlus className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Add New Customer</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-4 mt-4">
               <div className="space-y-2">
                 <Label>Name</Label>
                 <Input 
@@ -188,7 +169,9 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
                   onChange={handleNewCustomerFieldChange}
                 />
               )}
-              <Button className="w-full" onClick={handleAddNewCustomer}>Add Customer</Button>
+              <Button className="w-full" onClick={handleAddNewCustomer}>
+                Add Customer
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -198,7 +181,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
           {filteredCustomers.map((customer) => (
             <div 
               key={customer.id} 
-              className="p-2 hover:bg-accent cursor-pointer"
+              className="p-4 hover:bg-accent cursor-pointer transition-colors"
               onClick={() => handleCustomerSelect(customer)}
             >
               <div className="font-medium">{customer.name}</div>
