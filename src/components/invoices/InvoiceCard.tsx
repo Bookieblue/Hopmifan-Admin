@@ -33,8 +33,8 @@ export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: Invoice
   const type = invoice.type === 'one-time' ? 'One-time' : 'Recurring';
 
   return (
-    <div className="md:px-4 md:py-6 py-4 border-b last:border-b-0">
-      <div className="flex items-start justify-between gap-6">
+    <div className="md:border md:px-4 md:py-6 py-4 border-b last:border-b-0">
+      <div className="flex items-start justify-between gap-2 md:gap-6">
         <div className="flex-1">
           <h3 className="font-medium text-base md:text-lg">{invoice.customer}</h3>
           <div className="mt-2 text-sm text-gray-600 space-y-1">
@@ -44,7 +44,7 @@ export const InvoiceCard = ({ invoice, onDelete, onDuplicate, onShare }: Invoice
           </div>
         </div>
 
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-1 md:gap-3">
           <div className="text-right">
             <span className="font-semibold text-base md:text-lg block mb-2">{invoice.amount}</span>
             <span className={cn(
