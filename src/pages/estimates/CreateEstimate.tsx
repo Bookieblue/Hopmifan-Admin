@@ -1,160 +1,123 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
-import { InvoiceHeader } from "@/components/invoices/InvoiceHeader";
-import { PaymentDetails } from "@/components/invoices/PaymentDetails";
-import { InvoiceItems } from "@/components/invoices/InvoiceItems";
-import { InvoicePreview } from "@/components/invoices/InvoicePreview";
-import { generateInvoiceId } from "@/lib/utils";
-import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
-import type { InvoiceItem } from "@/types/invoice";
-import { AdditionalDetails } from "@/components/invoices/AdditionalDetails";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function CreateEstimate() {
-  const navigate = useNavigate();
-  const [estimateId, setEstimateId] = useState(generateInvoiceId().replace('INV', 'EST'));
-  const [dueDate, setDueDate] = useState("");
-  const [paymentType, setPaymentType] = useState<"one-time" | "recurring">("one-time");
-  const [selectedBankAccounts, setSelectedBankAccounts] = useState<string[]>([]);
-  const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
-  const [items, setItems] = useState<InvoiceItem[]>([]);
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
-  const [status, setStatus] = useState<InvoiceStatus>("pending");
-  const [selectedCurrency, setSelectedCurrency] = useState("NGN");
-  const [notes, setNotes] = useState("Please review this estimate");
-  const [terms, setTerms] = useState("This estimate is valid for 30 days");
-  const [footer, setFooter] = useState("");
-  
-  const [estimate, setEstimate] = useState({
-    number: estimateId,
-    date: new Date().toISOString().split('T')[0],
-    currency: selectedCurrency,
-    customer: null,
-    items: [{
-      id: Math.random().toString(36).substr(2, 9),
-      description: "Service",
-      quantity: 1,
-      price: 1000,
-      amount: 1000
-    }],
-    notes: notes,
-    terms: terms
-  });
-
-  const handleSubmit = async (status: 'draft' | 'published') => {
-    try {
-      const estimateData = {
-        id: estimateId,
-        dueDate,
-        paymentType,
-        bankAccounts: selectedBankAccounts,
-        paymentGateway: selectedGateway,
-        items,
-        notes,
-        terms,
-        status,
-        customer: selectedCustomer,
-        total: items.reduce((sum, item) => sum + item.amount, 0)
-      };
-
-      console.log('Saving estimate:', estimateData);
-      
-      toast.success(
-        status === 'draft' 
-          ? "Estimate saved as draft" 
-          : "Estimate created successfully"
-      );
-      
-      navigate('/estimates');
-    } catch (error) {
-      toast.error("Failed to create estimate");
-    }
-  };
-
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/estimates")}>
+    <div className="p-6 max-w-[1000px] mx-auto">
+      <div className="flex items-center gap-4 mb-8">
+        <Link to="/estimates">
+          <Button variant="ghost" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-semibold">Create Estimate</h1>
-        </div>
+        </Link>
+        <h1 className="text-2xl font-semibold">Create Estimate</h1>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <form className="space-y-8">
-          <Card>
-            <CardContent className="p-6 space-y-8">
-              <InvoiceHeader
-                invoiceId={estimateId}
-                dueDate={dueDate}
-                paymentType={paymentType}
-                onInvoiceIdChange={setEstimateId}
-                onDueDateChange={setDueDate}
-                onPaymentTypeChange={setPaymentType}
-                onCustomerSelect={setSelectedCustomer}
-              />
+      <form className="space-y-8">
+        <Card>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="number">Number</Label>
+                <Input id="number" placeholder="EST-001" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="date">Date</Label>
+                <Input id="date" type="date" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="clientName">Client Name</Label>
+                <Input id="clientName" placeholder="Enter client name" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="clientEmail">Client Email</Label>
+                <Input id="clientEmail" type="email" placeholder="client@example.com" />
+              </div>
+            </div>
 
-              <PaymentDetails
-                selectedCurrency={selectedCurrency}
-                onCurrencyChange={setSelectedCurrency}
-                paymentType={paymentType}
-                onPaymentTypeChange={setPaymentType}
-              />
+            <div className="mt-8">
+              <h3 className="text-lg font-medium mb-4">Items</h3>
+              <div className="space-y-4">
+                <div className="grid grid-cols-12 gap-4">
+                  <div className="col-span-5">
+                    <Label>Description</Label>
+                  </div>
+                  <div className="col-span-2">
+                    <Label>Quantity</Label>
+                  </div>
+                  <div className="col-span-2">
+                    <Label>Price</Label>
+                  </div>
+                  <div className="col-span-2">
+                    <Label>Amount</Label>
+                  </div>
+                </div>
 
-              <div className="mt-8">
-                <h3 className="text-lg font-medium mb-4">Items</h3>
-                <InvoiceItems
-                  items={items}
-                  onItemsChange={setItems}
-                />
+                <div className="grid grid-cols-12 gap-4 items-center">
+                  <div className="col-span-5">
+                    <Input placeholder="Item description" />
+                  </div>
+                  <div className="col-span-2">
+                    <Input type="number" defaultValue={1} min={1} />
+                  </div>
+                  <div className="col-span-2">
+                    <Input type="number" defaultValue={0} min={0} />
+                  </div>
+                  <div className="col-span-2">
+                    <Input type="number" defaultValue={0} disabled />
+                  </div>
+                  <div className="col-span-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
 
-              <AdditionalDetails
-                selectedBankAccounts={selectedBankAccounts}
-                selectedGateway={selectedGateway}
-                onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
-                onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
-                onPaymentGatewayChange={setSelectedGateway}
-                notes={notes}
-                terms={terms}
-                footer={footer}
-                onNotesChange={setNotes}
-                onTermsChange={setTerms}
-                onFooterChange={setFooter}
-              />
+              <Button variant="outline" className="mt-4 gap-2">
+                <Plus className="w-4 h-4" />
+                Add Item
+              </Button>
+            </div>
 
-              <div className="mt-4">
-                <InvoiceStatusSelect 
-                  status={status} 
-                  onStatusChange={setStatus}
-                />
+            <div className="mt-8 space-y-6">
+              <div className="space-y-2">
+                <Label>Bank Account</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select bank account" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="account1">Account 1</SelectItem>
+                    <SelectItem value="account2">Account 2</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </CardContent>
-          </Card>
 
-          <div className="flex justify-end gap-4">
-            <Button variant="outline" onClick={() => handleSubmit('draft')}>
-              Save as Draft
-            </Button>
-            <Button onClick={() => handleSubmit('published')}>
-              Create Estimate
-            </Button>
-          </div>
-        </form>
+              <div className="space-y-2">
+                <Label>Notes</Label>
+                <Textarea placeholder="Add any notes..." />
+              </div>
 
-        <div className="hidden lg:block sticky top-6">
-          <InvoicePreview 
-            invoice={estimate}
-            selectedCurrency={selectedCurrency}
-            selectedGateway={selectedGateway}
-          />
+              <div className="space-y-2">
+                <Label>Terms & Conditions</Label>
+                <Textarea placeholder="Add terms and conditions..." />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-end gap-4">
+          <Button variant="outline">Cancel</Button>
+          <Button type="submit">Create Estimate</Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
