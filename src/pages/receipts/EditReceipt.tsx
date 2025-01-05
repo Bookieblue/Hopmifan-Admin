@@ -1,125 +1,164 @@
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
+import { InvoicePreview } from "@/components/invoices/InvoicePreview";
+import { InvoiceHeader } from "@/components/invoices/InvoiceHeader";
+import { PaymentDetails } from "@/components/invoices/PaymentDetails";
+import { InvoiceItems } from "@/components/invoices/InvoiceItems";
+import { AdditionalDetails } from "@/components/invoices/AdditionalDetails";
+import type { InvoiceItem } from "@/types/invoice";
 
 export default function EditReceipt() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [selectedCurrency, setSelectedCurrency] = useState("NGN");
+  const [status, setStatus] = useState<InvoiceStatus>("paid");
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [receiptId, setReceiptId] = useState(id || "");
+  const [dueDate, setDueDate] = useState("");
+  const [paymentType, setPaymentType] = useState<"one-time" | "recurring">("one-time");
+  const [selectedBankAccounts, setSelectedBankAccounts] = useState<string[]>([]);
+  const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
+  const [items, setItems] = useState<InvoiceItem[]>([{
+    id: Math.random().toString(36).substr(2, 9),
+    description: "Service",
+    quantity: 1,
+    price: 1000,
+    amount: 1000
+  }]);
+  const [notes, setNotes] = useState("Thank you for your payment");
+  const [terms, setTerms] = useState("");
+  const [footer, setFooter] = useState("This is an official receipt");
+
+  const [receipt, setReceipt] = useState({
+    number: id,
+    date: new Date().toISOString().split('T')[0],
+    currency: selectedCurrency,
+    customer: null,
+    items: items,
+    notes: notes,
+    terms: terms
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const receiptData = {
+        id: receiptId,
+        dueDate,
+        paymentType,
+        bankAccounts: selectedBankAccounts,
+        paymentGateway: selectedGateway,
+        items,
+        notes,
+        terms,
+        status,
+        customer: selectedCustomer,
+        total: items.reduce((sum, item) => sum + item.amount, 0)
+      };
+
+      console.log('Updating receipt:', receiptData);
+      
+      toast.success("Receipt updated successfully");
+      navigate("/receipts");
+    } catch (error) {
+      toast.error("Failed to update receipt");
+    }
+  };
 
   return (
-    <div className="p-6 max-w-[1000px] mx-auto">
-      <div className="flex items-center gap-4 mb-8">
-        <Link to={`/receipts/${id}`}>
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <h1 className="text-2xl font-semibold">Edit Receipt #{id}</h1>
+    <div className="p-6">
+      <div className="flex items-center justify-between gap-4 mb-8">
+        <div className="flex items-center gap-4">
+          <Link to="/receipts">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-semibold">Edit Receipt #{id}</h1>
+        </div>
+        <InvoiceStatusSelect 
+          status={status} 
+          onStatusChange={(newStatus) => {
+            setStatus(newStatus);
+            toast.success(`Receipt status updated to ${newStatus}`);
+          }}
+        />
       </div>
 
-      <form className="space-y-8">
-        <Card>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="number">Number</Label>
-                <Input id="number" placeholder="RCP-001" defaultValue={id} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="date">Date</Label>
-                <Input id="date" type="date" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="clientName">Client Name</Label>
-                <Input id="clientName" placeholder="Enter client name" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="clientEmail">Client Email</Label>
-                <Input id="clientEmail" type="email" placeholder="client@example.com" />
-              </div>
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <Card>
+            <CardContent className="p-6 space-y-8">
+              <InvoiceHeader
+                invoiceId={receiptId}
+                dueDate={dueDate}
+                paymentType={paymentType}
+                onInvoiceIdChange={setReceiptId}
+                onDueDateChange={setDueDate}
+                onPaymentTypeChange={setPaymentType}
+                onCustomerSelect={(customer) => {
+                  setSelectedCustomer(customer);
+                  setReceipt(prev => ({ ...prev, customer }));
+                }}
+                initialCustomer={selectedCustomer}
+              />
 
-            <div className="mt-8">
-              <h3 className="text-lg font-medium mb-4">Items</h3>
-              <div className="space-y-4">
-                <div className="grid grid-cols-12 gap-4">
-                  <div className="col-span-5">
-                    <Label>Description</Label>
-                  </div>
-                  <div className="col-span-2">
-                    <Label>Quantity</Label>
-                  </div>
-                  <div className="col-span-2">
-                    <Label>Price</Label>
-                  </div>
-                  <div className="col-span-2">
-                    <Label>Amount</Label>
-                  </div>
-                </div>
+              <PaymentDetails
+                selectedCurrency={selectedCurrency}
+                onCurrencyChange={setSelectedCurrency}
+                paymentType={paymentType}
+                onPaymentTypeChange={setPaymentType}
+              />
 
-                <div className="grid grid-cols-12 gap-4 items-center">
-                  <div className="col-span-5">
-                    <Input placeholder="Item description" />
-                  </div>
-                  <div className="col-span-2">
-                    <Input type="number" defaultValue={1} min={1} />
-                  </div>
-                  <div className="col-span-2">
-                    <Input type="number" defaultValue={0} min={0} />
-                  </div>
-                  <div className="col-span-2">
-                    <Input type="number" defaultValue={0} disabled />
-                  </div>
-                  <div className="col-span-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
+              <div className="mt-8">
+                <h3 className="text-lg font-medium mb-4">Items</h3>
+                <InvoiceItems
+                  items={items}
+                  onItemsChange={setItems}
+                />
               </div>
 
-              <Button variant="outline" className="mt-4 gap-2">
-                <Plus className="w-4 h-4" />
-                Add Item
-              </Button>
-            </div>
+              <AdditionalDetails
+                selectedBankAccounts={selectedBankAccounts}
+                selectedGateway={selectedGateway}
+                onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
+                onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
+                onPaymentGatewayChange={setSelectedGateway}
+                notes={notes}
+                terms={terms}
+                footer={footer}
+                onNotesChange={setNotes}
+                onTermsChange={setTerms}
+                onFooterChange={setFooter}
+              />
+            </CardContent>
+          </Card>
 
-            <div className="mt-8 space-y-6">
-              <div className="space-y-2">
-                <Label>Bank Account</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select bank account" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="account1">Account 1</SelectItem>
-                    <SelectItem value="account2">Account 2</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          <div className="flex justify-end gap-4">
+            <Button 
+              type="button" 
+              variant="outline"
+              onClick={() => navigate("/receipts")}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">Update Receipt</Button>
+          </div>
+        </form>
 
-              <div className="space-y-2">
-                <Label>Notes</Label>
-                <Textarea placeholder="Add any notes..." />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Terms & Conditions</Label>
-                <Textarea placeholder="Add terms and conditions..." />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="flex justify-end gap-4">
-          <Button variant="outline">Cancel</Button>
-          <Button type="submit">Save Changes</Button>
+        <div className="hidden lg:block sticky top-6">
+          <InvoicePreview 
+            invoice={receipt}
+            selectedCurrency={selectedCurrency}
+            selectedGateway={selectedGateway}
+          />
         </div>
-      </form>
+      </div>
     </div>
   );
 }
