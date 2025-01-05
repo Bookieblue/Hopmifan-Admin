@@ -25,8 +25,6 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
       quantity: 1,
       price: 0,
       amount: 0,
-      tax: 0,
-      discount: 0,
       image: null
     };
     onItemsChange([...items, newItem]);
@@ -36,11 +34,8 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
     const updatedItems = items.map(item => {
       if (item.id === id) {
         const updatedItem = { ...item, [field]: value };
-        if (['quantity', 'price', 'tax', 'discount'].includes(field)) {
-          const subtotal = Number(updatedItem.quantity) * Number(updatedItem.price);
-          const taxAmount = subtotal * (Number(updatedItem.tax) / 100);
-          const discountAmount = subtotal * (Number(updatedItem.discount) / 100);
-          updatedItem.amount = subtotal + taxAmount - discountAmount;
+        if (['quantity', 'price'].includes(field)) {
+          updatedItem.amount = Number(updatedItem.quantity) * Number(updatedItem.price);
         }
         return updatedItem;
       }
@@ -64,8 +59,8 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-12 gap-6 px-6 py-4 bg-muted/50 rounded-lg">
-        <div className="col-span-4">
+      <div className="grid grid-cols-8 gap-6 px-6 py-4 bg-muted/50 rounded-lg">
+        <div className="col-span-3">
           <Label className="text-sm font-medium">Description</Label>
         </div>
         <div className="col-span-1">
@@ -73,12 +68,6 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
         </div>
         <div className="col-span-2">
           <Label className="text-sm font-medium">Price</Label>
-        </div>
-        <div className="col-span-1">
-          <Label className="text-sm font-medium">Tax %</Label>
-        </div>
-        <div className="col-span-1">
-          <Label className="text-sm font-medium">Disc %</Label>
         </div>
         <div className="col-span-2">
           <Label className="text-sm font-medium">Amount</Label>
@@ -88,8 +77,8 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
       {items.map((item) => (
         <Card key={item.id} className="border shadow-sm">
           <CardContent className="p-6">
-            <div className="grid grid-cols-12 gap-6 items-start">
-              <div className="col-span-4 space-y-4">
+            <div className="grid grid-cols-8 gap-6 items-start">
+              <div className="col-span-3 space-y-4">
                 <Input
                   value={item.description}
                   onChange={(e) => updateItem(item.id, 'description', e.target.value)}
@@ -140,26 +129,6 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                   className="w-full"
                 />
               </div>
-              <div className="col-span-1">
-                <Input
-                  type="number"
-                  value={item.tax}
-                  onChange={(e) => updateItem(item.id, 'tax', Number(e.target.value))}
-                  min={0}
-                  max={100}
-                  className="w-full"
-                />
-              </div>
-              <div className="col-span-1">
-                <Input
-                  type="number"
-                  value={item.discount}
-                  onChange={(e) => updateItem(item.id, 'discount', Number(e.target.value))}
-                  min={0}
-                  max={100}
-                  className="w-full"
-                />
-              </div>
               <div className="col-span-2">
                 <Input
                   type="number"
@@ -167,18 +136,6 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                   disabled
                   className="w-full bg-muted"
                 />
-              </div>
-              <div className="col-span-1 flex justify-center">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 text-destructive hover:text-destructive/90"
-                  onClick={() => removeItem(item.id)}
-                  disabled={items.length === 1}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
               </div>
             </div>
           </CardContent>
