@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectLabel } from "@/components/ui/select";
 import { CreditCard, Wallet, X } from "lucide-react";
 
 interface PaymentMethodSelectProps {
@@ -36,7 +36,7 @@ export const PaymentMethodSelect = ({
           <SelectValue placeholder="Add payment method" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="" disabled>Bank Accounts</SelectItem>
+          <SelectLabel>Bank Accounts</SelectLabel>
           {bankAccounts?.map((account) => (
             <SelectItem
               key={`bank_${account.id}`}
@@ -46,7 +46,7 @@ export const PaymentMethodSelect = ({
               {account.name}
             </SelectItem>
           ))}
-          <SelectItem value="" disabled>Payment Gateways</SelectItem>
+          <SelectLabel>Payment Gateways</SelectLabel>
           {paymentGateways?.map((gateway) => (
             <SelectItem
               key={gateway.id}
