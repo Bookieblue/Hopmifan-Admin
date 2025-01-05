@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp, Wallet, FileText } from "lucide-react";
 import { useState } from "react";
 import { PaymentMethodSelect } from "./payment/PaymentMethodSelect";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 
 interface AdditionalDetailsProps {
   selectedBankAccounts: string[];
@@ -121,29 +122,27 @@ export const AdditionalDetails = ({
         {sections.map((section) => (
           <Card 
             key={section.id} 
-            className="border rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md p-3"
+            className="border rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md p-6"
           >
             <Collapsible open={section.isOpen} onOpenChange={section.setIsOpen}>
-              <CollapsibleTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  className="w-full p-6 hover:bg-accent/50 transition-colors rounded-lg"
-                >
-                  <div className="flex items-center justify-between w-full">
-                    <div className="flex flex-col items-start text-left">
-                      <span className="flex items-center gap-3 text-lg font-medium">
-                        <section.icon className="w-5 h-5" />
-                        {section.title}
-                      </span>
-                      <span className="text-sm text-muted-foreground mt-1">
-                        {section.description}
-                      </span>
-                    </div>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <section.icon className="w-5 h-5" />
+                    <h4 className="text-lg font-medium">{section.title}</h4>
                   </div>
-                </Button>
-              </CollapsibleTrigger>
+                  <p className="text-sm text-muted-foreground mt-1 pr-8 line-clamp-2">
+                    {section.description}
+                  </p>
+                </div>
+                <Switch
+                  checked={section.isOpen}
+                  onCheckedChange={section.setIsOpen}
+                  className="ml-4"
+                />
+              </div>
               <CollapsibleContent>
-                <div className="p-6 pt-2 border-t bg-accent/5 rounded-lg mt-2">
+                <div className="mt-6 pt-4 border-t bg-accent/5 rounded-lg">
                   {section.content}
                 </div>
               </CollapsibleContent>
