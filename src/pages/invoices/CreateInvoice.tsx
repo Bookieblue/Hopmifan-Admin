@@ -48,9 +48,7 @@ export default function CreateInvoice() {
   });
 
   useEffect(() => {
-    // Fetch template content from settings
     const fetchTemplateContent = async () => {
-      // In a real app, this would be an API call
       const templateContent = {
         notesTemplate: "Please include invoice number in payment reference",
         termsAndConditions: "Payment is due within 30 days"
@@ -66,7 +64,6 @@ export default function CreateInvoice() {
     fetchTemplateContent();
   }, []);
 
-  // Update invoice state whenever relevant fields change
   useEffect(() => {
     setInvoice(prev => ({
       ...prev,
@@ -154,102 +151,98 @@ export default function CreateInvoice() {
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Additional Details</h3>
                 
-                <Collapsible open={isNotesOpen} onOpenChange={setIsNotesOpen}>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="outline" className="w-full flex justify-between">
-                      <span className="flex items-center gap-2">
-                        <FileText className="w-4 h-4" />
-                        Notes
-                      </span>
-                      {isNotesOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pt-4">
-                    <Textarea
-                      value={invoice.notes}
-                      onChange={(e) => setInvoice(prev => ({ ...prev, notes: e.target.value }))}
-                      placeholder="Add notes..."
-                    />
-                  </CollapsibleContent>
-                </Collapsible>
+                <Card className="border rounded-lg">
+                  <Collapsible>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" className="w-full flex justify-between p-4 hover:bg-accent">
+                        <span className="flex items-center gap-2">
+                          <Wallet className="w-4 h-4" />
+                          Payment Methods
+                        </span>
+                        <ChevronDown className="w-4 h-4" />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="p-4 pt-0">
+                      <PaymentMethodSelect 
+                        selectedBankAccounts={selectedBankAccounts}
+                        selectedGateway={selectedGateway}
+                        onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
+                        onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
+                        onPaymentGatewayChange={setSelectedGateway}
+                        bankAccounts={[
+                          { id: '1', name: "First Bank Account" },
+                          { id: '2', name: "Second Bank Account" }
+                        ]}
+                        paymentGateways={[
+                          { id: 'stripe', name: "Stripe" },
+                          { id: 'paypal', name: "PayPal" }
+                        ]}
+                      />
+                    </CollapsibleContent>
+                  </Collapsible>
+                </Card>
 
-                <Collapsible>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="outline" className="w-full flex justify-between">
-                      <span className="flex items-center gap-2">
-                        <Wallet className="w-4 h-4" />
-                        Payment Methods
-                      </span>
-                      <ChevronDown className="w-4 h-4" />
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pt-4">
-                    <PaymentMethodSelect 
-                      selectedBankAccounts={selectedBankAccounts}
-                      selectedGateway={selectedGateway}
-                      onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
-                      onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
-                      onPaymentGatewayChange={setSelectedGateway}
-                      bankAccounts={[]}
-                      paymentGateways={[]}
-                    />
-                  </CollapsibleContent>
-                </Collapsible>
+                <Card className="border rounded-lg">
+                  <Collapsible open={isNotesOpen} onOpenChange={setIsNotesOpen}>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" className="w-full flex justify-between p-4 hover:bg-accent">
+                        <span className="flex items-center gap-2">
+                          <FileText className="w-4 h-4" />
+                          Notes
+                        </span>
+                        {isNotesOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="p-4 pt-0">
+                      <Textarea
+                        value={invoice.notes}
+                        onChange={(e) => setInvoice(prev => ({ ...prev, notes: e.target.value }))}
+                        placeholder="Add notes..."
+                      />
+                    </CollapsibleContent>
+                  </Collapsible>
+                </Card>
 
-                <Collapsible open={isTermsOpen} onOpenChange={setIsTermsOpen}>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="outline" className="w-full flex justify-between">
-                      <span className="flex items-center gap-2">
-                        <FileText className="w-4 h-4" />
-                        Terms & Conditions
-                      </span>
-                      {isTermsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pt-4">
-                    <Textarea
-                      value={invoice.terms}
-                      onChange={(e) => setInvoice(prev => ({ ...prev, terms: e.target.value }))}
-                      placeholder="Add terms and conditions..."
-                    />
-                  </CollapsibleContent>
-                </Collapsible>
+                <Card className="border rounded-lg">
+                  <Collapsible open={isTermsOpen} onOpenChange={setIsTermsOpen}>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" className="w-full flex justify-between p-4 hover:bg-accent">
+                        <span className="flex items-center gap-2">
+                          <FileText className="w-4 h-4" />
+                          Terms & Conditions
+                        </span>
+                        {isTermsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="p-4 pt-0">
+                      <Textarea
+                        value={invoice.terms}
+                        onChange={(e) => setInvoice(prev => ({ ...prev, terms: e.target.value }))}
+                        placeholder="Add terms and conditions..."
+                      />
+                    </CollapsibleContent>
+                  </Collapsible>
+                </Card>
 
-                <Collapsible open={isFooterOpen} onOpenChange={setIsFooterOpen}>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="outline" className="w-full flex justify-between">
-                      <span className="flex items-center gap-2">
-                        <FileText className="w-4 h-4" />
-                        Footer
-                      </span>
-                      {isFooterOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pt-4">
-                    <Textarea
-                      placeholder="Add footer text..."
-                      onChange={(e) => setInvoice(prev => ({ ...prev, footer: e.target.value }))}
-                    />
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <Collapsible open={isAttachmentsOpen} onOpenChange={setIsAttachmentsOpen}>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="outline" className="w-full flex justify-between">
-                      <span className="flex items-center gap-2">
-                        <FileText className="w-4 h-4" />
-                        Attachments
-                      </span>
-                      {isAttachmentsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pt-4">
-                    <Button variant="outline" className="w-full">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Attachment
-                    </Button>
-                  </CollapsibleContent>
-                </Collapsible>
+                <Card className="border rounded-lg">
+                  <Collapsible open={isFooterOpen} onOpenChange={setIsFooterOpen}>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" className="w-full flex justify-between p-4 hover:bg-accent">
+                        <span className="flex items-center gap-2">
+                          <FileText className="w-4 h-4" />
+                          Footer
+                        </span>
+                        {isFooterOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="p-4 pt-0">
+                      <Textarea
+                        placeholder="Add footer text..."
+                        onChange={(e) => setInvoice(prev => ({ ...prev, footer: e.target.value }))}
+                      />
+                    </CollapsibleContent>
+                  </Collapsible>
+                </Card>
 
                 <div className="mt-4">
                   <InvoiceStatusSelect 
