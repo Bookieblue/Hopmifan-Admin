@@ -64,7 +64,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-muted/50 rounded-lg">
+      <div className="grid grid-cols-12 gap-6 px-6 py-4 bg-muted/50 rounded-lg">
         <div className="col-span-4">
           <Label className="text-sm font-medium">Description</Label>
         </div>
@@ -89,14 +89,14 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
         <Card key={item.id} className="border shadow-sm">
           <CardContent className="p-6">
             <div className="grid grid-cols-12 gap-6 items-start">
-              <div className="col-span-4 space-y-3">
+              <div className="col-span-4 space-y-4">
                 <Input
                   value={item.description}
                   onChange={(e) => updateItem(item.id, 'description', e.target.value)}
                   placeholder="Enter item description"
                   className="w-full"
                 />
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <Input
                     type="file"
                     accept="image/*"
@@ -114,7 +114,11 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                     <ImagePlus className="w-4 h-4 mr-2" />
                     {item.image ? 'Change Image' : 'Add Image'}
                   </Button>
-                  {item.image && <span className="text-sm text-muted-foreground truncate max-w-[150px]">{item.image.name}</span>}
+                  {item.image && (
+                    <span className="text-sm text-muted-foreground truncate max-w-[150px]">
+                      {item.image.name}
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="col-span-1">
@@ -184,7 +188,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
       <Button 
         type="button"
         variant="outline" 
-        className="w-full mt-4 gap-2 border-dashed" 
+        className="w-full mt-6 gap-2 border-dashed" 
         onClick={addItem}
       >
         <Plus className="w-4 h-4" />
