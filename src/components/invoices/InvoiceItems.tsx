@@ -81,27 +81,6 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
       <div className="border rounded-lg p-6 space-y-6">
         <h3 className="text-lg font-medium mb-4">Add New Item</h3>
         <div className="flex gap-4 items-start">
-          <div 
-            className="relative w-16 h-16 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
-            onClick={() => document.getElementById('new-item-image')?.click()}
-          >
-            {newItem.image ? (
-              <img 
-                src={URL.createObjectURL(newItem.image)} 
-                alt="New item" 
-                className="w-14 h-14 object-cover rounded"
-              />
-            ) : (
-              <ImagePlus className="w-6 h-6 text-gray-400" />
-            )}
-            <Input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              id="new-item-image"
-              onChange={handleImageUpload}
-            />
-          </div>
           <div className="flex-1 space-y-4">
             <div>
               <Label htmlFor="item-description">Item Description</Label>
@@ -113,7 +92,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                 className="mt-2"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="item-quantity">Quantity</Label>
                 <Input
@@ -137,16 +116,48 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                   className="mt-2"
                 />
               </div>
+              <div>
+                <Label htmlFor="item-amount">Amount</Label>
+                <Input
+                  id="item-amount"
+                  type="number"
+                  value={(newItem.quantity || 0) * (newItem.price || 0)}
+                  readOnly
+                  className="mt-2 bg-gray-50"
+                />
+              </div>
             </div>
           </div>
+          <div 
+            className="relative w-16 h-16 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={() => document.getElementById('new-item-image')?.click()}
+          >
+            {newItem.image ? (
+              <img 
+                src={URL.createObjectURL(newItem.image)} 
+                alt="New item" 
+                className="w-14 h-14 object-cover rounded"
+              />
+            ) : (
+              <ImagePlus className="w-6 h-6 text-gray-400" />
+            )}
+            <Input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              id="new-item-image"
+              onChange={handleImageUpload}
+            />
+          </div>
         </div>
-        <Button 
-          type="button"
-          className="w-full mt-4" 
-          onClick={handleAddItem}
-        >
-          Add Now
-        </Button>
+        <div className="flex justify-end">
+          <Button 
+            type="button"
+            onClick={handleAddItem}
+          >
+            Add Now
+          </Button>
+        </div>
       </div>
     </div>
   );
