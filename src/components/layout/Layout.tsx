@@ -24,7 +24,7 @@ export function Layout() {
         {isMobile ? (
           <>
             <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 z-50">
-              <div className="flex items-center justify-between h-full">
+              <div className="flex items-center justify-between pr-4 h-full">
                 <div className="flex items-center gap-4">
                   <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                     <SheetTrigger asChild>
