@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
+import { InvoicePreview } from "@/components/invoices/InvoicePreview";
 
 const currencies = [
   { code: "NGN", symbol: "₦", name: "Nigerian Naira" },
@@ -38,7 +39,6 @@ export default function EditInvoice() {
   const [newCustomer, setNewCustomer] = useState({ name: "", email: "", phone: "" });
   const [status, setStatus] = useState<InvoiceStatus>("pending");
 
-  // Mock data for demonstration - in a real app, fetch this from your backend
   const [invoice, setInvoice] = useState({
     number: id,
     date: "2024-01-01",
@@ -58,7 +58,6 @@ export default function EditInvoice() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically make an API call to update the invoice
     toast({
       title: "Success",
       description: "Invoice updated successfully",
@@ -81,7 +80,7 @@ export default function EditInvoice() {
   };
 
   return (
-    <div className="p-6 max-w-[1000px] mx-auto">
+    <div className="p-6">
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <Link to="/invoices">
@@ -103,215 +102,226 @@ export default function EditInvoice() {
         />
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <Card>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="number">Number</Label>
-                <Input 
-                  id="number" 
-                  value={invoice.number} 
-                  onChange={(e) => setInvoice({...invoice, number: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="date">Date</Label>
-                <Input 
-                  id="date" 
-                  type="date" 
-                  value={invoice.date}
-                  onChange={(e) => setInvoice({...invoice, date: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Currency</Label>
-                <Select 
-                  value={selectedCurrency} 
-                  onValueChange={(value) => {
-                    setSelectedCurrency(value);
-                    setInvoice({...invoice, currency: value});
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select currency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencies.map((currency) => (
-                      <SelectItem key={currency.code} value={currency.code}>
-                        {currency.symbol} - {currency.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Customer</Label>
-                <div className="space-y-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
-                    <Input
-                      placeholder="Search customers..."
-                      value={customerSearch}
-                      onChange={(e) => setCustomerSearch(e.target.value)}
-                      className="pl-10"
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="number">Number</Label>
+                    <Input 
+                      id="number" 
+                      value={invoice.number} 
+                      onChange={(e) => setInvoice({...invoice, number: e.target.value})}
                     />
                   </div>
-                  {customerSearch && (
-                    <Card>
-                      <CardContent className="p-2">
-                        {filteredCustomers.map((customer) => (
-                          <Button
-                            key={customer.id}
-                            variant="ghost"
-                            className="w-full justify-start"
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Date</Label>
+                    <Input 
+                      id="date" 
+                      type="date" 
+                      value={invoice.date}
+                      onChange={(e) => setInvoice({...invoice, date: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Currency</Label>
+                    <Select 
+                      value={selectedCurrency} 
+                      onValueChange={(value) => {
+                        setSelectedCurrency(value);
+                        setInvoice({...invoice, currency: value});
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select currency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {currencies.map((currency) => (
+                          <SelectItem key={currency.code} value={currency.code}>
+                            {currency.symbol} - {currency.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Customer</Label>
+                    <div className="space-y-2">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+                        <Input
+                          placeholder="Search customers..."
+                          value={customerSearch}
+                          onChange={(e) => setCustomerSearch(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                      {customerSearch && (
+                        <Card>
+                          <CardContent className="p-2">
+                            {filteredCustomers.map((customer) => (
+                              <Button
+                                key={customer.id}
+                                variant="ghost"
+                                className="w-full justify-start"
+                                onClick={() => {
+                                  setInvoice({...invoice, customer});
+                                  setCustomerSearch("");
+                                }}
+                              >
+                                <div className="text-left">
+                                  <div>{customer.name}</div>
+                                  <div className="text-sm text-gray-500">{customer.email}</div>
+                                </div>
+                              </Button>
+                            ))}
+                            <Button
+                              variant="outline"
+                              className="w-full mt-2"
+                              onClick={() => setShowNewCustomerModal(true)}
+                            >
+                              <Plus className="h-4 w-4 mr-2" />
+                              Add New Customer
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8">
+                  <h3 className="text-lg font-medium mb-4">Items</h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-12 gap-4">
+                      <div className="col-span-5">
+                        <Label>Description</Label>
+                      </div>
+                      <div className="col-span-2">
+                        <Label>Quantity</Label>
+                      </div>
+                      <div className="col-span-2">
+                        <Label>Price</Label>
+                      </div>
+                      <div className="col-span-2">
+                        <Label>Amount</Label>
+                      </div>
+                    </div>
+
+                    {invoice.items.map((item, index) => (
+                      <div key={index} className="grid grid-cols-12 gap-4 items-center">
+                        <div className="col-span-5">
+                          <Input 
+                            value={item.description}
+                            onChange={(e) => {
+                              const newItems = [...invoice.items];
+                              newItems[index].description = e.target.value;
+                              setInvoice({...invoice, items: newItems});
+                            }}
+                          />
+                        </div>
+                        <div className="col-span-2">
+                          <Input 
+                            type="number" 
+                            value={item.quantity}
+                            onChange={(e) => {
+                              const newItems = [...invoice.items];
+                              newItems[index].quantity = Number(e.target.value);
+                              newItems[index].amount = Number(e.target.value) * item.price;
+                              setInvoice({...invoice, items: newItems});
+                            }}
+                          />
+                        </div>
+                        <div className="col-span-2">
+                          <Input 
+                            type="number" 
+                            value={item.price}
+                            onChange={(e) => {
+                              const newItems = [...invoice.items];
+                              newItems[index].price = Number(e.target.value);
+                              newItems[index].amount = item.quantity * Number(e.target.value);
+                              setInvoice({...invoice, items: newItems});
+                            }}
+                          />
+                        </div>
+                        <div className="col-span-2">
+                          <Input type="number" value={item.amount} disabled />
+                        </div>
+                        <div className="col-span-1">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
                             onClick={() => {
-                              setInvoice({...invoice, customer});
-                              setCustomerSearch("");
+                              const newItems = invoice.items.filter((_, i) => i !== index);
+                              setInvoice({...invoice, items: newItems});
                             }}
                           >
-                            <div className="text-left">
-                              <div>{customer.name}</div>
-                              <div className="text-sm text-gray-500">{customer.email}</div>
-                            </div>
+                            <Trash2 className="w-4 h-4" />
                           </Button>
-                        ))}
-                        <Button
-                          variant="outline"
-                          className="w-full mt-2"
-                          onClick={() => setShowNewCustomerModal(true)}
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Add New Customer
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </div>
-            </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
-            <div className="mt-8">
-              <h3 className="text-lg font-medium mb-4">Items</h3>
-              <div className="space-y-4">
-                <div className="grid grid-cols-12 gap-4">
-                  <div className="col-span-5">
-                    <Label>Description</Label>
-                  </div>
-                  <div className="col-span-2">
-                    <Label>Quantity</Label>
-                  </div>
-                  <div className="col-span-2">
-                    <Label>Price</Label>
-                  </div>
-                  <div className="col-span-2">
-                    <Label>Amount</Label>
-                  </div>
+                  <Button 
+                    type="button"
+                    variant="outline" 
+                    className="mt-4 gap-2"
+                    onClick={() => {
+                      setInvoice({
+                        ...invoice,
+                        items: [...invoice.items, { description: "", quantity: 1, price: 0, amount: 0 }]
+                      });
+                    }}
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Item
+                  </Button>
                 </div>
 
-                {invoice.items.map((item, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-4 items-center">
-                    <div className="col-span-5">
-                      <Input 
-                        value={item.description}
-                        onChange={(e) => {
-                          const newItems = [...invoice.items];
-                          newItems[index].description = e.target.value;
-                          setInvoice({...invoice, items: newItems});
-                        }}
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      <Input 
-                        type="number" 
-                        value={item.quantity}
-                        onChange={(e) => {
-                          const newItems = [...invoice.items];
-                          newItems[index].quantity = Number(e.target.value);
-                          newItems[index].amount = Number(e.target.value) * item.price;
-                          setInvoice({...invoice, items: newItems});
-                        }}
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      <Input 
-                        type="number" 
-                        value={item.price}
-                        onChange={(e) => {
-                          const newItems = [...invoice.items];
-                          newItems[index].price = Number(e.target.value);
-                          newItems[index].amount = item.quantity * Number(e.target.value);
-                          setInvoice({...invoice, items: newItems});
-                        }}
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      <Input type="number" value={item.amount} disabled />
-                    </div>
-                    <div className="col-span-1">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8"
-                        onClick={() => {
-                          const newItems = invoice.items.filter((_, i) => i !== index);
-                          setInvoice({...invoice, items: newItems});
-                        }}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+                <div className="mt-8 space-y-6">
+                  <div className="space-y-2">
+                    <Label>Notes</Label>
+                    <Textarea 
+                      value={invoice.notes}
+                      onChange={(e) => setInvoice({...invoice, notes: e.target.value})}
+                    />
                   </div>
-                ))}
-              </div>
 
+                  <div className="space-y-2">
+                    <Label>Terms & Conditions</Label>
+                    <Textarea 
+                      value={invoice.terms}
+                      onChange={(e) => setInvoice({...invoice, terms: e.target.value})}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-end gap-4">
               <Button 
-                type="button"
-                variant="outline" 
-                className="mt-4 gap-2"
-                onClick={() => {
-                  setInvoice({
-                    ...invoice,
-                    items: [...invoice.items, { description: "", quantity: 1, price: 0, amount: 0 }]
-                  });
-                }}
+                type="button" 
+                variant="outline"
+                onClick={() => navigate("/invoices")}
               >
-                <Plus className="w-4 h-4" />
-                Add Item
+                Cancel
               </Button>
+              <Button type="submit">Update Invoice</Button>
             </div>
-
-            <div className="mt-8 space-y-6">
-              <div className="space-y-2">
-                <Label>Notes</Label>
-                <Textarea 
-                  value={invoice.notes}
-                  onChange={(e) => setInvoice({...invoice, notes: e.target.value})}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Terms & Conditions</Label>
-                <Textarea 
-                  value={invoice.terms}
-                  onChange={(e) => setInvoice({...invoice, terms: e.target.value})}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="flex justify-end gap-4">
-          <Button 
-            type="button" 
-            variant="outline"
-            onClick={() => navigate("/invoices")}
-          >
-            Cancel
-          </Button>
-          <Button type="submit">Update Invoice</Button>
+          </form>
         </div>
-      </form>
+
+        <div className="hidden lg:block sticky top-6">
+          <InvoicePreview 
+            invoice={invoice}
+            selectedCurrency={selectedCurrency}
+          />
+        </div>
+      </div>
 
       <Dialog open={showNewCustomerModal} onOpenChange={setShowNewCustomerModal}>
         <DialogContent>
