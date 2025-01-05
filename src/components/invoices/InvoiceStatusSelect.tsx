@@ -5,6 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 export type InvoiceStatus = "draft" | "pending" | "paid" | "overdue" | "cancelled";
 
@@ -19,13 +20,15 @@ export const InvoiceStatusSelect = ({
   onStatusChange,
   disabled = false 
 }: InvoiceStatusSelectProps) => {
-  const statuses: { value: InvoiceStatus; label: string; }[] = [
-    { value: "draft", label: "Draft" },
-    { value: "pending", label: "Pending" },
-    { value: "paid", label: "Paid" },
-    { value: "overdue", label: "Overdue" },
-    { value: "cancelled", label: "Cancelled" }
+  const statuses: { value: InvoiceStatus; label: string; bgColor: string; textColor: string }[] = [
+    { value: "draft", label: "Draft", bgColor: "bg-gray-100", textColor: "text-gray-800" },
+    { value: "pending", label: "Pending", bgColor: "bg-orange-100", textColor: "text-orange-800" },
+    { value: "paid", label: "Marked as Paid", bgColor: "bg-green-100", textColor: "text-green-800" },
+    { value: "overdue", label: "Overdue", bgColor: "bg-red-100", textColor: "text-red-800" },
+    { value: "cancelled", label: "Cancelled", bgColor: "bg-purple-100", textColor: "text-purple-800" }
   ];
+
+  const selectedStatus = statuses.find(s => s.value === status);
 
   return (
     <Select 
@@ -33,12 +36,25 @@ export const InvoiceStatusSelect = ({
       onValueChange={(value) => onStatusChange(value as InvoiceStatus)}
       disabled={disabled}
     >
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className={cn(
+        "w-[180px]",
+        selectedStatus?.bgColor,
+        selectedStatus?.textColor,
+        "border-0 font-medium"
+      )}>
         <SelectValue placeholder="Select status" />
       </SelectTrigger>
       <SelectContent>
         {statuses.map((status) => (
-          <SelectItem key={status.value} value={status.value}>
+          <SelectItem 
+            key={status.value} 
+            value={status.value}
+            className={cn(
+              "font-medium",
+              status.bgColor,
+              status.textColor
+            )}
+          >
             {status.label}
           </SelectItem>
         ))}
