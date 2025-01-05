@@ -1,6 +1,6 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Download, Share, CreditCard } from "lucide-react";
+import { Download, Share, CreditCard, ArrowLeft } from "lucide-react";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -51,6 +51,16 @@ export default function PreviewInvoice() {
   return (
     <div className="bg-[#F9FAFB] p-6 min-h-screen">
       <div className="max-w-5xl mx-auto space-y-4">
+        <div className="flex items-center gap-2 mb-6">
+          <Link 
+            to="/invoices" 
+            className="flex items-center text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Invoices
+          </Link>
+        </div>
+
         <div className="flex flex-wrap gap-2 mb-6">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
