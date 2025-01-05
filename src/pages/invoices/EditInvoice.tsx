@@ -1,40 +1,47 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
 import { InvoicePreview } from "@/components/invoices/InvoicePreview";
 import { InvoiceHeader } from "@/components/invoices/InvoiceHeader";
 import { PaymentDetails } from "@/components/invoices/PaymentDetails";
+import { InvoiceItems } from "@/components/invoices/InvoiceItems";
+import { AdditionalDetails } from "@/components/invoices/AdditionalDetails";
+import type { InvoiceItem } from "@/types/invoice";
 
 export default function EditInvoice() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [selectedCurrency, setSelectedCurrency] = useState("NGN");
   const [status, setStatus] = useState<InvoiceStatus>("pending");
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [invoiceId, setInvoiceId] = useState(id || "");
   const [dueDate, setDueDate] = useState("");
   const [paymentType, setPaymentType] = useState<"one-time" | "recurring">("one-time");
+  const [items, setItems] = useState<InvoiceItem[]>([]);
+  const [selectedBankAccounts, setSelectedBankAccounts] = useState<string[]>([]);
+  const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
+  const [notes, setNotes] = useState("Please include invoice number in payment reference");
+  const [terms, setTerms] = useState("Payment is due within 30 days");
+  const [footer, setFooter] = useState("");
 
   const [invoice, setInvoice] = useState({
     number: id,
-    date: "2024-01-01",
-    currency: "NGN",
+    date: new Date().toISOString().split('T')[0],
+    currency: selectedCurrency,
     customer: null,
-    items: [
-      {
-        description: "Service",
-        quantity: 1,
-        price: 1000,
-        amount: 1000
-      }
-    ],
-    notes: "Thank you for your business",
-    terms: "Net 30"
+    items: [{
+      id: Math.random().toString(36).substr(2, 9),
+      description: "Service",
+      quantity: 1,
+      price: 1000,
+      amount: 1000
+    }],
+    notes: notes,
+    terms: terms
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -50,11 +57,9 @@ export default function EditInvoice() {
     <div className="p-6">
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
-          <Link to="/invoices">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
+          <Button variant="ghost" size="icon" onClick={() => navigate("/invoices")}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
           <h1 className="text-2xl font-semibold">Edit Invoice #{id}</h1>
         </div>
         <InvoiceStatusSelect 
@@ -73,7 +78,7 @@ export default function EditInvoice() {
         <div className="space-y-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="p-6 space-y-8">
                 <InvoiceHeader
                   invoiceId={invoiceId}
                   dueDate={dueDate}
@@ -85,6 +90,7 @@ export default function EditInvoice() {
                     setSelectedCustomer(customer);
                     setInvoice(prev => ({ ...prev, customer }));
                   }}
+                  initialCustomer={selectedCustomer}
                 />
 
                 <PaymentDetails
@@ -92,6 +98,28 @@ export default function EditInvoice() {
                   onCurrencyChange={setSelectedCurrency}
                   paymentType={paymentType}
                   onPaymentTypeChange={setPaymentType}
+                />
+
+                <div className="mt-8">
+                  <h3 className="text-lg font-medium mb-4">Items</h3>
+                  <InvoiceItems
+                    items={items}
+                    onItemsChange={setItems}
+                  />
+                </div>
+
+                <AdditionalDetails
+                  selectedBankAccounts={selectedBankAccounts}
+                  selectedGateway={selectedGateway}
+                  onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
+                  onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
+                  onPaymentGatewayChange={setSelectedGateway}
+                  notes={notes}
+                  terms={terms}
+                  footer={footer}
+                  onNotesChange={setNotes}
+                  onTermsChange={setTerms}
+                  onFooterChange={setFooter}
                 />
               </CardContent>
             </Card>
@@ -113,6 +141,7 @@ export default function EditInvoice() {
           <InvoicePreview 
             invoice={invoice}
             selectedCurrency={selectedCurrency}
+            selectedGateway={selectedGateway}
           />
         </div>
       </div>

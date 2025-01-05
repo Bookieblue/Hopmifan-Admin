@@ -1,177 +1,125 @@
-import { Link, useNavigate } from "react-router-dom";
-import { MoreHorizontal } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { MoreHorizontal, Copy, Share2, Trash } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
-import { InvoiceCard } from "./InvoiceCard";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 
 interface InvoiceTableProps {
-  invoices: Array<{
-    id: string;
-    customer: string;
-    amount: string;
-    status: string;
-    date: string;
-    type?: 'one-time' | 'recurring';
-  }>;
+  invoices: any[];
   selectedInvoices: string[];
-  onSelectInvoice: (id: string, checked: boolean) => void;
+  onSelectInvoice: (invoiceId: string, checked: boolean) => void;
   onSelectAll: (checked: boolean) => void;
-  onDelete: (id: string) => void;
-  onDuplicate: (id: string) => void;
-  onShare: (id: string) => void;
+  onDelete: (invoiceId: string) => void;
+  onDuplicate: (invoiceId: string) => void;
+  onShare: (invoiceId: string) => void;
 }
 
-export const InvoiceTable = ({
-  invoices,
-  selectedInvoices,
-  onSelectInvoice,
-  onSelectAll,
+export const InvoiceTable = ({ 
+  invoices, 
+  selectedInvoices, 
+  onSelectInvoice, 
+  onSelectAll, 
   onDelete,
   onDuplicate,
-  onShare
+  onShare 
 }: InvoiceTableProps) => {
-  const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
-  const handleRowClick = (e: React.MouseEvent, invoiceId: string) => {
-    // Don't navigate if clicking checkbox, actions, or dropdown items
+  const handleRowClick = (
+    e: React.MouseEvent<HTMLTableRowElement>,
+    invoiceId: string
+  ) => {
     if (
-      (e.target as HTMLElement).closest('.checkbox-cell') ||
-      (e.target as HTMLElement).closest('.actions-cell') ||
-      (e.target as HTMLElement).closest('[role="menuitem"]')
+      (e.target as HTMLElement).closest('button') ||
+      (e.target as HTMLElement).closest('a')
     ) {
       return;
     }
-    window.open(`/invoices/${invoiceId}/preview`, '_blank');
+    navigate(`/invoices/${invoiceId}/edit`);
   };
-
-  const handleAction = (e: React.MouseEvent, action: () => void) => {
-    e.stopPropagation();
-    action();
-  };
-
-  if (isMobile) {
-    return (
-      <div className="-mx-4">
-        {invoices.map((invoice) => (
-          <InvoiceCard
-            key={invoice.id}
-            invoice={invoice}
-            onDelete={onDelete}
-            onDuplicate={onDuplicate}
-            onShare={onShare}
-          />
-        ))}
-      </div>
-    );
-  }
 
   return (
-    <table className="w-full">
-      <thead>
-        <tr className="border-b">
-          <th className="px-4 py-3 text-left">
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-[50px]">
             <Checkbox
-              checked={selectedInvoices.length === invoices.length}
-              onCheckedChange={onSelectAll}
+              checked={selectedInvoices.length === invoices.length && invoices.length > 0}
+              onCheckedChange={(checked) => onSelectAll(checked as boolean)}
             />
-          </th>
-          <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Invoice #</th>
-          <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Client</th>
-          <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Amount</th>
-          <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Status</th>
-          <th className="px-4 py-3 text-right text-sm font-medium text-gray-500">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
+          </TableHead>
+          <TableHead>Invoice</TableHead>
+          <TableHead>Customer</TableHead>
+          <TableHead>Amount</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Date</TableHead>
+          <TableHead>Type</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {invoices.map((invoice) => (
-          <tr 
-            key={invoice.id} 
-            className="border-b last:border-b-0 hover:bg-gray-50 cursor-pointer"
+          <TableRow 
+            key={invoice.id}
             onClick={(e) => handleRowClick(e, invoice.id)}
+            className="cursor-pointer"
           >
-            <td className="px-4 py-3 checkbox-cell">
+            <TableCell>
               <Checkbox
                 checked={selectedInvoices.includes(invoice.id)}
                 onCheckedChange={(checked) => onSelectInvoice(invoice.id, checked as boolean)}
                 onClick={(e) => e.stopPropagation()}
               />
-            </td>
-            <td className="px-4 py-3 text-sm font-medium">{invoice.id}</td>
-            <td className="px-4 py-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">{invoice.customer}</span>
-                <span className="text-sm text-gray-500">
-                  {invoice.type === 'one-time' ? 'One-time' : 'Recurring'}•{formatDate(invoice.date)}
-                </span>
-              </div>
-            </td>
-            <td className="px-4 py-3 text-sm font-medium">{invoice.amount}</td>
-            <td className="px-4 py-3">
-              <span className={cn(
-                "px-2.5 py-1 rounded-full text-xs font-medium",
-                invoice.status === "paid" && "bg-green-100 text-green-800",
-                invoice.status === "pending" && "bg-orange-100 text-orange-800",
-                invoice.status === "overdue" && "bg-red-100 text-red-800"
-              )}>
-                {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
+            </TableCell>
+            <TableCell>{invoice.id}</TableCell>
+            <TableCell>{invoice.customer}</TableCell>
+            <TableCell>{invoice.amount}</TableCell>
+            <TableCell>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
+                invoice.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {invoice.status}
               </span>
-            </td>
-            <td className="px-4 py-3 text-right actions-cell">
+            </TableCell>
+            <TableCell>{invoice.date}</TableCell>
+            <TableCell>{invoice.type}</TableCell>
+            <TableCell className="text-right">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="icon">
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                  <DropdownMenuItem 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(`/invoices/${invoice.id}/preview`, '_blank');
-                    }}
-                  >
-                    View
-                  </DropdownMenuItem>
-                  <Link to={`/invoices/${invoice.id}/edit`}>
-                    <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-                      Edit
-                    </DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuItem onSelect={(e) => handleAction(e as any, () => onDuplicate(invoice.id))}>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => onDuplicate(invoice.id)}>
+                    <Copy className="mr-2 h-4 w-4" />
                     Duplicate
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={(e) => handleAction(e as any, () => onShare(invoice.id))}>
+                  <DropdownMenuItem onClick={() => onShare(invoice.id)}>
+                    <Share2 className="mr-2 h-4 w-4" />
                     Share
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onSelect={(e) => handleAction(e as any, () => onDelete(invoice.id))}
+                    onClick={() => onDelete(invoice.id)}
                     className="text-red-600"
                   >
+                    <Trash className="mr-2 h-4 w-4" />
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </td>
-          </tr>
+            </TableCell>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 };
