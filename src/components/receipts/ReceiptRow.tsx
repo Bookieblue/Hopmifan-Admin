@@ -23,22 +23,17 @@ interface ReceiptRowProps {
   };
   isSelected: boolean;
   onSelect: (id: string, checked: boolean) => void;
+  onDelete: (id: string) => void;
+  onShare: (id: string) => void;
 }
 
-export function ReceiptRow({ receipt, isSelected, onSelect }: ReceiptRowProps) {
+export function ReceiptRow({ receipt, isSelected, onSelect, onDelete, onShare }: ReceiptRowProps) {
   const { toast } = useToast();
 
   const handleDownload = () => {
     toast({
       title: "Download started",
       description: `Receipt ${receipt.id} is being downloaded.`,
-    });
-  };
-
-  const handleDelete = () => {
-    toast({
-      title: "Receipt deleted",
-      description: `Receipt ${receipt.id} has been deleted.`,
     });
   };
 
@@ -97,7 +92,8 @@ export function ReceiptRow({ receipt, isSelected, onSelect }: ReceiptRowProps) {
               <ContextMenuItem>Edit Receipt</ContextMenuItem>
             </Link>
             <ContextMenuItem onClick={handleDownload}>Download</ContextMenuItem>
-            <ContextMenuItem onClick={handleDelete} className="text-red-600">
+            <ContextMenuItem onClick={() => onShare(receipt.id)}>Share</ContextMenuItem>
+            <ContextMenuItem onClick={() => onDelete(receipt.id)} className="text-red-600">
               Delete
             </ContextMenuItem>
           </ContextMenuContent>
