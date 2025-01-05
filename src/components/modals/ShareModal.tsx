@@ -6,7 +6,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Copy, Mail, Link2 } from "lucide-react";
+import { 
+  Copy, 
+  Mail, 
+  Link2, 
+  Download,
+  Facebook,
+  Twitter,
+  Linkedin,
+  WhatsApp,
+  Instagram
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 
@@ -22,7 +32,7 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
   const [copied, setCopied] = useState(false);
   const id = invoiceId || estimateId || receiptId;
   const type = invoiceId ? 'invoices' : estimateId ? 'estimates' : 'receipts';
-  const shareUrl = `${window.location.origin}/${type}/${id}`;
+  const shareUrl = `${window.location.origin}/${type}/${id}/preview`;
 
   const handleCopyLink = async () => {
     try {
@@ -43,18 +53,62 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
   };
 
   const handleEmailShare = () => {
-    const subject = `Invoice ${id}`;
-    const body = `View invoice here: ${shareUrl}`;
-    window.location.href = `mailto:?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(body)}`;
+    const subject = `${type.charAt(0).toUpperCase() + type.slice(1, -1)} ${id}`;
+    const body = `View ${type.slice(0, -1)} here: ${shareUrl}`;
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
+  const handleDownload = (format: 'pdf' | 'jpg') => {
+    toast({
+      title: `Downloading as ${format.toUpperCase()}`,
+      description: "Your download will begin shortly",
+    });
+    // Simulating download - in real app, replace with actual download logic
+    const element = document.createElement('a');
+    element.href = '#';
+    element.download = `${type.slice(0, -1)}-${id}.${format}`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  const handleSocialShare = (platform: string) => {
+    let shareLink = '';
+    const text = encodeURIComponent(`Check out this ${type.slice(0, -1)}`);
+    const url = encodeURIComponent(shareUrl);
+
+    switch (platform) {
+      case 'facebook':
+        shareLink = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        break;
+      case 'twitter':
+        shareLink = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+        break;
+      case 'linkedin':
+        shareLink = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+        break;
+      case 'whatsapp':
+        shareLink = `https://wa.me/?text=${text}%20${url}`;
+        break;
+      case 'instagram':
+        // Instagram doesn't have a direct share URL, show a toast instead
+        toast({
+          title: "Instagram Sharing",
+          description: "Copy the link and share it on Instagram",
+        });
+        return;
+    }
+
+    if (shareLink) {
+      window.open(shareLink, '_blank', 'width=600,height=400');
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Share Invoice</DialogTitle>
+          <DialogTitle>Share {type.slice(0, -1)}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="flex items-center space-x-2">
@@ -72,7 +126,8 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
               <Copy className="h-4 w-4" />
             </Button>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2">
+          
+          <div className="grid grid-cols-2 gap-2">
             <Button
               variant="outline"
               className="w-full"
@@ -88,6 +143,63 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
             >
               <Link2 className="mr-2 h-4 w-4" />
               Copy Link
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleDownload('pdf')}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Download PDF
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleDownload('jpg')}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Download JPG
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleSocialShare('facebook')}
+            >
+              <Facebook className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleSocialShare('twitter')}
+            >
+              <Twitter className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleSocialShare('linkedin')}
+            >
+              <Linkedin className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleSocialShare('whatsapp')}
+            >
+              <WhatsApp className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleSocialShare('instagram')}
+            >
+              <Instagram className="h-4 w-4" />
             </Button>
           </div>
         </div>
