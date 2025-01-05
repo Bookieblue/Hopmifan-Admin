@@ -64,30 +64,32 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
           <CardContent className="p-6">
             <div className="space-y-6">
               <div className="flex gap-4 items-start">
-                <div 
-                  className="relative w-10 h-10 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50"
-                  onClick={() => document.getElementById(`image-${item.id}`)?.click()}
-                >
-                  <ImagePlus className="w-5 h-5 text-gray-500" />
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    id={`image-${item.id}`}
-                    onChange={(e) => handleImageUpload(item.id, e)}
-                  />
-                </div>
                 <div className="flex-1">
                   <Label htmlFor={`description-${item.id}`} className="mb-2 block">
                     Item Description
                   </Label>
-                  <Input
-                    id={`description-${item.id}`}
-                    value={item.description}
-                    onChange={(e) => updateItem(item.id, 'description', e.target.value)}
-                    placeholder="Enter item description"
-                    className="w-full"
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      id={`description-${item.id}`}
+                      value={item.description}
+                      onChange={(e) => updateItem(item.id, 'description', e.target.value)}
+                      placeholder="Enter item description"
+                      className="flex-1"
+                    />
+                    <div 
+                      className="relative w-10 h-10 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50"
+                      onClick={() => document.getElementById(`image-${item.id}`)?.click()}
+                    >
+                      <ImagePlus className="w-5 h-5 text-gray-500" />
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        id={`image-${item.id}`}
+                        onChange={(e) => handleImageUpload(item.id, e)}
+                      />
+                    </div>
+                  </div>
                   {item.image && (
                     <p className="text-sm text-muted-foreground mt-1 truncate">
                       {item.image.name}
