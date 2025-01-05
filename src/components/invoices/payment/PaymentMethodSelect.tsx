@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectLabel } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectLabel, SelectGroup } from "@/components/ui/select";
 import { CreditCard, Wallet, X } from "lucide-react";
 
 interface PaymentMethodSelectProps {
@@ -36,26 +36,30 @@ export const PaymentMethodSelect = ({
           <SelectValue placeholder="Add payment method" />
         </SelectTrigger>
         <SelectContent>
-          <SelectLabel>Bank Accounts</SelectLabel>
-          {bankAccounts?.map((account) => (
-            <SelectItem
-              key={`bank_${account.id}`}
-              value={`bank_${account.id}`}
-              disabled={selectedBankAccounts.includes(account.id)}
-            >
-              {account.name}
-            </SelectItem>
-          ))}
-          <SelectLabel>Payment Gateways</SelectLabel>
-          {paymentGateways?.map((gateway) => (
-            <SelectItem
-              key={gateway.id}
-              value={gateway.id}
-              disabled={selectedGateway === gateway.id}
-            >
-              {gateway.name}
-            </SelectItem>
-          ))}
+          <SelectGroup>
+            <SelectLabel>Bank Accounts</SelectLabel>
+            {bankAccounts?.map((account) => (
+              <SelectItem
+                key={`bank_${account.id}`}
+                value={`bank_${account.id}`}
+                disabled={selectedBankAccounts.includes(account.id)}
+              >
+                {account.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+          <SelectGroup>
+            <SelectLabel>Payment Gateways</SelectLabel>
+            {paymentGateways?.map((gateway) => (
+              <SelectItem
+                key={gateway.id}
+                value={gateway.id}
+                disabled={selectedGateway === gateway.id}
+              >
+                {gateway.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
 
