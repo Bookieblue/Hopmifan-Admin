@@ -9,6 +9,11 @@ import CreateInvoice from "@/pages/invoices/CreateInvoice";
 import ViewInvoice from "@/pages/invoices/ViewInvoice";
 import EditInvoice from "@/pages/invoices/EditInvoice";
 import PreviewInvoice from "@/pages/invoices/PreviewInvoice";
+import EstimateList from "@/pages/estimates/EstimateList";
+import CreateEstimate from "@/pages/estimates/CreateEstimate";
+import ViewEstimate from "@/pages/estimates/ViewEstimate";
+import EditEstimate from "@/pages/estimates/EditEstimate";
+import PreviewEstimate from "@/pages/estimates/PreviewEstimate";
 import CustomerList from "@/pages/customers/CustomerList";
 import CreateCustomer from "@/pages/customers/CreateCustomer";
 import Payments from "@/pages/payments/Index";
@@ -27,6 +32,11 @@ function App() {
         <Route path="/invoices/:id" element={<ViewInvoice />} />
         <Route path="/invoices/:id/edit" element={<EditInvoice />} />
         <Route path="/invoices/:id/preview" element={<PreviewInvoice />} />
+        <Route path="/estimates" element={<EstimateList />} />
+        <Route path="/estimates/create" element={<CreateEstimate />} />
+        <Route path="/estimates/:id" element={<ViewEstimate />} />
+        <Route path="/estimates/:id/edit" element={<EditEstimate />} />
+        <Route path="/estimates/:id/preview" element={<PreviewEstimate />} />
         <Route path="/customers" element={<CustomerList />} />
         <Route path="/customers/create" element={<CreateCustomer />} />
         <Route path="/payments" element={<Payments />} />

@@ -1,50 +1,51 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
+import { InvoicePreview } from "@/components/invoices/InvoicePreview";
 import { InvoiceHeader } from "@/components/invoices/InvoiceHeader";
 import { PaymentDetails } from "@/components/invoices/PaymentDetails";
 import { InvoiceItems } from "@/components/invoices/InvoiceItems";
-import { InvoicePreview } from "@/components/invoices/InvoicePreview";
-import { generateInvoiceId } from "@/lib/utils";
-import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
-import type { InvoiceItem } from "@/types/invoice";
 import { AdditionalDetails } from "@/components/invoices/AdditionalDetails";
+import type { InvoiceItem } from "@/types/invoice";
 
-export default function CreateEstimate() {
+export default function EditEstimate() {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [estimateId, setEstimateId] = useState(`EST-${generateInvoiceId()}`);
+  const [selectedCurrency, setSelectedCurrency] = useState("NGN");
+  const [status, setStatus] = useState<InvoiceStatus>("pending");
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [estimateId, setEstimateId] = useState(id || "");
   const [dueDate, setDueDate] = useState("");
   const [paymentType, setPaymentType] = useState<"one-time" | "recurring">("one-time");
   const [selectedBankAccounts, setSelectedBankAccounts] = useState<string[]>([]);
   const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
-  const [items, setItems] = useState<InvoiceItem[]>([]);
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
-  const [status, setStatus] = useState<InvoiceStatus>("pending");
-  const [selectedCurrency, setSelectedCurrency] = useState("NGN");
+  const [items, setItems] = useState<InvoiceItem[]>([{
+    id: Math.random().toString(36).substr(2, 9),
+    description: "Service",
+    quantity: 1,
+    price: 1000,
+    amount: 1000
+  }]);
   const [notes, setNotes] = useState("Thank you for considering our estimate");
   const [terms, setTerms] = useState("This estimate is valid for 30 days");
   const [footer, setFooter] = useState("");
-  
+
   const [estimate, setEstimate] = useState({
-    number: estimateId,
+    number: id,
     date: new Date().toISOString().split('T')[0],
     currency: selectedCurrency,
     customer: null,
-    items: [{
-      id: Math.random().toString(36).substr(2, 9),
-      description: "Service",
-      quantity: 1,
-      price: 1000,
-      amount: 1000
-    }],
+    items: items,
     notes: notes,
     terms: terms
   });
 
-  const handleSubmit = async (status: 'draft' | 'published') => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       const estimateData = {
         id: estimateId,
@@ -60,17 +61,12 @@ export default function CreateEstimate() {
         total: items.reduce((sum, item) => sum + item.amount, 0)
       };
 
-      console.log('Saving estimate:', estimateData);
+      console.log('Updating estimate:', estimateData);
       
-      toast.success(
-        status === 'draft' 
-          ? "Estimate saved as draft" 
-          : "Estimate created successfully"
-      );
-      
-      navigate('/estimates');
+      toast.success("Estimate updated successfully");
+      navigate("/estimates");
     } catch (error) {
-      toast.error("Failed to create estimate");
+      toast.error("Failed to update estimate");
     }
   };
 
@@ -78,15 +74,24 @@ export default function CreateEstimate() {
     <div className="p-6">
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/estimates")}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-semibold">Create Estimate</h1>
+          <Link to="/estimates">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-semibold">Edit Estimate #{id}</h1>
         </div>
+        <InvoiceStatusSelect 
+          status={status} 
+          onStatusChange={(newStatus) => {
+            setStatus(newStatus);
+            toast.success(`Estimate status updated to ${newStatus}`);
+          }}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <form className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
           <Card>
             <CardContent className="p-6 space-y-8">
               <InvoiceHeader
@@ -96,7 +101,11 @@ export default function CreateEstimate() {
                 onInvoiceIdChange={setEstimateId}
                 onDueDateChange={setDueDate}
                 onPaymentTypeChange={setPaymentType}
-                onCustomerSelect={setSelectedCustomer}
+                onCustomerSelect={(customer) => {
+                  setSelectedCustomer(customer);
+                  setEstimate(prev => ({ ...prev, customer }));
+                }}
+                initialCustomer={selectedCustomer}
               />
 
               <PaymentDetails
@@ -127,23 +136,18 @@ export default function CreateEstimate() {
                 onTermsChange={setTerms}
                 onFooterChange={setFooter}
               />
-
-              <div className="mt-4">
-                <InvoiceStatusSelect 
-                  status={status} 
-                  onStatusChange={setStatus}
-                />
-              </div>
             </CardContent>
           </Card>
 
           <div className="flex justify-end gap-4">
-            <Button variant="outline" onClick={() => handleSubmit('draft')}>
-              Save as Draft
+            <Button 
+              type="button" 
+              variant="outline"
+              onClick={() => navigate("/estimates")}
+            >
+              Cancel
             </Button>
-            <Button onClick={() => handleSubmit('published')}>
-              Create Estimate
-            </Button>
+            <Button type="submit">Update Estimate</Button>
           </div>
         </form>
 

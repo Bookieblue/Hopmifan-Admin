@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ShareModal } from "@/components/modals/ShareModal";
 
-const ViewEstimate = () => {
+export default function ViewEstimate() {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
   const [estimate, setEstimate] = useState<any>(null);
@@ -14,9 +14,14 @@ const ViewEstimate = () => {
     // Fetch estimate data based on the ID
     const fetchEstimate = async () => {
       // Replace with your API call
-      const response = await fetch(`/api/estimates/${id}`);
-      const data = await response.json();
-      setEstimate(data);
+      const mockEstimate = {
+        id,
+        title: `Estimate ${id}`,
+        description: "Project estimate",
+        amount: "$2,500.00",
+        status: "pending"
+      };
+      setEstimate(mockEstimate);
     };
 
     fetchEstimate();
@@ -26,30 +31,28 @@ const ViewEstimate = () => {
     setShareDialogOpen(true);
   };
 
-  const printOptions = {
-    documentTitle: `Estimate-${estimate?.id}`,
-    onBeforePrint: () => console.log('Before printing...'),
-    onAfterPrint: () => console.log('After printing...'),
-    removeAfterPrint: true
-  };
-
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold">View Estimate</h1>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">View Estimate</h1>
       {estimate ? (
-        <div>
-          <h2 className="text-xl">{estimate.title}</h2>
-          <p>{estimate.description}</p>
-          <p>Amount: {estimate.amount}</p>
-          <Button onClick={handleShare}>Share</Button>
-          <Button onClick={() => window.print()}>Print</Button>
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">{estimate.title}</h2>
+          <p className="text-gray-600">{estimate.description}</p>
+          <p className="text-lg font-medium">Amount: {estimate.amount}</p>
+          <p className="text-gray-600">Status: {estimate.status}</p>
+          <div className="flex gap-4">
+            <Button onClick={handleShare}>Share</Button>
+            <Button onClick={() => window.print()}>Print</Button>
+          </div>
         </div>
       ) : (
         <p>Loading...</p>
       )}
-      <ShareModal open={shareDialogOpen} onOpenChange={setShareDialogOpen} estimateId={id} />
+      <ShareModal 
+        open={shareDialogOpen} 
+        onOpenChange={setShareDialogOpen} 
+        estimateId={id} 
+      />
     </div>
   );
-};
-
-export default ViewEstimate;
+}
