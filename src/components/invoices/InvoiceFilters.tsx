@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DatePicker } from "@/components/ui/date-picker";
+import { useState } from "react";
 
 interface InvoiceFiltersProps {
   searchQuery: string;
@@ -29,6 +30,23 @@ export const InvoiceFilters = ({
   setEndDate,
   handleResetFilter,
 }: InvoiceFiltersProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [tempStartDate, setTempStartDate] = useState<Date | undefined>(startDate);
+  const [tempEndDate, setTempEndDate] = useState<Date | undefined>(endDate);
+
+  const handleApplyFilter = () => {
+    setStartDate(tempStartDate);
+    setEndDate(tempEndDate);
+    setIsOpen(false);
+  };
+
+  const handleReset = () => {
+    setTempStartDate(undefined);
+    setTempEndDate(undefined);
+    handleResetFilter();
+    setIsOpen(false);
+  };
+
   return (
     <div className="mb-6 w-full">
       <div className="flex items-center gap-2 md:gap-4">
@@ -41,7 +59,7 @@ export const InvoiceFilters = ({
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2 px-3 md:px-4 whitespace-nowrap">
               <CalendarDays className="h-4 w-4" />
@@ -55,15 +73,15 @@ export const InvoiceFilters = ({
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">From Date</label>
-                <DatePicker date={startDate} setDate={setStartDate} />
+                <DatePicker date={tempStartDate} setDate={setTempStartDate} />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">To Date</label>
-                <DatePicker date={endDate} setDate={setEndDate} />
+                <DatePicker date={tempEndDate} setDate={setTempEndDate} />
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={handleResetFilter}>Reset Filter</Button>
-                <Button onClick={() => {}}>Apply Filter</Button>
+                <Button variant="outline" onClick={handleReset}>Reset Filter</Button>
+                <Button onClick={handleApplyFilter}>Apply Filter</Button>
               </div>
             </div>
           </DialogContent>
