@@ -129,17 +129,17 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
             </div>
           </div>
           <div 
-            className="relative w-16 h-16 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
+            className="relative w-10 h-10 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50 transition-colors mt-8"
             onClick={() => document.getElementById('new-item-image')?.click()}
           >
             {newItem.image ? (
               <img 
                 src={URL.createObjectURL(newItem.image)} 
                 alt="New item" 
-                className="w-14 h-14 object-cover rounded"
+                className="w-8 h-8 object-cover rounded"
               />
             ) : (
-              <ImagePlus className="w-6 h-6 text-gray-400" />
+              <ImagePlus className="w-4 h-4 text-gray-400" />
             )}
             <Input
               type="file"
