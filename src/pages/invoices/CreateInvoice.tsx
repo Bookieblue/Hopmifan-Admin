@@ -102,6 +102,8 @@ export default function CreateInvoice() {
               <PaymentDetails
                 selectedCurrency={selectedCurrency}
                 onCurrencyChange={setSelectedCurrency}
+                paymentType={paymentType}
+                onPaymentTypeChange={setPaymentType}
               />
 
               <div className="mt-8">

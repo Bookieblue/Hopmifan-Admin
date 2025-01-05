@@ -90,6 +90,8 @@ export default function EditInvoice() {
                 <PaymentDetails
                   selectedCurrency={selectedCurrency}
                   onCurrencyChange={setSelectedCurrency}
+                  paymentType={paymentType}
+                  onPaymentTypeChange={setPaymentType}
                 />
               </CardContent>
             </Card>
