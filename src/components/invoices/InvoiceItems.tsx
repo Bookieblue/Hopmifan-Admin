@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import type { InvoiceItem } from "@/types/invoice";
 import { InvoiceItemCard } from "./InvoiceItemCard";
@@ -12,9 +11,6 @@ interface InvoiceItemsProps {
 }
 
 export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
-  const [showCoupon, setShowCoupon] = useState(false);
-  const [showDiscount, setShowDiscount] = useState(false);
-  const [selectedDiscount, setSelectedDiscount] = useState("");
   const [newItem, setNewItem] = useState<Partial<InvoiceItem>>({
     description: "",
     quantity: 1,
@@ -134,55 +130,6 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
         >
           Add Now
         </Button>
-      </div>
-
-      <div className="space-y-4 mt-6">
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="coupon" 
-            checked={showCoupon}
-            onCheckedChange={(checked) => setShowCoupon(checked as boolean)}
-          />
-          <label
-            htmlFor="coupon"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Add Coupon
-          </label>
-        </div>
-
-        {showCoupon && (
-          <Input
-            placeholder="Enter coupon code"
-            className="max-w-md"
-          />
-        )}
-
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="discount" 
-            checked={showDiscount}
-            onCheckedChange={(checked) => setShowDiscount(checked as boolean)}
-          />
-          <label
-            htmlFor="discount"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Add Discount
-          </label>
-        </div>
-
-        {showDiscount && (
-          <select 
-            value={selectedDiscount}
-            onChange={(e) => setSelectedDiscount(e.target.value)}
-            className="w-full max-w-md border rounded-md p-2"
-          >
-            <option value="">Select a discount</option>
-            <option value="summer">Summer Sale 10%</option>
-            <option value="winter">Winter Special 15%</option>
-          </select>
-        )}
       </div>
     </div>
   );
