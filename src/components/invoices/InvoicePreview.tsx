@@ -54,8 +54,7 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
   const handlePaymentPage = () => {
     if (selectedGateway) {
       toast.success("Redirecting to payment page");
-      // In a real implementation, this would redirect to the payment gateway
-      window.open(`/payment/${invoice.number}`, '_blank');
+      window.open('https://paystack.com/pay/afrika-mom-braids-store', '_blank');
     }
   };
 
@@ -192,4 +191,3 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
       />
     </div>
   );
-}
