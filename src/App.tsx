@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import Index from "@/pages/Index";
 import SignIn from "@/pages/auth/SignIn";
@@ -28,47 +28,45 @@ import "./App.css";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/auth/signin" element={<SignIn />} />
-        <Route path="/auth/signup" element={<SignUp />} />
-        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-        <Route path="/onboarding/business" element={<Business />} />
+    <Routes>
+      <Route path="/auth/signin" element={<SignIn />} />
+      <Route path="/auth/signup" element={<SignUp />} />
+      <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+      <Route path="/onboarding/business" element={<Business />} />
+      
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Index />} />
         
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Index />} />
-          
-          {/* Invoice Routes */}
-          <Route path="invoices" element={<InvoiceList />} />
-          <Route path="invoices/create" element={<CreateInvoice />} />
-          <Route path="invoices/:id/edit" element={<EditInvoice />} />
-          <Route path="invoices/:id" element={<ViewInvoice />} />
-          <Route path="invoices/:id/preview" element={<PreviewInvoice />} />
-          
-          {/* Estimate Routes */}
-          <Route path="estimates" element={<EstimateList />} />
-          <Route path="estimates/create" element={<CreateEstimate />} />
-          <Route path="estimates/:id/edit" element={<EditEstimate />} />
-          <Route path="estimates/:id" element={<ViewEstimate />} />
-          
-          {/* Receipt Routes */}
-          <Route path="receipts" element={<ReceiptList />} />
-          <Route path="receipts/create" element={<CreateReceipt />} />
-          <Route path="receipts/:id/edit" element={<EditReceipt />} />
-          <Route path="receipts/:id" element={<ViewReceipt />} />
-          
-          {/* Customer Routes */}
-          <Route path="customers" element={<CustomerList />} />
-          <Route path="customers/create" element={<CreateCustomer />} />
-          
-          {/* Other Routes */}
-          <Route path="settings" element={<Settings />} />
-          <Route path="subscription" element={<Subscription />} />
-          <Route path="payments" element={<Payments />} />
-          <Route path="pricing" element={<Pricing />} />
-        </Route>
-      </Routes>
-    </Router>
+        {/* Invoice Routes */}
+        <Route path="invoices" element={<InvoiceList />} />
+        <Route path="invoices/create" element={<CreateInvoice />} />
+        <Route path="invoices/:id/edit" element={<EditInvoice />} />
+        <Route path="invoices/:id" element={<ViewInvoice />} />
+        <Route path="invoices/:id/preview" element={<PreviewInvoice />} />
+        
+        {/* Estimate Routes */}
+        <Route path="estimates" element={<EstimateList />} />
+        <Route path="estimates/create" element={<CreateEstimate />} />
+        <Route path="estimates/:id/edit" element={<EditEstimate />} />
+        <Route path="estimates/:id" element={<ViewEstimate />} />
+        
+        {/* Receipt Routes */}
+        <Route path="receipts" element={<ReceiptList />} />
+        <Route path="receipts/create" element={<CreateReceipt />} />
+        <Route path="receipts/:id/edit" element={<EditReceipt />} />
+        <Route path="receipts/:id" element={<ViewReceipt />} />
+        
+        {/* Customer Routes */}
+        <Route path="customers" element={<CustomerList />} />
+        <Route path="customers/create" element={<CreateCustomer />} />
+        
+        {/* Other Routes */}
+        <Route path="settings" element={<Settings />} />
+        <Route path="subscription" element={<Subscription />} />
+        <Route path="payments" element={<Payments />} />
+        <Route path="pricing" element={<Pricing />} />
+      </Route>
+    </Routes>
   );
 }
 
