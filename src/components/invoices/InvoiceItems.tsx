@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { ImagePlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { InvoiceItem } from "@/types/invoice";
 import { InvoiceItemCard } from "./InvoiceItemCard";
 
@@ -12,9 +12,6 @@ interface InvoiceItemsProps {
 }
 
 export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
-  const [showCoupon, setShowCoupon] = useState(false);
-  const [showDiscount, setShowDiscount] = useState(false);
-  const [selectedDiscount, setSelectedDiscount] = useState("");
   const [newItem, setNewItem] = useState<Partial<InvoiceItem>>({
     description: "",
     quantity: 1,
@@ -50,20 +47,6 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
     });
   };
 
-  const updateItem = (id: string, field: keyof InvoiceItem, value: any) => {
-    const updatedItems = items.map(item => {
-      if (item.id === id) {
-        const updatedItem = { ...item, [field]: value };
-        if (['quantity', 'price'].includes(field)) {
-          updatedItem.amount = Number(updatedItem.quantity) * Number(updatedItem.price);
-        }
-        return updatedItem;
-      }
-      return item;
-    });
-    onItemsChange(updatedItems);
-  };
-
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -71,8 +54,26 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
           <InvoiceItemCard
             key={item.id}
             item={item}
-            onUpdate={updateItem}
-            onImageUpload={(id, event) => updateItem(id, 'image', event.target.files?.[0])}
+            onUpdate={(id, field, value) => {
+              const updatedItems = items.map(item => {
+                if (item.id === id) {
+                  const updatedItem = { ...item, [field]: value };
+                  if (['quantity', 'price'].includes(field)) {
+                    updatedItem.amount = Number(updatedItem.quantity) * Number(updatedItem.price);
+                  }
+                  return updatedItem;
+                }
+                return item;
+              });
+              onItemsChange(updatedItems);
+            }}
+            onImageUpload={(id, event) => {
+              const file = event.target.files?.[0];
+              const updatedItems = items.map(item => 
+                item.id === id ? { ...item, image: file } : item
+              );
+              onItemsChange(updatedItems);
+            }}
           />
         ))}
       </div>
@@ -91,7 +92,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                 className="w-14 h-14 object-cover rounded"
               />
             ) : (
-              <Plus className="w-6 h-6 text-gray-400" />
+              <ImagePlus className="w-6 h-6 text-gray-400" />
             )}
             <Input
               type="file"
@@ -101,29 +102,41 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
               onChange={handleImageUpload}
             />
           </div>
-          <div className="flex-1">
-            <Input
-              value={newItem.description}
-              onChange={(e) => setNewItem(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Enter item description"
-              className="mb-4"
-            />
+          <div className="flex-1 space-y-4">
+            <div>
+              <Label htmlFor="item-description">Item Description</Label>
+              <Input
+                id="item-description"
+                value={newItem.description}
+                onChange={(e) => setNewItem(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Enter item description"
+                className="mt-2"
+              />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                type="number"
-                value={newItem.quantity}
-                onChange={(e) => setNewItem(prev => ({ ...prev, quantity: Number(e.target.value) }))}
-                min={1}
-                placeholder="Quantity"
-              />
-              <Input
-                type="number"
-                value={newItem.price}
-                onChange={(e) => setNewItem(prev => ({ ...prev, price: Number(e.target.value) }))}
-                min={0}
-                step="0.01"
-                placeholder="Price"
-              />
+              <div>
+                <Label htmlFor="item-quantity">Quantity</Label>
+                <Input
+                  id="item-quantity"
+                  type="number"
+                  value={newItem.quantity}
+                  onChange={(e) => setNewItem(prev => ({ ...prev, quantity: Number(e.target.value) }))}
+                  min={1}
+                  className="mt-2"
+                />
+              </div>
+              <div>
+                <Label htmlFor="item-price">Price</Label>
+                <Input
+                  id="item-price"
+                  type="number"
+                  value={newItem.price}
+                  onChange={(e) => setNewItem(prev => ({ ...prev, price: Number(e.target.value) }))}
+                  min={0}
+                  step="0.01"
+                  className="mt-2"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -134,55 +147,6 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
         >
           Add Now
         </Button>
-      </div>
-
-      <div className="space-y-4 mt-6">
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="coupon" 
-            checked={showCoupon}
-            onCheckedChange={(checked) => setShowCoupon(checked as boolean)}
-          />
-          <label
-            htmlFor="coupon"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Add Coupon
-          </label>
-        </div>
-
-        {showCoupon && (
-          <Input
-            placeholder="Enter coupon code"
-            className="max-w-md"
-          />
-        )}
-
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="discount" 
-            checked={showDiscount}
-            onCheckedChange={(checked) => setShowDiscount(checked as boolean)}
-          />
-          <label
-            htmlFor="discount"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Add Discount
-          </label>
-        </div>
-
-        {showDiscount && (
-          <select 
-            value={selectedDiscount}
-            onChange={(e) => setSelectedDiscount(e.target.value)}
-            className="w-full max-w-md border rounded-md p-2"
-          >
-            <option value="">Select a discount</option>
-            <option value="summer">Summer Sale 10%</option>
-            <option value="winter">Winter Special 15%</option>
-          </select>
-        )}
       </div>
     </div>
   );
