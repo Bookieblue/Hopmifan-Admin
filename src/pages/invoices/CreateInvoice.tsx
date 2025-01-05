@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { InvoiceHeader } from "@/components/invoices/InvoiceHeader";
 import { PaymentDetails } from "@/components/invoices/PaymentDetails";
 import { InvoiceItems } from "@/components/invoices/InvoiceItems";
+import { InvoicePreview } from "@/components/invoices/InvoicePreview";
 import { generateInvoiceId } from "@/lib/utils";
 import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
 import type { InvoiceItem } from "@/types/invoice";
@@ -51,6 +52,20 @@ export default function CreateInvoice() {
     fetchTemplateContent();
   }, []);
 
+  // Update invoice state whenever relevant fields change
+  useEffect(() => {
+    setInvoice(prev => ({
+      ...prev,
+      number: invoiceId,
+      date: new Date().toISOString().split('T')[0],
+      currency: selectedCurrency,
+      customer: selectedCustomer,
+      items: items,
+      notes: notes,
+      terms: termsAndConditions
+    }));
+  }, [invoiceId, selectedCurrency, selectedCustomer, items, notes, termsAndConditions]);
+
   const handleSubmit = async (status: 'draft' | 'published') => {
     try {
       const invoiceData = {
@@ -82,7 +97,7 @@ export default function CreateInvoice() {
   };
 
   return (
-    <div className="p-6 max-w-[1000px] mx-auto">
+    <div className="p-6">
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate("/invoices")}>
@@ -96,70 +111,79 @@ export default function CreateInvoice() {
         />
       </div>
 
-      <form className="space-y-8">
-        <Card>
-          <CardContent className="p-6 space-y-8">
-            <InvoiceHeader
-              invoiceId={invoiceId}
-              dueDate={dueDate}
-              paymentType={paymentType}
-              onInvoiceIdChange={setInvoiceId}
-              onDueDateChange={setDueDate}
-              onPaymentTypeChange={setPaymentType}
-              onCustomerSelect={setSelectedCustomer}
-            />
-
-            <PaymentDetails
-              selectedBankAccounts={selectedBankAccounts}
-              selectedGateway={selectedGateway}
-              onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
-              onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
-              onPaymentGatewayChange={setSelectedGateway}
-              selectedCurrency={selectedCurrency}
-              onCurrencyChange={setSelectedCurrency}
-              invoice={invoice}
-              onInvoiceChange={setInvoice}
-            />
-
-            <div className="mt-8">
-              <h3 className="text-lg font-medium mb-4">Items</h3>
-              <InvoiceItems
-                items={items}
-                onItemsChange={setItems}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <form className="space-y-8">
+          <Card>
+            <CardContent className="p-6 space-y-8">
+              <InvoiceHeader
+                invoiceId={invoiceId}
+                dueDate={dueDate}
+                paymentType={paymentType}
+                onInvoiceIdChange={setInvoiceId}
+                onDueDateChange={setDueDate}
+                onPaymentTypeChange={setPaymentType}
+                onCustomerSelect={setSelectedCustomer}
               />
-            </div>
 
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Notes</label>
-                <Textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Add any notes..."
+              <PaymentDetails
+                selectedBankAccounts={selectedBankAccounts}
+                selectedGateway={selectedGateway}
+                onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
+                onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
+                onPaymentGatewayChange={setSelectedGateway}
+                selectedCurrency={selectedCurrency}
+                onCurrencyChange={setSelectedCurrency}
+                invoice={invoice}
+                onInvoiceChange={setInvoice}
+              />
+
+              <div className="mt-8">
+                <h3 className="text-lg font-medium mb-4">Items</h3>
+                <InvoiceItems
+                  items={items}
+                  onItemsChange={setItems}
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Terms & Conditions</label>
-                <Textarea
-                  value={termsAndConditions}
-                  onChange={(e) => setTermsAndConditions(e.target.value)}
-                  placeholder="Add terms and conditions..."
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Notes</label>
+                  <Textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Add any notes..."
+                  />
+                </div>
 
-        <div className="flex justify-end gap-4">
-          <Button variant="outline" onClick={() => handleSubmit('draft')}>
-            Save as Draft
-          </Button>
-          <Button onClick={() => handleSubmit('published')}>
-            Create Invoice
-          </Button>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Terms & Conditions</label>
+                  <Textarea
+                    value={termsAndConditions}
+                    onChange={(e) => setTermsAndConditions(e.target.value)}
+                    placeholder="Add terms and conditions..."
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-end gap-4">
+            <Button variant="outline" onClick={() => handleSubmit('draft')}>
+              Save as Draft
+            </Button>
+            <Button onClick={() => handleSubmit('published')}>
+              Create Invoice
+            </Button>
+          </div>
+        </form>
+
+        <div className="hidden lg:block sticky top-6">
+          <InvoicePreview 
+            invoice={invoice}
+            selectedCurrency={selectedCurrency}
+          />
         </div>
-      </form>
+      </div>
     </div>
   );
 }
