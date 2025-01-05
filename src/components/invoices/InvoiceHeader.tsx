@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CustomerSelect } from "./CustomerSelect";
 
 interface InvoiceHeaderProps {
@@ -51,24 +50,6 @@ export const InvoiceHeader = ({
           value={dueDate} 
           onChange={(e) => onDueDateChange(e.target.value)} 
         />
-      </div>
-
-      <div className="space-y-3">
-        <Label>Payment Type</Label>
-        <RadioGroup 
-          value={paymentType} 
-          onValueChange={(value: "one-time" | "recurring") => onPaymentTypeChange(value)}
-          className="flex space-x-4"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="one-time" id="one-time" />
-            <Label htmlFor="one-time">One-time Payment</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="recurring" id="recurring" />
-            <Label htmlFor="recurring">Recurring Payment</Label>
-          </div>
-        </RadioGroup>
       </div>
     </div>
   );
