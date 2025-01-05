@@ -21,7 +21,6 @@ export const InvoiceStatusSelect = ({
   disabled = false 
 }: InvoiceStatusSelectProps) => {
   const statuses: { value: InvoiceStatus; label: string; bgColor: string; textColor: string }[] = [
-    { value: "draft", label: "Draft", bgColor: "bg-gray-100", textColor: "text-gray-800" },
     { value: "pending", label: "Pending", bgColor: "bg-orange-100", textColor: "text-orange-800" },
     { value: "paid", label: "Marked as Paid", bgColor: "bg-green-100", textColor: "text-green-800" },
     { value: "overdue", label: "Overdue", bgColor: "bg-red-100", textColor: "text-red-800" },
