@@ -14,6 +14,11 @@ import CreateEstimate from "@/pages/estimates/CreateEstimate";
 import ViewEstimate from "@/pages/estimates/ViewEstimate";
 import EditEstimate from "@/pages/estimates/EditEstimate";
 import PreviewEstimate from "@/pages/estimates/PreviewEstimate";
+import ReceiptList from "@/pages/receipts/ReceiptList";
+import CreateReceipt from "@/pages/receipts/CreateReceipt";
+import ViewReceipt from "@/pages/receipts/ViewReceipt";
+import EditReceipt from "@/pages/receipts/EditReceipt";
+import PreviewReceipt from "@/pages/receipts/PreviewReceipt";
 import CustomerList from "@/pages/customers/CustomerList";
 import CreateCustomer from "@/pages/customers/CreateCustomer";
 import Payments from "@/pages/payments/Index";
@@ -37,6 +42,11 @@ function App() {
         <Route path="/estimates/:id" element={<ViewEstimate />} />
         <Route path="/estimates/:id/edit" element={<EditEstimate />} />
         <Route path="/estimates/:id/preview" element={<PreviewEstimate />} />
+        <Route path="/receipts" element={<ReceiptList />} />
+        <Route path="/receipts/create" element={<CreateReceipt />} />
+        <Route path="/receipts/:id" element={<ViewReceipt />} />
+        <Route path="/receipts/:id/edit" element={<EditReceipt />} />
+        <Route path="/receipts/:id/preview" element={<PreviewReceipt />} />
         <Route path="/customers" element={<CustomerList />} />
         <Route path="/customers/create" element={<CreateCustomer />} />
         <Route path="/payments" element={<Payments />} />
