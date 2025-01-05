@@ -42,7 +42,6 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
   
   const handleDownload = (format: 'pdf' | 'jpg') => {
     toast.success(`Downloading invoice as ${format.toUpperCase()}`);
-    // In a real implementation, this would trigger the actual download
     const element = document.createElement('a');
     element.href = '#';
     element.download = `invoice-${invoice.number}.${format}`;
@@ -191,3 +190,4 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
       />
     </div>
   );
+}
