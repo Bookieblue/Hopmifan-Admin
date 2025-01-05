@@ -1,16 +1,7 @@
-import { useParams, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Download, Share, CreditCard, ArrowLeft } from "lucide-react";
-import { ShareModal } from "@/components/modals/ShareModal";
-import { useState } from "react";
-import { toast } from "sonner";
+import { useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useState } from "react";
+import { ShareModal } from "@/components/modals/ShareModal";
 
 export default function PreviewInvoice() {
   const { id } = useParams<{ id: string }>();
@@ -39,66 +30,10 @@ export default function PreviewInvoice() {
     footer: "Thank you for your business"
   });
 
-  const handleDownload = (format: 'pdf' | 'jpg') => {
-    toast.success(`Downloading invoice as ${format.toUpperCase()}`);
-  };
-
-  const handlePaymentPage = () => {
-    toast.success("Redirecting to payment page");
-    window.open('https://paystack.com/pay/afrika-mom-braids-store', '_blank');
-  };
-
   return (
-    <div className="bg-[#F9FAFB] p-6 min-h-screen">
-      <div className="max-w-5xl mx-auto space-y-4">
-        <div className="flex items-center gap-2 mb-6">
-          <Link 
-            to="/invoices" 
-            className="flex items-center text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Invoices
-          </Link>
-        </div>
-
-        <div className="flex flex-wrap gap-2 mb-6">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Download
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => handleDownload('pdf')}>
-                Download as PDF
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleDownload('jpg')}>
-                Download as JPG
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setShareModalOpen(true)}
-          >
-            <Share className="h-4 w-4 mr-2" />
-            Share
-          </Button>
-
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handlePaymentPage}
-          >
-            <CreditCard className="h-4 w-4 mr-2" />
-            Payment page
-          </Button>
-        </div>
-
-        <Card className="bg-white p-8">
+    <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center p-4 md:p-6">
+      <div className="w-full max-w-4xl">
+        <Card className="bg-white p-6 md:p-8 shadow-lg">
           <div className="space-y-6">
             <div className="flex justify-between items-start">
               <h2 className="text-2xl font-bold text-blue-600">Cordlo Invoice</h2>
@@ -110,16 +45,18 @@ export default function PreviewInvoice() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="font-semibold">Bill To:</h3>
-              <div>{invoice.customer.name}</div>
-              <div>{invoice.customer.email}</div>
-              <div className="text-gray-600">
-                {invoice.customer.street}
-                {invoice.customer.state && `, ${invoice.customer.state}`}
-                {invoice.customer.postalCode && ` ${invoice.customer.postalCode}`}
+            {invoice.customer && (
+              <div className="space-y-2">
+                <h3 className="font-semibold">Bill To:</h3>
+                <div>{invoice.customer.name}</div>
+                <div>{invoice.customer.email}</div>
+                <div className="text-gray-600">
+                  {invoice.customer.street}
+                  {invoice.customer.state && `, ${invoice.customer.state}`}
+                  {invoice.customer.postalCode && ` ${invoice.customer.postalCode}`}
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="mt-8">
               <table className="w-full">
