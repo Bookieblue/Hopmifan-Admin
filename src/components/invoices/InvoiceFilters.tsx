@@ -31,7 +31,7 @@ export const InvoiceFilters = ({
 }: InvoiceFiltersProps) => {
   return (
     <div className="mb-6">
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex items-center gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
           <Input 
@@ -43,7 +43,7 @@ export const InvoiceFilters = ({
         </div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" className="flex items-center gap-2 px-3 md:px-4 whitespace-nowrap">
               <CalendarDays className="h-4 w-4" />
               Filter by Date
             </Button>

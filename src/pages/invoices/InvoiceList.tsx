@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { InvoiceTable } from "@/components/invoices/InvoiceTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { InvoiceFilters } from "@/components/invoices/InvoiceFilters";
+import { InvoiceListHeader } from "@/components/invoices/InvoiceListHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const InvoiceList = () => {
   const { toast } = useToast();
@@ -181,16 +180,7 @@ const InvoiceList = () => {
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Invoices</h1>
-        <Link to="/invoices/create">
-          <Button size="default" className="w-full md:w-auto bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" />
-            New Invoice
-          </Button>
-        </Link>
-      </div>
-
+      <InvoiceListHeader />
       <InvoiceFilters
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
