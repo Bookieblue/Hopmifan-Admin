@@ -58,7 +58,7 @@ export const InvoiceTable = ({
     ) {
       return;
     }
-    window.open(`/invoices/${invoiceId}/preview`, '_blank');
+    navigate(`/invoices/${invoiceId}/edit`);
   };
 
   const handleAction = (e: React.MouseEvent, action: () => void) => {
@@ -141,6 +141,11 @@ export const InvoiceTable = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                  <Link to={`/invoices/${invoice.id}/edit`}>
+                    <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                      Edit
+                    </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem 
                     onClick={(e) => {
                       e.stopPropagation();
@@ -149,11 +154,6 @@ export const InvoiceTable = ({
                   >
                     View
                   </DropdownMenuItem>
-                  <Link to={`/invoices/${invoice.id}/edit`}>
-                    <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-                      Edit
-                    </DropdownMenuItem>
-                  </Link>
                   <DropdownMenuItem onSelect={(e) => handleAction(e as any, () => onDuplicate(invoice.id))}>
                     Duplicate
                   </DropdownMenuItem>
