@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody } from "@/components/ui/table";
-import { Search, Download, Calendar } from "lucide-react";
+import { Search, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PaymentTableHeader } from "@/components/payments/PaymentTableHeader";
 import { PaymentRow } from "@/components/payments/PaymentRow";
-import { PaymentBulkActions } from "@/components/payments/PaymentBulkActions";
+import { PaymentBulkActionsDropdown } from "@/components/payments/PaymentBulkActionsDropdown";
 import {
   Dialog,
   DialogContent,
@@ -159,12 +159,6 @@ export default function PaymentHistory() {
         </Button>
       </div>
 
-      <PaymentBulkActions
-        selectedCount={selectedPayments.length}
-        onBulkDownload={handleBulkDownload}
-        onExportCSV={handleBulkExportCSV}
-      />
-
       <div className="bg-white rounded-lg border">
         <Table>
           <PaymentTableHeader
@@ -183,6 +177,11 @@ export default function PaymentHistory() {
             ))}
           </TableBody>
         </Table>
+        <PaymentBulkActionsDropdown
+          selectedCount={selectedPayments.length}
+          onBulkDownload={handleBulkDownload}
+          onExportCSV={handleBulkExportCSV}
+        />
       </div>
 
       <Dialog open={showDateFilter} onOpenChange={setShowDateFilter}>
