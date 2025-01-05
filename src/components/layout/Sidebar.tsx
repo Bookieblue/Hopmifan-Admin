@@ -132,7 +132,7 @@ export function Sidebar() {
 
       <SidebarNavigation
         isCollapsed={isCollapsed}
-        enabledDocuments={enabledDocuments as Record<string, boolean>}
+        enabledDocuments={enabledDocuments}
         isAccountOpen={isAccountOpen}
         toggleAccount={toggleAccount}
       />

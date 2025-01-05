@@ -7,12 +7,6 @@ import {
   CreditCard,
   Users,
   Settings,
-  LogOut,
-  MessageSquare,
-  HelpCircle,
-  ChevronDown,
-  Building2,
-  Plus,
   ChevronRight,
 } from "lucide-react";
 
@@ -30,9 +24,15 @@ const accountMenuItems = [
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
+interface EnabledDocuments {
+  invoices: boolean;
+  estimates: boolean;
+  receipts: boolean;
+}
+
 interface SidebarNavigationProps {
   isCollapsed: boolean;
-  enabledDocuments: Record<string, boolean>;
+  enabledDocuments: EnabledDocuments;
   isAccountOpen: boolean;
   toggleAccount: () => void;
 }
@@ -43,7 +43,7 @@ export function SidebarNavigation({ isCollapsed, enabledDocuments, isAccountOpen
   // Filter menu items based on enabled documents
   const filteredMenuItems = menuItems.filter(item => {
     if (!item.type) return true;
-    return enabledDocuments[item.type as keyof typeof enabledDocuments];
+    return enabledDocuments[item.type as keyof EnabledDocuments];
   });
 
   return (
