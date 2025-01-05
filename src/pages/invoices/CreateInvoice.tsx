@@ -10,6 +10,7 @@ import { PaymentDetails } from "@/components/invoices/PaymentDetails";
 import { InvoiceItems } from "@/components/invoices/InvoiceItems";
 import { generateInvoiceId } from "@/lib/utils";
 import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
+import type { InvoiceItem } from "@/types/invoice";
 
 export default function CreateInvoice() {
   const navigate = useNavigate();
