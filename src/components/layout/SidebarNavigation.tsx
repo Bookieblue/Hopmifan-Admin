@@ -57,6 +57,7 @@ export function SidebarNavigation({ isCollapsed, enabledDocuments, isAccountOpen
             to={item.path}
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+              isCollapsed ? "justify-center" : "justify-start",
               isActive
                 ? "bg-blue-50 text-blue-600"
                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -64,11 +65,11 @@ export function SidebarNavigation({ isCollapsed, enabledDocuments, isAccountOpen
           >
             <Icon
               className={cn(
-                "w-5 h-5",
+                "w-5 h-5 flex-shrink-0",
                 isActive ? "text-blue-600" : "text-gray-500"
               )}
             />
-            {!isCollapsed && item.label}
+            {!isCollapsed && <span>{item.label}</span>}
           </Link>
         );
       })}
@@ -78,20 +79,21 @@ export function SidebarNavigation({ isCollapsed, enabledDocuments, isAccountOpen
         <button
           onClick={toggleAccount}
           className={cn(
-            "w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+            "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+            isCollapsed ? "justify-center" : "justify-between",
             isAccountOpen
               ? "bg-blue-50 text-blue-600"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
           )}
         >
-          <div className="flex items-center gap-3">
-            <Users className={cn("w-5 h-5", isAccountOpen ? "text-blue-600" : "text-gray-500")} />
+          <div className={cn("flex items-center gap-3", isCollapsed && "justify-center w-full")}>
+            <Users className={cn("w-5 h-5 flex-shrink-0", isAccountOpen ? "text-blue-600" : "text-gray-500")} />
             {!isCollapsed && <span>Account</span>}
           </div>
           {!isCollapsed && (
             <ChevronRight
               className={cn(
-                "w-4 h-4 transition-transform",
+                "w-4 h-4 transition-transform flex-shrink-0",
                 isAccountOpen ? "rotate-90" : ""
               )}
             />
@@ -122,7 +124,7 @@ export function SidebarNavigation({ isCollapsed, enabledDocuments, isAccountOpen
                 >
                   <Icon
                     className={cn(
-                      "w-5 h-5",
+                      "w-5 h-5 flex-shrink-0",
                       isActive ? "text-blue-600" : "text-gray-500"
                     )}
                   />
