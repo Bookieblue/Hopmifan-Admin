@@ -5,6 +5,7 @@ import TemplateSettings from "@/components/settings/TemplateSettings";
 import PaymentSettings from "@/components/settings/PaymentSettings";
 import ReminderSettings from "@/components/settings/ReminderSettings";
 import TeamSettings from "@/components/settings/TeamSettings";
+import AccountTabs from "@/components/settings/AccountTabs";
 
 export default function Settings() {
   return (
@@ -13,19 +14,19 @@ export default function Settings() {
         <h1 className="text-4xl font-semibold tracking-tight">Settings</h1>
       </div>
 
-      <Tabs defaultValue="business" className="space-y-4">
+      <Tabs defaultValue="account" className="space-y-4">
         <TabsList className="bg-muted/50 p-1">
-          <TabsTrigger value="business">Business</TabsTrigger>
+          <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="templates">Templates</TabsTrigger>
           <TabsTrigger value="payment">Payment</TabsTrigger>
           <TabsTrigger value="reminders">Reminders</TabsTrigger>
           <TabsTrigger value="members">Members</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="business">
+        <TabsContent value="account">
           <Card>
             <CardContent className="pt-6">
-              <BusinessSettings />
+              <AccountTabs />
             </CardContent>
           </Card>
         </TabsContent>
