@@ -9,9 +9,12 @@ interface InvoiceItemCardProps {
   item: InvoiceItem;
   onUpdate: (id: string, field: keyof InvoiceItem, value: any) => void;
   onImageUpload: (id: string, event: React.ChangeEvent<HTMLInputElement>) => void;
+  selectedCurrency: string;
 }
 
-export const InvoiceItemCard = ({ item, onUpdate, onImageUpload }: InvoiceItemCardProps) => {
+export const InvoiceItemCard = ({ item, onUpdate, onImageUpload, selectedCurrency }: InvoiceItemCardProps) => {
+  const currencySymbol = selectedCurrency === 'NGN' ? '₦' : selectedCurrency;
+
   return (
     <Card className="border shadow-sm">
       <CardContent className="p-4">
@@ -46,7 +49,7 @@ export const InvoiceItemCard = ({ item, onUpdate, onImageUpload }: InvoiceItemCa
               className="border-0 p-0 h-auto text-base font-medium focus-visible:ring-0"
             />
             <div className="text-sm text-muted-foreground">
-              {item.price?.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}
+              {currencySymbol}{item.price?.toLocaleString()}
             </div>
           </div>
 
