@@ -25,9 +25,17 @@ interface ReceiptRowProps {
   onSelect: (id: string, checked: boolean) => void;
   onDelete: (id: string) => void;
   onShare: (id: string) => void;
+  onDuplicate: (id: string) => void;
 }
 
-export function ReceiptRow({ receipt, isSelected, onSelect, onDelete, onShare }: ReceiptRowProps) {
+export function ReceiptRow({ 
+  receipt, 
+  isSelected, 
+  onSelect, 
+  onDelete, 
+  onShare,
+  onDuplicate 
+}: ReceiptRowProps) {
   const { toast } = useToast();
 
   const handleDownload = () => {
@@ -38,7 +46,7 @@ export function ReceiptRow({ receipt, isSelected, onSelect, onDelete, onShare }:
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case "paid":
         return "bg-green-100 text-green-800";
       case "pending":
@@ -85,13 +93,16 @@ export function ReceiptRow({ receipt, isSelected, onSelect, onDelete, onShare }:
             </Button>
           </ContextMenuTrigger>
           <ContextMenuContent>
-            <Link to={`/receipts/${receipt.id}`}>
+            <Link to={`/receipts/${receipt.id}/preview`}>
               <ContextMenuItem>View Receipt</ContextMenuItem>
             </Link>
             <Link to={`/receipts/${receipt.id}/edit`}>
               <ContextMenuItem>Edit Receipt</ContextMenuItem>
             </Link>
             <ContextMenuItem onClick={handleDownload}>Download</ContextMenuItem>
+            <ContextMenuItem onClick={() => onDuplicate(receipt.id)}>
+              Duplicate
+            </ContextMenuItem>
             <ContextMenuItem onClick={() => onShare(receipt.id)}>Share</ContextMenuItem>
             <ContextMenuItem onClick={() => onDelete(receipt.id)} className="text-red-600">
               Delete

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ShareModal } from "@/components/modals/ShareModal";
-import { ReceiptListHeader } from "@/components/receipts/ReceiptListHeader";
 import { Table, TableBody } from "@/components/ui/table";
+import { ShareModal } from "@/components/modals/ShareModal";
 import { ReceiptTableHeader } from "@/components/receipts/ReceiptTableHeader";
 import { ReceiptRow } from "@/components/receipts/ReceiptRow";
+import { ReceiptListHeader } from "@/components/receipts/ReceiptListHeader";
 
 export default function ReceiptList() {
   const { toast } = useToast();
@@ -58,6 +58,12 @@ export default function ReceiptList() {
     setShareDialogOpen(true);
   };
 
+  const handleDuplicate = (receiptId: string) => {
+    toast({
+      description: `Receipt ${receiptId} has been duplicated successfully.`
+    });
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <ReceiptListHeader />
@@ -77,6 +83,7 @@ export default function ReceiptList() {
                 onSelect={handleSelectReceipt}
                 onDelete={handleDelete}
                 onShare={handleShare}
+                onDuplicate={handleDuplicate}
               />
             ))}
           </TableBody>
