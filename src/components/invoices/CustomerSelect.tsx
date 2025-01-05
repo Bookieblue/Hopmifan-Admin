@@ -19,6 +19,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSearchMode, setIsSearchMode] = useState(!initialCustomer);
   const [includeBillingAddress, setIncludeBillingAddress] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(initialCustomer);
   const { toast } = useToast();
   
   // Initialize with some example customers
@@ -58,6 +59,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
   );
 
   const handleCustomerSelect = (customer: any) => {
+    setSelectedCustomer(customer);
     onCustomerSelect(customer);
     setSearchTerm("");
     setIsSearchMode(false);
@@ -78,13 +80,9 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
       ...newCustomer,
     };
 
-    // Add the new customer to the customers list
     setCustomers(prev => [...prev, customer]);
-    
-    // Select the newly added customer
     handleCustomerSelect(customer);
     
-    // Reset form and close dialog
     setNewCustomer({
       name: "",
       email: "",
