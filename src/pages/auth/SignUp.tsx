@@ -93,6 +93,7 @@ export default function SignUp() {
                     onChange={(e) => setFirstName(e.target.value)}
                     required
                     disabled={isLoading}
+                    className="h-14"
                   />
                 </div>
                 <div>
@@ -105,6 +106,7 @@ export default function SignUp() {
                     onChange={(e) => setLastName(e.target.value)}
                     required
                     disabled={isLoading}
+                    className="h-14"
                   />
                 </div>
               </div>
@@ -119,6 +121,7 @@ export default function SignUp() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={isLoading}
+                  className="h-14"
                 />
               </div>
 
@@ -132,6 +135,7 @@ export default function SignUp() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={isLoading}
+                    className="h-14"
                   />
                   <button
                     type="button"
@@ -149,7 +153,7 @@ export default function SignUp() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full h-14" disabled={isLoading}>
               {isLoading ? "Creating account..." : "Create account"}
             </Button>
 

@@ -54,7 +54,7 @@ export const BusinessBasicInfo = ({
           <FormItem className="col-span-full">
             <FormLabel>Business Name</FormLabel>
             <FormControl>
-              <Input placeholder="Enter your business name" {...field} />
+              <Input placeholder="Enter your business name" {...field} className="h-14" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -70,7 +70,7 @@ export const BusinessBasicInfo = ({
               <FormLabel>Business Type</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-14">
                     <SelectValue placeholder="Select business type" />
                   </SelectTrigger>
                 </FormControl>
@@ -95,7 +95,7 @@ export const BusinessBasicInfo = ({
               <FormLabel>Business Location</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-14">
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                 </FormControl>

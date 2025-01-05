@@ -61,11 +61,12 @@ export default function ForgotPassword() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  className="h-14"
                 />
               </div>
             </div>
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full h-14">
               Send Reset Link
             </Button>
 
