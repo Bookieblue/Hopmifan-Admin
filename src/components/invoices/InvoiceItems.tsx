@@ -92,8 +92,8 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                 className="mt-2"
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
+            <div className="flex gap-4">
+              <div className="flex-1">
                 <Label htmlFor="item-quantity">Quantity</Label>
                 <Input
                   id="item-quantity"
@@ -104,7 +104,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                   className="mt-2"
                 />
               </div>
-              <div>
+              <div className="flex-1">
                 <Label htmlFor="item-price">Price</Label>
                 <Input
                   id="item-price"
@@ -116,7 +116,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                   className="mt-2"
                 />
               </div>
-              <div>
+              <div className="flex-1">
                 <Label htmlFor="item-amount">Amount</Label>
                 <Input
                   id="item-amount"
