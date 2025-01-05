@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, ImagePlus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { InvoiceItem } from "@/types/invoice";
 
 interface InvoiceItemsProps {
@@ -12,6 +13,10 @@ interface InvoiceItemsProps {
 }
 
 export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
+  const [showCoupon, setShowCoupon] = useState(false);
+  const [showDiscount, setShowDiscount] = useState(false);
+  const [selectedDiscount, setSelectedDiscount] = useState("");
+
   useEffect(() => {
     if (items.length === 0) {
       addItem();
@@ -59,16 +64,37 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
 
   return (
     <div className="space-y-6">
-      {items.map((item) => (
-        <Card key={item.id} className="border shadow-sm">
-          <CardContent className="p-6">
-            <div className="space-y-6">
-              <div className="flex gap-4 items-start">
-                <div className="flex-1">
-                  <Label htmlFor={`description-${item.id}`} className="mb-2 block">
-                    Item Description
-                  </Label>
-                  <div className="flex gap-2">
+      <div className="space-y-4">
+        {items.map((item) => (
+          <Card key={item.id} className="border shadow-sm">
+            <CardContent className="p-6">
+              <div className="space-y-6">
+                <div className="flex gap-4 items-start">
+                  <div 
+                    className="relative w-12 h-12 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50"
+                    onClick={() => document.getElementById(`image-${item.id}`)?.click()}
+                  >
+                    {item.image ? (
+                      <img 
+                        src={URL.createObjectURL(item.image)} 
+                        alt="Item" 
+                        className="w-10 h-10 object-cover rounded"
+                      />
+                    ) : (
+                      <ImagePlus className="w-6 h-6 text-gray-500" />
+                    )}
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      id={`image-${item.id}`}
+                      onChange={(e) => handleImageUpload(item.id, e)}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor={`description-${item.id}`} className="mb-2 block">
+                      Item Description
+                    </Label>
                     <Input
                       id={`description-${item.id}`}
                       value={item.description}
@@ -76,85 +102,116 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                       placeholder="Enter item description"
                       className="flex-1"
                     />
-                    <div 
-                      className="relative w-10 h-10 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50"
-                      onClick={() => document.getElementById(`image-${item.id}`)?.click()}
-                    >
-                      <ImagePlus className="w-5 h-5 text-gray-500" />
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        id={`image-${item.id}`}
-                        onChange={(e) => handleImageUpload(item.id, e)}
-                      />
-                    </div>
                   </div>
-                  {item.image && (
-                    <p className="text-sm text-muted-foreground mt-1 truncate">
-                      {item.image.name}
-                    </p>
-                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <Label htmlFor={`quantity-${item.id}`} className="mb-2 block">
+                      Quantity
+                    </Label>
+                    <Input
+                      id={`quantity-${item.id}`}
+                      type="number"
+                      value={item.quantity}
+                      onChange={(e) => updateItem(item.id, 'quantity', Number(e.target.value))}
+                      min={1}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`price-${item.id}`} className="mb-2 block">
+                      Price
+                    </Label>
+                    <Input
+                      id={`price-${item.id}`}
+                      type="number"
+                      value={item.price}
+                      onChange={(e) => updateItem(item.id, 'price', Number(e.target.value))}
+                      min={0}
+                      step="0.01"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`amount-${item.id}`} className="mb-2 block">
+                      Amount
+                    </Label>
+                    <Input
+                      id={`amount-${item.id}`}
+                      type="number"
+                      value={item.amount}
+                      disabled
+                      className="w-full bg-muted"
+                    />
+                  </div>
                 </div>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <Label htmlFor={`quantity-${item.id}`} className="mb-2 block">
-                    Quantity
-                  </Label>
-                  <Input
-                    id={`quantity-${item.id}`}
-                    type="number"
-                    value={item.quantity}
-                    onChange={(e) => updateItem(item.id, 'quantity', Number(e.target.value))}
-                    min={1}
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor={`price-${item.id}`} className="mb-2 block">
-                    Price
-                  </Label>
-                  <Input
-                    id={`price-${item.id}`}
-                    type="number"
-                    value={item.price}
-                    onChange={(e) => updateItem(item.id, 'price', Number(e.target.value))}
-                    min={0}
-                    step="0.01"
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor={`amount-${item.id}`} className="mb-2 block">
-                    Amount
-                  </Label>
-                  <Input
-                    id={`amount-${item.id}`}
-                    type="number"
-                    value={item.amount}
-                    disabled
-                    className="w-full bg-muted"
-                  />
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
       <Button 
         type="button"
         variant="outline" 
-        className="w-full mt-6 gap-2 border-dashed" 
+        className="w-full gap-2 border-dashed" 
         onClick={addItem}
       >
         <Plus className="w-4 h-4" />
         Add New Item
       </Button>
+
+      <div className="space-y-4 mt-6">
+        <div className="flex items-center space-x-2">
+          <Checkbox 
+            id="coupon" 
+            checked={showCoupon}
+            onCheckedChange={(checked) => setShowCoupon(checked as boolean)}
+          />
+          <label
+            htmlFor="coupon"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Add Coupon
+          </label>
+        </div>
+
+        {showCoupon && (
+          <Input
+            placeholder="Enter coupon code"
+            className="max-w-md"
+          />
+        )}
+
+        <div className="flex items-center space-x-2">
+          <Checkbox 
+            id="discount" 
+            checked={showDiscount}
+            onCheckedChange={(checked) => setShowDiscount(checked as boolean)}
+          />
+          <label
+            htmlFor="discount"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Add Discount
+          </label>
+        </div>
+
+        {showDiscount && (
+          <select 
+            value={selectedDiscount}
+            onChange={(e) => setSelectedDiscount(e.target.value)}
+            className="w-full max-w-md border rounded-md p-2"
+          >
+            <option value="">Select a discount</option>
+            <option value="summer">Summer Sale 10%</option>
+            <option value="winter">Winter Special 15%</option>
+          </select>
+        )}
+      </div>
     </div>
   );
 };
