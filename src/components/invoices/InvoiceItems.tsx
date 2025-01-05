@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import type { InvoiceItem } from "@/types/invoice";
 import { InvoiceItemCard } from "./InvoiceItemCard";
 import { useFormContext } from "react-hook-form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface InvoiceItemsProps {
   items: InvoiceItem[];
@@ -22,6 +23,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
     description: defaultDescription,
     quantity: 1,
     price: 0,
+    tax: 0,
     image: null
   });
 
@@ -80,6 +82,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
               );
               onItemsChange(updatedItems);
             }}
+            selectedCurrency={form?.watch?.("currency") || "NGN"}
           />
         ))}
       </div>
@@ -121,6 +124,23 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                   step="0.01"
                   className="mt-2"
                 />
+              </div>
+              <div className="flex-1">
+                <Label htmlFor="item-tax">Tax</Label>
+                <Select 
+                  value={(newItem.tax || "0").toString()}
+                  onValueChange={(value) => setNewItem(prev => ({ ...prev, tax: Number(value) }))}
+                >
+                  <SelectTrigger className="mt-2">
+                    <SelectValue placeholder="Select tax" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">No Tax</SelectItem>
+                    <SelectItem value="10">10%</SelectItem>
+                    <SelectItem value="15">15%</SelectItem>
+                    <SelectItem value="20">20%</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex-1">
                 <Label htmlFor="item-amount">Amount</Label>
