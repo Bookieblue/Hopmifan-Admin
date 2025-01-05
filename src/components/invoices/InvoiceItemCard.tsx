@@ -1,4 +1,4 @@
-import { ImagePlus, Trash2 } from "lucide-react";
+import { ImagePlus, Trash2, Edit, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,7 +18,7 @@ export const InvoiceItemCard = ({ item, onUpdate, onImageUpload, selectedCurrenc
   return (
     <Card className="border shadow-sm">
       <CardContent className="p-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-start gap-4">
           <div 
             className="relative w-12 h-12 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={() => document.getElementById(`image-${item.id}`)?.click()}
@@ -48,35 +48,24 @@ export const InvoiceItemCard = ({ item, onUpdate, onImageUpload, selectedCurrenc
               placeholder="Enter item description"
               className="border-0 p-0 h-auto text-base font-medium focus-visible:ring-0"
             />
-            <div className="text-sm text-muted-foreground">
-              {currencySymbol}{item.price?.toLocaleString()}
+            <div className="space-y-1 mt-2 text-sm text-muted-foreground">
+              <p>Quantity: {item.quantity}</p>
+              <p>Tax: {item.tax}%</p>
+              <p>{currencySymbol}{item.price?.toLocaleString()}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <Input
-              type="number"
-              value={item.quantity}
-              onChange={(e) => onUpdate(item.id, 'quantity', Number(e.target.value))}
-              min={1}
-              className="w-20 text-center"
-            />
-
-            <Select 
-              value={(item.tax || "0").toString()} 
-              onValueChange={(value) => onUpdate(item.id, 'tax', Number(value))}
+          <div className="flex items-center gap-3">
+            <div className="text-base font-medium">
+              {currencySymbol}{(item.quantity * item.price).toLocaleString()}
+            </div>
+            <button
+              type="button"
+              className="text-gray-500 hover:text-gray-700"
+              onClick={() => {/* Add edit functionality */}}
             >
-              <SelectTrigger className="w-24">
-                <SelectValue placeholder="Tax" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0">No Tax</SelectItem>
-                <SelectItem value="10">10%</SelectItem>
-                <SelectItem value="15">15%</SelectItem>
-                <SelectItem value="20">20%</SelectItem>
-              </SelectContent>
-            </Select>
-
+              <Edit className="w-4 h-4" />
+            </button>
             <button
               type="button"
               className="text-red-500 hover:text-red-600"
