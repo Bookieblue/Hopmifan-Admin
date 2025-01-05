@@ -29,6 +29,10 @@ export const PaymentMethodSelect = ({
         if (value.startsWith('bank_')) {
           onBankAccountAdd(value.replace('bank_', ''));
         } else {
+          // Clear previous gateway if exists and set new one
+          if (selectedGateway) {
+            onPaymentGatewayChange('');
+          }
           onPaymentGatewayChange(value);
         }
       }}>
@@ -54,7 +58,7 @@ export const PaymentMethodSelect = ({
               <SelectItem
                 key={gateway.id}
                 value={gateway.id}
-                disabled={selectedGateway === gateway.id}
+                disabled={selectedGateway !== null}
               >
                 {gateway.name}
               </SelectItem>

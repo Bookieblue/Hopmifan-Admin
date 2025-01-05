@@ -246,6 +246,7 @@ export default function CreateInvoice() {
           <InvoicePreview 
             invoice={invoice}
             selectedCurrency={selectedCurrency}
+            selectedGateway={selectedGateway}
           />
         </div>
       </div>

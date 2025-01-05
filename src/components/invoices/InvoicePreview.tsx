@@ -1,4 +1,14 @@
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Download, Share, CreditCard } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ShareModal } from "@/components/modals/ShareModal";
+import { useState } from "react";
 
 interface InvoicePreviewProps {
   invoice: {
@@ -16,19 +26,55 @@ interface InvoicePreviewProps {
     }>;
   };
   selectedCurrency: string;
+  selectedGateway?: string | null;
 }
 
-export function InvoicePreview({ invoice, selectedCurrency }: InvoicePreviewProps) {
+export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: InvoicePreviewProps) {
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   const currencySymbol = selectedCurrency === 'NGN' ? '₦' : selectedCurrency;
   
+  const handleDownload = (format: 'pdf' | 'jpg') => {
+    // In a real app, this would trigger the actual download
+    console.log(`Downloading as ${format}`);
+  };
+
   return (
     <div className="bg-[#F9FAFB] p-6 h-[calc(100vh-8rem)] overflow-y-auto">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-semibold">Preview</h2>
         <div className="flex gap-4">
-          <button className="text-gray-600 hover:text-gray-900">PDF</button>
-          <button className="text-gray-600 hover:text-gray-900">Email</button>
-          <button className="text-gray-600 hover:text-gray-900">Payment page</button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => handleDownload('pdf')}>
+                Download as PDF
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDownload('jpg')}>
+                Download as JPG
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShareModalOpen(true)}
+          >
+            <Share className="h-4 w-4 mr-2" />
+            Share
+          </Button>
+
+          {selectedGateway && (
+            <Button variant="outline" size="sm">
+              <CreditCard className="h-4 w-4 mr-2" />
+              Payment page
+            </Button>
+          )}
         </div>
       </div>
 
@@ -83,6 +129,12 @@ export function InvoicePreview({ invoice, selectedCurrency }: InvoicePreviewProp
           </div>
         </div>
       </Card>
+
+      <ShareModal 
+        open={shareModalOpen}
+        onOpenChange={setShareModalOpen}
+        invoiceId={invoice.number}
+      />
     </div>
   );
 }
