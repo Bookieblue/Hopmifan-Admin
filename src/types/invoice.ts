@@ -4,6 +4,9 @@ export interface InvoiceItem {
   quantity: number;
   price: number;
   amount: number;
+  image?: File | null;
+  tax?: number;
+  deleted?: boolean;
 }
 
 export interface Invoice {
