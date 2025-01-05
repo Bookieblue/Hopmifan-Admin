@@ -1,20 +1,12 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  FileText,
-  LayoutDashboard,
-  Receipt,
-  CreditCard,
-  Users,
-  Settings,
-  LogOut,
-  MessageSquare,
-  HelpCircle,
-  ChevronDown,
   Building2,
   Plus,
-  ChevronRight,
-  CreditCard as Subscription,
+  MessageSquare,
+  HelpCircle,
+  LogOut,
+  PanelLeftClose,
+  PanelLeft,
 } from "lucide-react";
 import { SupportModal } from "../modals/SupportModal";
 import { FeedbackModal } from "../modals/FeedbackModal";
@@ -28,6 +20,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useDocuments } from "@/contexts/DocumentContext";
+import { cn } from "@/lib/utils";
+import { SidebarNavigation } from "./SidebarNavigation";
 
 // Mock data for businesses - in a real app, this would come from an API
 const businesses = [
@@ -36,28 +30,14 @@ const businesses = [
   { id: 3, name: "Design Studio" },
 ];
 
-const menuItems = [
-  { icon: LayoutDashboard, label: "Overview", path: "/" },
-  { icon: FileText, label: "Invoices", path: "/invoices", type: "invoices" },
-  { icon: FileText, label: "Estimates", path: "/estimates", type: "estimates" },
-  { icon: Receipt, label: "Receipts", path: "/receipts", type: "receipts" },
-  { icon: CreditCard, label: "Payments", path: "/payments" },
-];
-
-const accountMenuItems = [
-  { icon: Users, label: "Customers", path: "/customers" },
-  { icon: Subscription, label: "Subscription", path: "/subscription" },
-  { icon: Settings, label: "Settings", path: "/settings" },
-];
-
 export function Sidebar() {
-  const location = useLocation();
   const navigate = useNavigate();
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(businesses[0]);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const { enabledDocuments } = useDocuments();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleBusinessChange = (business: typeof businesses[0]) => {
     setSelectedBusiness(business);
@@ -72,37 +52,59 @@ export function Sidebar() {
     setIsAccountOpen(!isAccountOpen);
   };
 
-  // Filter menu items based on enabled documents
-  const filteredMenuItems = menuItems.filter(item => {
-    if (!item.type) return true; // Keep items without a type (Overview, Payments)
-    return enabledDocuments[item.type as keyof typeof enabledDocuments];
-  });
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
 
   return (
-    <div className="h-screen w-64 bg-[#F9FAFB] border-r border-gray-100 p-6 fixed left-0 top-0 flex flex-col font-inter">
-      <div className="mb-4">
+    <div 
+      className={cn(
+        "h-screen bg-[#F9FAFB] border-r border-gray-100 fixed left-0 top-0 flex flex-col font-inter transition-all duration-300",
+        isCollapsed ? "w-20" : "w-64"
+      )}
+    >
+      <div className="flex items-center justify-between p-4 border-b border-gray-100">
         <Link to="/" className="flex items-center">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-semibold">C</span>
             </div>
-            <span className="text-xl font-semibold text-gray-900">Cordlo</span>
+            {!isCollapsed && (
+              <span className="text-xl font-semibold text-gray-900">Cordlo</span>
+            )}
           </div>
         </Link>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="p-1"
+          onClick={toggleSidebar}
+        >
+          {isCollapsed ? (
+            <PanelLeft className="h-4 w-4" />
+          ) : (
+            <PanelLeftClose className="h-4 w-4" />
+          )}
+        </Button>
       </div>
 
-      <div className="mb-6">
+      <div className="p-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="w-full justify-between border-dashed"
+              className={cn(
+                "w-full justify-between border-dashed",
+                isCollapsed && "px-2"
+              )}
             >
               <div className="flex items-center gap-2">
                 <Building2 className="h-4 w-4" />
-                <span className="truncate">{selectedBusiness.name}</span>
+                {!isCollapsed && (
+                  <span className="truncate">{selectedBusiness.name}</span>
+                )}
               </div>
-              <ChevronDown className="h-4 w-4 opacity-50" />
+              {!isCollapsed && <ChevronDown className="h-4 w-4 opacity-50" />}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[--trigger-width]">
@@ -127,112 +129,44 @@ export function Sidebar() {
         </DropdownMenu>
       </div>
 
-      <nav className="flex-1 space-y-1">
-        {filteredMenuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              )}
-            >
-              <Icon
-                className={cn(
-                  "w-5 h-5",
-                  isActive ? "text-blue-600" : "text-gray-500"
-                )}
-              />
-              {item.label}
-            </Link>
-          );
-        })}
+      <SidebarNavigation
+        isCollapsed={isCollapsed}
+        enabledDocuments={enabledDocuments}
+        isAccountOpen={isAccountOpen}
+        toggleAccount={toggleAccount}
+      />
 
-        {/* Account Menu with Dropdown */}
-        <div className="relative">
-          <button
-            onClick={toggleAccount}
-            className={cn(
-              "w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-              isAccountOpen
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            )}
-          >
-            <div className="flex items-center gap-3">
-              <Users className={cn("w-5 h-5", isAccountOpen ? "text-blue-600" : "text-gray-500")} />
-              <span>Account</span>
-            </div>
-            <ChevronRight
-              className={cn(
-                "w-4 h-4 transition-transform",
-                isAccountOpen ? "rotate-90" : ""
-              )}
-            />
-          </button>
-
-          {/* Account Submenu */}
-          <div
-            className={cn(
-              "pl-4 space-y-1 overflow-hidden transition-all duration-200",
-              isAccountOpen ? "max-h-[500px] mt-1" : "max-h-0"
-            )}
-          >
-            {accountMenuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  )}
-                >
-                  <Icon
-                    className={cn(
-                      "w-5 h-5",
-                      isActive ? "text-blue-600" : "text-gray-500"
-                    )}
-                  />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </nav>
-
-      <div className="mt-auto space-y-1">
+      <div className="mt-auto space-y-1 p-4">
         <button
           onClick={() => setShowSupportModal(true)}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+          className={cn(
+            "w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors",
+            isCollapsed && "justify-center"
+          )}
         >
           <HelpCircle className="w-5 h-5 text-gray-500" />
-          Support
+          {!isCollapsed && "Support"}
         </button>
         <button
           onClick={() => setShowFeedbackModal(true)}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+          className={cn(
+            "w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors",
+            isCollapsed && "justify-center"
+          )}
         >
           <MessageSquare className="w-5 h-5 text-gray-500" />
-          Feedback
+          {!isCollapsed && "Feedback"}
         </button>
         <div className="pt-4 border-t border-gray-100">
           <Link
             to="/auth/signin"
-            className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors",
+              isCollapsed && "justify-center"
+            )}
           >
             <LogOut className="w-5 h-5 text-gray-500" />
-            Sign out
+            {!isCollapsed && "Sign out"}
           </Link>
         </div>
       </div>
