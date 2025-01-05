@@ -58,7 +58,7 @@ export const InvoiceTable = ({
     ) {
       return;
     }
-    navigate(`/invoices/${invoiceId}/preview`);
+    window.open(`/invoices/${invoiceId}/preview`, '_blank');
   };
 
   const handleAction = (e: React.MouseEvent, action: () => void) => {
@@ -141,11 +141,14 @@ export const InvoiceTable = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                  <Link to={`/invoices/${invoice.id}/preview`}>
-                    <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-                      View
-                    </DropdownMenuItem>
-                  </Link>
+                  <DropdownMenuItem 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(`/invoices/${invoice.id}/preview`, '_blank');
+                    }}
+                  >
+                    View
+                  </DropdownMenuItem>
                   <Link to={`/invoices/${invoice.id}/edit`}>
                     <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                       Edit
