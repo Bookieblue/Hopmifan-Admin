@@ -22,7 +22,7 @@ export default function CreateInvoice() {
   const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
   const [items, setItems] = useState<InvoiceItem[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
-  const [status, setStatus] = useState<InvoiceStatus>("draft");
+  const [status, setStatus] = useState<InvoiceStatus>("pending");
   const [selectedCurrency, setSelectedCurrency] = useState("NGN");
   const [notes, setNotes] = useState("Please include invoice number in payment reference");
   const [terms, setTerms] = useState("Payment is due within 30 days");
