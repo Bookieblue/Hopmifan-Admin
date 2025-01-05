@@ -7,4 +7,5 @@ export interface InvoiceItem {
   tax?: number;
   discount?: number;
   image?: File | null;
+  deleted?: boolean;
 }
