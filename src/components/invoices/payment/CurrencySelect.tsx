@@ -2,15 +2,15 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CurrencySelectProps {
-  selectedCurrency: string;
-  onCurrencyChange: (currency: string) => void;
+  value: string;
+  onValueChange: (currency: string) => void;
 }
 
-export const CurrencySelect = ({ selectedCurrency, onCurrencyChange }: CurrencySelectProps) => {
+export const CurrencySelect = ({ value, onValueChange }: CurrencySelectProps) => {
   return (
     <div className="space-y-2">
       <Label>Currency</Label>
-      <Select value={selectedCurrency} onValueChange={onCurrencyChange}>
+      <Select value={value} onValueChange={onValueChange}>
         <SelectTrigger>
           <SelectValue placeholder="Select currency" />
         </SelectTrigger>
