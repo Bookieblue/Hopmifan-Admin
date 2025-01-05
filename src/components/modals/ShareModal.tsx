@@ -117,6 +117,14 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
               readOnly
               className="flex-1"
             />
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={handleCopyLink}
+              className="shrink-0"
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
           </div>
           
           <div className="grid grid-cols-2 gap-2">
@@ -149,7 +157,7 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             <Button
               variant="outline"
               className="w-full"
