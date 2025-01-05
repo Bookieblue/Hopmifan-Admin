@@ -7,6 +7,7 @@ import { ChevronDown, ChevronUp, FileText, Plus } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { InvoiceItems } from "./InvoiceItems";
 
 interface PaymentDetailsProps {
   selectedBankAccounts: string[];
@@ -91,7 +92,15 @@ export const PaymentDetails = ({
         paymentGateways={paymentGateways}
       />
 
-      <div className="space-y-4">
+      <div className="mt-8">
+        <h3 className="text-lg font-medium mb-4">Items</h3>
+        <InvoiceItems
+          items={invoice.items}
+          onItemsChange={(newItems) => onInvoiceChange({ ...invoice, items: newItems })}
+        />
+      </div>
+
+      <div className="space-y-4 mt-8">
         <Collapsible open={isNotesOpen} onOpenChange={setIsNotesOpen}>
           <CollapsibleTrigger asChild>
             <Button variant="outline" className="w-full flex justify-between">
