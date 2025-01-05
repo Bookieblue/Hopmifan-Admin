@@ -16,6 +16,7 @@ interface InvoiceItemsProps {
 export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
   const form = useFormContext();
   const businessType = form?.watch?.("businessType") || "freelancing";
+  const taxes = form?.watch?.("taxes") || [{ name: "No Tax", rate: "0" }];
   
   const defaultDescription = businessType === "freelancing" ? "Service 1" : "Product 1";
 
@@ -101,7 +102,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                 className="mt-2"
               />
             </div>
-            <div className="flex gap-4 pr-4">
+            <div className="flex gap-4">
               <div className="flex-1">
                 <Label htmlFor="item-quantity">Quantity</Label>
                 <Input
@@ -135,10 +136,11 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                     <SelectValue placeholder="Select tax" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="0">No Tax</SelectItem>
-                    <SelectItem value="10">10%</SelectItem>
-                    <SelectItem value="15">15%</SelectItem>
-                    <SelectItem value="20">20%</SelectItem>
+                    {taxes.map((tax, index) => (
+                      <SelectItem key={index} value={tax.rate}>
+                        {tax.name} ({tax.rate}%)
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -154,26 +156,28 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
               </div>
             </div>
           </div>
-          <div 
-            className="relative w-10 h-10 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50 transition-colors mt-8"
-            onClick={() => document.getElementById('new-item-image')?.click()}
-          >
-            {newItem.image ? (
-              <img 
-                src={URL.createObjectURL(newItem.image)} 
-                alt="New item" 
-                className="w-8 h-8 object-cover rounded"
+          <div className="min-w-[40px]"> 
+            <div 
+              className="w-10 h-10 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50 transition-colors mt-8"
+              onClick={() => document.getElementById('new-item-image')?.click()}
+            >
+              {newItem.image ? (
+                <img 
+                  src={URL.createObjectURL(newItem.image)} 
+                  alt="New item" 
+                  className="w-8 h-8 object-cover rounded"
+                />
+              ) : (
+                <ImagePlus className="w-4 h-4 text-gray-400" />
+              )}
+              <Input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                id="new-item-image"
+                onChange={handleImageUpload}
               />
-            ) : (
-              <ImagePlus className="w-4 h-4 text-gray-400" />
-            )}
-            <Input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              id="new-item-image"
-              onChange={handleImageUpload}
-            />
+            </div>
           </div>
         </div>
         <div className="flex justify-end">
