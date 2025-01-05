@@ -1,6 +1,5 @@
-import { ImagePlus, Trash2, Edit, Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { ImagePlus, Trash2, Edit, ChevronDown, ChevronUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import type { InvoiceItem } from "@/types/invoice";
 import { useState } from "react";
@@ -62,14 +61,6 @@ export const InvoiceItemCard = ({ item, onUpdate, onImageUpload, selectedCurrenc
                 )}
               </button>
             </div>
-            
-            {isExpanded && (
-              <div className="space-y-1 mt-2 text-sm text-muted-foreground">
-                <p>Quantity: {item.quantity}</p>
-                <p>Tax: {item.tax}%</p>
-                <p>{currencySymbol}{item.price?.toLocaleString()}</p>
-              </div>
-            )}
           </div>
 
           <div className="flex items-center gap-3">
