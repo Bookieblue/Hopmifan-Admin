@@ -198,7 +198,7 @@ const InvoiceList = () => {
         handleResetFilter={handleResetFilter}
       />
 
-      <div className="bg-white rounded-lg border">
+      <div className="bg-white md:rounded-lg md:border">
         <InvoiceTable
           invoices={filteredInvoices}
           selectedInvoices={selectedInvoices}
