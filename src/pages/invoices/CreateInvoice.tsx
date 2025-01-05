@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, ChevronDown, ChevronUp, FileText, Plus } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, FileText, Plus, Wallet } from "lucide-react";
 import { toast } from "sonner";
 import { InvoiceHeader } from "@/components/invoices/InvoiceHeader";
 import { PaymentDetails } from "@/components/invoices/PaymentDetails";
@@ -13,6 +13,7 @@ import { generateInvoiceId } from "@/lib/utils";
 import { InvoiceStatusSelect, type InvoiceStatus } from "@/components/invoices/InvoiceStatusSelect";
 import type { InvoiceItem } from "@/types/invoice";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { PaymentMethodSelect } from "@/components/invoices/payment/PaymentMethodSelect";
 
 export default function CreateInvoice() {
   const navigate = useNavigate();
@@ -168,6 +169,29 @@ export default function CreateInvoice() {
                       value={invoice.notes}
                       onChange={(e) => setInvoice(prev => ({ ...prev, notes: e.target.value }))}
                       placeholder="Add notes..."
+                    />
+                  </CollapsibleContent>
+                </Collapsible>
+
+                <Collapsible>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="outline" className="w-full flex justify-between">
+                      <span className="flex items-center gap-2">
+                        <Wallet className="w-4 h-4" />
+                        Payment Methods
+                      </span>
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-4">
+                    <PaymentMethodSelect 
+                      selectedBankAccounts={selectedBankAccounts}
+                      selectedGateway={selectedGateway}
+                      onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
+                      onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
+                      onPaymentGatewayChange={setSelectedGateway}
+                      bankAccounts={[]}
+                      paymentGateways={[]}
                     />
                   </CollapsibleContent>
                 </Collapsible>
