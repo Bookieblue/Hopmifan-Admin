@@ -21,7 +21,7 @@ export const PaymentDetails = ({
         <div className="space-y-2">
           <Label>Payment Type</Label>
           <Select value={paymentType} onValueChange={(value: "one-time" | "recurring") => onPaymentTypeChange(value)}>
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select payment type" />
             </SelectTrigger>
             <SelectContent>

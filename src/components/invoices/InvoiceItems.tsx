@@ -64,7 +64,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-muted rounded-lg">
+      <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-muted/50 rounded-lg">
         <div className="col-span-4">
           <Label className="text-sm font-medium">Description</Label>
         </div>
@@ -87,9 +87,9 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
 
       {items.map((item) => (
         <Card key={item.id} className="border shadow-sm">
-          <CardContent className="p-4">
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <div className="col-span-4 space-y-2">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-12 gap-6 items-start">
+              <div className="col-span-4 space-y-3">
                 <Input
                   value={item.description}
                   onChange={(e) => updateItem(item.id, 'description', e.target.value)}
@@ -108,7 +108,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="h-8"
+                    className="h-9"
                     onClick={() => document.getElementById(`image-${item.id}`)?.click()}
                   >
                     <ImagePlus className="w-4 h-4 mr-2" />
@@ -169,7 +169,7 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-destructive hover:text-destructive/90"
+                  className="h-9 w-9 text-destructive hover:text-destructive/90"
                   onClick={() => removeItem(item.id)}
                   disabled={items.length === 1}
                 >

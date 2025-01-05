@@ -121,14 +121,13 @@ export const AdditionalDetails = ({
         {sections.map((section) => (
           <Card 
             key={section.id} 
-            className="border rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md"
+            className="border rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md p-3"
           >
             <Collapsible open={section.isOpen} onOpenChange={section.setIsOpen}>
               <CollapsibleTrigger asChild>
                 <Button 
                   variant="ghost" 
-                  className="w-full p-6 hover:bg-accent/50 transition-colors"
-                  onClick={() => section.setIsOpen(!section.isOpen)}
+                  className="w-full p-6 hover:bg-accent/50 transition-colors rounded-lg"
                 >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex flex-col items-start text-left">
@@ -144,7 +143,7 @@ export const AdditionalDetails = ({
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <div className="p-6 pt-2 border-t bg-accent/5">
+                <div className="p-6 pt-2 border-t bg-accent/5 rounded-lg mt-2">
                   {section.content}
                 </div>
               </CollapsibleContent>
