@@ -15,7 +15,8 @@ import {
   Twitter,
   Linkedin,
   MessageCircle,
-  Instagram
+  Instagram,
+  Telegram
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
@@ -91,12 +92,14 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
         shareLink = `https://wa.me/?text=${text}%20${url}`;
         break;
       case 'instagram':
-        // Instagram doesn't have a direct share URL, show a toast instead
         toast({
           title: "Instagram Sharing",
           description: "Copy the link and share it on Instagram",
         });
         return;
+      case 'telegram':
+        shareLink = `https://t.me/share/url?url=${url}&text=${text}`;
+        break;
     }
 
     if (shareLink) {
@@ -111,23 +114,12 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
           <DialogTitle>Share {type.slice(0, -1)}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-col space-y-2">
             <Input
               value={shareUrl}
               readOnly
               className="flex-1"
             />
-            <Button
-              size="icon"
-              variant="outline"
-              onClick={handleCopyLink}
-              className="shrink-0"
-            >
-              <Copy className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-2">
             <Button
               variant="outline"
               className="w-full"
@@ -157,7 +149,7 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <Button
               variant="outline"
               className="w-full"
@@ -197,6 +189,14 @@ export function ShareModal({ open, onOpenChange, invoiceId, estimateId, receiptI
             >
               <Instagram className="h-4 w-4 mr-2" />
               Instagram
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleSocialShare('telegram')}
+            >
+              <Telegram className="h-4 w-4 mr-2" />
+              Telegram
             </Button>
           </div>
         </div>
