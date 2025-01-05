@@ -9,3 +9,17 @@ export interface InvoiceItem {
   image?: File | null;
   deleted?: boolean;
 }
+
+export interface Invoice {
+  id: string;
+  number: string;
+  customer: string;
+  amount: string;
+  status: 'pending' | 'paid' | 'overdue';
+  date: string;
+  type: 'one-time' | 'recurring';
+  items?: InvoiceItem[];
+  notes?: string;
+  terms?: string;
+  dueDate?: string;
+}

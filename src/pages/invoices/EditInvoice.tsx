@@ -46,10 +46,7 @@ export default function EditInvoice() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Success",
-      description: "Invoice updated successfully",
-    });
+    toast("Invoice updated successfully");
     navigate("/invoices");
   };
 
@@ -66,10 +63,7 @@ export default function EditInvoice() {
           status={status} 
           onStatusChange={(newStatus) => {
             setStatus(newStatus);
-            toast({
-              title: "Status Updated",
-              description: `Invoice status updated to ${newStatus}`,
-            });
+            toast("Invoice status updated to " + newStatus);
           }}
         />
       </div>
