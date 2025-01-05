@@ -4,16 +4,19 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { UserPlus } from "lucide-react";
+import { UserPlus, PenSquare } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface CustomerSelectProps {
   onCustomerSelect: (customer: any) => void;
+  initialCustomer?: any;
 }
 
-export const CustomerSelect = ({ onCustomerSelect }: CustomerSelectProps) => {
+export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSelectProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSearchMode, setIsSearchMode] = useState(!initialCustomer);
   const [includeBillingAddress, setIncludeBillingAddress] = useState(false);
   const { toast } = useToast();
   
@@ -39,6 +42,7 @@ export const CustomerSelect = ({ onCustomerSelect }: CustomerSelectProps) => {
   const handleCustomerSelect = (customer: any) => {
     onCustomerSelect(customer);
     setSearchTerm("");
+    setIsSearchMode(false);
   };
 
   const handleAddNewCustomer = () => {
@@ -56,11 +60,44 @@ export const CustomerSelect = ({ onCustomerSelect }: CustomerSelectProps) => {
       postalCode: "",
     });
     setIsDialogOpen(false);
+    setIsSearchMode(false);
     toast({
       title: "Success",
       description: "New customer added successfully",
     });
   };
+
+  if (!isSearchMode && (initialCustomer || customers.find(c => c.id === initialCustomer?.id))) {
+    const customer = initialCustomer || customers.find(c => c.id === initialCustomer?.id);
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label>Customer</Label>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsSearchMode(true)}
+            className="h-8 w-8 p-0"
+          >
+            <PenSquare className="h-4 w-4" />
+          </Button>
+        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-1">
+              <div className="font-medium">{customer.name}</div>
+              <div className="text-sm text-muted-foreground">{customer.email}</div>
+              {customer.street && (
+                <div className="text-sm text-muted-foreground">
+                  {customer.street}, {customer.state} {customer.postalCode}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">
