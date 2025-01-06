@@ -9,6 +9,7 @@ import { CustomerCard } from "./CustomerCard";
 import { SearchResults } from "@/components/customers/SearchResults";
 import { NewCustomerForm } from "@/components/customers/NewCustomerForm";
 import { Customer, NewCustomer } from "@/types/customer";
+import { useTerminology } from "@/utils/terminology";
 
 interface CustomerSelectProps {
   onCustomerSelect: (customer: Customer) => void;
@@ -16,6 +17,7 @@ interface CustomerSelectProps {
 }
 
 export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSelectProps) => {
+  const { customer } = useTerminology();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSearchMode, setIsSearchMode] = useState(!initialCustomer);
@@ -120,7 +122,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
   if (!isSearchMode && (initialCustomer || selectedCustomer)) {
     return (
       <div className="space-y-4">
-        <Label className="text-base font-medium">Customer</Label>
+        <Label className="text-base font-medium">{customer}</Label>
         <CustomerCard 
           customer={initialCustomer || selectedCustomer}
           onEdit={() => setIsSearchMode(true)}
@@ -131,10 +133,10 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
 
   return (
     <div className="space-y-4">
-      <Label className="text-base font-medium">Customer</Label>
+      <Label className="text-base font-medium">{customer}</Label>
       <div className="flex gap-2 items-center">
         <Input
-          placeholder="Search customers..."
+          placeholder={`Search ${customer.toLowerCase()}s...`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="flex-1"
@@ -147,7 +149,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Add New Customer</DialogTitle>
+              <DialogTitle>Add New {customer}</DialogTitle>
             </DialogHeader>
             <NewCustomerForm 
               newCustomer={newCustomer}
