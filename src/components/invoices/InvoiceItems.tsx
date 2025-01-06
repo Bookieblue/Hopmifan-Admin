@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ImagePlus } from "lucide-react";
+import { ImagePlus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { InvoiceItem } from "@/types/invoice";
-import { InvoiceItemCard } from "./InvoiceItemCard";
 import { useFormContext } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -21,19 +20,12 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
   const defaultDescription = businessType === "freelancing" ? "Service 1" : "Product 1";
 
   const [newItem, setNewItem] = useState<Partial<InvoiceItem>>({
-    description: defaultDescription,
+    description: "",
     quantity: 1,
     price: 0,
     tax: 0,
     image: null
   });
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setNewItem(prev => ({ ...prev, image: file }));
-    }
-  };
 
   const handleAddItem = () => {
     if (!newItem.description) return;
@@ -49,146 +41,116 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
 
     onItemsChange([...items, itemToAdd]);
     setNewItem({
-      description: defaultDescription,
+      description: "",
       quantity: 1,
       price: 0,
       image: null
     });
   };
 
+  const handleDeleteItem = (id: string) => {
+    onItemsChange(items.filter(item => item.id !== id));
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-gray-50 rounded-lg p-6">
+      <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-600 mb-2 px-4">
+        <div className="col-span-4">Item</div>
+        <div className="col-span-2">Rate</div>
+        <div className="col-span-2">Qty</div>
+        <div className="col-span-3">Amount</div>
+        <div className="col-span-1"></div>
+      </div>
+
       <div className="space-y-4">
         {items.map((item) => (
-          <InvoiceItemCard
-            key={item.id}
-            item={item}
-            onUpdate={(id, field, value) => {
-              const updatedItems = items.map(item => {
-                if (item.id === id) {
-                  const updatedItem = { ...item, [field]: value };
-                  if (['quantity', 'price'].includes(field)) {
-                    updatedItem.amount = Number(updatedItem.quantity) * Number(updatedItem.price);
-                  }
-                  return updatedItem;
-                }
-                return item;
-              });
-              onItemsChange(updatedItems);
-            }}
-            onImageUpload={(id, event) => {
-              const file = event.target.files?.[0];
-              const updatedItems = items.map(item => 
-                item.id === id ? { ...item, image: file } : item
-              );
-              onItemsChange(updatedItems);
-            }}
-            selectedCurrency={form?.watch?.("currency") || "NGN"}
-          />
+          <div key={item.id} className="grid grid-cols-12 gap-4 items-center bg-white p-4 rounded-lg">
+            <div className="col-span-4">
+              <Input
+                value={item.description}
+                onChange={(e) => {
+                  const updatedItems = items.map(i =>
+                    i.id === item.id ? { ...i, description: e.target.value } : i
+                  );
+                  onItemsChange(updatedItems);
+                }}
+                className="border-none shadow-none focus-visible:ring-0 px-0"
+                placeholder="Enter item name"
+              />
+            </div>
+            <div className="col-span-2">
+              <Input
+                type="number"
+                value={item.price}
+                onChange={(e) => {
+                  const updatedItems = items.map(i => {
+                    if (i.id === item.id) {
+                      const price = Number(e.target.value);
+                      return {
+                        ...i,
+                        price,
+                        amount: price * i.quantity
+                      };
+                    }
+                    return i;
+                  });
+                  onItemsChange(updatedItems);
+                }}
+                className="border-none shadow-none focus-visible:ring-0 px-0"
+                placeholder="0.00"
+              />
+            </div>
+            <div className="col-span-2">
+              <Input
+                type="number"
+                value={item.quantity}
+                onChange={(e) => {
+                  const updatedItems = items.map(i => {
+                    if (i.id === item.id) {
+                      const quantity = Number(e.target.value);
+                      return {
+                        ...i,
+                        quantity,
+                        amount: i.price * quantity
+                      };
+                    }
+                    return i;
+                  });
+                  onItemsChange(updatedItems);
+                }}
+                className="border-none shadow-none focus-visible:ring-0 px-0"
+                min={1}
+              />
+            </div>
+            <div className="col-span-3">
+              <Input
+                type="number"
+                value={item.amount}
+                readOnly
+                className="border-none shadow-none focus-visible:ring-0 px-0 bg-transparent"
+              />
+            </div>
+            <div className="col-span-1 flex justify-end">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleDeleteItem(item.id)}
+                className="h-8 w-8"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         ))}
       </div>
 
-      <div className="border rounded-lg p-6 space-y-6">
-        <h3 className="text-lg font-medium mb-4">Add New Item</h3>
-        <div className="flex gap-4 items-start">
-          <div className="flex-1 space-y-4">
-            <div>
-              <Label htmlFor="item-description">Item Description</Label>
-              <Input
-                id="item-description"
-                value={newItem.description}
-                onChange={(e) => setNewItem(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Enter item description"
-                className="mt-2"
-              />
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <Label htmlFor="item-quantity">Quantity</Label>
-                <Input
-                  id="item-quantity"
-                  type="number"
-                  value={newItem.quantity}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, quantity: Number(e.target.value) }))}
-                  min={1}
-                  className="mt-2"
-                />
-              </div>
-              <div className="flex-1">
-                <Label htmlFor="item-price">Price</Label>
-                <Input
-                  id="item-price"
-                  type="number"
-                  value={newItem.price}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, price: Number(e.target.value) }))}
-                  min={0}
-                  step="0.01"
-                  className="mt-2"
-                />
-              </div>
-              <div className="flex-1">
-                <Label htmlFor="item-tax">Tax</Label>
-                <Select 
-                  value={(newItem.tax || "0").toString()}
-                  onValueChange={(value) => setNewItem(prev => ({ ...prev, tax: Number(value) }))}
-                >
-                  <SelectTrigger className="mt-2">
-                    <SelectValue placeholder="Select tax" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {taxes.map((tax, index) => (
-                      <SelectItem key={index} value={tax.rate}>
-                        {tax.name} ({tax.rate}%)
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex-1">
-                <Label htmlFor="item-amount">Amount</Label>
-                <Input
-                  id="item-amount"
-                  type="number"
-                  value={(newItem.quantity || 0) * (newItem.price || 0)}
-                  readOnly
-                  className="mt-2 bg-gray-50"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="min-w-[40px]"> 
-            <div 
-              className="w-10 h-10 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-50 transition-colors mt-8"
-              onClick={() => document.getElementById('new-item-image')?.click()}
-            >
-              {newItem.image ? (
-                <img 
-                  src={URL.createObjectURL(newItem.image)} 
-                  alt="New item" 
-                  className="w-8 h-8 object-cover rounded"
-                />
-              ) : (
-                <ImagePlus className="w-4 h-4 text-gray-400" />
-              )}
-              <Input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                id="new-item-image"
-                onChange={handleImageUpload}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <Button 
-            type="button"
-            onClick={handleAddItem}
-          >
-            Add Now
-          </Button>
-        </div>
-      </div>
+      <Button
+        variant="outline"
+        className="w-full mt-4"
+        onClick={handleAddItem}
+      >
+        Add Item
+      </Button>
     </div>
   );
 };
