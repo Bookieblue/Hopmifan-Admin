@@ -37,6 +37,11 @@ export function RecentActivity({ activities, title }: RecentActivityProps) {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  };
+
   return (
     <Card className="space-y-6 p-6">
       <h2 className="text-2xl font-semibold">{title}</h2>
@@ -44,36 +49,34 @@ export function RecentActivity({ activities, title }: RecentActivityProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Reference ID</TableHead>
               <TableHead>Details</TableHead>
+              <TableHead>Amount</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>Reference ID</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {activities.map((activity, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium">
-                  {activity.reference || `REF${Math.random().toString(36).substr(2, 9)}`}
-                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <CircleIcon className="h-2 w-2 text-gray-500" />
                     <div>
                       <div className="font-medium">{activity.type}</div>
-                      <div className="text-sm text-muted-foreground">{activity.description}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {activity.customer} on {formatDate(activity.date)}
+                      </div>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
+                  <div className="font-semibold">₦{activity.amount.toLocaleString()}</div>
+                  <span className={`mt-1 inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
                     {activity.status || 'completed'}
                   </span>
                 </TableCell>
-                <TableCell>{activity.date}</TableCell>
-                <TableCell className="text-right">
-                  <div className="font-semibold">₦{activity.amount.toLocaleString()}</div>
+                <TableCell className="font-medium">
+                  {activity.reference || `REF${Math.random().toString(36).substr(2, 9)}`}
                 </TableCell>
               </TableRow>
             ))}
