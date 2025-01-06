@@ -3,7 +3,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLink } from 'lucide-react'
-import Image from 'next/image'
 
 interface QuoteItem {
   title: string
@@ -84,7 +83,7 @@ const Quote: React.FC<QuoteProps> = ({
         <div className="grid grid-cols-2 gap-16 mb-16">
           <div>
             <div className="mb-8">
-              <Image
+              <img
                 src={companyLogo}
                 alt={companyName}
                 width={200}
