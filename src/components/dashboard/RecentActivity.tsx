@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ActivityItem {
   type: string;
@@ -25,6 +26,8 @@ interface RecentActivityProps {
 }
 
 export function RecentActivity({ activities, title }: RecentActivityProps) {
+  const isMobile = useIsMobile();
+
   const getStatusColor = (status?: string) => {
     switch (status) {
       case "completed":
@@ -46,42 +49,44 @@ export function RecentActivity({ activities, title }: RecentActivityProps) {
   return (
     <Card className="space-y-6 p-6">
       <h2 className="text-2xl font-semibold">{title}</h2>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Details</TableHead>
-              <TableHead>Amount & Status</TableHead>
-              <TableHead>Reference ID</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {activities.map((activity, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <CircleIcon className="h-2 w-2 text-gray-500" />
-                    <div>
-                      <div className="font-medium">{activity.type}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {activity.customer} on {formatDate(activity.date)}
+      <div className="overflow-x-auto">
+        <div className="inline-block min-w-full align-middle">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Details</TableHead>
+                <TableHead>Amount & Status</TableHead>
+                <TableHead className="hidden md:table-cell">Reference ID</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {activities.map((activity, index) => (
+                <TableRow key={index}>
+                  <TableCell className="max-w-[200px]">
+                    <div className="flex items-center gap-2">
+                      <CircleIcon className="h-2 w-2 text-gray-500 flex-shrink-0" />
+                      <div className="truncate">
+                        <div className="font-medium truncate">{activity.type}</div>
+                        <div className="text-sm text-muted-foreground truncate">
+                          {activity.customer} on {formatDate(activity.date)}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="font-semibold">₦{activity.amount.toLocaleString()}</div>
-                  <span className={`mt-1 inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
-                    {activity.status || 'completed'}
-                  </span>
-                </TableCell>
-                <TableCell className="font-medium">
-                  {activity.reference || `REF${Math.random().toString(36).substr(2, 9)}`}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    <div className="font-semibold">₦{activity.amount.toLocaleString()}</div>
+                    <span className={`mt-1 inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
+                      {activity.status || 'completed'}
+                    </span>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell font-medium">
+                    {activity.reference || `REF${Math.random().toString(36).substr(2, 9)}`}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </Card>
   );
