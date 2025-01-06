@@ -28,21 +28,31 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
       id: '1', 
       name: "Acme Corp", 
       email: "billing@acme.com",
-      billingAddress: "123 Business Ave, Lagos, Nigeria"
+      phone: "+1 234 567 890",
+      address: "123 Business Ave, Lagos, Nigeria",
+      billingAddress: "123 Business Ave, Lagos, Nigeria",
+      totalSpent: "₦12,500.00",
+      date: "15 Mar 2024",
+      profilePicture: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+      invoices: [],
+      estimates: [],
+      receipts: []
     },
     { 
       id: '2', 
       name: "TechStart Solutions", 
       email: "finance@techstart.com",
-      billingAddress: "456 Innovation Way, Abuja, Nigeria"
+      phone: "+1 987 654 321",
+      address: "456 Innovation Way, Abuja, Nigeria",
+      billingAddress: "456 Innovation Way, Abuja, Nigeria",
+      totalSpent: "₦8,750.00",
+      date: "14 Mar 2024",
+      profilePicture: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
+      invoices: [],
+      estimates: [],
+      receipts: []
     }
   ]);
-
-  const [newCustomer, setNewCustomer] = useState<NewCustomer>({
-    name: "",
-    email: "",
-    billingAddress: "",
-  });
 
   const filteredCustomers = customers.filter((customer) =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -73,6 +83,17 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
     const customer: Customer = {
       id: Date.now().toString(),
       ...newCustomer,
+      phone: "",
+      address: "",
+      totalSpent: "₦0.00",
+      date: new Date().toLocaleDateString('en-US', { 
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }),
+      invoices: [],
+      estimates: [],
+      receipts: []
     };
 
     handleCustomerSelect(customer);
@@ -89,18 +110,6 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
       description: "New customer added successfully",
     });
   };
-
-  if (!isSearchMode && (initialCustomer || selectedCustomer)) {
-    return (
-      <div className="space-y-4">
-        <Label className="text-base font-medium">Customer</Label>
-        <CustomerCard 
-          customer={initialCustomer || selectedCustomer}
-          onEdit={() => setIsSearchMode(true)}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-4">
