@@ -129,6 +129,46 @@ export function InvoicePreview({
     paymentLink: "https://payment.link"
   };
 
+  // Transform data for minimal template
+  const minimalInvoiceData = {
+    amount: `${currencySymbol}${cleanInvoice.items.reduce((sum, item) => sum + item.amount, 0).toLocaleString()}`,
+    dueDate: new Date(cleanInvoice.date).toLocaleDateString(),
+    invoiceNumber: cleanInvoice.number || '',
+    issueDate: new Date(cleanInvoice.date).toLocaleDateString(),
+    companyDetails: {
+      name: "Your Company",
+      website: "www.company.com",
+      email: "contact@company.com",
+      phone: "+1234567890",
+      address: {
+        street: "123 Business Street",
+        city: "Business City",
+        postcode: "12345"
+      }
+    },
+    clientDetails: {
+      name: cleanInvoice.customer?.name || '',
+      address: {
+        street: cleanInvoice.customer?.street || '',
+        city: cleanInvoice.customer?.state || '',
+        postcode: cleanInvoice.customer?.postalCode || ''
+      }
+    },
+    items: cleanInvoice.items.map(item => ({
+      description: item.description,
+      quantity: item.quantity,
+      cost: item.price,
+      amount: item.amount
+    })),
+    bankDetails: {
+      bank: "Sample Bank",
+      accountName: "Sample Account",
+      accountNumber: "1234567890",
+      sortCode: "12-34-56"
+    },
+    paymentLink: "https://payment.link"
+  };
+
   return (
     <div className="bg-[#F9FAFB] p-6 h-[calc(100vh-8rem)] overflow-y-auto">
       <div className="space-y-4">
@@ -177,7 +217,7 @@ export function InvoicePreview({
       {template === 'modern' ? (
         <ModernInvoiceTemplate {...modernInvoiceData} />
       ) : template === 'minimal' ? (
-        <MinimalInvoiceTemplate {...modernInvoiceData} />
+        <MinimalInvoiceTemplate {...minimalInvoiceData} />
       ) : template === 'professional' ? (
         <ProfessionalQuoteTemplate />
       ) : (
