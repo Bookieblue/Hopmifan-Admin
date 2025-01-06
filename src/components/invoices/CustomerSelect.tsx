@@ -23,6 +23,12 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>(initialCustomer);
   const { toast } = useToast();
   
+  const [newCustomer, setNewCustomer] = useState<NewCustomer>({
+    name: "",
+    email: "",
+    billingAddress: "",
+  });
+
   const [customers] = useState<Customer[]>([
     { 
       id: '1', 
@@ -110,6 +116,18 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
       description: "New customer added successfully",
     });
   };
+
+  if (!isSearchMode && (initialCustomer || selectedCustomer)) {
+    return (
+      <div className="space-y-4">
+        <Label className="text-base font-medium">Customer</Label>
+        <CustomerCard 
+          customer={initialCustomer || selectedCustomer}
+          onEdit={() => setIsSearchMode(true)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
