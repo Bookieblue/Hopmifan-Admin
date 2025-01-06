@@ -16,6 +16,8 @@ const customerData = {
     phone: "+1 234 567 890",
     address: "123 Business Ave, Lagos, Nigeria",
     totalSpent: "₦12,500.00",
+    date: "15 Mar 2024",
+    profilePicture: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
     invoices: [
       { id: "INV-001", date: "15 Mar 2024", amount: "₦5,000.00", status: "paid" },
       { id: "INV-002", date: "10 Mar 2024", amount: "₦7,500.00", status: "pending" }
@@ -34,6 +36,8 @@ const customerData = {
     phone: "+1 987 654 321",
     address: "456 Innovation Way, Abuja, Nigeria",
     totalSpent: "₦8,750.00",
+    date: "14 Mar 2024",
+    profilePicture: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
     invoices: [
       { id: "INV-003", date: "14 Mar 2024", amount: "₦8,750.00", status: "paid" }
     ],
