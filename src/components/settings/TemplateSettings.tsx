@@ -56,7 +56,7 @@ export default function TemplateSettings() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <h2 className="text-2xl font-semibold tracking-tight">Bill Document Settings</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Billing Doc Settings</h2>
       </div>
 
       <Tabs defaultValue="document-types" className="space-y-4">

@@ -46,6 +46,9 @@ export function SidebarNavigation({ isCollapsed, enabledDocuments, isAccountOpen
     return enabledDocuments[item.type as keyof EnabledDocuments];
   });
 
+  // Check if current path is an account menu item
+  const isAccountMenuItem = accountMenuItems.some(item => location.pathname === item.path);
+
   return (
     <nav className="flex-1 space-y-1">
       {filteredMenuItems.map((item) => {
@@ -81,13 +84,13 @@ export function SidebarNavigation({ isCollapsed, enabledDocuments, isAccountOpen
           className={cn(
             "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
             isCollapsed ? "justify-center" : "justify-between",
-            isAccountOpen
+            !isAccountMenuItem && isAccountOpen
               ? "bg-blue-50 text-blue-600"
               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
           )}
         >
           <div className={cn("flex items-center gap-3", isCollapsed && "justify-center w-full")}>
-            <Users className={cn("w-5 h-5 flex-shrink-0", isAccountOpen ? "text-blue-600" : "text-gray-500")} />
+            <Users className={cn("w-5 h-5 flex-shrink-0", !isAccountMenuItem && isAccountOpen ? "text-blue-600" : "text-gray-500")} />
             {!isCollapsed && <span>Account</span>}
           </div>
           {!isCollapsed && (
