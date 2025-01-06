@@ -1,4 +1,16 @@
-import { Card } from "@/components/ui/card";
+import React from 'react'
+import { Card, CardContent } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+
+interface InvoiceItem {
+  no: string
+  description: string
+  sac: string
+  amount: number
+}
 
 interface ClassicInvoiceTemplateProps {
   invoice: {
@@ -25,86 +37,125 @@ interface ClassicInvoiceTemplateProps {
 }
 
 export function ClassicInvoiceTemplate({ invoice, currencySymbol }: ClassicInvoiceTemplateProps) {
+  const subtotal = invoice.items.reduce((sum, item) => sum + item.amount, 0)
+  const taxableValue = subtotal * 0.75 // Example calculation
+  const igst = taxableValue * 0.18
+  const total = subtotal + igst
+
   return (
-    <Card className="bg-white p-8 mt-4">
-      <div className="space-y-6">
-        <div className="flex justify-between items-start">
-          <h2 className="text-2xl font-bold text-blue-600">Cordlo Invoice</h2>
+    <Card className="w-full max-w-3xl mx-auto bg-[#f8f1f1] mt-4">
+      <CardContent className="p-8">
+        {/* Header */}
+        <div className="flex justify-between items-start mb-12">
+          <div>
+            <h1 className="text-4xl font-bold text-[#1a1a3c]">Cordlo Invoice</h1>
+          </div>
           <div className="text-right">
-            <div className="text-xl font-semibold">#{invoice.number}</div>
-            <div className="text-gray-500">
-              Date: {new Date(invoice.date).toLocaleDateString()}
+            <h2 className="text-xl font-semibold mb-1">TAX INVOICE</h2>
+            <p className="text-sm">#{invoice.number}</p>
+          </div>
+        </div>
+
+        {/* Client Information */}
+        {invoice.customer && (
+          <div className="grid grid-cols-2 gap-8 mb-8">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-semibold mb-2">Issued to</h3>
+                <div className="space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-xs text-gray-600">NAME AND ADDRESS</span>
+                    <span className="text-sm">{invoice.customer.name}</span>
+                  </div>
+                  <p className="text-sm">
+                    {invoice.customer.street}
+                    {invoice.customer.state && `, ${invoice.customer.state}`}
+                    {invoice.customer.postalCode && ` ${invoice.customer.postalCode}`}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-xs text-gray-600">DATE ISSUED</span>
+                  <span className="text-sm">{new Date(invoice.date).toLocaleDateString()}</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        {invoice.customer && (
-          <div className="space-y-2">
-            <h3 className="font-semibold">Bill To:</h3>
-            <div>{invoice.customer.name}</div>
-            <div>{invoice.customer.email}</div>
-            {invoice.customer.street && (
-              <div className="text-gray-600">
-                {invoice.customer.street}
-                {invoice.customer.state && `, ${invoice.customer.state}`}
-                {invoice.customer.postalCode && ` ${invoice.customer.postalCode}`}
-              </div>
-            )}
-          </div>
         )}
 
-        <div className="mt-8">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-2">Description</th>
-                <th className="text-center py-2">Quantity</th>
-                <th className="text-right py-2">Price</th>
-                <th className="text-right py-2">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
+        {/* Charges Table */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold mb-4">Charges</h3>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>DESCRIPTION</TableHead>
+                <TableHead className="text-right">QUANTITY</TableHead>
+                <TableHead className="text-right">PRICE</TableHead>
+                <TableHead className="text-right">AMOUNT</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {invoice.items.map((item, index) => (
-                <tr key={index} className="border-b">
-                  <td className="py-2">{item.description}</td>
-                  <td className="text-center py-2">{item.quantity}</td>
-                  <td className="text-right py-2">{currencySymbol}{item.price.toLocaleString()}</td>
-                  <td className="text-right py-2">{currencySymbol}{item.amount.toLocaleString()}</td>
-                </tr>
+                <TableRow key={index}>
+                  <TableCell>{item.description}</TableCell>
+                  <TableCell className="text-right">{item.quantity}</TableCell>
+                  <TableCell className="text-right">{currencySymbol}{item.price.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">{currencySymbol}{item.amount.toLocaleString()}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan={3} className="text-right pt-4 font-semibold">Total:</td>
-                <td className="text-right pt-4 font-semibold">
-                  {currencySymbol}
-                  {invoice.items.reduce((sum, item) => sum + item.amount, 0).toLocaleString()}
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+            </TableBody>
+          </Table>
         </div>
 
+        {/* Totals */}
+        <div className="space-y-2 mb-8">
+          <div className="flex justify-between">
+            <span>Subtotal</span>
+            <span>{currencySymbol}{subtotal.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Taxable Value</span>
+            <span>{currencySymbol}{taxableValue.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>IGST @ 18%</span>
+            <span>{currencySymbol}{igst.toLocaleString()}</span>
+          </div>
+          <Separator className="my-2" />
+          <div className="flex justify-between text-lg font-bold">
+            <span>Total</span>
+            <span>{currencySymbol}{total.toLocaleString()}</span>
+          </div>
+        </div>
+
+        {/* Notes */}
         {invoice.notes && (
-          <div className="mt-8 space-y-2">
-            <h3 className="font-semibold">Notes:</h3>
-            <p className="text-gray-600">{invoice.notes}</p>
+          <div className="mb-4">
+            <h4 className="text-sm font-semibold mb-2">Notes</h4>
+            <p className="text-sm text-gray-600">{invoice.notes}</p>
           </div>
         )}
 
+        {/* Terms */}
         {invoice.terms && (
-          <div className="mt-4 space-y-2">
-            <h3 className="font-semibold">Terms & Conditions:</h3>
-            <p className="text-gray-600">{invoice.terms}</p>
+          <div className="mb-8">
+            <h4 className="text-sm font-semibold mb-2">Terms and Conditions</h4>
+            <p className="text-sm text-gray-600">{invoice.terms}</p>
           </div>
         )}
 
+        {/* Footer */}
         {invoice.footer && (
-          <div className="mt-8 pt-4 border-t text-center text-gray-500">
-            {invoice.footer}
-          </div>
+          <>
+            <Separator className="mb-4" />
+            <p className="text-xs text-gray-600 mt-4 text-center">
+              {invoice.footer}
+            </p>
+          </>
         )}
-      </div>
+      </CardContent>
     </Card>
-  );
+  )
 }
