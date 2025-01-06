@@ -41,7 +41,7 @@ export function StatsGrid() {
                 <CircleDot className="text-green-500 h-4 w-4" />
                 <span className="text-lg">Payments Received</span>
               </div>
-              <span className="text-lg font-semibold">
+              <span className="text-[54px] font-semibold leading-none">
                 ₦{totalReceived.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
               </span>
             </div>
@@ -58,7 +58,7 @@ export function StatsGrid() {
                 <CircleDot className="text-orange-500 h-4 w-4" />
                 <span className="text-lg">{waitingCount} Waiting to be paid</span>
               </div>
-              <span className="text-lg font-semibold">
+              <span className="text-[54px] font-semibold leading-none">
                 ₦{waitingToBePaid.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
               </span>
             </div>
@@ -75,7 +75,7 @@ export function StatsGrid() {
                 <CircleDot className="text-red-500 h-4 w-4" />
                 <span className="text-lg">{overdueCount} Overdue Invoices</span>
               </div>
-              <span className="text-lg font-semibold">
+              <span className="text-[54px] font-semibold leading-none">
                 ₦{overdueAmount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
               </span>
             </div>
