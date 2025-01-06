@@ -8,10 +8,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ShareModal } from "@/components/modals/ShareModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { ModernInvoiceTemplate } from "./ModernInvoiceTemplate";
 import { ClassicInvoiceTemplate } from "./ClassicInvoiceTemplate";
+import MinimalInvoiceTemplate from "./MinimalInvoiceTemplate";
+import ProfessionalQuoteTemplate from "./ProfessionalQuoteTemplate";
 
 interface InvoicePreviewProps {
   invoice: {
@@ -43,10 +45,22 @@ export function InvoicePreview({
   invoice, 
   selectedCurrency, 
   selectedGateway,
-  selectedTemplate = 'classic' 
+  selectedTemplate = 'classic'
 }: InvoicePreviewProps) {
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [template, setTemplate] = useState(selectedTemplate);
   const currencySymbol = selectedCurrency === 'NGN' ? '₦' : selectedCurrency;
+
+  // Load template preference from settings
+  useEffect(() => {
+    const settings = localStorage.getItem('templateSettings');
+    if (settings) {
+      const { selectedTemplate } = JSON.parse(settings);
+      if (selectedTemplate) {
+        setTemplate(selectedTemplate);
+      }
+    }
+  }, []);
 
   const handleDownload = (format: 'pdf' | 'jpg') => {
     toast.success(`Downloading invoice as ${format.toUpperCase()}`);
@@ -65,31 +79,46 @@ export function InvoicePreview({
     }
   };
 
+  // Only include fields that have data
+  const cleanInvoice = {
+    ...invoice,
+    customer: invoice.customer ? {
+      name: invoice.customer.name || undefined,
+      email: invoice.customer.email || undefined,
+      street: invoice.customer.street || undefined,
+      state: invoice.customer.state || undefined,
+      postalCode: invoice.customer.postalCode || undefined
+    } : undefined,
+    notes: invoice.notes || undefined,
+    terms: invoice.terms || undefined,
+    footer: invoice.footer || undefined
+  };
+
   // Transform invoice data for modern template
   const modernInvoiceData = {
-    invoiceNumber: invoice.number || '',
+    invoiceNumber: cleanInvoice.number || '',
     projectDesc: "Invoice",
-    date: new Date(invoice.date).toLocaleDateString(),
-    dueDate: new Date(invoice.date).toLocaleDateString(),
+    date: new Date(cleanInvoice.date).toLocaleDateString(),
+    dueDate: new Date(cleanInvoice.date).toLocaleDateString(),
     companyName: "Your Company",
     companyAddress: "Your Address",
     companyPhone: "Your Phone",
     companyEmail: "your@email.com",
-    clientName: invoice.customer?.name || '',
-    clientAddress: invoice.customer?.street || '',
+    clientName: cleanInvoice.customer?.name || '',
+    clientAddress: cleanInvoice.customer?.street || '',
     clientPhone: "",
-    clientEmail: invoice.customer?.email || '',
+    clientEmail: cleanInvoice.customer?.email || '',
     status: "pending" as const,
     paymentType: "one-time" as const,
-    items: invoice.items.map(item => ({
+    items: cleanInvoice.items.map(item => ({
       description: item.description,
       cost: item.price,
       quantity: item.quantity.toString(),
       price: item.amount,
       unit: "item"
     })),
-    customerNotes: invoice.notes,
-    terms: invoice.terms,
+    customerNotes: cleanInvoice.notes,
+    terms: cleanInvoice.terms,
     bankDetails: {
       bankName: "Bank Name",
       accountName: "Account Name",
@@ -145,11 +174,15 @@ export function InvoicePreview({
         </div>
       </div>
 
-      {selectedTemplate === 'modern' ? (
+      {template === 'modern' ? (
         <ModernInvoiceTemplate {...modernInvoiceData} />
+      ) : template === 'minimal' ? (
+        <MinimalInvoiceTemplate {...modernInvoiceData} />
+      ) : template === 'professional' ? (
+        <ProfessionalQuoteTemplate />
       ) : (
         <ClassicInvoiceTemplate 
-          invoice={invoice}
+          invoice={cleanInvoice}
           currencySymbol={currencySymbol}
         />
       )}
