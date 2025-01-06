@@ -4,14 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useState } from "react";
 import { BusinessBasicInfo } from "./business/BusinessBasicInfo";
+import { BusinessContactInfo } from "@/components/onboarding/BusinessContactInfo";
+import { BusinessLocationInfo } from "@/components/onboarding/BusinessLocationInfo";
 import { formSchema, BusinessFormData } from "@/types/business";
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
+import { countries } from "@/lib/constants";
 
 export default function BusinessSettings() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [defaultCurrency, setDefaultCurrency] = useState("USD");
+  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
   const { toast } = useToast();
 
   // Mock signup date - In a real app, this would come from your auth system
@@ -31,6 +35,8 @@ export default function BusinessSettings() {
     },
   });
 
+  const operationType = form.watch("operationType");
+
   const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -40,6 +46,16 @@ export default function BusinessSettings() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleCountrySelect = (country: string) => {
+    if (!selectedCountries.includes(country)) {
+      setSelectedCountries([...selectedCountries, country]);
+    }
+  };
+
+  const removeCountry = (country: string) => {
+    setSelectedCountries(selectedCountries.filter((c) => c !== country));
   };
 
   const handleDeleteAccount = async () => {
@@ -102,31 +118,52 @@ export default function BusinessSettings() {
             setDefaultCurrency={setDefaultCurrency}
           />
 
-          <div className="flex justify-end space-x-4">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete Account</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your
-                    account and remove your data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteAccount}>
-                    Delete Account
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+          <BusinessContactInfo form={form} />
+
+          <BusinessLocationInfo
+            form={form}
+            selectedCountries={selectedCountries}
+            handleCountrySelect={handleCountrySelect}
+            removeCountry={removeCountry}
+            countries={countries}
+            operationType={operationType}
+          />
+
+          <div className="flex justify-end">
             <Button type="submit">Save Changes</Button>
           </div>
         </form>
       </Form>
+
+      <div className="mt-8 p-6 border rounded-lg bg-red-50">
+        <h4 className="text-lg font-medium text-red-700">Delete Account</h4>
+        <p className="mt-2 text-sm text-red-600">
+          Deleting your account will permanently remove all your data, including invoices, customers, and payment history. 
+          This action cannot be undone. Please make sure to backup any important information before proceeding.
+        </p>
+        <div className="mt-4">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">Delete Account</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete your
+                  account and remove your data from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteAccount}>
+                  Delete Account
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </div>
     </div>
   );
 }
