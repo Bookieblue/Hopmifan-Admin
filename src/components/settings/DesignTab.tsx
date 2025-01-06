@@ -2,7 +2,6 @@ import { DocumentTypeSelector } from "./DocumentTypeSelector";
 import { TemplatePreview } from "./TemplatePreview";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Grid } from "@/components/ui/grid";
 import { ColorPicker } from "./ColorPicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
