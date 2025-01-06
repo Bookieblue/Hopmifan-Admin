@@ -10,6 +10,7 @@ import {
 import { ShareModal } from "@/components/modals/ShareModal";
 import { useState } from "react";
 import { toast } from "sonner";
+import ModernInvoiceTemplate from "./ModernInvoiceTemplate";
 
 interface InvoicePreviewProps {
   invoice: {
@@ -34,9 +35,15 @@ interface InvoicePreviewProps {
   };
   selectedCurrency: string;
   selectedGateway?: string | null;
+  selectedTemplate?: string;
 }
 
-export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: InvoicePreviewProps) {
+export function InvoicePreview({ 
+  invoice, 
+  selectedCurrency, 
+  selectedGateway,
+  selectedTemplate = 'classic' 
+}: InvoicePreviewProps) {
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const currencySymbol = selectedCurrency === 'NGN' ? '₦' : selectedCurrency;
   
@@ -55,6 +62,41 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
       toast.success("Redirecting to payment page");
       window.open('https://paystack.com/pay/afrika-mom-braids-store', '_blank');
     }
+  };
+
+  // Transform invoice data for modern template
+  const modernInvoiceData = {
+    invoiceNumber: invoice.number || '',
+    projectDesc: "Invoice",
+    date: new Date(invoice.date).toLocaleDateString(),
+    dueDate: new Date(invoice.date).toLocaleDateString(), // You might want to use actual due date
+    companyName: "Your Company",
+    companyAddress: "Your Address",
+    companyPhone: "Your Phone",
+    companyEmail: "your@email.com",
+    clientName: invoice.customer?.name || '',
+    clientAddress: invoice.customer?.street || '',
+    clientPhone: "",
+    clientEmail: invoice.customer?.email || '',
+    status: "pending" as const,
+    paymentType: "one-time" as const,
+    items: invoice.items.map(item => ({
+      description: item.description,
+      cost: item.price,
+      quantity: item.quantity.toString(),
+      price: item.amount,
+      unit: "item"
+    })),
+    customerNotes: invoice.notes,
+    terms: invoice.terms,
+    bankDetails: {
+      bankName: "Bank Name",
+      accountName: "Account Name",
+      accountNumber: "Account Number",
+      swiftCode: "SWIFT Code",
+      routingNumber: "Routing Number"
+    },
+    paymentLink: "https://payment.link"
   };
 
   return (
@@ -102,7 +144,10 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
         </div>
       </div>
 
-      <Card className="bg-white p-8 mt-4">
+      {selectedTemplate === 'modern' ? (
+        <ModernInvoiceTemplate {...modernInvoiceData} />
+      ) : (
+        <Card className="bg-white p-8 mt-4">
         <div className="space-y-6">
           <div className="flex justify-between items-start">
             <h2 className="text-2xl font-bold text-blue-600">Cordlo Invoice</h2>
@@ -181,7 +226,8 @@ export function InvoicePreview({ invoice, selectedCurrency, selectedGateway }: I
             </div>
           )}
         </div>
-      </Card>
+        </Card>
+      )}
 
       <ShareModal 
         open={shareModalOpen}

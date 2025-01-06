@@ -9,6 +9,7 @@ import { ContentTab } from "./ContentTab";
 export default function TemplateSettings() {
   const { enabledDocuments, toggleDocument } = useDocuments();
   const [selectedDocument, setSelectedDocument] = useState("invoices");
+  const [selectedTemplate, setSelectedTemplate] = useState("classic");
   const [templateContent, setTemplateContent] = useState({
     headerText: "INVOICE",
     footerText: "Thank you for your business",
@@ -28,7 +29,7 @@ export default function TemplateSettings() {
     }, 1000);
 
     return () => clearTimeout(saveTimeout);
-  }, [templateContent, colors]);
+  }, [templateContent, colors, selectedTemplate]);
 
   const handleContentChange = (field: string, value: string) => {
     setTemplateContent(prev => ({ ...prev, [field]: value }));
@@ -38,6 +39,11 @@ export default function TemplateSettings() {
   const handleColorChange = (type: 'brand' | 'accent', value: string) => {
     setColors(prev => ({ ...prev, [type]: value }));
     console.log(`Updating ${type} color to:`, value);
+  };
+
+  const handleTemplateChange = (template: string) => {
+    setSelectedTemplate(template);
+    toast.success(`Template style updated to ${template}`);
   };
 
   return (
@@ -66,6 +72,8 @@ export default function TemplateSettings() {
             onDocumentChange={setSelectedDocument}
             colors={colors}
             onColorChange={handleColorChange}
+            selectedTemplate={selectedTemplate}
+            onTemplateChange={handleTemplateChange}
           />
         </TabsContent>
 

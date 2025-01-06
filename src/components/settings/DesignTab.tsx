@@ -10,9 +10,18 @@ interface DesignTabProps {
     accent: string;
   };
   onColorChange: (type: 'brand' | 'accent', value: string) => void;
+  selectedTemplate?: string;
+  onTemplateChange?: (template: string) => void;
 }
 
-export const DesignTab = ({ selectedDocument, onDocumentChange, colors, onColorChange }: DesignTabProps) => (
+export const DesignTab = ({ 
+  selectedDocument, 
+  onDocumentChange, 
+  colors, 
+  onColorChange,
+  selectedTemplate = 'classic',
+  onTemplateChange = () => {}
+}: DesignTabProps) => (
   <div className="space-y-6">
     <DocumentTypeSelector 
       selectedDocument={selectedDocument}
@@ -20,19 +29,28 @@ export const DesignTab = ({ selectedDocument, onDocumentChange, colors, onColorC
     />
     
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <Card className="p-4 border-2 border-blue-500 rounded-lg">
+      <Card 
+        className={`p-4 rounded-lg cursor-pointer ${selectedTemplate === 'modern' ? 'border-2 border-blue-500' : 'border'}`}
+        onClick={() => onTemplateChange('modern')}
+      >
         <h3 className="font-medium mb-2">Modern</h3>
         <p className="text-sm text-gray-500 mb-4">Clean and contemporary design with a focus on typography and whitespace</p>
         <div className="aspect-[8.5/11] bg-gray-100 rounded-lg"></div>
       </Card>
 
-      <Card className="p-4 border rounded-lg">
+      <Card 
+        className={`p-4 rounded-lg cursor-pointer ${selectedTemplate === 'classic' ? 'border-2 border-blue-500' : 'border'}`}
+        onClick={() => onTemplateChange('classic')}
+      >
         <h3 className="font-medium mb-2">Classic</h3>
         <p className="text-sm text-gray-500 mb-4">Traditional business layout with a professional appearance</p>
         <div className="aspect-[8.5/11] bg-gray-100 rounded-lg"></div>
       </Card>
 
-      <Card className="p-4 border rounded-lg">
+      <Card 
+        className={`p-4 rounded-lg cursor-pointer ${selectedTemplate === 'minimal' ? 'border-2 border-blue-500' : 'border'}`}
+        onClick={() => onTemplateChange('minimal')}
+      >
         <h3 className="font-medium mb-2">Minimal</h3>
         <p className="text-sm text-gray-500 mb-4">Simplified design that emphasizes content and readability</p>
         <div className="aspect-[8.5/11] bg-gray-100 rounded-lg"></div>
