@@ -175,6 +175,48 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
         ))}
       </div>
 
+      <div className="space-y-4">
+        {/* New Item Form */}
+        <div className="grid grid-cols-12 gap-4 items-center bg-white p-4 rounded-lg">
+          <div className="col-span-4">
+            <Input
+              value={newItem.description}
+              onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+              className="border-none shadow-none focus-visible:ring-0 px-0"
+              placeholder="Enter item name"
+            />
+          </div>
+          <div className="col-span-2">
+            <Input
+              type="number"
+              value={newItem.price}
+              onChange={(e) => setNewItem({ ...newItem, price: Number(e.target.value) })}
+              className="border-none shadow-none focus-visible:ring-0 px-0"
+              placeholder="0.00"
+            />
+          </div>
+          <div className="col-span-2">
+            <Input
+              type="number"
+              value={newItem.quantity}
+              onChange={(e) => setNewItem({ ...newItem, quantity: Number(e.target.value) })}
+              className="border-none shadow-none focus-visible:ring-0 px-0"
+              min={1}
+              placeholder="1"
+            />
+          </div>
+          <div className="col-span-3">
+            <Input
+              type="number"
+              value={(newItem.price || 0) * (newItem.quantity || 1)}
+              readOnly
+              className="border-none shadow-none focus-visible:ring-0 px-0 bg-transparent"
+            />
+          </div>
+          <div className="col-span-1"></div>
+        </div>
+      </div>
+
       <div className="space-y-4 border-t pt-4">
         <div className="flex items-center space-x-2">
           <Checkbox
