@@ -10,6 +10,7 @@ export default function TemplateSettings() {
   const { enabledDocuments, toggleDocument } = useDocuments();
   const [selectedDocument, setSelectedDocument] = useState("invoices");
   const [selectedTemplate, setSelectedTemplate] = useState("classic");
+  const [selectedFont, setSelectedFont] = useState("inter");
   const [templateContent, setTemplateContent] = useState({
     headerText: "INVOICE",
     footerText: "Thank you for your business",
@@ -18,7 +19,8 @@ export default function TemplateSettings() {
   });
   const [colors, setColors] = useState({
     brand: "#4F46E5",
-    accent: "#818CF8"
+    text: "#1A1F2C",
+    background: "#FFFFFF"
   });
 
   // Autosave functionality
@@ -36,7 +38,7 @@ export default function TemplateSettings() {
     console.log(`Updating ${field} to:`, value);
   };
 
-  const handleColorChange = (type: 'brand' | 'accent', value: string) => {
+  const handleColorChange = (type: 'brand' | 'text' | 'background', value: string) => {
     setColors(prev => ({ ...prev, [type]: value }));
     console.log(`Updating ${type} color to:`, value);
   };
@@ -46,10 +48,15 @@ export default function TemplateSettings() {
     toast.success(`Template style updated to ${template}`);
   };
 
+  const handleFontChange = (font: string) => {
+    setSelectedFont(font);
+    toast.success(`Template font updated to ${font}`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <h2 className="text-2xl font-semibold tracking-tight">Template Settings</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Bill Document Settings</h2>
       </div>
 
       <Tabs defaultValue="document-types" className="space-y-4">
@@ -74,6 +81,8 @@ export default function TemplateSettings() {
             onColorChange={handleColorChange}
             selectedTemplate={selectedTemplate}
             onTemplateChange={handleTemplateChange}
+            selectedFont={selectedFont}
+            onFontChange={handleFontChange}
           />
         </TabsContent>
 

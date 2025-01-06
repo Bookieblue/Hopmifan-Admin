@@ -16,7 +16,7 @@ export default function Settings() {
       <Tabs defaultValue="account" className="space-y-4">
         <TabsList className="bg-muted/50 p-1">
           <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="templates">Templates</TabsTrigger>
+          <TabsTrigger value="templates">Bill Document</TabsTrigger>
           <TabsTrigger value="payment">Payment</TabsTrigger>
           <TabsTrigger value="members">Members</TabsTrigger>
         </TabsList>
