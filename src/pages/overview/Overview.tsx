@@ -1,32 +1,33 @@
-import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
+import { StatsGrid } from "@/components/dashboard/StatsGrid";
 
 const Overview = () => {
+  // Sample activities data
   const recentActivities = [
     {
-      type: "New Invoice",
+      id: 1,
+      type: "invoice",
       description: "Invoice #001 created",
-      amount: 50000,
-      date: "2024-03-20"
+      date: new Date().toISOString(),
+      amount: 1500,
+      status: "pending"
     },
     {
-      type: "Payment Received",
-      description: "Payment for Invoice #002",
-      amount: 75000,
-      date: "2024-03-19"
+      id: 2,
+      type: "estimate",
+      description: "Estimate #002 sent",
+      date: new Date().toISOString(),
+      amount: 2500,
+      status: "sent"
     }
   ];
 
   return (
-    <div className="space-y-8 py-6">
-      <div>
-        <h1 className="text-3xl font-bold">Overview</h1>
-        <p className="text-gray-500 mt-2">Welcome to your dashboard</p>
-      </div>
+    <div className="space-y-8">
       <StatsGrid />
       <RecentActivity 
+        title="Recent Activity"
         activities={recentActivities}
-        title="Recent Activities"
       />
     </div>
   );

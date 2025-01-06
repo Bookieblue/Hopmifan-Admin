@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { BusinessProvider } from "./contexts/BusinessContext";
+import { DocumentProvider } from "./contexts/DocumentContext";
 import { Layout } from "./components/layout/Layout";
 import CustomerList from "./pages/customers/CustomerList";
 import CreateEstimate from "./pages/estimates/CreateEstimate";
@@ -12,6 +13,7 @@ import SignUp from "./pages/auth/SignUp";
 function App() {
   return (
     <BusinessProvider>
+      <DocumentProvider>
         <Layout>
           <Routes>
             <Route path="/" element={<Overview />} />
@@ -23,6 +25,7 @@ function App() {
             <Route path="/auth/signup" element={<SignUp />} />
           </Routes>
         </Layout>
+      </DocumentProvider>
     </BusinessProvider>
   );
 }
