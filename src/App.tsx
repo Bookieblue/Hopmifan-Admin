@@ -26,6 +26,7 @@ import Settings from "@/pages/settings/Index";
 import Pricing from "@/pages/pricing/Index";
 import Subscription from "@/pages/subscription/Index";
 import Business from "@/pages/onboarding/Business";
+import CustomerDetail from "@/pages/customers/CustomerDetail";
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
         <Route path="/receipts/:id/preview" element={<PreviewReceipt />} />
         <Route path="/customers" element={<CustomerList />} />
         <Route path="/customers/create" element={<CreateCustomer />} />
+        <Route path="/customers/:id" element={<CustomerDetail />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/pricing" element={<Pricing />} />
