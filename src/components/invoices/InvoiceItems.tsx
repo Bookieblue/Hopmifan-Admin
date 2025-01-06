@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ImagePlus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { InvoiceItem } from "@/types/invoice";
 import { useFormContext } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,6 +18,12 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
   const businessType = form?.watch?.("businessType") || "freelancing";
   const taxes = form?.watch?.("taxes") || [{ name: "No Tax", rate: "0" }];
   
+  const [enableTax, setEnableTax] = useState(false);
+  const [enableDiscount, setEnableDiscount] = useState(false);
+  const [taxRate, setTaxRate] = useState(0);
+  const [discountRate, setDiscountRate] = useState(0);
+  const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
+  
   const defaultDescription = businessType === "freelancing" ? "Service 1" : "Product 1";
 
   const [newItem, setNewItem] = useState<Partial<InvoiceItem>>({
@@ -26,6 +33,30 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
     tax: 0,
     image: null
   });
+
+  const calculateSubtotal = () => {
+    return items.reduce((sum, item) => sum + item.amount, 0);
+  };
+
+  const calculateTax = (subtotal: number) => {
+    if (!enableTax) return 0;
+    return (subtotal * taxRate) / 100;
+  };
+
+  const calculateDiscount = (subtotal: number) => {
+    if (!enableDiscount) return 0;
+    if (discountType === 'percentage') {
+      return (subtotal * discountRate) / 100;
+    }
+    return discountRate;
+  };
+
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    const tax = calculateTax(subtotal);
+    const discount = calculateDiscount(subtotal);
+    return subtotal + tax - discount;
+  };
 
   const handleAddItem = () => {
     if (!newItem.description) return;
@@ -142,6 +173,66 @@ export const InvoiceItems = ({ items, onItemsChange }: InvoiceItemsProps) => {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="space-y-4 border-t pt-4">
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="tax"
+            checked={enableTax}
+            onCheckedChange={(checked) => setEnableTax(checked as boolean)}
+          />
+          <Label htmlFor="tax">Add Tax</Label>
+          {enableTax && (
+            <div className="flex items-center space-x-2">
+              <Input
+                type="number"
+                value={taxRate}
+                onChange={(e) => setTaxRate(Number(e.target.value))}
+                className="w-20"
+                min="0"
+                max="100"
+              />
+              <span>%</span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="discount"
+            checked={enableDiscount}
+            onCheckedChange={(checked) => setEnableDiscount(checked as boolean)}
+          />
+          <Label htmlFor="discount">Add Discount</Label>
+          {enableDiscount && (
+            <div className="flex items-center space-x-2">
+              <Input
+                type="number"
+                value={discountRate}
+                onChange={(e) => setDiscountRate(Number(e.target.value))}
+                className="w-20"
+                min="0"
+              />
+              <Select value={discountType} onValueChange={(value: 'percentage' | 'fixed') => setDiscountType(value)}>
+                <SelectTrigger className="w-[100px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="percentage">%</SelectItem>
+                  <SelectItem value="fixed">Fixed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-2 text-right">
+          <div>Subtotal: {calculateSubtotal().toFixed(2)}</div>
+          {enableTax && <div>Tax: {calculateTax(calculateSubtotal()).toFixed(2)}</div>}
+          {enableDiscount && <div>Discount: {calculateDiscount(calculateSubtotal()).toFixed(2)}</div>}
+          <div className="font-bold">Total: {calculateTotal().toFixed(2)}</div>
+        </div>
       </div>
 
       <Button

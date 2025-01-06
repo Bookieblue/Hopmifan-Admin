@@ -37,7 +37,7 @@ export default function CreateInvoice() {
   const [notes, setNotes] = useState("Please include invoice number in payment reference");
   const [terms, setTerms] = useState("Payment is due within 30 days");
   const [footer, setFooter] = useState("");
-  
+
   // Load business settings on mount
   useEffect(() => {
     const businessData = localStorage.getItem('businessData');
@@ -92,7 +92,13 @@ export default function CreateInvoice() {
 
       console.log('Saving invoice:', invoiceData);
       
-      if (status === 'published') {
+      if (status === 'draft') {
+        // Save to localStorage for demonstration
+        const drafts = JSON.parse(localStorage.getItem('invoiceDrafts') || '[]');
+        drafts.push(invoiceData);
+        localStorage.setItem('invoiceDrafts', JSON.stringify(drafts));
+        toast.success("Invoice saved as draft");
+      } else {
         setShowSuccessModal(true);
         confetti({
           particleCount: 100,
@@ -104,9 +110,6 @@ export default function CreateInvoice() {
           setShowSuccessModal(false);
           navigate('/invoices');
         }, 2000);
-      } else {
-        toast.success("Invoice saved as draft");
-        navigate('/invoices');
       }
     } catch (error) {
       console.error('Error creating invoice:', error);
