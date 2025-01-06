@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CurrencySelect } from "@/components/invoices/payment/CurrencySelect";
 import { businessTypes, countries } from "@/lib/constants";
 import { BusinessFormData } from "@/types/business";
+import { useEffect } from "react";
 
 interface BusinessBasicInfoProps {
   form: UseFormReturn<BusinessFormData>;
@@ -23,6 +24,22 @@ export const BusinessBasicInfo = ({
   defaultCurrency,
   setDefaultCurrency,
 }: BusinessBasicInfoProps) => {
+  // Watch for business name changes and update localStorage
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      if (value.businessName) {
+        const existingData = localStorage.getItem('businessData');
+        const parsedData = existingData ? JSON.parse(existingData) : {};
+        localStorage.setItem('businessData', JSON.stringify({
+          ...parsedData,
+          businessName: value.businessName,
+          logo: logoPreview
+        }));
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, logoPreview]);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-start space-y-4">
@@ -62,7 +79,21 @@ export const BusinessBasicInfo = ({
           <FormItem className="col-span-full">
             <FormLabel>Business Name</FormLabel>
             <FormControl>
-              <Input placeholder="Enter your business name" {...field} className="h-14" />
+              <Input 
+                placeholder="Enter your business name" 
+                {...field} 
+                className="h-14"
+                onChange={(e) => {
+                  field.onChange(e);
+                  // Update localStorage immediately on change
+                  const existingData = localStorage.getItem('businessData');
+                  const parsedData = existingData ? JSON.parse(existingData) : {};
+                  localStorage.setItem('businessData', JSON.stringify({
+                    ...parsedData,
+                    businessName: e.target.value
+                  }));
+                }}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
