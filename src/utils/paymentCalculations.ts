@@ -37,7 +37,7 @@ export const groupPaymentsByTimeRange = (payments: Payment[], range: string) => 
     
     switch (range) {
       case "24H":
-        key = `${date.getHours()}:00`;
+        key = `${date.getHours().toString().padStart(2, '0')}:00`;
         break;
       case "1W":
         key = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()];
@@ -64,8 +64,10 @@ export const groupPaymentsByTimeRange = (payments: Payment[], range: string) => 
 };
 
 export const formatChartData = (groupedData: Record<string, number>) => {
-  return Object.entries(groupedData).map(([month, amount]) => ({
-    month,
-    amount,
-  }));
+  return Object.entries(groupedData)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([month, amount]) => ({
+      month,
+      amount,
+    }));
 };

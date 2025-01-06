@@ -5,22 +5,38 @@ import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { calculateTotalEarnings, groupPaymentsByTimeRange, formatChartData, type Payment } from "@/utils/paymentCalculations";
 
-// Temporary mock data until connected to backend
+// Temporary mock data with more realistic entries
 const mockPayments: Payment[] = [
   { 
-    date: "2024-03-14 10:00:00", 
-    amount: 5057, 
-    customer: "Client 1", 
+    date: "2025-03-14 10:00:00", 
+    amount: 505700, 
+    customer: "Client A", 
     method: "Credit Card", 
-    reference: "REF000001",
+    reference: "REF202503001",
     type: "One-time"
   },
   { 
-    date: "2024-03-13 15:30:00", 
-    amount: 6470, 
-    customer: "Client 2", 
+    date: "2025-03-14 08:30:00", 
+    amount: 647000, 
+    customer: "Client B", 
     method: "Bank Transfer", 
-    reference: "REF000002",
+    reference: "REF202503002",
+    type: "Recurring"
+  },
+  { 
+    date: "2025-03-14 06:15:00", 
+    amount: 892500, 
+    customer: "Client C", 
+    method: "Credit Card", 
+    reference: "REF202503003",
+    type: "One-time"
+  },
+  { 
+    date: "2025-03-13 23:45:00", 
+    amount: 345000, 
+    customer: "Client D", 
+    method: "Bank Transfer", 
+    reference: "REF202503004",
     type: "Recurring"
   },
   // ... Add more mock payments for testing
@@ -47,7 +63,7 @@ export default function Index() {
       type: "Payment Received",
       description: `Payment received from ${payment.customer}`,
       amount: payment.amount,
-      date: payment.date.split(' ')[0] // Get only the date part
+      date: payment.date.split(' ')[0]
     }));
 
   return (
@@ -95,7 +111,15 @@ export default function Index() {
                     <stop offset="95%" stopColor="#0FA0CE" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="month" />
+                <XAxis 
+                  dataKey="month"
+                  tickFormatter={(value) => {
+                    if (timeRange === "24H") {
+                      return value; // Already formatted as HH:00
+                    }
+                    return value;
+                  }}
+                />
                 <YAxis 
                   tickFormatter={(value) => `₦${(value / 1000).toFixed(1)}K`}
                 />
