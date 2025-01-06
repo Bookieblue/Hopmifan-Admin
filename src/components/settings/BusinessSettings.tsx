@@ -54,6 +54,8 @@ export default function BusinessSettings() {
   // Watch for business location changes
   const businessLocation = form.watch("businessLocation");
   const operationType = form.watch("operationType");
+  const businessType = form.watch("businessType");
+  const businessName = form.watch("businessName");
 
   // Effect to update currency when business location changes
   useEffect(() => {
@@ -62,23 +64,44 @@ export default function BusinessSettings() {
     }
   }, [businessLocation]);
 
-  // Effect to load onboarding data
+  // Effect to load and save business data
   useEffect(() => {
-    const onboardingData = localStorage.getItem('businessData');
-    if (onboardingData) {
-      const parsedData = JSON.parse(onboardingData);
+    const businessData = localStorage.getItem('businessData');
+    if (businessData) {
+      const parsedData = JSON.parse(businessData);
       form.reset(parsedData);
       setLogoPreview(parsedData.logo || null);
       setSelectedCountries(parsedData.targetCountries || []);
     }
   }, [form]);
 
+  // Effect to save business data when it changes
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      const dataToSave = {
+        ...value,
+        logo: logoPreview,
+        targetCountries: selectedCountries,
+      };
+      localStorage.setItem('businessData', JSON.stringify(dataToSave));
+    });
+    return () => subscription.unsubscribe();
+  }, [form, logoPreview, selectedCountries]);
+
   const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setLogoPreview(reader.result as string);
+        const logoData = reader.result as string;
+        setLogoPreview(logoData);
+        // Save to localStorage immediately when logo changes
+        const currentData = form.getValues();
+        localStorage.setItem('businessData', JSON.stringify({
+          ...currentData,
+          logo: logoData,
+          targetCountries: selectedCountries,
+        }));
       };
       reader.readAsDataURL(file);
     }
@@ -112,7 +135,14 @@ export default function BusinessSettings() {
 
   const onSubmit = async (values: BusinessFormData) => {
     try {
-      console.log({ ...values, defaultCurrency });
+      const dataToSave = {
+        ...values,
+        logo: logoPreview,
+        defaultCurrency,
+        targetCountries: selectedCountries,
+      };
+      localStorage.setItem('businessData', JSON.stringify(dataToSave));
+      
       toast({
         title: "Success",
         description: "Business settings updated successfully",

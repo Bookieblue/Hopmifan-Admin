@@ -30,31 +30,45 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// Mock data for businesses - in a real app, this would come from an API
-const businesses = [
-  { id: 1, name: "Acme Corp" },
-  { id: 2, name: "TechStart Inc" },
-  { id: 3, name: "Design Studio" },
-];
+// Default placeholder image from Unsplash
+const DEFAULT_LOGO = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b";
 
-interface SidebarProps {
-  onCollapse?: (collapsed: boolean) => void;
-}
-
-export function Sidebar({ onCollapse }: SidebarProps) {
+export function Sidebar({ onCollapse }: { onCollapse?: (collapsed: boolean) => void }) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [selectedBusiness, setSelectedBusiness] = useState(businesses[0]);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const { enabledDocuments } = useDocuments();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [businessData, setBusinessData] = useState<any>({
+    businessName: "My Business",
+    logo: null,
+    businessType: "freelancing"
+  });
 
-  const handleBusinessChange = (business: typeof businesses[0]) => {
-    setSelectedBusiness(business);
-    console.log("Switched to business:", business.name);
-  };
+  useEffect(() => {
+    const loadBusinessData = () => {
+      const data = localStorage.getItem('businessData');
+      if (data) {
+        const parsedData = JSON.parse(data);
+        setBusinessData(parsedData);
+      }
+    };
+
+    // Load initial data
+    loadBusinessData();
+
+    // Set up storage event listener for real-time updates
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'businessData') {
+        loadBusinessData();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const handleAddBusiness = () => {
     navigate("/onboarding/business");
@@ -88,11 +102,25 @@ export function Sidebar({ onCollapse }: SidebarProps) {
       <div className="flex items-center justify-between p-4 border-b border-gray-100">
         <Link to="/" className="flex items-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-semibold">C</span>
-            </div>
+            {businessData.logo ? (
+              <img 
+                src={businessData.logo} 
+                alt="Business logo" 
+                className="w-8 h-8 rounded-lg object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <img 
+                  src={DEFAULT_LOGO}
+                  alt="Default logo"
+                  className="w-8 h-8 rounded-lg object-cover"
+                />
+              </div>
+            )}
             {!isCollapsed && (
-              <span className="text-xl font-semibold text-gray-900">Cordlo</span>
+              <span className="text-xl font-semibold text-gray-900 truncate">
+                {businessData.businessName || "My Business"}
+              </span>
             )}
           </div>
         </Link>
@@ -132,23 +160,13 @@ export function Sidebar({ onCollapse }: SidebarProps) {
               <div className="flex items-center gap-2">
                 <Building2 className="h-4 w-4" />
                 {!isCollapsed && (
-                  <span className="truncate">{selectedBusiness.name}</span>
+                  <span className="truncate">{businessData.businessName || "My Business"}</span>
                 )}
               </div>
               {!isCollapsed && <ChevronDown className="h-4 w-4 opacity-50" />}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[--trigger-width]">
-            {businesses.map((business) => (
-              <DropdownMenuItem
-                key={business.id}
-                onClick={() => handleBusinessChange(business)}
-                className="cursor-pointer"
-              >
-                {business.name}
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleAddBusiness}
               className="cursor-pointer"
