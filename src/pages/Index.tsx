@@ -62,7 +62,8 @@ export default function Index() {
       amount: payment.amount,
       date: payment.date.split(' ')[0],
       status: payment.type === 'Recurring' ? 'completed' as const : 'pending' as const,
-      reference: payment.reference
+      reference: payment.reference,
+      customer: payment.customer // Added this line to fix the TypeScript error
     }));
 
   return (
