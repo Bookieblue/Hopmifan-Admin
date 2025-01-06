@@ -19,6 +19,9 @@ interface InvoiceTableProps {
   onDelete: (id: string) => void;
   onDuplicate: (id: string) => void;
   onShare: (id: string) => void;
+  bulkAction?: string;
+  setBulkAction?: (value: string) => void;
+  onBulkAction?: () => void;
 }
 
 export const InvoiceTable = ({
@@ -28,7 +31,10 @@ export const InvoiceTable = ({
   onSelectAll,
   onDelete,
   onDuplicate,
-  onShare
+  onShare,
+  bulkAction,
+  setBulkAction,
+  onBulkAction
 }: InvoiceTableProps) => {
   const navigate = useNavigate();
 
@@ -83,6 +89,9 @@ export const InvoiceTable = ({
       }}
       onRowClick={(id) => navigate(`/invoices/${id}/edit`)}
       CardComponent={InvoiceCard}
+      bulkAction={bulkAction}
+      setBulkAction={setBulkAction}
+      onBulkAction={onBulkAction}
     />
   );
 };

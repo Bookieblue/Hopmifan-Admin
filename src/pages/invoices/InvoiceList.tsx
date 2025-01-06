@@ -64,6 +64,11 @@ const InvoiceList = () => {
     });
   };
 
+  const handleShare = (invoiceId: string) => {
+    setSelectedInvoiceId(invoiceId);
+    setShareDialogOpen(true);
+  };
+
   const handleBulkDelete = () => {
     if (selectedInvoices.length === 0) return;
     setInvoices(invoices.filter(invoice => !selectedInvoices.includes(invoice.id)));
@@ -170,11 +175,6 @@ const InvoiceList = () => {
           onDelete={handleDelete}
           onDuplicate={handleBulkDuplicate}
           onShare={handleShare}
-          bulkActions={[
-            { value: "delete", label: "Delete Selected" },
-            { value: "duplicate", label: "Duplicate Selected" },
-            { value: "export", label: "Export as CSV" }
-          ]}
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
