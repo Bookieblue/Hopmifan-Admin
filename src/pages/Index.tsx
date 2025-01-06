@@ -38,7 +38,6 @@ const mockPayments: Payment[] = [
     reference: "REF202503004",
     type: "Recurring"
   },
-  // ... Add more mock payments for testing
 ];
 
 const timeRanges = ["24H", "1W", "1M", "3M", "1Y", "ALL"] as const;
