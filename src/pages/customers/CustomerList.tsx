@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Plus } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { CustomerTable } from "@/components/customers/CustomerTable";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CustomerForm } from "@/components/customers/CustomerForm";
 
-// Mock data for the customers list with unique IDs
 const initialCustomers = [
   { 
     id: "1",
@@ -37,10 +37,12 @@ export default function CustomerList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [customers, setCustomers] = useState(initialCustomers);
   const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
-  // Filter customers based on search term
   const filteredCustomers = customers.filter(customer => 
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -65,16 +67,42 @@ export default function CustomerList() {
     });
   };
 
+  const handleEdit = (customer: any) => {
+    setSelectedCustomer(customer);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCustomerSubmit = (customerData: any, isEdit = false) => {
+    if (isEdit) {
+      setCustomers(prev => prev.map(c => c.id === selectedCustomer.id ? { ...c, ...customerData } : c));
+      setIsEditModalOpen(false);
+      toast({
+        title: "Success",
+        description: "Customer updated successfully",
+      });
+    } else {
+      const newCustomer = {
+        id: Date.now().toString(),
+        date: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
+        ...customerData
+      };
+      setCustomers(prev => [...prev, newCustomer]);
+      setIsAddModalOpen(false);
+      toast({
+        title: "Success",
+        description: "Customer added successfully",
+      });
+    }
+  };
+
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold">Customers</h1>
-        <Link to="/customers/create">
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            Add Customer
-          </Button>
-        </Link>
+        <Button onClick={() => setIsAddModalOpen(true)} className="gap-2">
+          <Plus className="w-4 h-4" />
+          Add Customer
+        </Button>
       </div>
 
       <div className="mb-6">
@@ -89,31 +117,6 @@ export default function CustomerList() {
         </div>
       </div>
 
-      {selectedCustomers.length > 0 && (
-        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500">
-              {selectedCustomers.length} selected
-            </span>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => {
-                setCustomers(prev => prev.filter(customer => !selectedCustomers.includes(customer.id)));
-                toast({
-                  title: "Customers deleted",
-                  description: `${selectedCustomers.length} customers have been deleted.`,
-                });
-                setSelectedCustomers([]);
-              }}
-              className="gap-2"
-            >
-              Delete Selected
-            </Button>
-          </div>
-        </div>
-      )}
-
       <div className="bg-white rounded-lg border">
         <CustomerTable
           customers={filteredCustomers}
@@ -121,8 +124,30 @@ export default function CustomerList() {
           onSelectCustomer={handleSelectCustomer}
           onSelectAll={handleSelectAll}
           onDelete={handleDelete}
+          onEdit={handleEdit}
         />
       </div>
+
+      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Add New Customer</DialogTitle>
+          </DialogHeader>
+          <CustomerForm onSubmit={(data) => handleCustomerSubmit(data, false)} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Customer</DialogTitle>
+          </DialogHeader>
+          <CustomerForm 
+            initialData={selectedCustomer} 
+            onSubmit={(data) => handleCustomerSubmit(data, true)} 
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

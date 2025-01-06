@@ -12,6 +12,7 @@ interface Customer {
   street?: string;
   state?: string;
   postalCode?: string;
+  profilePicture?: string;
 }
 
 interface CustomerTableProps {
@@ -20,6 +21,7 @@ interface CustomerTableProps {
   onSelectCustomer: (id: string, checked: boolean) => void;
   onSelectAll: (checked: boolean) => void;
   onDelete: (id: string) => void;
+  onEdit: (customer: Customer) => void;
 }
 
 export const CustomerTable = ({
@@ -28,6 +30,7 @@ export const CustomerTable = ({
   onSelectCustomer,
   onSelectAll,
   onDelete,
+  onEdit,
 }: CustomerTableProps) => {
   const navigate = useNavigate();
 
@@ -56,8 +59,17 @@ export const CustomerTable = ({
       getItemId={(customer) => customer.id}
       actions={{
         onDelete,
+        additionalActions: [
+          {
+            label: "Edit",
+            onClick: (id) => onEdit(customers.find(c => c.id === id)!)
+          },
+          {
+            label: "View",
+            onClick: (id) => navigate(`/customers/${id}`)
+          }
+        ]
       }}
-      onRowClick={(id) => navigate(`/customers/${id}`)}
       CardComponent={CustomerCard}
     />
   );
