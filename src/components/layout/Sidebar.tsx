@@ -31,6 +31,7 @@ export function Sidebar({ onCollapse }: { onCollapse?: (collapsed: boolean) => v
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const { enabledDocuments } = useDocuments();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [businessData, setBusinessData] = useState<any>({
     businessName: "My Business",
     logo: null,
@@ -76,20 +77,34 @@ export function Sidebar({ onCollapse }: { onCollapse?: (collapsed: boolean) => v
 
   useEffect(() => {
     if (!isMobile) {
-      onCollapse?.(isCollapsed);
+      onCollapse?.(isCollapsed && !isHovered);
     }
-  }, [isCollapsed, onCollapse, isMobile]);
+  }, [isCollapsed, isHovered, onCollapse, isMobile]);
+
+  const handleMouseEnter = () => {
+    if (isCollapsed && !isMobile) {
+      setIsHovered(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isCollapsed && !isMobile) {
+      setIsHovered(false);
+    }
+  };
 
   return (
     <div 
       className={cn(
         "h-screen bg-[#F9FAFB] border-r border-gray-100 fixed left-0 top-0 flex flex-col font-inter transition-all duration-300",
-        isCollapsed ? "w-20" : "w-64"
+        isCollapsed && !isHovered ? "w-20" : "w-64"
       )}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <SidebarHeader 
         businessData={businessData}
-        isCollapsed={isCollapsed}
+        isCollapsed={isCollapsed && !isHovered}
         isMobile={isMobile}
         toggleSidebar={toggleSidebar}
       />
@@ -101,16 +116,16 @@ export function Sidebar({ onCollapse }: { onCollapse?: (collapsed: boolean) => v
               variant="outline"
               className={cn(
                 "w-full justify-between border-dashed",
-                isCollapsed && "px-2"
+                isCollapsed && !isHovered && "px-2"
               )}
             >
               <div className="flex items-center gap-2">
                 <Building2 className="h-4 w-4" />
-                {!isCollapsed && (
+                {(!isCollapsed || isHovered) && (
                   <span className="truncate">{businessData.businessName || "My Business"}</span>
                 )}
               </div>
-              {!isCollapsed && <ChevronDown className="h-4 w-4 opacity-50" />}
+              {(!isCollapsed || isHovered) && <ChevronDown className="h-4 w-4 opacity-50" />}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[--trigger-width]">
@@ -126,7 +141,7 @@ export function Sidebar({ onCollapse }: { onCollapse?: (collapsed: boolean) => v
       </div>
 
       <SidebarNavigation
-        isCollapsed={isCollapsed}
+        isCollapsed={isCollapsed && !isHovered}
         enabledDocuments={enabledDocuments}
         isAccountOpen={isAccountOpen}
         toggleAccount={toggleAccount}
@@ -137,32 +152,32 @@ export function Sidebar({ onCollapse }: { onCollapse?: (collapsed: boolean) => v
           onClick={() => setShowSupportModal(true)}
           className={cn(
             "w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors",
-            isCollapsed && "justify-center"
+            isCollapsed && !isHovered && "justify-center"
           )}
         >
           <HelpCircle className="w-5 h-5 text-gray-500" />
-          {!isCollapsed && "Support"}
+          {(!isCollapsed || isHovered) && "Support"}
         </button>
         <button
           onClick={() => setShowFeedbackModal(true)}
           className={cn(
             "w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors",
-            isCollapsed && "justify-center"
+            isCollapsed && !isHovered && "justify-center"
           )}
         >
           <MessageSquare className="w-5 h-5 text-gray-500" />
-          {!isCollapsed && "Feedback"}
+          {(!isCollapsed || isHovered) && "Feedback"}
         </button>
         <div className="pt-4 border-t border-gray-100">
           <Link
             to="/auth/signin"
             className={cn(
               "flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors",
-              isCollapsed && "justify-center"
+              isCollapsed && !isHovered && "justify-center"
             )}
           >
             <LogOut className="w-5 h-5 text-gray-500" />
-            {!isCollapsed && "Sign out"}
+            {(!isCollapsed || isHovered) && "Sign out"}
           </Link>
         </div>
       </div>
