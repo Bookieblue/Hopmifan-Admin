@@ -68,17 +68,23 @@ export default function CreateInvoice() {
           : "Invoice created successfully"
       );
       
+      // Fix: Remove the colon from navigation
       navigate('/invoices');
     } catch (error) {
+      console.error('Error creating invoice:', error);
       toast.error("Failed to create invoice");
     }
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 px-2.5 md:px-6">
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/invoices")}>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate("/invoices")}
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 className="text-2xl font-semibold">Create Invoice</h1>
