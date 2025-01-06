@@ -47,35 +47,18 @@ export const CustomerTable = ({
   ];
 
   return (
-    <div className="space-y-4">
-      {selectedCustomers.length > 0 && (
-        <div className="bg-white p-4 rounded-lg border shadow-sm">
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500">
-              {selectedCustomers.length} selected
-            </span>
-            <button
-              onClick={() => selectedCustomers.forEach(id => onDelete(id))}
-              className="text-sm text-red-600 hover:text-red-700 font-medium"
-            >
-              Delete Selected
-            </button>
-          </div>
-        </div>
-      )}
-      <DataTable
-        data={customers}
-        columns={columns}
-        selectedItems={selectedCustomers}
-        onSelectItem={onSelectCustomer}
-        onSelectAll={onSelectAll}
-        getItemId={(customer) => customer.id}
-        actions={{
-          onDelete,
-        }}
-        onRowClick={(id) => navigate(`/customers/${id}`)}
-        CardComponent={CustomerCard}
-      />
-    </div>
+    <DataTable
+      data={customers}
+      columns={columns}
+      selectedItems={selectedCustomers}
+      onSelectItem={onSelectCustomer}
+      onSelectAll={onSelectAll}
+      getItemId={(customer) => customer.id}
+      actions={{
+        onDelete,
+      }}
+      onRowClick={(id) => navigate(`/customers/${id}`)}
+      CardComponent={CustomerCard}
+    />
   );
 };
