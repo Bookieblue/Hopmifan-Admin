@@ -4,7 +4,7 @@ import { ClassicInvoiceTemplate } from "@/components/invoices/ClassicInvoiceTemp
 import MinimalInvoiceTemplate from "@/components/invoices/MinimalInvoiceTemplate";
 import ProfessionalQuoteTemplate from "@/components/invoices/ProfessionalQuoteTemplate";
 
-export interface TemplatePreviewProps {
+interface TemplatePreviewProps {
   template: string;
   onClick: () => void;
   isSelected: boolean;

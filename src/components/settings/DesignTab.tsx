@@ -8,14 +8,6 @@ interface DesignTabProps {
   onDocumentChange: (value: string) => void;
   selectedTemplate: string;
   onTemplateChange: (value: string) => void;
-  colors: {
-    brand: string;
-    text: string;
-    background: string;
-  };
-  onColorChange: (type: 'brand' | 'text' | 'background', value: string) => void;
-  selectedFont: string;
-  onFontChange: (value: string) => void;
 }
 
 export const DesignTab = ({
@@ -23,10 +15,6 @@ export const DesignTab = ({
   onDocumentChange,
   selectedTemplate,
   onTemplateChange,
-  colors,
-  onColorChange,
-  selectedFont,
-  onFontChange,
 }: DesignTabProps) => {
   const { toast } = useToast();
 
@@ -45,11 +33,8 @@ export const DesignTab = ({
         onDocumentChange={onDocumentChange}
       />
       <TemplatePreview
-        template={selectedTemplate}
-        onClick={() => {}}
-        isSelected={true}
-        title="Template Preview"
-        description="Preview of your selected template"
+        selectedTemplate={selectedTemplate}
+        onTemplateChange={onTemplateChange}
       />
       <div className="flex justify-end mt-6">
         <Button onClick={handleSave}>Save Changes</Button>
