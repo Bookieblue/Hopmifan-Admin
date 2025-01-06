@@ -16,7 +16,7 @@ interface ActivityItem {
   date: string;
   status?: "pending" | "completed" | "failed";
   reference?: string;
-  customer: string; // Added this line to fix the TypeScript error
+  customer: string;
 }
 
 interface RecentActivityProps {
@@ -51,8 +51,7 @@ export function RecentActivity({ activities, title }: RecentActivityProps) {
           <TableHeader>
             <TableRow>
               <TableHead>Details</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Amount & Status</TableHead>
               <TableHead>Reference ID</TableHead>
             </TableRow>
           </TableHeader>
