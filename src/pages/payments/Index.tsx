@@ -8,45 +8,93 @@ import { BulkActions } from "@/components/shared/BulkActions";
 
 const payments = [
   { 
-    date: "14 Mar 2024", 
-    customer: "Client 1", 
+    date: "14 Mar 2025", 
+    customer: "Client A", 
     amount: "₦5,057.00", 
     method: "Credit Card", 
-    reference: "REF000001",
+    reference: "REF202503001",
     type: "One-time"
   },
   { 
-    date: "13 Mar 2024", 
-    customer: "Client 2", 
-    amount: "₦6,470.00", 
+    date: "28 Feb 2025", 
+    customer: "Client B", 
+    amount: "₦8,470.00", 
     method: "Bank Transfer", 
-    reference: "REF000002",
+    reference: "REF202502001",
     type: "Recurring"
   },
   { 
-    date: "12 Mar 2024", 
-    customer: "Client 3", 
-    amount: "₦8,340.00", 
+    date: "15 Dec 2024", 
+    customer: "Client C", 
+    amount: "₦12,340.00", 
     method: "Credit Card", 
-    reference: "REF000003",
+    reference: "REF202412001",
     type: "One-time"
   },
   { 
-    date: "11 Mar 2024", 
-    customer: "Client 4", 
-    amount: "₦3,355.00", 
+    date: "30 Sep 2024", 
+    customer: "Client D", 
+    amount: "₦7,355.00", 
     method: "Bank Transfer", 
-    reference: "REF000004",
+    reference: "REF202409001",
     type: "Recurring"
   },
   { 
-    date: "10 Mar 2024", 
-    customer: "Client 5", 
-    amount: "₦7,104.00", 
+    date: "15 Jun 2024", 
+    customer: "Client E", 
+    amount: "₦9,104.00", 
     method: "Credit Card", 
-    reference: "REF000005",
+    reference: "REF202406001",
     type: "One-time"
   },
+  { 
+    date: "28 Mar 2024", 
+    customer: "Client F", 
+    amount: "₦6,250.00", 
+    method: "Bank Transfer", 
+    reference: "REF202403001",
+    type: "Recurring"
+  },
+  { 
+    date: "15 Dec 2023", 
+    customer: "Client G", 
+    amount: "₦11,780.00", 
+    method: "Credit Card", 
+    reference: "REF202312001",
+    type: "One-time"
+  },
+  { 
+    date: "30 Sep 2023", 
+    customer: "Client H", 
+    amount: "₦8,920.00", 
+    method: "Bank Transfer", 
+    reference: "REF202309001",
+    type: "Recurring"
+  },
+  { 
+    date: "15 Jun 2023", 
+    customer: "Client I", 
+    amount: "₦7,640.00", 
+    method: "Credit Card", 
+    reference: "REF202306001",
+    type: "One-time"
+  },
+  { 
+    date: "30 Mar 2023", 
+    customer: "Client J", 
+    amount: "₦9,890.00", 
+    method: "Bank Transfer", 
+    reference: "REF202303001",
+    type: "Recurring"
+  },
+  { 
+    date: "15 Jan 2023", 
+    customer: "Client K", 
+    amount: "₦6,430.00", 
+    method: "Credit Card", 
+    reference: "REF202301001",
+    type: "One-time"
+  }
 ];
 
 export default function PaymentHistory() {
