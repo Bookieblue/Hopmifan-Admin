@@ -3,15 +3,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
 import { UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { CustomerCard } from "./CustomerCard";
-import { BillingAddressForm } from "./BillingAddressForm";
+import { SearchResults } from "@/components/customers/SearchResults";
+import { NewCustomerForm } from "@/components/customers/NewCustomerForm";
+import { Customer, NewCustomer } from "@/types/customer";
 
 interface CustomerSelectProps {
-  onCustomerSelect: (customer: any) => void;
-  initialCustomer?: any;
+  onCustomerSelect: (customer: Customer) => void;
+  initialCustomer?: Customer;
 }
 
 export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSelectProps) => {
@@ -19,38 +20,28 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSearchMode, setIsSearchMode] = useState(!initialCustomer);
   const [includeBillingAddress, setIncludeBillingAddress] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState(initialCustomer);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>(initialCustomer);
   const { toast } = useToast();
   
-  // Initialize with some example customers
-  const [customers, setCustomers] = useState([
+  const [customers] = useState<Customer[]>([
     { 
       id: '1', 
       name: "Acme Corp", 
       email: "billing@acme.com",
-      street: "123 Business Ave",
-      country: "Nigeria",
-      state: "Lagos",
-      postalCode: "100001"
+      billingAddress: "123 Business Ave, Lagos, Nigeria"
     },
     { 
       id: '2', 
       name: "TechStart Solutions", 
       email: "finance@techstart.com",
-      street: "456 Innovation Way",
-      country: "Nigeria",
-      state: "Abuja",
-      postalCode: "900001"
+      billingAddress: "456 Innovation Way, Abuja, Nigeria"
     }
   ]);
 
-  const [newCustomer, setNewCustomer] = useState({
+  const [newCustomer, setNewCustomer] = useState<NewCustomer>({
     name: "",
     email: "",
-    street: "",
-    country: "",
-    state: "",
-    postalCode: "",
+    billingAddress: "",
   });
 
   const filteredCustomers = customers.filter((customer) =>
@@ -58,11 +49,15 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
     customer.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleCustomerSelect = (customer: any) => {
+  const handleCustomerSelect = (customer: Customer) => {
     setSelectedCustomer(customer);
     onCustomerSelect(customer);
     setSearchTerm("");
     setIsSearchMode(false);
+  };
+
+  const handleNewCustomerFieldChange = (field: string, value: string) => {
+    setNewCustomer(prev => ({ ...prev, [field]: value }));
   };
 
   const handleAddNewCustomer = () => {
@@ -75,21 +70,17 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
       return;
     }
 
-    const customer = {
+    const customer: Customer = {
       id: Date.now().toString(),
       ...newCustomer,
     };
 
-    setCustomers(prev => [...prev, customer]);
     handleCustomerSelect(customer);
     
     setNewCustomer({
       name: "",
       email: "",
-      street: "",
-      country: "",
-      state: "",
-      postalCode: "",
+      billingAddress: "",
     });
     setIsDialogOpen(false);
     
@@ -99,18 +90,12 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
     });
   };
 
-  const handleNewCustomerFieldChange = (field: string, value: string) => {
-    setNewCustomer(prev => ({ ...prev, [field]: value }));
-  };
-
-  // Show selected customer card if a customer is selected and not in search mode
   if (!isSearchMode && (initialCustomer || selectedCustomer)) {
-    const displayCustomer = initialCustomer || selectedCustomer;
     return (
       <div className="space-y-4">
         <Label className="text-base font-medium">Customer</Label>
         <CustomerCard 
-          customer={displayCustomer}
+          customer={initialCustomer || selectedCustomer}
           onEdit={() => setIsSearchMode(true)}
         />
       </div>
@@ -137,64 +122,17 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
             <DialogHeader>
               <DialogTitle>Add New Customer</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 mt-4">
-              <div className="space-y-2">
-                <Label>Name</Label>
-                <Input 
-                  placeholder="Enter customer name"
-                  value={newCustomer.name}
-                  onChange={(e) => handleNewCustomerFieldChange('name', e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Email</Label>
-                <Input 
-                  type="email" 
-                  placeholder="Enter customer email"
-                  value={newCustomer.email}
-                  onChange={(e) => handleNewCustomerFieldChange('email', e.target.value)}
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="billing-address"
-                  checked={includeBillingAddress}
-                  onCheckedChange={setIncludeBillingAddress}
-                />
-                <Label htmlFor="billing-address">Include Billing Address</Label>
-              </div>
-              {includeBillingAddress && (
-                <BillingAddressForm 
-                  newCustomer={newCustomer}
-                  onChange={handleNewCustomerFieldChange}
-                />
-              )}
-              <Button className="w-full" onClick={handleAddNewCustomer}>
-                Add Customer
-              </Button>
-            </div>
+            <NewCustomerForm 
+              newCustomer={newCustomer}
+              includeBillingAddress={includeBillingAddress}
+              onFieldChange={handleNewCustomerFieldChange}
+              onBillingAddressToggle={setIncludeBillingAddress}
+              onSubmit={handleAddNewCustomer}
+            />
           </DialogContent>
         </Dialog>
       </div>
-      {searchTerm && filteredCustomers.length > 0 && (
-        <div className="mt-2 border rounded-md divide-y">
-          {filteredCustomers.map((customer) => (
-            <div 
-              key={customer.id} 
-              className="p-4 hover:bg-accent cursor-pointer transition-colors"
-              onClick={() => handleCustomerSelect(customer)}
-            >
-              <div className="font-medium">{customer.name}</div>
-              <div className="text-sm text-muted-foreground">{customer.email}</div>
-              {customer.street && (
-                <div className="text-sm text-muted-foreground">
-                  {customer.street}, {customer.state} {customer.postalCode}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+      {searchTerm && <SearchResults customers={filteredCustomers} onSelect={handleCustomerSelect} />}
     </div>
   );
 };
