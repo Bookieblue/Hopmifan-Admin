@@ -61,7 +61,9 @@ export default function Index() {
       type: "Payment Received",
       description: `Payment received from ${payment.customer}`,
       amount: payment.amount,
-      date: payment.date.split(' ')[0]
+      date: payment.date.split(' ')[0],
+      status: payment.type === 'Recurring' ? 'completed' : 'pending',
+      reference: payment.reference
     }));
 
   return (
