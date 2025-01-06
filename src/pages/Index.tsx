@@ -30,7 +30,7 @@ const timeRanges = ["24H", "1W", "1M", "3M", "1Y", "ALL"] as const;
 type TimeRange = typeof timeRanges[number];
 
 export default function Index() {
-  const [timeRange, setTimeRange] = useState<TimeRange>("3M");
+  const [timeRange, setTimeRange] = useState<TimeRange>("24H");
   
   // Calculate total earnings from all payments
   const totalEarnings = calculateTotalEarnings(mockPayments);
@@ -75,46 +75,50 @@ export default function Index() {
           ))}
         </div>
 
-        <div className="h-[300px] w-full mt-8 bg-gradient-to-t from-[#0FA0CE]/10 to-transparent rounded-lg">
-          <ChartContainer
-            className="h-full w-full"
-            config={{
-              primary: {
-                theme: {
-                  light: "#0FA0CE",
-                  dark: "#0FA0CE",
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-6">
+          <div className="h-[300px] w-full bg-gradient-to-t from-[#0FA0CE]/10 to-transparent rounded-lg">
+            <ChartContainer
+              className="h-full w-full"
+              config={{
+                primary: {
+                  theme: {
+                    light: "#0FA0CE",
+                    dark: "#0FA0CE",
+                  },
                 },
-              },
-            }}
-          >
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0FA0CE" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#0FA0CE" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="month" />
-              <YAxis 
-                tickFormatter={(value) => `₦${(value / 1000).toFixed(1)}K`}
-              />
-              <ChartTooltip 
-                formatter={(value: number) => [`₦${value.toLocaleString('en-NG', { minimumFractionDigits: 2 })}`, "Amount"]}
-              />
-              <Area
-                type="monotone"
-                dataKey="amount"
-                stroke="#0FA0CE"
-                fillOpacity={1}
-                fill="url(#colorAmount)"
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ChartContainer>
+              }}
+            >
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#0FA0CE" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#0FA0CE" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="month" />
+                <YAxis 
+                  tickFormatter={(value) => `₦${(value / 1000).toFixed(1)}K`}
+                />
+                <ChartTooltip 
+                  formatter={(value: number) => [`₦${value.toLocaleString('en-NG', { minimumFractionDigits: 2 })}`, "Amount"]}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="amount"
+                  stroke="#0FA0CE"
+                  fillOpacity={1}
+                  fill="url(#colorAmount)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ChartContainer>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <StatsGrid />
+          </div>
         </div>
       </div>
-
-      <StatsGrid />
 
       <div className="grid grid-cols-1">
         <RecentActivity 

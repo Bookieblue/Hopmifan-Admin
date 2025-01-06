@@ -32,59 +32,57 @@ export function StatsGrid() {
   const waitingCount = 24; // This should come from invoices data
 
   return (
-    <Card className="bg-white p-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link to="/payments" className="flex flex-col items-start space-y-2 group hover:bg-gray-50 p-4 rounded-lg transition-colors">
-          <div className="flex flex-col w-full">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center gap-2">
-                  <CircleDot className="text-green-500 h-4 w-4" />
-                  <span className="text-lg">Payments Received</span>
-                </div>
-                <span className="text-lg font-semibold">
-                  ₦{totalReceived.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-                </span>
+    <>
+      <Link to="/payments" className="flex flex-col items-start space-y-2 group hover:bg-gray-50 p-4 rounded-lg transition-colors">
+        <div className="flex flex-col w-full">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center gap-2">
+                <CircleDot className="text-green-500 h-4 w-4" />
+                <span className="text-lg">Payments Received</span>
               </div>
-              <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors self-center" />
+              <span className="text-lg font-semibold">
+                ₦{totalReceived.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+              </span>
             </div>
+            <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors self-center" />
           </div>
-        </Link>
+        </div>
+      </Link>
 
-        <Link to="/invoices" className="flex flex-col items-start space-y-2 group hover:bg-gray-50 p-4 rounded-lg transition-colors">
-          <div className="flex flex-col w-full">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center gap-2">
-                  <CircleDot className="text-orange-500 h-4 w-4" />
-                  <span className="text-lg">{waitingCount} Waiting to be paid</span>
-                </div>
-                <span className="text-lg font-semibold">
-                  ₦{waitingToBePaid.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-                </span>
+      <Link to="/invoices" className="flex flex-col items-start space-y-2 group hover:bg-gray-50 p-4 rounded-lg transition-colors">
+        <div className="flex flex-col w-full">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center gap-2">
+                <CircleDot className="text-orange-500 h-4 w-4" />
+                <span className="text-lg">{waitingCount} Waiting to be paid</span>
               </div>
-              <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors self-center" />
+              <span className="text-lg font-semibold">
+                ₦{waitingToBePaid.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+              </span>
             </div>
+            <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors self-center" />
           </div>
-        </Link>
+        </div>
+      </Link>
 
-        <Link to="/invoices?status=overdue" className="flex flex-col items-start space-y-2 group hover:bg-gray-50 p-4 rounded-lg transition-colors">
-          <div className="flex flex-col w-full">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center gap-2">
-                  <CircleDot className="text-red-500 h-4 w-4" />
-                  <span className="text-lg">{overdueCount} Overdue Invoices</span>
-                </div>
-                <span className="text-lg font-semibold">
-                  ₦{overdueAmount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-                </span>
+      <Link to="/invoices?status=overdue" className="flex flex-col items-start space-y-2 group hover:bg-gray-50 p-4 rounded-lg transition-colors">
+        <div className="flex flex-col w-full">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center gap-2">
+                <CircleDot className="text-red-500 h-4 w-4" />
+                <span className="text-lg">{overdueCount} Overdue Invoices</span>
               </div>
-              <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors self-center" />
+              <span className="text-lg font-semibold">
+                ₦{overdueAmount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+              </span>
             </div>
+            <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors self-center" />
           </div>
-        </Link>
-      </div>
-    </Card>
+        </div>
+      </Link>
+    </>
   );
 }
