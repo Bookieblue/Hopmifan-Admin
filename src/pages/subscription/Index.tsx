@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 
 // Sample billing history data
 const billingHistory = [
@@ -33,6 +34,7 @@ const billingHistory = [
 
 export default function Subscription() {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   const handleDownloadReceipt = (invoiceId: string) => {
     toast({
@@ -85,7 +87,7 @@ export default function Subscription() {
             </div>
 
             <div className="flex justify-end">
-              <Button>Upgrade Plan</Button>
+              <Button onClick={() => navigate('/pricing')}>Upgrade Plan</Button>
             </div>
           </div>
         </CardContent>

@@ -64,10 +64,11 @@ export function DataTable<T>({
   const isMobile = useIsMobile();
 
   const handleRowClick = (e: React.MouseEvent, id: string) => {
+    // Don't trigger row click when clicking on checkbox or dropdown
     if (
       (e.target as HTMLElement).closest('.checkbox-cell') ||
-      (e.target as HTMLElement).closest('.actions-cell') ||
-      (e.target as HTMLElement).closest('[role="menuitem"]')
+      (e.target as HTMLElement).closest('[role="menuitem"]') ||
+      (e.target as HTMLElement).closest('button')
     ) {
       return;
     }
@@ -137,7 +138,7 @@ export function DataTable<T>({
                       : String(item[column.accessor])}
                   </td>
                 ))}
-                <td className="px-4 py-3 text-right actions-cell">
+                <td className="px-4 py-3 text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                       <Button variant="ghost" size="sm">
@@ -153,7 +154,7 @@ export function DataTable<T>({
                       {onRowClick && (
                         <DropdownMenuItem
                           onClick={(e) => {
-                            e.stopPropagation();
+                            e.preventDefault();
                             window.open(`preview`, '_blank');
                           }}
                         >
@@ -161,26 +162,42 @@ export function DataTable<T>({
                         </DropdownMenuItem>
                       )}
                       {actions?.onDuplicate && (
-                        <DropdownMenuItem onClick={() => actions.onDuplicate?.(id)}>
+                        <DropdownMenuItem 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            actions.onDuplicate?.(id);
+                          }}
+                        >
                           Duplicate
                         </DropdownMenuItem>
                       )}
                       {actions?.onShare && (
-                        <DropdownMenuItem onClick={() => actions.onShare?.(id)}>
+                        <DropdownMenuItem 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            actions.onShare?.(id);
+                          }}
+                        >
                           Share
                         </DropdownMenuItem>
                       )}
                       {actions?.additionalActions?.map((action, index) => (
                         <DropdownMenuItem
                           key={index}
-                          onClick={() => action.onClick(id)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            action.onClick(id);
+                          }}
                         >
                           {action.label}
                         </DropdownMenuItem>
                       ))}
                       {actions?.onDelete && (
                         <DropdownMenuItem
-                          onClick={() => actions.onDelete?.(id)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            actions.onDelete?.(id);
+                          }}
                           className="text-red-600"
                         >
                           Delete
