@@ -4,6 +4,7 @@ import { Check, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Sample billing history data
 const billingHistory = [
@@ -31,6 +32,8 @@ const billingHistory = [
 ];
 
 export default function Subscription() {
+  const isMobile = useIsMobile();
+
   const handleDownloadReceipt = (invoiceId: string) => {
     toast({
       title: "Downloading Receipt",
@@ -90,32 +93,25 @@ export default function Subscription() {
 
       {/* Billing History Section */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <h2 className="text-xl font-semibold">Billing History</h2>
           <p className="text-muted-foreground">View your billing history and download receipts</p>
         </div>
         
         <Card>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Invoice</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          {isMobile ? (
+            <div className="divide-y">
               {billingHistory.map((bill) => (
-                <TableRow key={bill.id}>
-                  <TableCell className="font-medium">{bill.invoice}</TableCell>
-                  <TableCell>{bill.date}</TableCell>
-                  <TableCell>{bill.amount}</TableCell>
-                  <TableCell>
+                <div key={bill.id} className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <p className="font-medium">{bill.invoice}</p>
+                      <p className="text-sm text-gray-500">{bill.date}</p>
+                    </div>
                     <Badge variant="secondary">{bill.status}</Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-medium">{bill.amount}</span>
                     <Button 
                       variant="ghost" 
                       size="sm"
@@ -123,13 +119,48 @@ export default function Subscription() {
                       className="text-blue-600 hover:text-blue-800"
                     >
                       <Download className="h-4 w-4 mr-2" />
-                      Download Receipt
+                      Receipt
                     </Button>
-                  </TableCell>
-                </TableRow>
+                  </div>
+                </div>
               ))}
-            </TableBody>
-          </Table>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Invoice</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {billingHistory.map((bill) => (
+                  <TableRow key={bill.id}>
+                    <TableCell className="font-medium">{bill.invoice}</TableCell>
+                    <TableCell>{bill.date}</TableCell>
+                    <TableCell>{bill.amount}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{bill.status}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDownloadReceipt(bill.invoice)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download Receipt
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </Card>
       </div>
     </div>
