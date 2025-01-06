@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { DocumentTypeSelector } from "./DocumentTypeSelector";
 import { ModernInvoiceTemplate } from "@/components/invoices/ModernInvoiceTemplate";
 import { ClassicInvoiceTemplate } from "@/components/invoices/ClassicInvoiceTemplate";
+import MinimalInvoiceTemplate from "@/components/invoices/MinimalInvoiceTemplate";
 
 interface DesignTabProps {
   selectedDocument: string;
@@ -80,6 +81,48 @@ const classicInvoiceData = {
   currencySymbol: "$"
 };
 
+// Sample data for minimal invoice
+const minimalInvoiceData = {
+  amount: "£1,500.00",
+  dueDate: "2024-04-19",
+  invoiceNumber: "210201",
+  issueDate: "2024-03-19",
+  companyDetails: {
+    name: "Sample Company",
+    website: "www.company.com",
+    email: "contact@company.com",
+    phone: "+1 234 567 8900",
+    address: {
+      street: "123 Company St",
+      city: "Sample City",
+      postcode: "12345"
+    }
+  },
+  clientDetails: {
+    name: "Sample Client",
+    address: {
+      street: "456 Client Avenue",
+      city: "Client City",
+      postcode: "67890"
+    }
+  },
+  items: [
+    {
+      description: "Sample Service",
+      quantity: 1,
+      cost: 1500,
+      amount: 1500
+    }
+  ],
+  bankDetails: {
+    bank: "Sample Bank",
+    accountName: "Sample Account",
+    accountNumber: "1234567890",
+    sortCode: "12-34-56"
+  },
+  paymentLink: "https://payment.link"
+};
+
 export const DesignTab = ({ 
   selectedDocument, 
   onDocumentChange, 
@@ -127,7 +170,11 @@ export const DesignTab = ({
       >
         <h3 className="font-medium mb-2">Minimal</h3>
         <p className="text-sm text-gray-500 mb-4">Simplified design that emphasizes content and readability</p>
-        <div className="aspect-[8.5/11] bg-gray-100 rounded-lg"></div>
+        <div className="aspect-[8.5/11] bg-gray-100 rounded-lg overflow-hidden">
+          <div className="transform scale-[0.2] origin-top-left w-[500%] h-[500%]">
+            <MinimalInvoiceTemplate {...minimalInvoiceData} />
+          </div>
+        </div>
       </Card>
     </div>
 
