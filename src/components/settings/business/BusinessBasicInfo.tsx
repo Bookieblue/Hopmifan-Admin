@@ -25,32 +25,34 @@ export const BusinessBasicInfo = ({
 }: BusinessBasicInfoProps) => {
   return (
     <div className="space-y-6">
-      <div className="flex flex-col items-center space-y-4">
-        <Label className="text-sm text-gray-600">Business Logo</Label>
-        <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary relative overflow-hidden">
-          <input
-            type="file"
-            id="logo"
-            accept="image/*"
-            onChange={handleLogoChange}
-            className="absolute inset-0 opacity-0 cursor-pointer"
-          />
-          {logoPreview ? (
-            <img
-              src={logoPreview}
-              alt="Logo preview"
-              className="w-full h-full object-cover"
+      <div className="flex flex-start space-y-4">
+        <div className="w-32">
+          <Label className="text-sm text-gray-600">Business Logo</Label>
+          <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary relative overflow-hidden">
+            <input
+              type="file"
+              id="logo"
+              accept="image/*"
+              onChange={handleLogoChange}
+              className="absolute inset-0 opacity-0 cursor-pointer"
             />
-          ) : (
-            <div className="flex flex-col items-center">
-              <Upload className="w-8 h-8 text-gray-400" />
-              <span className="text-sm text-gray-500 mt-2">Upload Logo</span>
-            </div>
-          )}
+            {logoPreview ? (
+              <img
+                src={logoPreview}
+                alt="Logo preview"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="flex flex-col items-center">
+                <Upload className="w-8 h-8 text-gray-400" />
+                <span className="text-sm text-gray-500 mt-2">Upload Logo</span>
+              </div>
+            )}
+          </div>
+          <Label htmlFor="logo" className="text-sm text-gray-600">
+            Click to {logoPreview ? 'change' : 'upload'} logo
+          </Label>
         </div>
-        <Label htmlFor="logo" className="text-sm text-gray-600">
-          Click to {logoPreview ? 'change' : 'upload'} logo
-        </Label>
       </div>
 
       <FormField

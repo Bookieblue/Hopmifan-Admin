@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BusinessBasicInfo } from "./business/BusinessBasicInfo";
 import { BusinessContactInfo } from "@/components/onboarding/BusinessContactInfo";
 import { BusinessLocationInfo } from "@/components/onboarding/BusinessLocationInfo";
@@ -11,6 +11,22 @@ import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
 import { countries } from "@/lib/constants";
+
+// Currency mapping object
+const countryCurrencyMap: { [key: string]: string } = {
+  "United States": "USD",
+  "United Kingdom": "GBP",
+  "Canada": "CAD",
+  "Australia": "AUD",
+  "Germany": "EUR",
+  "France": "EUR",
+  "Spain": "EUR",
+  "Italy": "EUR",
+  "Japan": "JPY",
+  "China": "CNY",
+  "India": "INR",
+  "Brazil": "BRL",
+};
 
 export default function BusinessSettings() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -35,7 +51,27 @@ export default function BusinessSettings() {
     },
   });
 
+  // Watch for business location changes
+  const businessLocation = form.watch("businessLocation");
   const operationType = form.watch("operationType");
+
+  // Effect to update currency when business location changes
+  useEffect(() => {
+    if (businessLocation && countryCurrencyMap[businessLocation]) {
+      setDefaultCurrency(countryCurrencyMap[businessLocation]);
+    }
+  }, [businessLocation]);
+
+  // Effect to load onboarding data
+  useEffect(() => {
+    const onboardingData = localStorage.getItem('businessData');
+    if (onboardingData) {
+      const parsedData = JSON.parse(onboardingData);
+      form.reset(parsedData);
+      setLogoPreview(parsedData.logo || null);
+      setSelectedCountries(parsedData.targetCountries || []);
+    }
+  }, [form]);
 
   const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
