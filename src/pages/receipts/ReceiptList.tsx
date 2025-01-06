@@ -5,6 +5,7 @@ import { ShareModal } from "@/components/modals/ShareModal";
 import { ReceiptTableHeader } from "@/components/receipts/ReceiptTableHeader";
 import { ReceiptRow } from "@/components/receipts/ReceiptRow";
 import { ReceiptListHeader } from "@/components/receipts/ReceiptListHeader";
+import { BulkActions } from "@/components/shared/BulkActions";
 
 export default function ReceiptList() {
   const { toast } = useToast();
@@ -30,6 +31,7 @@ export default function ReceiptList() {
   const [selectedReceipts, setSelectedReceipts] = useState<string[]>([]);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [selectedReceiptId, setSelectedReceiptId] = useState<string>("");
+  const [bulkAction, setBulkAction] = useState("");
 
   const handleSelectReceipt = (receiptId: string, checked: boolean) => {
     if (checked) {
@@ -64,6 +66,26 @@ export default function ReceiptList() {
     });
   };
 
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedReceipts.length === 0) return;
+    
+    switch (bulkAction) {
+      case "delete":
+        toast({
+          description: `${selectedReceipts.length} receipts have been deleted.`
+        });
+        setSelectedReceipts([]);
+        break;
+      case "export":
+        toast({
+          description: "Receipts exported successfully"
+        });
+        setSelectedReceipts([]);
+        break;
+    }
+    setBulkAction("");
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <ReceiptListHeader />
@@ -88,6 +110,16 @@ export default function ReceiptList() {
             ))}
           </TableBody>
         </Table>
+        <BulkActions
+          selectedCount={selectedReceipts.length}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
+          actions={[
+            { value: "delete", label: "Delete Selected" },
+            { value: "export", label: "Export as CSV" }
+          ]}
+        />
       </div>
 
       <ShareModal 

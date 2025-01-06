@@ -3,8 +3,8 @@ import { Table, TableBody } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { PaymentTableHeader } from "@/components/payments/PaymentTableHeader";
 import { PaymentRow } from "@/components/payments/PaymentRow";
-import { PaymentBulkActionsDropdown } from "@/components/payments/PaymentBulkActionsDropdown";
 import { PaymentFilters } from "@/components/payments/PaymentFilters";
+import { BulkActions } from "@/components/shared/BulkActions";
 
 const payments = [
   { 
@@ -56,6 +56,7 @@ export default function PaymentHistory() {
   const [endDate, setEndDate] = useState<Date>();
   const [filteredPayments, setFilteredPayments] = useState(payments);
   const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState<string>("");
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -138,6 +139,20 @@ export default function PaymentHistory() {
     setFilteredPayments(payments);
   };
 
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedPayments.length === 0) return;
+    
+    switch (bulkAction) {
+      case "download":
+        handleBulkDownload();
+        break;
+      case "export":
+        handleBulkExportCSV();
+        break;
+    }
+    setBulkAction("");
+  };
+
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
       <div className="flex justify-between items-center mb-8">
@@ -173,10 +188,15 @@ export default function PaymentHistory() {
             ))}
           </TableBody>
         </Table>
-        <PaymentBulkActionsDropdown
+        <BulkActions
           selectedCount={selectedPayments.length}
-          onBulkDownload={handleBulkDownload}
-          onExportCSV={handleBulkExportCSV}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
+          actions={[
+            { value: "download", label: "Download Receipts" },
+            { value: "export", label: "Export as CSV" }
+          ]}
         />
       </div>
     </div>

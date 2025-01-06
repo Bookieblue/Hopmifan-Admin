@@ -4,8 +4,6 @@ import { InvoiceTable } from "@/components/invoices/InvoiceTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { InvoiceFilters } from "@/components/invoices/InvoiceFilters";
 import { InvoiceListHeader } from "@/components/invoices/InvoiceListHeader";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const InvoiceList = () => {
@@ -150,41 +148,6 @@ const InvoiceList = () => {
     }
   };
 
-  const handleDuplicate = (invoiceId: string) => {
-    const originalInvoice = invoices.find(inv => inv.id === invoiceId);
-    if (!originalInvoice) return;
-
-    const newInvoice = {
-      ...originalInvoice,
-      id: `INV-${Math.floor(Math.random() * 9000) + 1000}`,
-      status: "pending",
-      date: new Date().toISOString().split('T')[0]
-    };
-
-    setInvoices([newInvoice, ...invoices]);
-    toast({
-      description: `Invoice ${invoiceId} has been duplicated successfully.`
-    });
-  };
-
-  const handleShare = (invoiceId: string) => {
-    setSelectedInvoiceId(invoiceId);
-    setShareDialogOpen(true);
-  };
-
-  const filteredInvoices = invoices.filter(invoice => {
-    let matchesSearch = invoice.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                       invoice.id.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    let matchesDateRange = true;
-    if (startDate && endDate) {
-      const invoiceDate = new Date(invoice.date);
-      matchesDateRange = invoiceDate >= startDate && invoiceDate <= endDate;
-    }
-    
-    return matchesSearch && matchesDateRange;
-  });
-
   return (
     <div className="w-full max-w-[1400px] mx-auto px-2.5 md:px-6">
       <InvoiceListHeader />
@@ -200,36 +163,22 @@ const InvoiceList = () => {
 
       <div className="bg-white md:rounded-lg md:border">
         <InvoiceTable
-          invoices={filteredInvoices}
+          invoices={invoices}
           selectedInvoices={selectedInvoices}
           onSelectInvoice={handleSelectInvoice}
           onSelectAll={handleSelectAll}
           onDelete={handleDelete}
-          onDuplicate={handleDuplicate}
+          onDuplicate={handleBulkDuplicate}
           onShare={handleShare}
+          bulkActions={[
+            { value: "delete", label: "Delete Selected" },
+            { value: "duplicate", label: "Duplicate Selected" },
+            { value: "export", label: "Export as CSV" }
+          ]}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
         />
-
-        {selectedInvoices.length > 0 && !isMobile && (
-          <div className="p-4 border-t bg-gray-50 flex items-center gap-4">
-            <Select value={bulkAction} onValueChange={setBulkAction}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select bulk action" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="delete">Delete Selected</SelectItem>
-                <SelectItem value="duplicate">Duplicate Selected</SelectItem>
-                <SelectItem value="export">Export as CSV</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button 
-              onClick={handleBulkAction}
-              disabled={!bulkAction || selectedInvoices.length === 0}
-              className="ml-2"
-            >
-              Proceed
-            </Button>
-          </div>
-        )}
       </div>
 
       <ShareModal 
