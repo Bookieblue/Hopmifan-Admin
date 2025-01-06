@@ -17,7 +17,15 @@ export default function EditInvoice() {
   const navigate = useNavigate();
   const [selectedCurrency, setSelectedCurrency] = useState("NGN");
   const [status, setStatus] = useState<InvoiceStatus>("pending");
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState({
+    id: '1',
+    name: "Acme Corp",
+    email: "billing@acme.com",
+    street: "123 Business Ave",
+    country: "Nigeria",
+    state: "Lagos",
+    postalCode: "100001"
+  });
   const [invoiceId, setInvoiceId] = useState(id || "");
   const [dueDate, setDueDate] = useState("");
   const [paymentType, setPaymentType] = useState<"one-time" | "recurring">("one-time");
@@ -38,7 +46,7 @@ export default function EditInvoice() {
     number: id,
     date: new Date().toISOString().split('T')[0],
     currency: selectedCurrency,
-    customer: null,
+    customer: selectedCustomer,
     items: items,
     notes: notes,
     terms: terms
@@ -71,7 +79,7 @@ export default function EditInvoice() {
   };
 
   return (
-    <div className="p-6">
+    <div className="px-2.5 md:px-6">
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <Link to="/invoices">
@@ -81,75 +89,81 @@ export default function EditInvoice() {
           </Link>
           <h1 className="text-2xl font-semibold">Edit Invoice #{id}</h1>
         </div>
-        <InvoiceStatusSelect 
-          status={status} 
-          onStatusChange={(newStatus) => {
-            setStatus(newStatus);
-            toast.success(`Invoice status updated to ${newStatus}`);
-          }}
-        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <Card>
-            <CardContent className="p-6 space-y-8">
-              <InvoiceHeader
-                invoiceId={invoiceId}
-                dueDate={dueDate}
-                paymentType={paymentType}
-                onInvoiceIdChange={setInvoiceId}
-                onDueDateChange={setDueDate}
-                onPaymentTypeChange={setPaymentType}
-                onCustomerSelect={(customer) => {
-                  setSelectedCustomer(customer);
-                  setInvoice(prev => ({ ...prev, customer }));
-                }}
-                initialCustomer={selectedCustomer}
-              />
+        <div className="space-y-8">
+          <form onSubmit={handleSubmit}>
+            <Card>
+              <CardContent className="p-6 space-y-8">
+                <InvoiceHeader
+                  invoiceId={invoiceId}
+                  dueDate={dueDate}
+                  paymentType={paymentType}
+                  onInvoiceIdChange={setInvoiceId}
+                  onDueDateChange={setDueDate}
+                  onPaymentTypeChange={setPaymentType}
+                  onCustomerSelect={(customer) => {
+                    setSelectedCustomer(customer);
+                    setInvoice(prev => ({ ...prev, customer }));
+                  }}
+                  initialCustomer={selectedCustomer}
+                />
 
-              <PaymentDetails
-                selectedCurrency={selectedCurrency}
-                onCurrencyChange={setSelectedCurrency}
-                paymentType={paymentType}
-                onPaymentTypeChange={setPaymentType}
-              />
+                <PaymentDetails
+                  selectedCurrency={selectedCurrency}
+                  onCurrencyChange={setSelectedCurrency}
+                  paymentType={paymentType}
+                  onPaymentTypeChange={setPaymentType}
+                />
 
-              <div className="mt-8">
-                <h3 className="text-lg font-medium mb-4">Items</h3>
-                <InvoiceItems
-                  items={items}
-                  onItemsChange={setItems}
+                <div className="mt-8">
+                  <h3 className="text-lg font-medium mb-4">Items</h3>
+                  <InvoiceItems
+                    items={items}
+                    onItemsChange={setItems}
+                  />
+                </div>
+
+                <AdditionalDetails
+                  selectedBankAccounts={selectedBankAccounts}
+                  selectedGateway={selectedGateway}
+                  onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
+                  onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
+                  onPaymentGatewayChange={setSelectedGateway}
+                  notes={notes}
+                  terms={terms}
+                  footer={footer}
+                  onNotesChange={setNotes}
+                  onTermsChange={setTerms}
+                  onFooterChange={setFooter}
+                />
+              </CardContent>
+            </Card>
+
+            <div className="mt-6 flex flex-col gap-4">
+              <div className="flex items-center gap-4">
+                <InvoiceStatusSelect 
+                  status={status} 
+                  onStatusChange={(newStatus) => {
+                    setStatus(newStatus);
+                    toast.success(`Invoice status updated to ${newStatus}`);
+                  }}
                 />
               </div>
-
-              <AdditionalDetails
-                selectedBankAccounts={selectedBankAccounts}
-                selectedGateway={selectedGateway}
-                onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
-                onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
-                onPaymentGatewayChange={setSelectedGateway}
-                notes={notes}
-                terms={terms}
-                footer={footer}
-                onNotesChange={setNotes}
-                onTermsChange={setTerms}
-                onFooterChange={setFooter}
-              />
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-end gap-4">
-            <Button 
-              type="button" 
-              variant="outline"
-              onClick={() => navigate("/invoices")}
-            >
-              Cancel
-            </Button>
-            <Button type="submit">Update Invoice</Button>
-          </div>
-        </form>
+              <div className="flex justify-end gap-4">
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => navigate("/invoices")}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">Update Invoice</Button>
+              </div>
+            </div>
+          </form>
+        </div>
 
         <div className="hidden lg:block sticky top-6">
           <InvoicePreview 
