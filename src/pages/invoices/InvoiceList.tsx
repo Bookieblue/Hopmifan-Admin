@@ -186,7 +186,7 @@ const InvoiceList = () => {
   });
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+    <div className="w-full max-w-[1400px] mx-auto px-2.5 md:px-6">
       <InvoiceListHeader />
       <InvoiceFilters
         searchQuery={searchQuery}
