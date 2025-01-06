@@ -3,82 +3,64 @@ import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { AreaChart, Area, XAxis, YAxis } from "recharts";
 import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
+import { calculateTotalEarnings, groupPaymentsByTimeRange, formatChartData, type Payment } from "@/utils/paymentCalculations";
 
-const data = {
-  "1W": [
-    { month: "Mon", amount: 1000000 },
-    { month: "Tue", amount: 2000000 },
-    { month: "Wed", amount: 2500000 },
-    { month: "Thu", amount: 3000000 },
-    { month: "Fri", amount: 3500000 },
-    { month: "Sat", amount: 4000000 },
-    { month: "Sun", amount: 4500000 },
-  ],
-  "1M": [
-    { month: "Week 1", amount: 5000000 },
-    { month: "Week 2", amount: 12000000 },
-    { month: "Week 3", amount: 18000000 },
-    { month: "Week 4", amount: 25000000 },
-  ],
-  "3M": [
-    { month: "Jan", amount: 5000000 },
-    { month: "Feb", amount: 12000000 },
-    { month: "Mar", amount: 18000000 },
-  ],
-  "1Y": [
-    { month: "Q1", amount: 15000000 },
-    { month: "Q2", amount: 25000000 },
-    { month: "Q3", amount: 35000000 },
-    { month: "Q4", amount: 45000000 },
-  ],
-  "ALL": [
-    { month: "2020", amount: 25000000 },
-    { month: "2021", amount: 35000000 },
-    { month: "2022", amount: 45000000 },
-    { month: "2023", amount: 55000000 },
-    { month: "2024", amount: 30345421 },
-  ],
-};
-
-const recentActivities = [
-  {
-    type: "Payment Received",
-    description: "Payment received for Invoice #INV-001",
-    amount: 250000,
-    date: "2024-03-15"
+// Temporary mock data until connected to backend
+const mockPayments: Payment[] = [
+  { 
+    date: "2024-03-14 10:00:00", 
+    amount: 5057, 
+    customer: "Client 1", 
+    method: "Credit Card", 
+    reference: "REF000001",
+    type: "One-time"
   },
-  {
-    type: "Invoice Sent",
-    description: "New invoice #INV-002 sent to TechCorp",
-    amount: 180000,
-    date: "2024-03-14"
+  { 
+    date: "2024-03-13 15:30:00", 
+    amount: 6470, 
+    customer: "Client 2", 
+    method: "Bank Transfer", 
+    reference: "REF000002",
+    type: "Recurring"
   },
-  {
-    type: "Estimate Accepted",
-    description: "Estimate #EST-001 accepted by Client A",
-    amount: 450000,
-    date: "2024-03-13"
-  },
-  {
-    type: "Payment Received",
-    description: "Payment received for Invoice #INV-003",
-    amount: 320000,
-    date: "2024-03-12"
-  }
+  // ... Add more mock payments for testing
 ];
 
+const timeRanges = ["24H", "1W", "1M", "3M", "1Y", "ALL"] as const;
+type TimeRange = typeof timeRanges[number];
+
 export default function Index() {
-  const [timeRange, setTimeRange] = useState("3M");
+  const [timeRange, setTimeRange] = useState<TimeRange>("3M");
+  
+  // Calculate total earnings from all payments
+  const totalEarnings = calculateTotalEarnings(mockPayments);
+  
+  // Group payments by selected time range
+  const groupedPayments = groupPaymentsByTimeRange(mockPayments, timeRange);
+  const chartData = formatChartData(groupedPayments);
+
+  // Get recent activities from payments
+  const recentActivities = mockPayments
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 4)
+    .map(payment => ({
+      type: "Payment Received",
+      description: `Payment received from ${payment.customer}`,
+      amount: payment.amount,
+      date: payment.date.split(' ')[0] // Get only the date part
+    }));
 
   return (
     <div className="space-y-8">
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold">Total Earnings</h2>
-        <p className="text-muted-foreground">Your earnings over the last 6 months</p>
-        <div className="text-4xl font-bold">₦30,345,421.00</div>
+        <p className="text-muted-foreground">Your earnings over time</p>
+        <div className="text-4xl font-bold">
+          ₦{totalEarnings.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </div>
         
         <div className="flex flex-wrap gap-2 items-center">
-          {Object.keys(data).map((range) => (
+          {timeRanges.map((range) => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
@@ -105,7 +87,7 @@ export default function Index() {
               },
             }}
           >
-            <AreaChart data={data[timeRange]} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#0FA0CE" stopOpacity={0.3}/>
@@ -114,9 +96,11 @@ export default function Index() {
               </defs>
               <XAxis dataKey="month" />
               <YAxis 
-                tickFormatter={(value) => `₦${(value / 1000000).toFixed(1)}M`}
+                tickFormatter={(value) => `₦${(value / 1000).toFixed(1)}K`}
               />
-              <ChartTooltip />
+              <ChartTooltip 
+                formatter={(value: number) => [`₦${value.toLocaleString('en-NG', { minimumFractionDigits: 2 })}`, "Amount"]}
+              />
               <Area
                 type="monotone"
                 dataKey="amount"
