@@ -37,7 +37,7 @@ export function Layout() {
         <TooltipProvider>
           <div className="flex min-h-screen bg-gray-50 font-inter">
             <main className="flex-1 overflow-x-hidden bg-white">
-              <div className="max-w-7xl mx-auto">
+              <div className="max-w-7xl mx-auto px-2.5">
                 <Outlet />
               </div>
             </main>
@@ -55,7 +55,7 @@ export function Layout() {
           {isMobile ? (
             <>
               <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 z-50">
-                <div className="flex items-center justify-between pr-4 h-full">
+                <div className="flex items-center justify-between px-2.5 h-full">
                   <div className="flex items-center gap-4">
                     <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                       <SheetTrigger asChild>
@@ -95,7 +95,7 @@ export function Layout() {
                   </div>
                 </div>
               </header>
-              <main className="flex-1 p-4 md:p-8 mt-16 overflow-x-hidden bg-white">
+              <main className="flex-1 px-2.5 py-4 md:p-8 mt-16 overflow-x-hidden bg-white">
                 <div className="max-w-7xl mx-auto">
                   <Outlet />
                 </div>
