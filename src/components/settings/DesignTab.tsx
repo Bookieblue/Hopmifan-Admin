@@ -17,7 +17,7 @@ interface DesignTabProps {
 }
 
 // Sample invoice data for preview
-const sampleInvoice = {
+const modernInvoiceData = {
   invoiceNumber: "210201",
   projectDesc: "Product Development",
   date: "2024-03-19",
@@ -26,33 +26,58 @@ const sampleInvoice = {
   companyAddress: "123 Company St",
   companyPhone: "+1 234 567 8900",
   companyEmail: "contact@company.com",
-  companyWebsite: "www.company.com",
   clientName: "Sample Client",
   clientAddress: "456 Client Avenue",
-  gstId: "GST123456789",
-  pan: "PANABCD1234E",
-  payableTo: {
-    name: "Sample Company",
-    accountNumber: "1234567890",
-    ifscCode: "IFSC00001",
-    bank: "Sample Bank",
-    gstId: "GST123456789",
-    pan: "PANABCD1234E",
-    address: "123 Company St"
-  },
-  items: [
-    {
-      no: "1",
-      description: "Sample Service",
-      sac: "998314",
-      amount: 1000
-    }
-  ],
+  clientPhone: "+1 234 567 8901",
+  clientEmail: "client@example.com",
   status: "pending" as const,
   paymentType: "one-time" as const,
+  items: [
+    {
+      description: "Sample Service",
+      cost: 1000,
+      quantity: "1",
+      price: 1000,
+      unit: "item"
+    }
+  ],
   customerNotes: "Sample notes for the invoice",
   terms: "Standard terms and conditions apply",
+  bankDetails: {
+    bankName: "Sample Bank",
+    accountName: "Sample Account",
+    accountNumber: "1234567890",
+    swiftCode: "SWIFT1234",
+    routingNumber: "123456"
+  },
   paymentLink: "https://payment.link"
+};
+
+// Sample data for classic invoice
+const classicInvoiceData = {
+  invoice: {
+    number: "210201",
+    date: "2024-03-19",
+    customer: {
+      name: "Sample Client",
+      email: "client@example.com",
+      street: "456 Client Avenue",
+      state: "Sample State",
+      postalCode: "12345"
+    },
+    items: [
+      {
+        description: "Sample Service",
+        quantity: 1,
+        price: 1000,
+        amount: 1000
+      }
+    ],
+    notes: "Sample notes for the invoice",
+    terms: "Standard terms and conditions apply",
+    footer: "Thank you for your business"
+  },
+  currencySymbol: "$"
 };
 
 export const DesignTab = ({ 
@@ -78,7 +103,7 @@ export const DesignTab = ({
         <p className="text-sm text-gray-500 mb-4">Clean and contemporary design with a focus on typography and whitespace</p>
         <div className="aspect-[8.5/11] bg-gray-100 rounded-lg overflow-hidden">
           <div className="transform scale-[0.2] origin-top-left w-[500%] h-[500%]">
-            <ModernInvoiceTemplate {...sampleInvoice} />
+            <ModernInvoiceTemplate {...modernInvoiceData} />
           </div>
         </div>
       </Card>
@@ -91,7 +116,7 @@ export const DesignTab = ({
         <p className="text-sm text-gray-500 mb-4">Traditional business layout with a professional appearance</p>
         <div className="aspect-[8.5/11] bg-gray-100 rounded-lg overflow-hidden">
           <div className="transform scale-[0.2] origin-top-left w-[500%] h-[500%]">
-            <ClassicInvoiceTemplate {...sampleInvoice} />
+            <ClassicInvoiceTemplate {...classicInvoiceData} />
           </div>
         </div>
       </Card>
