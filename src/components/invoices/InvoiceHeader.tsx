@@ -26,30 +26,33 @@ export const InvoiceHeader = ({
   initialCustomer
 }: InvoiceHeaderProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="md:col-span-2">
-        <CustomerSelect 
-          onCustomerSelect={onCustomerSelect} 
-          initialCustomer={initialCustomer}
-        />
-      </div>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold">Invoice Details</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="md:col-span-2">
+          <CustomerSelect 
+            onCustomerSelect={onCustomerSelect} 
+            initialCustomer={initialCustomer}
+          />
+        </div>
 
-      <div className="space-y-2">
-        <Label>Invoice Number</Label>
-        <Input 
-          value={invoiceId} 
-          onChange={(e) => onInvoiceIdChange(e.target.value)}
-          placeholder="Enter invoice number"
-        />
-      </div>
-      
-      <div className="space-y-2">
-        <Label>Due Date</Label>
-        <Input 
-          type="date" 
-          value={dueDate} 
-          onChange={(e) => onDueDateChange(e.target.value)} 
-        />
+        <div className="space-y-2">
+          <Label>Invoice Number</Label>
+          <Input 
+            value={invoiceId} 
+            onChange={(e) => onInvoiceIdChange(e.target.value)}
+            placeholder="Enter invoice number"
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label>Due Date</Label>
+          <Input 
+            type="date" 
+            value={dueDate} 
+            onChange={(e) => onDueDateChange(e.target.value)} 
+          />
+        </div>
       </div>
     </div>
   );
