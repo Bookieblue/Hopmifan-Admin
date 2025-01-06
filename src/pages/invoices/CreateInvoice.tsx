@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,7 +23,14 @@ export default function CreateInvoice() {
   const [paymentType, setPaymentType] = useState<"one-time" | "recurring">("one-time");
   const [selectedBankAccounts, setSelectedBankAccounts] = useState<string[]>([]);
   const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
-  const [items, setItems] = useState<InvoiceItem[]>([]);
+  const [items, setItems] = useState<InvoiceItem[]>([{
+    id: Math.random().toString(36).substr(2, 9),
+    description: "Service 1",
+    quantity: 1,
+    price: 0,
+    amount: 0,
+    image: null
+  }]);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [status, setStatus] = useState<InvoiceStatus>("pending");
   const [selectedCurrency, setSelectedCurrency] = useState("NGN");
@@ -31,21 +38,40 @@ export default function CreateInvoice() {
   const [terms, setTerms] = useState("Payment is due within 30 days");
   const [footer, setFooter] = useState("");
   
+  // Load business settings on mount
+  useEffect(() => {
+    const businessData = localStorage.getItem('businessData');
+    if (businessData) {
+      const { defaultCurrency } = JSON.parse(businessData);
+      if (defaultCurrency) {
+        setSelectedCurrency(defaultCurrency);
+      }
+    }
+  }, []);
+
   const [invoice, setInvoice] = useState({
     number: invoiceId,
     date: new Date().toISOString().split('T')[0],
     currency: selectedCurrency,
     customer: null,
-    items: [{
-      id: Math.random().toString(36).substr(2, 9),
-      description: "Service",
-      quantity: 1,
-      price: 1000,
-      amount: 1000
-    }],
+    items: items,
     notes: notes,
-    terms: terms
+    terms: terms,
+    footer: footer
   });
+
+  // Update invoice state when relevant fields change
+  useEffect(() => {
+    setInvoice(prev => ({
+      ...prev,
+      customer: selectedCustomer,
+      items: items,
+      notes: notes,
+      terms: terms,
+      footer: footer,
+      currency: selectedCurrency
+    }));
+  }, [selectedCustomer, items, notes, terms, footer, selectedCurrency]);
 
   const handleSubmit = async (status: 'draft' | 'published') => {
     try {
@@ -58,6 +84,7 @@ export default function CreateInvoice() {
         items,
         notes,
         terms,
+        footer,
         status,
         customer: selectedCustomer,
         total: items.reduce((sum, item) => sum + item.amount, 0)
@@ -99,7 +126,7 @@ export default function CreateInvoice() {
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <h1 className="text-2xl font-semibold">Create Invoice</h1>
+            <h1 className="text-2xl font-semibold">Create New Invoice</h1>
           </div>
         </div>
 
@@ -107,15 +134,18 @@ export default function CreateInvoice() {
           <form className="space-y-8">
             <Card>
               <CardContent className="p-6 space-y-8">
-                <InvoiceHeader
-                  invoiceId={invoiceId}
-                  dueDate={dueDate}
-                  paymentType={paymentType}
-                  onInvoiceIdChange={setInvoiceId}
-                  onDueDateChange={setDueDate}
-                  onPaymentTypeChange={setPaymentType}
-                  onCustomerSelect={setSelectedCustomer}
-                />
+                <div>
+                  <h2 className="text-lg font-medium mb-4">Invoice Details</h2>
+                  <InvoiceHeader
+                    invoiceId={invoiceId}
+                    dueDate={dueDate}
+                    paymentType={paymentType}
+                    onInvoiceIdChange={setInvoiceId}
+                    onDueDateChange={setDueDate}
+                    onPaymentTypeChange={setPaymentType}
+                    onCustomerSelect={setSelectedCustomer}
+                  />
+                </div>
 
                 <PaymentDetails
                   selectedCurrency={selectedCurrency}
@@ -135,8 +165,8 @@ export default function CreateInvoice() {
                 <AdditionalDetails
                   selectedBankAccounts={selectedBankAccounts}
                   selectedGateway={selectedGateway}
-                  onBankAccountAdd={(accountId) => setSelectedBankAccounts(prev => [...prev, accountId])}
-                  onBankAccountRemove={(accountId) => setSelectedBankAccounts(prev => prev.filter(id => id !== accountId))}
+                  onBankAccountAdd={(accountId) => setSelectedBankAccounts([accountId])}
+                  onBankAccountRemove={() => setSelectedBankAccounts([])}
                   onPaymentGatewayChange={setSelectedGateway}
                   notes={notes}
                   terms={terms}

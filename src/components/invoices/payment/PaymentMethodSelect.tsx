@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectLabel, SelectGroup } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { CreditCard, Wallet, X } from "lucide-react";
 
 interface PaymentMethodSelectProps {
@@ -22,20 +22,25 @@ export const PaymentMethodSelect = ({
   bankAccounts,
   paymentGateways
 }: PaymentMethodSelectProps) => {
+  const handleValueChange = (value: string) => {
+    if (value.startsWith('bank_')) {
+      const accountId = value.replace('bank_', '');
+      onBankAccountAdd(accountId);
+      if (selectedGateway) {
+        onPaymentGatewayChange('');
+      }
+    } else {
+      if (selectedBankAccounts.length > 0) {
+        onBankAccountRemove(selectedBankAccounts[0]);
+      }
+      onPaymentGatewayChange(value);
+    }
+  };
+
   return (
     <div className="space-y-2">
       <Label>Payment Methods</Label>
-      <Select onValueChange={(value) => {
-        if (value.startsWith('bank_')) {
-          onBankAccountAdd(value.replace('bank_', ''));
-        } else {
-          // Clear previous gateway if exists and set new one
-          if (selectedGateway) {
-            onPaymentGatewayChange('');
-          }
-          onPaymentGatewayChange(value);
-        }
-      }}>
+      <Select onValueChange={handleValueChange}>
         <SelectTrigger>
           <SelectValue placeholder="Add payment method" />
         </SelectTrigger>
@@ -58,7 +63,7 @@ export const PaymentMethodSelect = ({
               <SelectItem
                 key={gateway.id}
                 value={gateway.id}
-                disabled={selectedGateway !== null}
+                disabled={selectedGateway === gateway.id}
               >
                 {gateway.name}
               </SelectItem>
