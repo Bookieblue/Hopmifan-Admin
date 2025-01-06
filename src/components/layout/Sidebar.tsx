@@ -5,8 +5,6 @@ import {
   MessageSquare,
   HelpCircle,
   LogOut,
-  PanelLeftClose,
-  PanelLeft,
   ChevronDown,
 } from "lucide-react";
 import { SupportModal } from "../modals/SupportModal";
@@ -17,21 +15,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useDocuments } from "@/contexts/DocumentContext";
 import { cn } from "@/lib/utils";
 import { SidebarNavigation } from "./SidebarNavigation";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-// Default placeholder image from Unsplash
-const DEFAULT_LOGO = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b";
+import { SidebarHeader } from "./SidebarHeader";
 
 export function Sidebar({ onCollapse }: { onCollapse?: (collapsed: boolean) => void }) {
   const navigate = useNavigate();
@@ -56,10 +46,8 @@ export function Sidebar({ onCollapse }: { onCollapse?: (collapsed: boolean) => v
       }
     };
 
-    // Load initial data
     loadBusinessData();
 
-    // Set up storage event listener for real-time updates
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'businessData') {
         loadBusinessData();
@@ -99,53 +87,12 @@ export function Sidebar({ onCollapse }: { onCollapse?: (collapsed: boolean) => v
         isCollapsed ? "w-20" : "w-64"
       )}
     >
-      <div className="flex items-center justify-between p-4 border-b border-gray-100">
-        <Link to="/" className="flex items-center">
-          <div className="flex items-center gap-2">
-            {businessData.logo ? (
-              <img 
-                src={businessData.logo} 
-                alt="Business logo" 
-                className="w-8 h-8 rounded-lg object-cover"
-              />
-            ) : (
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <img 
-                  src={DEFAULT_LOGO}
-                  alt="Default logo"
-                  className="w-8 h-8 rounded-lg object-cover"
-                />
-              </div>
-            )}
-            {!isCollapsed && (
-              <span className="text-xl font-semibold text-gray-900 truncate">
-                {businessData.businessName || "My Business"}
-              </span>
-            )}
-          </div>
-        </Link>
-        {!isMobile && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="hover:bg-gray-100 transition-colors"
-                onClick={toggleSidebar}
-              >
-                {isCollapsed ? (
-                  <PanelLeft className="h-4 w-4 text-gray-600" />
-                ) : (
-                  <PanelLeftClose className="h-4 w-4 text-gray-600" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}</p>
-            </TooltipContent>
-          </Tooltip>
-        )}
-      </div>
+      <SidebarHeader 
+        businessData={businessData}
+        isCollapsed={isCollapsed}
+        isMobile={isMobile}
+        toggleSidebar={toggleSidebar}
+      />
 
       <div className="p-4">
         <DropdownMenu>
