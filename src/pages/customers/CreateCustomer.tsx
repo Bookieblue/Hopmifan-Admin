@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { ArrowLeft } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -52,10 +53,19 @@ const CreateCustomer = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-bold">Add Customer</h1>
-        <p className="text-muted-foreground">Add a new customer to your business</p>
+    <div className="space-y-6 max-w-2xl mx-auto p-6">
+      <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/customers")}
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold">Add Customer</h1>
+          <p className="text-muted-foreground">Add a new customer to your business</p>
+        </div>
       </div>
 
       <Form {...form}>

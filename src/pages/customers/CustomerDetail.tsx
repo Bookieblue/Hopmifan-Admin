@@ -1,8 +1,10 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 // Mock data for the customer details
 const customerData = {
@@ -43,17 +45,41 @@ const customerData = {
 
 export default function CustomerDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const customer = customerData[id as keyof typeof customerData];
 
   if (!customer) {
-    return <div className="p-6">Customer not found</div>;
+    return (
+      <div className="p-6">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/customers")}
+          className="mb-4"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <p>Customer not found</p>
+      </div>
+    );
   }
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto space-y-6">
+      <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/customers")}
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <h1 className="text-2xl font-semibold">{customer.name}</h1>
+      </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>{customer.name}</CardTitle>
+          <CardTitle>Customer Information</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div>
