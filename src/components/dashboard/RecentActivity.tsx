@@ -16,6 +16,7 @@ interface ActivityItem {
   date: string;
   status?: "pending" | "completed" | "failed";
   reference?: string;
+  customer: string; // Added this line to fix the TypeScript error
 }
 
 interface RecentActivityProps {
