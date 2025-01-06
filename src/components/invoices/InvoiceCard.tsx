@@ -8,22 +8,40 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Card } from "@/components/ui/card";
+import { Invoice } from "@/types/invoice";
 
-interface InvoiceCardProps {
-  invoice: {
-    id: string;
-    customer: string;
-    amount: string;
-    status: string;
-    date: string;
-    type?: 'one-time' | 'recurring';
-  };
-  onDelete: (id: string) => void;
-  onDuplicate: (id: string) => void;
-  onShare: (id: string) => void;
+interface InvoiceCardBaseProps {
+  onDelete?: (id: string) => void;
+  onDuplicate?: (id: string) => void;
+  onShare?: (id: string) => void;
 }
 
-export function InvoiceCard({ invoice, onDelete, onDuplicate, onShare }: InvoiceCardProps) {
+// Original props interface
+interface InvoiceCardDirectProps extends InvoiceCardBaseProps {
+  invoice: Invoice;
+}
+
+// DataTable compatible props interface
+interface InvoiceCardTableProps extends InvoiceCardBaseProps {
+  item: Invoice;
+  actions?: {
+    onDelete?: (id: string) => void;
+    onDuplicate?: (id: string) => void;
+    onShare?: (id: string) => void;
+  };
+}
+
+type InvoiceCardProps = InvoiceCardDirectProps | InvoiceCardTableProps;
+
+export function InvoiceCard(props: InvoiceCardProps) {
+  // Determine which props format we're dealing with
+  const invoice = 'invoice' in props ? props.invoice : props.item;
+  const actions = 'actions' in props ? props.actions : {
+    onDelete: props.onDelete,
+    onDuplicate: props.onDuplicate,
+    onShare: props.onShare
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -77,20 +95,20 @@ export function InvoiceCard({ invoice, onDelete, onDuplicate, onShare }: Invoice
               </DropdownMenuItem>
               <DropdownMenuItem onClick={(e) => {
                 e.preventDefault();
-                onDuplicate(invoice.id);
+                actions.onDuplicate?.(invoice.id);
               }}>
                 Duplicate
               </DropdownMenuItem>
               <DropdownMenuItem onClick={(e) => {
                 e.preventDefault();
-                onShare(invoice.id);
+                actions.onShare?.(invoice.id);
               }}>
                 Share
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={(e) => {
                   e.preventDefault();
-                  onDelete(invoice.id);
+                  actions.onDelete?.(invoice.id);
                 }}
                 className="text-red-600"
               >
