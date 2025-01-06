@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Mock data for the customer details
 const customerData = {
@@ -65,8 +66,8 @@ export default function CustomerDetail() {
   }
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="p-6 max-w-[1400px] mx-auto">
+      <div className="flex items-center gap-4 mb-6">
         <Button
           variant="ghost"
           size="icon"
@@ -77,133 +78,143 @@ export default function CustomerDetail() {
         <h1 className="text-2xl font-semibold">{customer.name}</h1>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Customer Information</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">Email</p>
-            <p>{customer.email}</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">Phone</p>
-            <p>{customer.phone}</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">Address</p>
-            <p>{customer.address}</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
-            <p className="font-semibold">{customer.totalSpent}</p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Customer Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-4 mb-6">
+              <Avatar className="w-24 h-24">
+                <AvatarImage src={customer.profilePicture} />
+                <AvatarFallback>{customer.name[0]}</AvatarFallback>
+              </Avatar>
+              <div>
+                <h2 className="text-xl font-semibold">{customer.name}</h2>
+                <p className="text-sm text-muted-foreground">Customer since {customer.date}</p>
+              </div>
+            </div>
+            <div className="grid gap-4">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Email</p>
+                <p>{customer.email}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Phone</p>
+                <p>{customer.phone}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Address</p>
+                <p>{customer.address}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
+                <p className="font-semibold">{customer.totalSpent}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-      <Tabs defaultValue="invoices" className="w-full">
-        <TabsList>
-          <TabsTrigger value="invoices">Invoices</TabsTrigger>
-          <TabsTrigger value="estimates">Estimates</TabsTrigger>
-          <TabsTrigger value="receipts">Receipts</TabsTrigger>
-        </TabsList>
+        <Card>
+          <Tabs defaultValue="invoices" className="w-full">
+            <TabsList className="w-full">
+              <TabsTrigger value="invoices" className="flex-1">Invoices</TabsTrigger>
+              <TabsTrigger value="estimates" className="flex-1">Estimates</TabsTrigger>
+              <TabsTrigger value="receipts" className="flex-1">Receipts</TabsTrigger>
+            </TabsList>
 
-        <TabsContent value="invoices">
-          <Card>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Invoice #</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {customer.invoices.map((invoice) => (
-                  <TableRow key={invoice.id}>
-                    <TableCell className="font-medium">{invoice.id}</TableCell>
-                    <TableCell>{invoice.date}</TableCell>
-                    <TableCell>{invoice.amount}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{invoice.status}</Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {customer.invoices.length === 0 && (
+            <TabsContent value="invoices">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center">No invoices found</TableCell>
+                    <TableHead>Invoice #</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
+                </TableHeader>
+                <TableBody>
+                  {customer.invoices.map((invoice) => (
+                    <TableRow key={invoice.id}>
+                      <TableCell className="font-medium">{invoice.id}</TableCell>
+                      <TableCell>{invoice.date}</TableCell>
+                      <TableCell>{invoice.amount}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{invoice.status}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {customer.invoices.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center">No invoices found</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TabsContent>
 
-        <TabsContent value="estimates">
-          <Card>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Estimate #</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {customer.estimates.map((estimate) => (
-                  <TableRow key={estimate.id}>
-                    <TableCell className="font-medium">{estimate.id}</TableCell>
-                    <TableCell>{estimate.date}</TableCell>
-                    <TableCell>{estimate.amount}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{estimate.status}</Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {customer.estimates.length === 0 && (
+            <TabsContent value="estimates">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center">No estimates found</TableCell>
+                    <TableHead>Estimate #</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
+                </TableHeader>
+                <TableBody>
+                  {customer.estimates.map((estimate) => (
+                    <TableRow key={estimate.id}>
+                      <TableCell className="font-medium">{estimate.id}</TableCell>
+                      <TableCell>{estimate.date}</TableCell>
+                      <TableCell>{estimate.amount}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{estimate.status}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {customer.estimates.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center">No estimates found</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TabsContent>
 
-        <TabsContent value="receipts">
-          <Card>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Receipt #</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {customer.receipts.map((receipt) => (
-                  <TableRow key={receipt.id}>
-                    <TableCell className="font-medium">{receipt.id}</TableCell>
-                    <TableCell>{receipt.date}</TableCell>
-                    <TableCell>{receipt.amount}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{receipt.status}</Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {customer.receipts.length === 0 && (
+            <TabsContent value="receipts">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center">No receipts found</TableCell>
+                    <TableHead>Receipt #</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                </TableHeader>
+                <TableBody>
+                  {customer.receipts.map((receipt) => (
+                    <TableRow key={receipt.id}>
+                      <TableCell className="font-medium">{receipt.id}</TableCell>
+                      <TableCell>{receipt.date}</TableCell>
+                      <TableCell>{receipt.amount}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{receipt.status}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {customer.receipts.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center">No receipts found</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TabsContent>
+          </Tabs>
+        </Card>
+      </div>
     </div>
   );
 }
