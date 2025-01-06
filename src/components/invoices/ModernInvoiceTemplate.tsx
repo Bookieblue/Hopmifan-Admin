@@ -42,7 +42,7 @@ interface InvoiceProps {
   paymentLink: string
 }
 
-const ModernInvoiceTemplate: React.FC<InvoiceProps> = ({
+export const ModernInvoiceTemplate: React.FC<InvoiceProps> = ({
   invoiceNumber,
   projectDesc,
   date,
@@ -261,5 +261,3 @@ const ModernInvoiceTemplate: React.FC<InvoiceProps> = ({
     </Card>
   )
 }
-
-export default ModernInvoiceTemplate
