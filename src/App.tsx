@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { BusinessProvider } from "./contexts/BusinessContext";
 import { Layout } from "./components/layout/Layout";
 import CustomerList from "./pages/customers/CustomerList";
@@ -12,7 +12,6 @@ import SignUp from "./pages/auth/SignUp";
 function App() {
   return (
     <BusinessProvider>
-      <Router>
         <Layout>
           <Routes>
             <Route path="/" element={<Overview />} />
@@ -24,7 +23,6 @@ function App() {
             <Route path="/auth/signup" element={<SignUp />} />
           </Routes>
         </Layout>
-      </Router>
     </BusinessProvider>
   );
 }
