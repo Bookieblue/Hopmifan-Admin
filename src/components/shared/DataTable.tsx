@@ -11,6 +11,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { BulkActions } from "./BulkActions";
+import { TableBody } from "@/components/ui/table";
 
 export interface TableColumn<T> {
   header: string;
