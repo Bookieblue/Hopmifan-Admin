@@ -18,26 +18,41 @@ interface DesignTabProps {
 
 // Sample invoice data for preview
 const sampleInvoice = {
-  number: "210201",
+  invoiceNumber: "210201",
+  projectDesc: "Product Development",
   date: "2024-03-19",
-  customer: {
-    name: "Sample Client",
-    email: "client@example.com",
-    street: "123 Business Street",
-    state: "Sample State",
-    postalCode: "12345"
+  dueDate: "2024-04-19",
+  companyName: "Sample Company",
+  companyAddress: "123 Company St",
+  companyPhone: "+1 234 567 8900",
+  companyEmail: "contact@company.com",
+  companyWebsite: "www.company.com",
+  clientName: "Sample Client",
+  clientAddress: "456 Client Avenue",
+  gstId: "GST123456789",
+  pan: "PANABCD1234E",
+  payableTo: {
+    name: "Sample Company",
+    accountNumber: "1234567890",
+    ifscCode: "IFSC00001",
+    bank: "Sample Bank",
+    gstId: "GST123456789",
+    pan: "PANABCD1234E",
+    address: "123 Company St"
   },
   items: [
     {
+      no: "1",
       description: "Sample Service",
-      quantity: 1,
-      price: 1000,
+      sac: "998314",
       amount: 1000
     }
   ],
-  notes: "Sample invoice for preview",
-  terms: "Terms and conditions apply",
-  footer: "Thank you for your business"
+  status: "pending" as const,
+  paymentType: "one-time" as const,
+  customerNotes: "Sample notes for the invoice",
+  terms: "Standard terms and conditions apply",
+  paymentLink: "https://payment.link"
 };
 
 export const DesignTab = ({ 
@@ -76,10 +91,7 @@ export const DesignTab = ({
         <p className="text-sm text-gray-500 mb-4">Traditional business layout with a professional appearance</p>
         <div className="aspect-[8.5/11] bg-gray-100 rounded-lg overflow-hidden">
           <div className="transform scale-[0.2] origin-top-left w-[500%] h-[500%]">
-            <ClassicInvoiceTemplate 
-              invoice={sampleInvoice}
-              currencySymbol="$"
-            />
+            <ClassicInvoiceTemplate {...sampleInvoice} />
           </div>
         </div>
       </Card>
