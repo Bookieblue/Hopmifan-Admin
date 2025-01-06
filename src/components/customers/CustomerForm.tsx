@@ -15,16 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   profilePicture: z.string().optional(),
-  street: z.string().optional(),
-  country: z.string().optional(),
-  state: z.string().optional(),
-  postalCode: z.string().optional(),
+  billingAddress: z.string().optional(),
 });
 
 interface CustomerFormProps {
@@ -33,7 +31,7 @@ interface CustomerFormProps {
 }
 
 export const CustomerForm = ({ initialData, onSubmit }: CustomerFormProps) => {
-  const [includeBillingAddress, setIncludeBillingAddress] = useState(!!initialData?.street);
+  const [includeBillingAddress, setIncludeBillingAddress] = useState(!!initialData?.billingAddress);
   const [profilePicture, setProfilePicture] = useState(initialData?.profilePicture || "");
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,10 +41,7 @@ export const CustomerForm = ({ initialData, onSubmit }: CustomerFormProps) => {
       email: initialData?.email || "",
       phone: initialData?.phone || "",
       profilePicture: initialData?.profilePicture || "",
-      street: initialData?.street || "",
-      country: initialData?.country || "",
-      state: initialData?.state || "",
-      postalCode: initialData?.postalCode || "",
+      billingAddress: initialData?.billingAddress || "",
     },
   });
 
@@ -138,63 +133,23 @@ export const CustomerForm = ({ initialData, onSubmit }: CustomerFormProps) => {
         </div>
 
         {includeBillingAddress && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="street"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Street Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter street address" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="country"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter country" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="state"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>State</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter state" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="postalCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Postal Code</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter postal code" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="billingAddress"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Billing Address</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    placeholder="Enter complete billing address"
+                    className="min-h-[100px]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         )}
 
         <div className="flex justify-end gap-4">

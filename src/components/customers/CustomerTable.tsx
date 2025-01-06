@@ -9,9 +9,7 @@ interface Customer {
   email: string;
   phone: string;
   totalSpent: string;
-  street?: string;
-  state?: string;
-  postalCode?: string;
+  billingAddress?: string;
   profilePicture?: string;
 }
 
@@ -22,6 +20,9 @@ interface CustomerTableProps {
   onSelectAll: (checked: boolean) => void;
   onDelete: (id: string) => void;
   onEdit: (customer: Customer) => void;
+  bulkAction?: string;
+  setBulkAction?: (value: string) => void;
+  onBulkAction?: () => void;
 }
 
 export const CustomerTable = ({
@@ -31,6 +32,9 @@ export const CustomerTable = ({
   onSelectAll,
   onDelete,
   onEdit,
+  bulkAction,
+  setBulkAction,
+  onBulkAction,
 }: CustomerTableProps) => {
   const navigate = useNavigate();
 
@@ -70,6 +74,13 @@ export const CustomerTable = ({
           }
         ]
       }}
+      bulkActions={[
+        { value: "delete", label: "Delete Selected" },
+        { value: "export", label: "Export as CSV" }
+      ]}
+      bulkAction={bulkAction}
+      setBulkAction={setBulkAction}
+      onBulkAction={onBulkAction}
       CardComponent={CustomerCard}
     />
   );
