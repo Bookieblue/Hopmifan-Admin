@@ -47,7 +47,7 @@ export function RecentActivity({ activities, title }: RecentActivityProps) {
   };
 
   return (
-    <Card className="space-y-6 p-6">
+    <Card className="p-2.5 md:p-6 space-y-6">
       <h2 className="text-2xl font-semibold">{title}</h2>
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full align-middle">
