@@ -69,20 +69,37 @@ export const InvoiceTable = ({
   ];
 
   return (
-    <DataTable
-      data={invoices}
-      columns={columns}
-      selectedItems={selectedInvoices}
-      onSelectItem={onSelectInvoice}
-      onSelectAll={onSelectAll}
-      getItemId={(invoice) => invoice.id}
-      actions={{
-        onDelete,
-        onDuplicate,
-        onShare
-      }}
-      onRowClick={(id) => navigate(`/invoices/${id}/edit`)}
-      CardComponent={InvoiceCard}
-    />
+    <div className="space-y-4">
+      {selectedInvoices.length > 0 && (
+        <div className="bg-white p-4 rounded-lg border shadow-sm">
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-500">
+              {selectedInvoices.length} selected
+            </span>
+            <button
+              onClick={() => selectedInvoices.forEach(id => onDelete(id))}
+              className="text-sm text-red-600 hover:text-red-700 font-medium"
+            >
+              Delete Selected
+            </button>
+          </div>
+        </div>
+      )}
+      <DataTable
+        data={invoices}
+        columns={columns}
+        selectedItems={selectedInvoices}
+        onSelectItem={onSelectInvoice}
+        onSelectAll={onSelectAll}
+        getItemId={(invoice) => invoice.id}
+        actions={{
+          onDelete,
+          onDuplicate,
+          onShare
+        }}
+        onRowClick={(id) => navigate(`/invoices/${id}/edit`)}
+        CardComponent={InvoiceCard}
+      />
+    </div>
   );
 };
