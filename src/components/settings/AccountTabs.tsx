@@ -1,7 +1,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import BusinessSettings from "@/components/settings/BusinessSettings";
 import TaxSettings from "@/components/settings/TaxSettings";
-import ReminderSettings from "@/components/settings/ReminderSettings";
 
 export default function AccountTabs() {
   return (
@@ -10,7 +9,6 @@ export default function AccountTabs() {
         <TabsList>
           <TabsTrigger value="business">Business</TabsTrigger>
           <TabsTrigger value="tax">Tax</TabsTrigger>
-          <TabsTrigger value="reminders">Reminders</TabsTrigger>
         </TabsList>
 
         <TabsContent value="business">
@@ -19,10 +17,6 @@ export default function AccountTabs() {
 
         <TabsContent value="tax">
           <TaxSettings />
-        </TabsContent>
-
-        <TabsContent value="reminders">
-          <ReminderSettings />
         </TabsContent>
       </Tabs>
     </div>
