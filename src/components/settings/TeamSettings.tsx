@@ -4,6 +4,9 @@ import { UserPlus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Member, MemberFormData } from "@/types/team";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import MemberForm from "./MemberForm";
 import MemberList from "./MemberList";
 
@@ -13,7 +16,14 @@ export default function TeamSettings() {
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   
   // Mock current user (in real app, this would come from auth)
-  const currentUser = { id: "1", name: "User", email: "test@gmail.com", role: "Admin" as const };
+  const currentUser = { 
+    id: "1", 
+    firstName: "John",
+    lastName: "Doe",
+    name: "John Doe", 
+    email: "test@gmail.com", 
+    role: "Admin" as const 
+  };
   
   const [members, setMembers] = useState<Member[]>([
     currentUser,
@@ -76,18 +86,63 @@ export default function TeamSettings() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold tracking-tight">Team Members</h2>
-        <Button onClick={() => setShowAddMember(true)}>
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add Member
-        </Button>
       </div>
 
-      <MemberList 
-        members={members}
-        currentUserId={currentUser.id}
-        onEdit={handleEditMember}
-        onDelete={handleDeleteMember}
-      />
+      <Tabs defaultValue="admin" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="admin">Admin</TabsTrigger>
+          <TabsTrigger value="team">Team</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="admin" className="space-y-4">
+          <div className="grid gap-4 p-4 border rounded-lg">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First Name</Label>
+              <Input
+                id="firstName"
+                value={currentUser.firstName}
+                disabled
+                className="bg-muted"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                id="lastName"
+                value={currentUser.lastName}
+                disabled
+                className="bg-muted"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={currentUser.email}
+                disabled
+                className="bg-muted"
+              />
+              <p className="text-sm text-muted-foreground">Email cannot be changed</p>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="team" className="space-y-4">
+          <div className="flex justify-end">
+            <Button onClick={() => setShowAddMember(true)}>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Add Member
+            </Button>
+          </div>
+          <MemberList 
+            members={members}
+            currentUserId={currentUser.id}
+            onEdit={handleEditMember}
+            onDelete={handleDeleteMember}
+          />
+        </TabsContent>
+      </Tabs>
 
       {/* Add Member Dialog */}
       <Dialog open={showAddMember} onOpenChange={setShowAddMember}>
