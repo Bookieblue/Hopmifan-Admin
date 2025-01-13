@@ -106,6 +106,10 @@ export default function CustomerDetail() {
     return data.slice(start, end);
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="p-6 max-w-[1400px] mx-auto space-y-8">
       <div className="flex items-center justify-between mb-6">
@@ -219,7 +223,7 @@ export default function CustomerDetail() {
                   <Pagination
                     total={Math.ceil(customer[tab].length / itemsPerPage)}
                     value={currentPage}
-                    onChange={setCurrentPage}
+                    onChange={handlePageChange}
                   />
                 </div>
               )}
