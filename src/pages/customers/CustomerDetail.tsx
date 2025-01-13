@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,9 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Pagination } from "@/components/ui/pagination";
 
-// Mock data remains the same
 // Mock data for the customer details
 const customerData = {
   "1": {
@@ -99,16 +97,6 @@ export default function CustomerDetail() {
     navigate(`/customers/${id}/edit`);
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const getPaginatedData = (data: any[], page: number) => {
-    const start = (page - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return data.slice(start, end);
-  };
-
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto space-y-6">
       <div className="flex items-center gap-4 mb-6">
@@ -116,22 +104,28 @@ export default function CustomerDetail() {
           variant="ghost"
           size="icon"
           onClick={() => navigate("/customers")}
+          className="hover:bg-gray-100"
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-semibold">{customer.name}</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">{customer.name}</h1>
       </div>
 
-      <Card className="bg-white">
-        <CardContent className="p-6">
+      <Card className="bg-white border-0 shadow-sm">
+        <CardContent className="p-8">
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex flex-col items-center md:items-start space-y-4">
-              <Avatar className="w-24 h-24">
+              <Avatar className="w-24 h-24 border-2 border-gray-100">
                 <AvatarImage src={customer.profilePicture} alt={customer.name} />
-                <AvatarFallback>{customer.name[0]}</AvatarFallback>
+                <AvatarFallback className="bg-gray-50 text-gray-600">{customer.name[0]}</AvatarFallback>
               </Avatar>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={handleEdit}>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleEdit}
+                  className="text-gray-600 hover:text-gray-700 border-gray-200"
+                >
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
@@ -139,7 +133,7 @@ export default function CustomerDetail() {
                   variant="outline" 
                   size="sm" 
                   onClick={() => setShowDeleteDialog(true)}
-                  className="text-red-600 hover:text-red-700"
+                  className="text-red-600 hover:text-red-700 border-gray-200"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Delete
@@ -148,106 +142,106 @@ export default function CustomerDetail() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow">
-              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center text-muted-foreground">
+              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
+                <div className="flex items-center text-gray-500">
                   <Building2 className="h-4 w-4 mr-2" />
                   <span className="text-sm font-medium">Company</span>
                 </div>
-                <p className="text-lg">{customer.name}</p>
+                <p className="text-lg text-gray-900 font-medium">{customer.name}</p>
               </div>
               
-              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center text-muted-foreground">
+              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
+                <div className="flex items-center text-gray-500">
                   <Mail className="h-4 w-4 mr-2" />
                   <span className="text-sm font-medium">Email</span>
                 </div>
-                <p className="text-lg break-all">{customer.email}</p>
+                <p className="text-lg text-gray-900 break-all">{customer.email}</p>
               </div>
               
-              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center text-muted-foreground">
+              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
+                <div className="flex items-center text-gray-500">
                   <Phone className="h-4 w-4 mr-2" />
                   <span className="text-sm font-medium">Phone</span>
                 </div>
-                <p className="text-lg">{customer.phone}</p>
+                <p className="text-lg text-gray-900">{customer.phone}</p>
               </div>
               
-              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center text-muted-foreground">
+              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
+                <div className="flex items-center text-gray-500">
                   <MapPin className="h-4 w-4 mr-2" />
                   <span className="text-sm font-medium">Address</span>
                 </div>
-                <p className="text-lg">{customer.address}</p>
+                <p className="text-lg text-gray-900">{customer.address}</p>
               </div>
               
-              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center text-muted-foreground">
+              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
+                <div className="flex items-center text-gray-500">
                   <Wallet className="h-4 w-4 mr-2" />
                   <span className="text-sm font-medium">Total Spent</span>
                 </div>
-                <p className="text-lg font-semibold">{customer.totalSpent}</p>
+                <p className="text-lg text-gray-900 font-semibold">{customer.totalSpent}</p>
               </div>
               
-              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center text-muted-foreground">
+              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
+                <div className="flex items-center text-gray-500">
                   <Calendar className="h-4 w-4 mr-2" />
                   <span className="text-sm font-medium">Customer Since</span>
                 </div>
-                <p className="text-lg">{customer.date}</p>
+                <p className="text-lg text-gray-900">{customer.date}</p>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="mt-8">
+      <Card className="mt-8 border-0 shadow-sm overflow-hidden">
         <Tabs defaultValue="invoices" className="w-full">
-          <TabsList className="w-full justify-start border-b rounded-none px-6">
-            <TabsTrigger value="invoices">Invoices</TabsTrigger>
-            <TabsTrigger value="estimates">Estimates</TabsTrigger>
-            <TabsTrigger value="receipts">Receipts</TabsTrigger>
+          <TabsList className="w-full justify-start border-b rounded-none px-6 bg-white">
+            <TabsTrigger value="invoices" className="text-gray-600">Invoices</TabsTrigger>
+            <TabsTrigger value="estimates" className="text-gray-600">Estimates</TabsTrigger>
+            <TabsTrigger value="receipts" className="text-gray-600">Receipts</TabsTrigger>
           </TabsList>
 
           {["invoices", "estimates", "receipts"].map((tab) => (
-            <TabsContent key={tab} value={tab} className="p-6">
+            <TabsContent key={tab} value={tab} className="p-6 bg-white">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>{tab.charAt(0).toUpperCase() + tab.slice(1, -1)} #</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
+                  <TableRow className="hover:bg-gray-50/50">
+                    <TableHead className="text-gray-600">{tab.charAt(0).toUpperCase() + tab.slice(1, -1)} #</TableHead>
+                    <TableHead className="text-gray-600">Date</TableHead>
+                    <TableHead className="text-gray-600">Amount</TableHead>
+                    <TableHead className="text-gray-600">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {getPaginatedData(customer[tab], currentPage).map((item: any) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">{item.id}</TableCell>
-                      <TableCell>{item.date}</TableCell>
-                      <TableCell>{item.amount}</TableCell>
+                  {customer[tab].slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((item: any) => (
+                    <TableRow key={item.id} className="hover:bg-gray-50/50">
+                      <TableCell className="font-medium text-gray-900">{item.id}</TableCell>
+                      <TableCell className="text-gray-600">{item.date}</TableCell>
+                      <TableCell className="text-gray-900">{item.amount}</TableCell>
                       <TableCell>
-                        <Badge variant="secondary">{item.status}</Badge>
+                        <Badge 
+                          variant="secondary"
+                          className={`
+                            ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
+                            ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
+                            ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
+                          `}
+                        >
+                          {item.status}
+                        </Badge>
                       </TableCell>
                     </TableRow>
                   ))}
                   {customer[tab].length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center">
+                      <TableCell colSpan={4} className="text-center text-gray-500">
                         No {tab} found
                       </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
               </Table>
-              {customer[tab].length > itemsPerPage && (
-                <div className="mt-4 flex justify-center">
-                  <Pagination
-                    total={Math.ceil(customer[tab].length / itemsPerPage)}
-                    value={currentPage}
-                    onChange={handlePageChange}
-                  />
-                </div>
-              )}
             </TabsContent>
           ))}
         </Tabs>
