@@ -16,10 +16,10 @@ const menuItems = [
   { icon: FileText, label: "Estimates", path: "/estimates", type: "estimates" },
   { icon: Receipt, label: "Receipts", path: "/receipts", type: "receipts" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
+  { icon: Users, label: "Customers", path: "/customers" },
 ];
 
 const accountMenuItems = [
-  { icon: Users, label: "Customers", path: "/customers" },
   { icon: CreditCard, label: "Subscription", path: "/subscription" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
