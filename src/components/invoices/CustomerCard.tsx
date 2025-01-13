@@ -1,70 +1,95 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PenLine, User } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Card } from "@/components/ui/card";
 
-interface Customer {
-  name: string;
-  email: string;
-  street?: string;
-  state?: string;
-  postalCode?: string;
-  profilePicture?: string;
+interface CustomerCardBaseProps {
+  onDelete?: (id: string) => void;
+  onEdit?: (customer: any) => void;
 }
 
-interface CustomerCardProps {
-  customer?: Customer;
-  item?: Customer;
-  onEdit?: () => void;
+interface CustomerCardDirectProps extends CustomerCardBaseProps {
+  customer: any;
+}
+
+interface CustomerCardTableProps extends CustomerCardBaseProps {
+  item: any;
   actions?: {
     onDelete?: (id: string) => void;
+    onEdit?: (customer: any) => void;
   };
 }
 
-export const CustomerCard = ({ customer, item, onEdit, actions }: CustomerCardProps) => {
-  const customerData = customer || item;
+type CustomerCardProps = CustomerCardDirectProps | CustomerCardTableProps;
 
-  if (!customerData) {
-    return null;
-  }
+export function CustomerCard(props: CustomerCardProps) {
+  const customer = 'customer' in props ? props.customer : props.item;
+  const actions = 'actions' in props ? props.actions : {
+    onDelete: props.onDelete,
+    onEdit: props.onEdit
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
 
   return (
-    <Card className="hover:shadow-sm transition-shadow duration-200">
-      <CardContent className="p-4">
-        <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-100 flex items-center justify-center">
-            {customerData.profilePicture ? (
-              <img 
-                src={customerData.profilePicture} 
-                alt={customerData.name}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <User className="h-5 w-5 text-gray-400" />
-            )}
-          </div>
-          <div className="flex-1 space-y-1">
-            <h3 className="font-medium text-base">{customerData.name}</h3>
-            <div className="text-sm text-muted-foreground space-y-0.5">
-              <p>{customerData.email}</p>
-              {customerData.street && (
-                <p className="text-sm text-muted-foreground">
-                  {customerData.street}, {customerData.state} {customerData.postalCode}
-                </p>
-              )}
-              {(onEdit || actions) && (
-                <Button
-                  variant="link"
-                  className="p-0 h-auto text-sm flex items-center gap-1.5 text-muted-foreground hover:text-primary mt-1"
-                  onClick={onEdit}
-                >
-                  <PenLine className="h-3 w-3" />
-                  Change Client
-                </Button>
-              )}
+    <Link to={`/customers/${customer.id}`}>
+      <Card className="mb-4 p-4 hover:border-mint-200 transition-colors">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-sm font-medium">{customer.name}</p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>{customer.email}</span>
+              <span>•</span>
+              <span>{formatDate(customer.date)}</span>
             </div>
           </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+              <Button variant="ghost" size="icon">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+              <DropdownMenuItem onClick={(e) => {
+                e.preventDefault();
+                actions.onEdit?.(customer);
+              }}>
+                Edit
+              </DropdownMenuItem>
+              <Link to={`/customers/${customer.id}`}>
+                <DropdownMenuItem>
+                  View
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem 
+                onClick={(e) => {
+                  e.preventDefault();
+                  actions.onDelete?.(customer.id);
+                }}
+                className="text-red-600"
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      </CardContent>
-    </Card>
+        <div className="mt-4 flex items-center justify-between">
+          <span className="text-lg font-semibold">{customer.totalSpent}</span>
+          <span className="text-sm text-muted-foreground">{customer.phone}</span>
+        </div>
+      </Card>
+    </Link>
   );
-};
+}
