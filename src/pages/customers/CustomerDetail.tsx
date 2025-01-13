@@ -178,8 +178,15 @@ export default function CustomerDetail() {
       accessor: 'id'
     },
     {
-      header: 'Date',
-      accessor: (item) => new Date(item.date).toLocaleDateString()
+      header: 'Details',
+      accessor: (item) => (
+        <div className="flex flex-col">
+          <span className="text-sm font-medium">{formatDate(item.date)}</span>
+          <span className="text-sm text-muted-foreground">
+            {item.type === 'one-time' ? 'One-time' : 'Recurring'}
+          </span>
+        </div>
+      )
     },
     { 
       header: 'Amount', 
@@ -191,9 +198,9 @@ export default function CustomerDetail() {
         <Badge 
           variant="secondary"
           className={`
-            ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
+            ${item.status === 'paid' || item.status === 'completed' || item.status === 'accepted' ? 'bg-green-50 text-green-700' : ''}
             ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
-            ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
+            ${item.status === 'overdue' || item.status === 'rejected' || item.status === 'cancelled' ? 'bg-red-50 text-red-700' : ''}
           `}
         >
           {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
