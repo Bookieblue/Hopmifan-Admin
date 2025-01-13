@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit, Trash2, Mail, Phone, MapPin } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, Mail, Phone, MapPin, Building2, Calendar, Wallet } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   AlertDialog,
@@ -88,7 +88,6 @@ export default function CustomerDetail() {
   }
 
   const handleDelete = () => {
-    // In a real app, this would make an API call
     toast({
       title: "Customer deleted",
       description: "The customer has been successfully deleted",
@@ -100,79 +99,101 @@ export default function CustomerDetail() {
     navigate(`/customers/${id}/edit`);
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   const getPaginatedData = (data: any[], page: number) => {
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return data.slice(start, end);
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
   return (
-    <div className="p-6 max-w-[1400px] mx-auto space-y-8">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/customers")}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-semibold">{customer.name}</h1>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleEdit}>
-            <Edit className="h-4 w-4 mr-2" />
-            Edit
-          </Button>
-          <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
-            <Trash2 className="h-4 w-4 mr-2" />
-            Delete
-          </Button>
-        </div>
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/customers")}
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <h1 className="text-2xl font-semibold">{customer.name}</h1>
       </div>
 
-      <Card className="bg-white shadow-lg">
+      <Card className="bg-white">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-8">
-            <div className="flex-shrink-0">
+            <div className="flex flex-col items-center md:items-start space-y-4">
               <Avatar className="w-24 h-24">
-                <AvatarImage src={customer.profilePicture} />
+                <AvatarImage src={customer.profilePicture} alt={customer.name} />
                 <AvatarFallback>{customer.name[0]}</AvatarFallback>
               </Avatar>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={handleEdit}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </div>
             </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow">
-              <div className="space-y-2">
+              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center text-muted-foreground">
+                  <Building2 className="h-4 w-4 mr-2" />
+                  <span className="text-sm font-medium">Company</span>
+                </div>
+                <p className="text-lg">{customer.name}</p>
+              </div>
+              
+              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center text-muted-foreground">
                   <Mail className="h-4 w-4 mr-2" />
-                  <span className="text-sm">Email</span>
+                  <span className="text-sm font-medium">Email</span>
                 </div>
-                <p>{customer.email}</p>
+                <p className="text-lg break-all">{customer.email}</p>
               </div>
-              <div className="space-y-2">
+              
+              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center text-muted-foreground">
                   <Phone className="h-4 w-4 mr-2" />
-                  <span className="text-sm">Phone</span>
+                  <span className="text-sm font-medium">Phone</span>
                 </div>
-                <p>{customer.phone}</p>
+                <p className="text-lg">{customer.phone}</p>
               </div>
-              <div className="space-y-2">
+              
+              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center text-muted-foreground">
                   <MapPin className="h-4 w-4 mr-2" />
-                  <span className="text-sm">Address</span>
+                  <span className="text-sm font-medium">Address</span>
                 </div>
-                <p>{customer.address}</p>
+                <p className="text-lg">{customer.address}</p>
               </div>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Total Spent</p>
-                <p className="text-xl font-semibold">{customer.totalSpent}</p>
+              
+              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center text-muted-foreground">
+                  <Wallet className="h-4 w-4 mr-2" />
+                  <span className="text-sm font-medium">Total Spent</span>
+                </div>
+                <p className="text-lg font-semibold">{customer.totalSpent}</p>
               </div>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Customer Since</p>
-                <p>{customer.date}</p>
+              
+              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center text-muted-foreground">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  <span className="text-sm font-medium">Customer Since</span>
+                </div>
+                <p className="text-lg">{customer.date}</p>
               </div>
             </div>
           </div>
