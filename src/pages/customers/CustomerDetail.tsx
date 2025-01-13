@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 
 // Mock data for the customer details
@@ -99,6 +99,11 @@ export default function CustomerDetail() {
 
   const handleEdit = () => {
     navigate(`/customers/${id}/edit`);
+  };
+
+  const handleExternalLink = (type: string, itemId: string) => {
+    // Remove the colon from URL construction
+    window.open(`/${type}/${itemId}`, '_blank');
   };
 
   return (
@@ -256,7 +261,7 @@ export default function CustomerDetail() {
                                 variant="ghost"
                                 size="icon"
                                 className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => window.open(`/${tab}/${item.id}`, '_blank')}
+                                onClick={() => handleExternalLink(tab, item.id)}
                               >
                                 <ExternalLink className="h-4 w-4" />
                               </Button>
@@ -288,7 +293,7 @@ export default function CustomerDetail() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => window.open(`/${tab}/${item.id}`, '_blank')}
+                            onClick={() => handleExternalLink(tab, item.id)}
                           >
                             <ExternalLink className="h-4 w-4" />
                           </Button>
