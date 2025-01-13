@@ -132,6 +132,22 @@ export default function CustomerDetail() {
     });
   };
 
+  const invoicesWithCustomer = customer.invoices.map(invoice => ({
+    ...invoice,
+    customer: customer.name,
+    type: 'one-time' // Adding required field from Invoice type
+  }));
+
+  const estimatesWithCustomer = customer.estimates.map(estimate => ({
+    ...estimate,
+    customer: customer.name
+  }));
+
+  const receiptsWithCustomer = customer.receipts.map(receipt => ({
+    ...receipt,
+    customer: customer.name
+  }));
+
   const columns: TableColumn<any>[] = [
     { 
       header: 'ID', 
@@ -282,7 +298,7 @@ export default function CustomerDetail() {
 
             <TabsContent value="invoices" className="p-2.5 md:p-6 bg-white">
               <DataTable
-                data={customer.invoices}
+                data={invoicesWithCustomer}
                 columns={columns}
                 selectedItems={selectedItems}
                 onSelectItem={handleSelectItem}
@@ -300,7 +316,7 @@ export default function CustomerDetail() {
 
             <TabsContent value="estimates" className="p-2.5 md:p-6 bg-white">
               <DataTable
-                data={customer.estimates}
+                data={estimatesWithCustomer}
                 columns={columns}
                 selectedItems={selectedItems}
                 onSelectItem={handleSelectItem}
@@ -318,7 +334,7 @@ export default function CustomerDetail() {
 
             <TabsContent value="receipts" className="p-2.5 md:p-6 bg-white">
               <DataTable
-                data={customer.receipts}
+                data={receiptsWithCustomer}
                 columns={columns}
                 selectedItems={selectedItems}
                 onSelectItem={handleSelectItem}
