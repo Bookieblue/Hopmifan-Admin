@@ -222,55 +222,98 @@ export default function CustomerDetail() {
             {["invoices", "estimates", "receipts"].map((tab) => (
               <TabsContent key={tab} value={tab} className="p-6 bg-white">
                 <div className="rounded-lg border border-gray-100 overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-gray-50/50">
-                        <TableHead className="text-gray-600 font-medium">{tab.charAt(0).toUpperCase() + tab.slice(1, -1)} #</TableHead>
-                        <TableHead className="text-gray-600 font-medium">Date</TableHead>
-                        <TableHead className="text-gray-600 font-medium">Amount</TableHead>
-                        <TableHead className="text-gray-600 font-medium">Status</TableHead>
-                        <TableHead className="text-gray-600 font-medium w-[50px]"></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {customer[tab].slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((item: any) => (
-                        <TableRow key={item.id} className="hover:bg-gray-50/50 group">
-                          <TableCell className="font-medium text-gray-900">{item.id}</TableCell>
-                          <TableCell className="text-gray-600">{item.date}</TableCell>
-                          <TableCell className="text-gray-900 font-medium">{item.amount}</TableCell>
-                          <TableCell>
-                            <Badge 
-                              variant="secondary"
-                              className={`
-                                ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
-                                ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
-                                ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
-                              `}
-                            >
-                              {item.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => window.open(`/${tab}/${item.id}`, '_blank')}
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
+                  <div className="hidden md:block">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-gray-50/50">
+                          <TableHead className="text-gray-600 font-medium">{tab.charAt(0).toUpperCase() + tab.slice(1, -1)} #</TableHead>
+                          <TableHead className="text-gray-600 font-medium">Date</TableHead>
+                          <TableHead className="text-gray-600 font-medium">Amount</TableHead>
+                          <TableHead className="text-gray-600 font-medium">Status</TableHead>
+                          <TableHead className="text-gray-600 font-medium w-[50px]"></TableHead>
                         </TableRow>
-                      ))}
-                      {customer[tab].length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={5} className="text-center text-gray-500 py-8">
-                            No {tab} found
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {customer[tab].slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((item: any) => (
+                          <TableRow key={item.id} className="hover:bg-gray-50/50 group">
+                            <TableCell className="font-medium text-gray-900">{item.id}</TableCell>
+                            <TableCell className="text-gray-600">{item.date}</TableCell>
+                            <TableCell className="text-gray-900 font-medium">{item.amount}</TableCell>
+                            <TableCell>
+                              <Badge 
+                                variant="secondary"
+                                className={`
+                                  ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
+                                  ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
+                                  ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
+                                `}
+                              >
+                                {item.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => window.open(`/${tab}/${item.id}`, '_blank')}
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {customer[tab].length === 0 && (
+                          <TableRow>
+                            <TableCell colSpan={5} className="text-center text-gray-500 py-8">
+                              No {tab} found
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* Mobile View */}
+                  <div className="md:hidden space-y-4">
+                    {customer[tab].slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((item: any) => (
+                      <Card key={item.id} className="mb-4 p-4 hover:border-mint-200 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium">{item.id}</p>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <span>{item.date}</span>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => window.open(`/${tab}/${item.id}`, '_blank')}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <div className="mt-4 flex items-center justify-between">
+                          <span className="text-lg font-semibold">{item.amount}</span>
+                          <Badge 
+                            variant="secondary"
+                            className={`
+                              ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
+                              ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
+                              ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
+                            `}
+                          >
+                            {item.status}
+                          </Badge>
+                        </div>
+                      </Card>
+                    ))}
+                    {customer[tab].length === 0 && (
+                      <div className="text-center text-gray-500 py-8">
+                        No {tab} found
+                      </div>
+                    )}
+                  </div>
                 </div>
               </TabsContent>
             ))}
