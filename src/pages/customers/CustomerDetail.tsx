@@ -107,7 +107,7 @@ export default function CustomerDetail() {
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-[1400px] mx-auto space-y-8">
+    <div className="p-2.5 md:p-6 max-w-[1400px] mx-auto space-y-8">
       <div className="flex items-center gap-4 mb-6">
         <Button
           variant="ghost"
@@ -282,35 +282,37 @@ export default function CustomerDetail() {
                   {/* Mobile View */}
                   <div className="md:hidden space-y-4">
                     {customer[tab].slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((item: any) => (
-                      <Card key={item.id} className="mb-4 p-4 hover:border-mint-200 transition-colors">
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-1">
-                            <p className="text-sm font-medium">{item.id}</p>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <span>{item.date}</span>
+                      <Card key={item.id} className="mb-4">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-1">
+                              <p className="text-sm font-medium">{item.id}</p>
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <span>{item.date}</span>
+                              </div>
                             </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleExternalLink(tab, item.id)}
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleExternalLink(tab, item.id)}
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <div className="mt-4 flex items-center justify-between">
-                          <span className="text-lg font-semibold">{item.amount}</span>
-                          <Badge 
-                            variant="secondary"
-                            className={`
-                              ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
-                              ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
-                              ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
-                            `}
-                          >
-                            {item.status}
-                          </Badge>
-                        </div>
+                          <div className="mt-4 flex items-center justify-between">
+                            <span className="text-lg font-semibold">{item.amount}</span>
+                            <Badge 
+                              variant="secondary"
+                              className={`
+                                ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
+                                ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
+                                ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
+                              `}
+                            >
+                              {item.status}
+                            </Badge>
+                          </div>
+                        </CardContent>
                       </Card>
                     ))}
                     {customer[tab].length === 0 && (
