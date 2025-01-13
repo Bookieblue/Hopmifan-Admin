@@ -18,6 +18,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
@@ -26,6 +32,7 @@ import type { TableColumn } from "@/components/shared/DataTable";
 import { InvoiceCard } from "@/components/invoices/InvoiceCard";
 import { EstimateCard } from "@/components/invoices/EstimateCard";
 import { ReceiptCard } from "@/components/invoices/ReceiptCard";
+import { CustomerForm } from "@/components/customers/CustomerForm";
 
 // Mock data for the customer details
 const customerData = {
@@ -74,6 +81,7 @@ export default function CustomerDetail() {
   const { toast } = useToast();
   const customer = customerData[id as keyof typeof customerData];
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   if (!customer) {
@@ -101,7 +109,15 @@ export default function CustomerDetail() {
   };
 
   const handleEdit = () => {
-    navigate(`/customers/${id}/edit`);
+    setShowEditDialog(true);
+  };
+
+  const handleEditSubmit = (data: any) => {
+    toast({
+      title: "Customer updated",
+      description: "The customer has been successfully updated",
+    });
+    setShowEditDialog(false);
   };
 
   const handleSelectItem = (id: string, checked: boolean) => {
@@ -403,6 +419,18 @@ export default function CustomerDetail() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Edit Customer</DialogTitle>
+          </DialogHeader>
+          <CustomerForm 
+            initialData={customer}
+            onSubmit={handleEditSubmit}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
