@@ -117,9 +117,9 @@ export default function CustomerDetail() {
 
       <div className="grid gap-6 md:grid-cols-[300px_1fr]">
         {/* Profile Card */}
-        <Card className="bg-white border-0 shadow-sm h-fit">
+        <Card className="bg-white border shadow-sm h-fit">
           <CardContent className="p-6">
-            <div className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-start text-left">
               <Avatar className="w-24 h-24 border-2 border-gray-100 mb-4">
                 <AvatarImage src={customer.profilePicture} alt={customer.name} />
                 <AvatarFallback className="bg-gray-50 text-gray-600 text-xl">
@@ -205,12 +205,18 @@ export default function CustomerDetail() {
         </Card>
 
         {/* Transactions Card */}
-        <Card className="border-0 shadow-sm overflow-hidden">
+        <Card className="border shadow-sm overflow-hidden">
           <Tabs defaultValue="invoices" className="w-full">
-            <TabsList className="w-full justify-start border-b rounded-none px-6 bg-white">
-              <TabsTrigger value="invoices" className="text-gray-600">Invoices</TabsTrigger>
-              <TabsTrigger value="estimates" className="text-gray-600">Estimates</TabsTrigger>
-              <TabsTrigger value="receipts" className="text-gray-600">Receipts</TabsTrigger>
+            <TabsList className="w-full justify-start rounded-none px-6 bg-muted p-1">
+              <TabsTrigger value="invoices" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                Invoices
+              </TabsTrigger>
+              <TabsTrigger value="estimates" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                Estimates
+              </TabsTrigger>
+              <TabsTrigger value="receipts" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                Receipts
+              </TabsTrigger>
             </TabsList>
 
             {["invoices", "estimates", "receipts"].map((tab) => (
