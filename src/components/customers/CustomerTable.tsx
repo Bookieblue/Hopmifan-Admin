@@ -1,16 +1,25 @@
 import { useNavigate } from "react-router-dom";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/utils";
+import { DataTable, type TableColumn } from "@/components/shared/DataTable";
+import { CustomerCard } from "@/components/invoices/CustomerCard";
+
+interface Customer {
+  id: string;
+  date: string;
+  name: string;
+  email: string;
+  phone: string;
+  totalSpent: string;
+  billingAddress?: string;
+  profilePicture?: string;
+}
 
 interface CustomerTableProps {
-  customers: any[];
+  customers: Customer[];
   selectedCustomers: string[];
   onSelectCustomer: (id: string, checked: boolean) => void;
   onSelectAll: (checked: boolean) => void;
   onDelete: (id: string) => void;
-  onEdit: (customer: any) => void;
+  onEdit: (customer: Customer) => void;
 }
 
 export const CustomerTable = ({
@@ -23,55 +32,49 @@ export const CustomerTable = ({
 }: CustomerTableProps) => {
   const navigate = useNavigate();
 
-  const handleRowClick = (customerId: string) => {
-    navigate(`/customers/${customerId}`);
-  };
+  const columns: TableColumn<Customer>[] = [
+    { header: 'Name', accessor: 'name' },
+    {
+      header: 'Contact',
+      accessor: (customer) => (
+        <div className="flex flex-col">
+          <span className="text-sm font-medium">{customer.email}</span>
+          <span className="text-sm text-gray-500">{customer.phone}</span>
+        </div>
+      )
+    },
+    { header: 'Total Spent', accessor: 'totalSpent' },
+    { header: 'Date Added', accessor: 'date' }
+  ];
+
+  const bulkActions = [
+    { value: "delete", label: "Delete Selected" },
+    { value: "export", label: "Export as CSV" }
+  ];
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-12">
-            <Checkbox
-              checked={
-                customers.length > 0 &&
-                selectedCustomers.length === customers.length
-              }
-              onCheckedChange={(checked: boolean) => onSelectAll(checked)}
-            />
-          </TableHead>
-          <TableHead>Customer</TableHead>
-          <TableHead className="hidden md:table-cell">Date Added</TableHead>
-          <TableHead className="hidden md:table-cell">Email</TableHead>
-          <TableHead className="hidden md:table-cell">Phone</TableHead>
-          <TableHead className="text-right">Total Spent</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {customers.map((customer) => (
-          <TableRow 
-            key={customer.id}
-            className="cursor-pointer hover:bg-muted/50"
-            onClick={() => handleRowClick(customer.id)}
-          >
-            <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
-              <Checkbox
-                checked={selectedCustomers.includes(customer.id)}
-                onCheckedChange={(checked: boolean) =>
-                  onSelectCustomer(customer.id, checked)
-                }
-              />
-            </TableCell>
-            <TableCell>{customer.name}</TableCell>
-            <TableCell className="hidden md:table-cell">
-              {formatDate(customer.date)}
-            </TableCell>
-            <TableCell className="hidden md:table-cell">{customer.email}</TableCell>
-            <TableCell className="hidden md:table-cell">{customer.phone}</TableCell>
-            <TableCell className="text-right">{customer.totalSpent}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <DataTable
+      data={customers}
+      columns={columns}
+      selectedItems={selectedCustomers}
+      onSelectItem={onSelectCustomer}
+      onSelectAll={onSelectAll}
+      getItemId={(customer) => customer.id}
+      actions={{
+        onDelete,
+        additionalActions: [
+          {
+            label: "Edit",
+            onClick: (id) => onEdit(customers.find(c => c.id === id)!)
+          },
+          {
+            label: "View",
+            onClick: (id) => navigate(`/customers/${id}`)
+          }
+        ]
+      }}
+      bulkActions={bulkActions}
+      CardComponent={CustomerCard}
+    />
   );
 };
