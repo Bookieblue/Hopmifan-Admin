@@ -4,9 +4,23 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, Mail, Phone, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { Pagination } from "@/components/ui/pagination";
 
+// Mock data remains the same
 // Mock data for the customer details
 const customerData = {
   "1": {
@@ -51,7 +65,11 @@ const customerData = {
 export default function CustomerDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const customer = customerData[id as keyof typeof customerData];
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
   if (!customer) {
     return (
@@ -69,156 +87,162 @@ export default function CustomerDetail() {
     );
   }
 
+  const handleDelete = () => {
+    // In a real app, this would make an API call
+    toast({
+      title: "Customer deleted",
+      description: "The customer has been successfully deleted",
+    });
+    navigate("/customers");
+  };
+
+  const handleEdit = () => {
+    navigate(`/customers/${id}/edit`);
+  };
+
+  const getPaginatedData = (data: any[], page: number) => {
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return data.slice(start, end);
+  };
+
   return (
-    <div className="p-6 max-w-[1400px] mx-auto">
-      <div className="flex items-center gap-4 mb-6">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate("/customers")}
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <h1 className="text-2xl font-semibold">{customer.name}</h1>
+    <div className="p-6 max-w-[1400px] mx-auto space-y-8">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/customers")}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-2xl font-semibold">{customer.name}</h1>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleEdit}>
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+          <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
+            <Trash2 className="h-4 w-4 mr-2" />
+            Delete
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Customer Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-4 mb-6">
+      <Card className="bg-white shadow-lg">
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row gap-8">
+            <div className="flex-shrink-0">
               <Avatar className="w-24 h-24">
                 <AvatarImage src={customer.profilePicture} />
                 <AvatarFallback>{customer.name[0]}</AvatarFallback>
               </Avatar>
-              <div>
-                <h2 className="text-xl font-semibold">{customer.name}</h2>
-                <p className="text-sm text-muted-foreground">Customer since {customer.date}</p>
-              </div>
             </div>
-            <div className="grid gap-4">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Email</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow">
+              <div className="space-y-2">
+                <div className="flex items-center text-muted-foreground">
+                  <Mail className="h-4 w-4 mr-2" />
+                  <span className="text-sm">Email</span>
+                </div>
                 <p>{customer.email}</p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Phone</p>
+              <div className="space-y-2">
+                <div className="flex items-center text-muted-foreground">
+                  <Phone className="h-4 w-4 mr-2" />
+                  <span className="text-sm">Phone</span>
+                </div>
                 <p>{customer.phone}</p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Address</p>
+              <div className="space-y-2">
+                <div className="flex items-center text-muted-foreground">
+                  <MapPin className="h-4 w-4 mr-2" />
+                  <span className="text-sm">Address</span>
+                </div>
                 <p>{customer.address}</p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
-                <p className="font-semibold">{customer.totalSpent}</p>
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">Total Spent</p>
+                <p className="text-xl font-semibold">{customer.totalSpent}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">Customer Since</p>
+                <p>{customer.date}</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        <Card>
-          <Tabs defaultValue="invoices" className="w-full">
-            <TabsList className="w-full">
-              <TabsTrigger value="invoices" className="flex-1">Invoices</TabsTrigger>
-              <TabsTrigger value="estimates" className="flex-1">Estimates</TabsTrigger>
-              <TabsTrigger value="receipts" className="flex-1">Receipts</TabsTrigger>
-            </TabsList>
+      <Card className="mt-8">
+        <Tabs defaultValue="invoices" className="w-full">
+          <TabsList className="w-full justify-start border-b rounded-none px-6">
+            <TabsTrigger value="invoices">Invoices</TabsTrigger>
+            <TabsTrigger value="estimates">Estimates</TabsTrigger>
+            <TabsTrigger value="receipts">Receipts</TabsTrigger>
+          </TabsList>
 
-            <TabsContent value="invoices">
+          {["invoices", "estimates", "receipts"].map((tab) => (
+            <TabsContent key={tab} value={tab} className="p-6">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Invoice #</TableHead>
+                    <TableHead>{tab.charAt(0).toUpperCase() + tab.slice(1, -1)} #</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {customer.invoices.map((invoice) => (
-                    <TableRow key={invoice.id}>
-                      <TableCell className="font-medium">{invoice.id}</TableCell>
-                      <TableCell>{invoice.date}</TableCell>
-                      <TableCell>{invoice.amount}</TableCell>
+                  {getPaginatedData(customer[tab], currentPage).map((item: any) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">{item.id}</TableCell>
+                      <TableCell>{item.date}</TableCell>
+                      <TableCell>{item.amount}</TableCell>
                       <TableCell>
-                        <Badge variant="secondary">{invoice.status}</Badge>
+                        <Badge variant="secondary">{item.status}</Badge>
                       </TableCell>
                     </TableRow>
                   ))}
-                  {customer.invoices.length === 0 && (
+                  {customer[tab].length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center">No invoices found</TableCell>
+                      <TableCell colSpan={4} className="text-center">
+                        No {tab} found
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
               </Table>
+              {customer[tab].length > itemsPerPage && (
+                <div className="mt-4 flex justify-center">
+                  <Pagination
+                    total={Math.ceil(customer[tab].length / itemsPerPage)}
+                    value={currentPage}
+                    onChange={setCurrentPage}
+                  />
+                </div>
+              )}
             </TabsContent>
+          ))}
+        </Tabs>
+      </Card>
 
-            <TabsContent value="estimates">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Estimate #</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {customer.estimates.map((estimate) => (
-                    <TableRow key={estimate.id}>
-                      <TableCell className="font-medium">{estimate.id}</TableCell>
-                      <TableCell>{estimate.date}</TableCell>
-                      <TableCell>{estimate.amount}</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{estimate.status}</Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {customer.estimates.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center">No estimates found</TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TabsContent>
-
-            <TabsContent value="receipts">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Receipt #</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {customer.receipts.map((receipt) => (
-                    <TableRow key={receipt.id}>
-                      <TableCell className="font-medium">{receipt.id}</TableCell>
-                      <TableCell>{receipt.date}</TableCell>
-                      <TableCell>{receipt.amount}</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{receipt.status}</Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {customer.receipts.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center">No receipts found</TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TabsContent>
-          </Tabs>
-        </Card>
-      </div>
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the customer
+              and all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
