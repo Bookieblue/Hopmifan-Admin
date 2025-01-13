@@ -58,7 +58,7 @@ export function RecentActivity({ activities, title = "Recent Activity" }: Recent
                 <TableCell className="pr-0 md:pr-4 whitespace-nowrap">
                   <div className="font-semibold">₦{activity.amount.toLocaleString()}</div>
                   <span className={`mt-1 inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
-                    {activity.status || 'completed'}
+                    {activity.status}
                   </span>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-muted-foreground">
