@@ -84,6 +84,14 @@ export default function CustomerDetail() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
   if (!customer) {
     return (
       <div className="p-2.5 md:p-6">
