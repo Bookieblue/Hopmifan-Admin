@@ -4,51 +4,57 @@ import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ButtonProps, buttonVariants } from "@/components/ui/button"
 
-interface PaginationProps extends React.ComponentProps<"nav"> {
+type CustomPaginationProps = {
   total?: number;
   value?: number;
   onChange?: (page: number) => void;
 }
 
-const Pagination = ({ className, total = 1, value = 1, onChange, ...props }: PaginationProps) => {
-  const pages = Array.from({ length: total }, (_, i) => i + 1);
+type PaginationProps = React.HTMLAttributes<HTMLElement> & CustomPaginationProps;
 
-  return (
-    <nav
-      role="navigation"
-      aria-label="pagination"
-      className={cn("mx-auto flex w-full justify-center", className)}
-      {...props}
-    >
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious 
-            onClick={() => onChange?.(Math.max(1, value - 1))}
-            aria-disabled={value === 1}
-            className={value === 1 ? "pointer-events-none opacity-50" : ""}
-          />
-        </PaginationItem>
-        {pages.map((page) => (
-          <PaginationItem key={page}>
-            <PaginationLink
-              onClick={() => onChange?.(page)}
-              isActive={page === value}
-            >
-              {page}
-            </PaginationLink>
+const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
+  ({ className, total = 1, value = 1, onChange, ...props }, ref) => {
+    const pages = Array.from({ length: total }, (_, i) => i + 1);
+
+    return (
+      <nav
+        ref={ref}
+        role="navigation"
+        aria-label="pagination"
+        className={cn("mx-auto flex w-full justify-center", className)}
+        {...props}
+      >
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious 
+              onClick={() => onChange?.(Math.max(1, value - 1))}
+              aria-disabled={value === 1}
+              className={value === 1 ? "pointer-events-none opacity-50" : ""}
+            />
           </PaginationItem>
-        ))}
-        <PaginationItem>
-          <PaginationNext
-            onClick={() => onChange?.(Math.min(total, value + 1))}
-            aria-disabled={value === total}
-            className={value === total ? "pointer-events-none opacity-50" : ""}
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </nav>
-  )
-}
+          {pages.map((page) => (
+            <PaginationItem key={page}>
+              <PaginationLink
+                onClick={() => onChange?.(page)}
+                isActive={page === value}
+              >
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          <PaginationItem>
+            <PaginationNext
+              onClick={() => onChange?.(Math.min(total, value + 1))}
+              aria-disabled={value === total}
+              className={value === total ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </nav>
+    )
+  }
+)
+Pagination.displayName = "Pagination"
 
 const PaginationContent = React.forwardRef<
   HTMLUListElement,
