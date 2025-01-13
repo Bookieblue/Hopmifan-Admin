@@ -52,6 +52,10 @@ export const CustomerTable = ({
     { value: "export", label: "Export as CSV" }
   ];
 
+  const handleRowClick = (id: string) => {
+    navigate(`/customers/${id}`);
+  };
+
   return (
     <DataTable
       data={customers}
@@ -60,6 +64,7 @@ export const CustomerTable = ({
       onSelectItem={onSelectCustomer}
       onSelectAll={onSelectAll}
       getItemId={(customer) => customer.id}
+      onRowClick={handleRowClick}
       actions={{
         onDelete,
         additionalActions: [
