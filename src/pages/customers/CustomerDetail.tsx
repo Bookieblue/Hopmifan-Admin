@@ -1,12 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { 
   Building2, Mail, Phone, MapPin, Calendar, Wallet,
-  ArrowLeft, Edit, Trash2, ExternalLink 
+  ArrowLeft, Edit, Trash2
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -22,6 +21,8 @@ import {
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
+import { DataTable } from "@/components/shared/DataTable";
+import type { TableColumn } from "@/components/shared/DataTable";
 
 // Mock data for the customer details
 const customerData = {
@@ -70,12 +71,11 @@ export default function CustomerDetail() {
   const { toast } = useToast();
   const customer = customerData[id as keyof typeof customerData];
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   if (!customer) {
     return (
-      <div className="p-6">
+      <div className="p-2.5 md:p-6">
         <Button
           variant="ghost"
           size="icon"
@@ -101,10 +101,63 @@ export default function CustomerDetail() {
     navigate(`/customers/${id}/edit`);
   };
 
-  const handleExternalLink = (type: string, itemId: string) => {
-    // Remove the colon from URL construction
-    window.open(`/${type}/${itemId}`, '_blank');
+  const handleSelectItem = (id: string, checked: boolean) => {
+    setSelectedItems(prev => 
+      checked ? [...prev, id] : prev.filter(item => item !== id)
+    );
   };
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedItems(checked ? customer.invoices.map(inv => inv.id) : []);
+  };
+
+  const handleItemDelete = (id: string) => {
+    toast({
+      description: `Item ${id} has been deleted.`
+    });
+  };
+
+  const handleItemShare = (id: string) => {
+    toast({
+      description: `Sharing ${id}...`
+    });
+  };
+
+  const handleItemDuplicate = (id: string) => {
+    toast({
+      description: `${id} has been duplicated.`
+    });
+  };
+
+  const columns: TableColumn<any>[] = [
+    { 
+      header: 'ID', 
+      accessor: 'id'
+    },
+    {
+      header: 'Date',
+      accessor: (item) => new Date(item.date).toLocaleDateString()
+    },
+    { 
+      header: 'Amount', 
+      accessor: 'amount'
+    },
+    {
+      header: 'Status',
+      accessor: (item) => (
+        <Badge 
+          variant="secondary"
+          className={`
+            ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
+            ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
+            ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
+          `}
+        >
+          {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+        </Badge>
+      )
+    }
+  ];
 
   return (
     <div className="p-2.5 md:p-6 max-w-[1400px] mx-auto space-y-8">
@@ -226,102 +279,20 @@ export default function CustomerDetail() {
 
             {["invoices", "estimates", "receipts"].map((tab) => (
               <TabsContent key={tab} value={tab} className="p-6 bg-white">
-                <div className="rounded-lg border border-gray-100 overflow-hidden">
-                  <div className="hidden md:block">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-gray-50/50">
-                          <TableHead className="text-gray-600 font-medium">{tab.charAt(0).toUpperCase() + tab.slice(1, -1)} #</TableHead>
-                          <TableHead className="text-gray-600 font-medium">Date</TableHead>
-                          <TableHead className="text-gray-600 font-medium">Amount</TableHead>
-                          <TableHead className="text-gray-600 font-medium">Status</TableHead>
-                          <TableHead className="text-gray-600 font-medium w-[50px]"></TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {customer[tab].slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((item: any) => (
-                          <TableRow key={item.id} className="hover:bg-gray-50/50 group">
-                            <TableCell className="font-medium text-gray-900">{item.id}</TableCell>
-                            <TableCell className="text-gray-600">{item.date}</TableCell>
-                            <TableCell className="text-gray-900 font-medium">{item.amount}</TableCell>
-                            <TableCell>
-                              <Badge 
-                                variant="secondary"
-                                className={`
-                                  ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
-                                  ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
-                                  ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
-                                `}
-                              >
-                                {item.status}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => handleExternalLink(tab, item.id)}
-                              >
-                                <ExternalLink className="h-4 w-4" />
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                        {customer[tab].length === 0 && (
-                          <TableRow>
-                            <TableCell colSpan={5} className="text-center text-gray-500 py-8">
-                              No {tab} found
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
-
-                  {/* Mobile View */}
-                  <div className="md:hidden space-y-4">
-                    {customer[tab].slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((item: any) => (
-                      <Card key={item.id} className="mb-4">
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="space-y-1">
-                              <p className="text-sm font-medium">{item.id}</p>
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <span>{item.date}</span>
-                              </div>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleExternalLink(tab, item.id)}
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                            </Button>
-                          </div>
-                          <div className="mt-4 flex items-center justify-between">
-                            <span className="text-lg font-semibold">{item.amount}</span>
-                            <Badge 
-                              variant="secondary"
-                              className={`
-                                ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
-                                ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
-                                ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
-                              `}
-                            >
-                              {item.status}
-                            </Badge>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                    {customer[tab].length === 0 && (
-                      <div className="text-center text-gray-500 py-8">
-                        No {tab} found
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <DataTable
+                  data={customer[tab]}
+                  columns={columns}
+                  selectedItems={selectedItems}
+                  onSelectItem={handleSelectItem}
+                  onSelectAll={handleSelectAll}
+                  getItemId={(item) => item.id}
+                  actions={{
+                    onDelete: handleItemDelete,
+                    onDuplicate: handleItemDuplicate,
+                    onShare: handleItemShare
+                  }}
+                  onRowClick={(id) => navigate(`/${tab}/${id}/edit`)}
+                />
               </TabsContent>
             ))}
           </Tabs>
