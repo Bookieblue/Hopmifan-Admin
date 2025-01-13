@@ -132,6 +132,14 @@ export default function CustomerDetail() {
     });
   };
 
+  const handleItemView = (type: string, id: string) => {
+    window.open(`/${type}/${id}/preview`, '_blank');
+  };
+
+  const handleItemEdit = (type: string, id: string) => {
+    navigate(`/${type}/${id}/edit`);
+  };
+
   const invoicesWithCustomer = customer.invoices.map(invoice => ({
     ...invoice,
     customer: customer.name,
@@ -307,9 +315,18 @@ export default function CustomerDetail() {
                 actions={{
                   onDelete: handleItemDelete,
                   onDuplicate: handleItemDuplicate,
-                  onShare: handleItemShare
+                  onShare: handleItemShare,
+                  additionalActions: [
+                    {
+                      label: "Edit",
+                      onClick: (id) => handleItemEdit('invoices', id)
+                    },
+                    {
+                      label: "View",
+                      onClick: (id) => handleItemView('invoices', id)
+                    }
+                  ]
                 }}
-                onRowClick={(id) => navigate(`/invoices/${id}/edit`)}
                 CardComponent={InvoiceCard}
               />
             </TabsContent>
@@ -325,9 +342,18 @@ export default function CustomerDetail() {
                 actions={{
                   onDelete: handleItemDelete,
                   onDuplicate: handleItemDuplicate,
-                  onShare: handleItemShare
+                  onShare: handleItemShare,
+                  additionalActions: [
+                    {
+                      label: "Edit",
+                      onClick: (id) => handleItemEdit('estimates', id)
+                    },
+                    {
+                      label: "View",
+                      onClick: (id) => handleItemView('estimates', id)
+                    }
+                  ]
                 }}
-                onRowClick={(id) => navigate(`/estimates/${id}/edit`)}
                 CardComponent={EstimateCard}
               />
             </TabsContent>
@@ -343,9 +369,18 @@ export default function CustomerDetail() {
                 actions={{
                   onDelete: handleItemDelete,
                   onDuplicate: handleItemDuplicate,
-                  onShare: handleItemShare
+                  onShare: handleItemShare,
+                  additionalActions: [
+                    {
+                      label: "Edit",
+                      onClick: (id) => handleItemEdit('receipts', id)
+                    },
+                    {
+                      label: "View",
+                      onClick: (id) => handleItemView('receipts', id)
+                    }
+                  ]
                 }}
-                onRowClick={(id) => navigate(`/receipts/${id}/edit`)}
                 CardComponent={ReceiptCard}
               />
             </TabsContent>
