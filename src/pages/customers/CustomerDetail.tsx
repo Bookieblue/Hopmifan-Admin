@@ -4,7 +4,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit, Trash2, Mail, Phone, MapPin, Building2, Calendar, Wallet } from "lucide-react";
+import { 
+  Building2, Mail, Phone, MapPin, Calendar, Wallet,
+  ArrowLeft, Edit, Trash2, ExternalLink 
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   AlertDialog,
@@ -18,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 // Mock data for the customer details
 const customerData = {
@@ -98,7 +102,7 @@ export default function CustomerDetail() {
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-[1400px] mx-auto space-y-6">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto space-y-8">
       <div className="flex items-center gap-4 mb-6">
         <Button
           variant="ghost"
@@ -111,141 +115,162 @@ export default function CustomerDetail() {
         <h1 className="text-2xl font-semibold text-gray-900">{customer.name}</h1>
       </div>
 
-      <Card className="bg-white border-0 shadow-sm">
-        <CardContent className="p-8">
-          <div className="flex flex-col md:flex-row gap-8">
-            <div className="flex flex-col items-center md:items-start space-y-4">
-              <Avatar className="w-24 h-24 border-2 border-gray-100">
+      <div className="grid gap-6 md:grid-cols-[300px_1fr]">
+        {/* Profile Card */}
+        <Card className="bg-white border-0 shadow-sm h-fit">
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center text-center">
+              <Avatar className="w-24 h-24 border-2 border-gray-100 mb-4">
                 <AvatarImage src={customer.profilePicture} alt={customer.name} />
-                <AvatarFallback className="bg-gray-50 text-gray-600">{customer.name[0]}</AvatarFallback>
+                <AvatarFallback className="bg-gray-50 text-gray-600 text-xl">
+                  {customer.name[0]}
+                </AvatarFallback>
               </Avatar>
-              <div className="flex gap-2">
+              <h2 className="text-xl font-semibold text-gray-900 mb-1">{customer.name}</h2>
+              <p className="text-sm text-gray-500 mb-4">{customer.email}</p>
+              <div className="flex gap-2 w-full">
                 <Button 
                   variant="outline" 
-                  size="sm" 
+                  size="sm"
                   onClick={handleEdit}
-                  className="text-gray-600 hover:text-gray-700 border-gray-200"
+                  className="flex-1"
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
                 <Button 
                   variant="outline" 
-                  size="sm" 
+                  size="sm"
                   onClick={() => setShowDeleteDialog(true)}
-                  className="text-red-600 hover:text-red-700 border-gray-200"
+                  className="flex-1 text-red-600 hover:text-red-700"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Delete
                 </Button>
               </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow">
-              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
-                <div className="flex items-center text-gray-500">
-                  <Building2 className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium">Company</span>
+
+            <Separator className="my-6" />
+
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Building2 className="h-5 w-5 text-gray-400 mt-1" />
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Company</p>
+                  <p className="text-gray-900">{customer.name}</p>
                 </div>
-                <p className="text-lg text-gray-900 font-medium">{customer.name}</p>
               </div>
-              
-              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
-                <div className="flex items-center text-gray-500">
-                  <Mail className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium">Email</span>
+
+              <div className="flex items-start gap-3">
+                <Mail className="h-5 w-5 text-gray-400 mt-1" />
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Email</p>
+                  <p className="text-gray-900 break-all">{customer.email}</p>
                 </div>
-                <p className="text-lg text-gray-900 break-all">{customer.email}</p>
               </div>
-              
-              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
-                <div className="flex items-center text-gray-500">
-                  <Phone className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium">Phone</span>
+
+              <div className="flex items-start gap-3">
+                <Phone className="h-5 w-5 text-gray-400 mt-1" />
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Phone</p>
+                  <p className="text-gray-900">{customer.phone}</p>
                 </div>
-                <p className="text-lg text-gray-900">{customer.phone}</p>
               </div>
-              
-              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
-                <div className="flex items-center text-gray-500">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium">Address</span>
+
+              <div className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 text-gray-400 mt-1" />
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Address</p>
+                  <p className="text-gray-900">{customer.address}</p>
                 </div>
-                <p className="text-lg text-gray-900">{customer.address}</p>
               </div>
-              
-              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
-                <div className="flex items-center text-gray-500">
-                  <Wallet className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium">Total Spent</span>
+
+              <div className="flex items-start gap-3">
+                <Wallet className="h-5 w-5 text-gray-400 mt-1" />
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Total Spent</p>
+                  <p className="text-gray-900 font-semibold">{customer.totalSpent}</p>
                 </div>
-                <p className="text-lg text-gray-900 font-semibold">{customer.totalSpent}</p>
               </div>
-              
-              <div className="space-y-2 p-6 bg-gray-50/50 rounded-xl border border-gray-100">
-                <div className="flex items-center text-gray-500">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium">Customer Since</span>
+
+              <div className="flex items-start gap-3">
+                <Calendar className="h-5 w-5 text-gray-400 mt-1" />
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Customer Since</p>
+                  <p className="text-gray-900">{customer.date}</p>
                 </div>
-                <p className="text-lg text-gray-900">{customer.date}</p>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      <Card className="mt-8 border-0 shadow-sm overflow-hidden">
-        <Tabs defaultValue="invoices" className="w-full">
-          <TabsList className="w-full justify-start border-b rounded-none px-6 bg-white">
-            <TabsTrigger value="invoices" className="text-gray-600">Invoices</TabsTrigger>
-            <TabsTrigger value="estimates" className="text-gray-600">Estimates</TabsTrigger>
-            <TabsTrigger value="receipts" className="text-gray-600">Receipts</TabsTrigger>
-          </TabsList>
+        {/* Transactions Card */}
+        <Card className="border-0 shadow-sm overflow-hidden">
+          <Tabs defaultValue="invoices" className="w-full">
+            <TabsList className="w-full justify-start border-b rounded-none px-6 bg-white">
+              <TabsTrigger value="invoices" className="text-gray-600">Invoices</TabsTrigger>
+              <TabsTrigger value="estimates" className="text-gray-600">Estimates</TabsTrigger>
+              <TabsTrigger value="receipts" className="text-gray-600">Receipts</TabsTrigger>
+            </TabsList>
 
-          {["invoices", "estimates", "receipts"].map((tab) => (
-            <TabsContent key={tab} value={tab} className="p-6 bg-white">
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-gray-50/50">
-                    <TableHead className="text-gray-600">{tab.charAt(0).toUpperCase() + tab.slice(1, -1)} #</TableHead>
-                    <TableHead className="text-gray-600">Date</TableHead>
-                    <TableHead className="text-gray-600">Amount</TableHead>
-                    <TableHead className="text-gray-600">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {customer[tab].slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((item: any) => (
-                    <TableRow key={item.id} className="hover:bg-gray-50/50">
-                      <TableCell className="font-medium text-gray-900">{item.id}</TableCell>
-                      <TableCell className="text-gray-600">{item.date}</TableCell>
-                      <TableCell className="text-gray-900">{item.amount}</TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant="secondary"
-                          className={`
-                            ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
-                            ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
-                            ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
-                          `}
-                        >
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {customer[tab].length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center text-gray-500">
-                        No {tab} found
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TabsContent>
-          ))}
-        </Tabs>
-      </Card>
+            {["invoices", "estimates", "receipts"].map((tab) => (
+              <TabsContent key={tab} value={tab} className="p-6 bg-white">
+                <div className="rounded-lg border border-gray-100 overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-gray-50/50">
+                        <TableHead className="text-gray-600 font-medium">{tab.charAt(0).toUpperCase() + tab.slice(1, -1)} #</TableHead>
+                        <TableHead className="text-gray-600 font-medium">Date</TableHead>
+                        <TableHead className="text-gray-600 font-medium">Amount</TableHead>
+                        <TableHead className="text-gray-600 font-medium">Status</TableHead>
+                        <TableHead className="text-gray-600 font-medium w-[50px]"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {customer[tab].slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((item: any) => (
+                        <TableRow key={item.id} className="hover:bg-gray-50/50 group">
+                          <TableCell className="font-medium text-gray-900">{item.id}</TableCell>
+                          <TableCell className="text-gray-600">{item.date}</TableCell>
+                          <TableCell className="text-gray-900 font-medium">{item.amount}</TableCell>
+                          <TableCell>
+                            <Badge 
+                              variant="secondary"
+                              className={`
+                                ${item.status === 'paid' ? 'bg-green-50 text-green-700' : ''}
+                                ${item.status === 'pending' ? 'bg-orange-50 text-orange-700' : ''}
+                                ${item.status === 'overdue' ? 'bg-red-50 text-red-700' : ''}
+                              `}
+                            >
+                              {item.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => window.open(`/${tab}/${item.id}`, '_blank')}
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {customer[tab].length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center text-gray-500 py-8">
+                            No {tab} found
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </Card>
+      </div>
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
