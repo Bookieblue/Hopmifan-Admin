@@ -23,6 +23,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/shared/DataTable";
 import type { TableColumn } from "@/components/shared/DataTable";
+import { InvoiceCard } from "@/components/invoices/InvoiceCard";
+import { EstimateCard } from "@/components/invoices/EstimateCard";
+import { ReceiptCard } from "@/components/invoices/ReceiptCard";
 
 // Mock data for the customer details
 const customerData = {
@@ -277,24 +280,59 @@ export default function CustomerDetail() {
               </TabsTrigger>
             </TabsList>
 
-            {["invoices", "estimates", "receipts"].map((tab) => (
-              <TabsContent key={tab} value={tab} className="p-6 bg-white">
-                <DataTable
-                  data={customer[tab]}
-                  columns={columns}
-                  selectedItems={selectedItems}
-                  onSelectItem={handleSelectItem}
-                  onSelectAll={handleSelectAll}
-                  getItemId={(item) => item.id}
-                  actions={{
-                    onDelete: handleItemDelete,
-                    onDuplicate: handleItemDuplicate,
-                    onShare: handleItemShare
-                  }}
-                  onRowClick={(id) => navigate(`/${tab}/${id}/edit`)}
-                />
-              </TabsContent>
-            ))}
+            <TabsContent value="invoices" className="p-2.5 md:p-6 bg-white">
+              <DataTable
+                data={customer.invoices}
+                columns={columns}
+                selectedItems={selectedItems}
+                onSelectItem={handleSelectItem}
+                onSelectAll={handleSelectAll}
+                getItemId={(item) => item.id}
+                actions={{
+                  onDelete: handleItemDelete,
+                  onDuplicate: handleItemDuplicate,
+                  onShare: handleItemShare
+                }}
+                onRowClick={(id) => navigate(`/invoices/${id}/edit`)}
+                CardComponent={InvoiceCard}
+              />
+            </TabsContent>
+
+            <TabsContent value="estimates" className="p-2.5 md:p-6 bg-white">
+              <DataTable
+                data={customer.estimates}
+                columns={columns}
+                selectedItems={selectedItems}
+                onSelectItem={handleSelectItem}
+                onSelectAll={handleSelectAll}
+                getItemId={(item) => item.id}
+                actions={{
+                  onDelete: handleItemDelete,
+                  onDuplicate: handleItemDuplicate,
+                  onShare: handleItemShare
+                }}
+                onRowClick={(id) => navigate(`/estimates/${id}/edit`)}
+                CardComponent={EstimateCard}
+              />
+            </TabsContent>
+
+            <TabsContent value="receipts" className="p-2.5 md:p-6 bg-white">
+              <DataTable
+                data={customer.receipts}
+                columns={columns}
+                selectedItems={selectedItems}
+                onSelectItem={handleSelectItem}
+                onSelectAll={handleSelectAll}
+                getItemId={(item) => item.id}
+                actions={{
+                  onDelete: handleItemDelete,
+                  onDuplicate: handleItemDuplicate,
+                  onShare: handleItemShare
+                }}
+                onRowClick={(id) => navigate(`/receipts/${id}/edit`)}
+                CardComponent={ReceiptCard}
+              />
+            </TabsContent>
           </Tabs>
         </Card>
       </div>
