@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MoreHorizontal } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -78,7 +78,7 @@ export function InvoiceCard(props: InvoiceCardProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
               <Button variant="ghost" size="icon">
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
@@ -117,7 +117,7 @@ export function InvoiceCard(props: InvoiceCardProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex items-center gap-3">
           <span className="text-lg font-semibold">{invoice.amount}</span>
           <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(invoice.status)}`}>
             {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
