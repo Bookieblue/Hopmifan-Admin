@@ -63,7 +63,7 @@ export default function Index() {
       date: payment.date.split(' ')[0],
       status: payment.type === 'Recurring' ? 'completed' as const : 'pending' as const,
       reference: payment.reference,
-      customer: payment.customer // Added this line to fix the TypeScript error
+      customer: payment.customer
     }));
 
   return (
@@ -115,12 +115,7 @@ export default function Index() {
                   </defs>
                   <XAxis 
                     dataKey="month"
-                    tickFormatter={(value) => {
-                      if (timeRange === "24H") {
-                        return value;
-                      }
-                      return value;
-                    }}
+                    tickFormatter={(value) => value}
                   />
                   <YAxis 
                     tickFormatter={(value) => `₦${(value / 1000).toFixed(1)}K`}
