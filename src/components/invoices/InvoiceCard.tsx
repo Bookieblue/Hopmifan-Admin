@@ -16,12 +16,10 @@ interface InvoiceCardBaseProps {
   onShare?: (id: string) => void;
 }
 
-// Original props interface
 interface InvoiceCardDirectProps extends InvoiceCardBaseProps {
   invoice: Invoice;
 }
 
-// DataTable compatible props interface
 interface InvoiceCardTableProps extends InvoiceCardBaseProps {
   item: Invoice;
   actions?: {
@@ -34,7 +32,6 @@ interface InvoiceCardTableProps extends InvoiceCardBaseProps {
 type InvoiceCardProps = InvoiceCardDirectProps | InvoiceCardTableProps;
 
 export function InvoiceCard(props: InvoiceCardProps) {
-  // Determine which props format we're dealing with
   const invoice = 'invoice' in props ? props.invoice : props.item;
   const actions = 'actions' in props ? props.actions : {
     onDelete: props.onDelete,
@@ -67,13 +64,11 @@ export function InvoiceCard(props: InvoiceCardProps) {
     <Link to={`/invoices/${invoice.id}/edit`}>
       <Card className="mb-4 p-4 hover:border-mint-200 transition-colors">
         <div className="flex items-center justify-between">
-          <div className="space-y-1">
+          <div>
             <p className="text-sm font-medium">{invoice.customer}</p>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{invoice.type === 'one-time' ? 'One-time' : 'Recurring'}</span>
-              <span>•</span>
-              <span>{formatDate(invoice.date)}</span>
-            </div>
+            <p className="text-sm text-muted-foreground">
+              {invoice.type === 'one-time' ? 'One-time' : 'Recurring'} • {formatDate(invoice.date)}
+            </p>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
