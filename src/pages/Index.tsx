@@ -57,14 +57,14 @@ export default function Index() {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 4)
     .map(payment => ({
-      type: payment.type === 'Recurring' ? 'Donation' : 'Publication' as const,
+      type: payment.type === 'Recurring' ? 'Donation' : 'Publication',
       description: `${payment.type === 'Recurring' ? 'Donation' : 'Publication'} from ${payment.customer}`,
       amount: payment.amount,
       date: payment.date.split(' ')[0],
-      status: payment.type === 'Recurring' ? 'completed' as const : 'pending' as const,
+      status: payment.type === 'Recurring' ? 'completed' : 'pending',
       reference: payment.reference,
       member: payment.customer
-    }));
+    })) as const;
 
   return (
     <div className="space-y-8">

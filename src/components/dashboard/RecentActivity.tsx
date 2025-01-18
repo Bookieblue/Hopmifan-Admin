@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleIcon } from "lucide-react";
 
-interface Activity {
+export type Activity = {
   type: "Publication" | "Event" | "Contact" | "Donation" | "Membership" | "Sermon";
   description: string;
   amount?: number;
