@@ -17,7 +17,9 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
     const pages = Array.from({ length: total }, (_, i) => i + 1);
 
     const handlePageChange = (page: number) => {
-      onChange?.(page);
+      if (onChange) {
+        onChange(page);
+      }
     };
 
     return (
