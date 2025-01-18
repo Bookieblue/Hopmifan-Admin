@@ -4,6 +4,7 @@ import { CustomerTransactions } from "@/components/customers/CustomerTransaction
 import { ShareModal } from "@/components/modals/ShareModal";
 import { useToast } from "@/hooks/use-toast";
 import { Customer } from "@/types/customer";
+import { Activity } from "@/types/activity";
 
 const Index = () => {
   const { toast } = useToast();
@@ -21,6 +22,10 @@ const Index = () => {
           id: "CUST-001",
           name: "John Doe",
           email: "john@example.com",
+          phone: "+1234567890",
+          address: "123 Main St",
+          totalSpent: "$0",
+          date: "2024-03-15",
           invoices: [],
           estimates: [],
           receipts: [],
@@ -29,6 +34,10 @@ const Index = () => {
           id: "CUST-002",
           name: "Jane Smith",
           email: "jane@example.com",
+          phone: "+1987654321",
+          address: "456 Oak Ave",
+          totalSpent: "$0",
+          date: "2024-03-15",
           invoices: [],
           estimates: [],
           receipts: [],
@@ -45,26 +54,26 @@ const Index = () => {
     setShareDialogOpen(true);
   };
 
-  const recentActivities = [
+  const recentActivities: Activity[] = [
     {
-      type: "Publication" as const,
+      type: "Publication",
       description: "New blog post published",
       amount: 0,
       date: "2024-03-15",
-      status: "completed" as const,
+      status: "completed",
       reference: "BLG-001",
       member: "John Doe"
     },
     {
-      type: "Event" as const,
+      type: "Event",
       description: "Sunday Service",
       amount: 0,
       date: "2024-03-14",
-      status: "pending" as const,
+      status: "pending",
       reference: "EVT-001",
       member: "Church Admin"
     }
-  ] as const;
+  ];
 
   return (
     <div className="p-6">
