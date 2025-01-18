@@ -51,7 +51,6 @@ export default function Index() {
   const groupedPayments = groupPaymentsByTimeRange(mockPayments, timeRange);
   const chartData = formatChartData(groupedPayments);
 
-  // Calculate the current selected period's total
   const selectedPeriodTotal = chartData.reduce((sum, data) => sum + data.amount, 0);
 
   const recentActivities = mockPayments
