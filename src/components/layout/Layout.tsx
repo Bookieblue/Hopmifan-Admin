@@ -9,7 +9,6 @@ import { useState } from "react";
 import { DocumentProvider } from "@/contexts/DocumentContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-// Next.js-like layout component
 export function Layout() {
   const isMobile = useIsMobile();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -17,11 +16,6 @@ export function Layout() {
   const location = useLocation();
   
   const isPreviewRoute = location.pathname.includes('/preview');
-  
-  const currentBusiness = {
-    name: "Acme Corp",
-    logo: null
-  };
 
   const handleSidebarCollapse = (collapsed: boolean) => {
     if (!isMobile) {
@@ -69,27 +63,12 @@ export function Layout() {
                     </Sheet>
                     <Link to="/" className="flex items-center">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
                           <span className="text-white font-semibold">C</span>
                         </div>
-                        <span className="text-xl font-semibold text-gray-900">Cordlo</span>
+                        <span className="text-xl font-semibold text-gray-900">Church Admin</span>
                       </div>
                     </Link>
-                  </div>
-                  <div className="flex items-center">
-                    {currentBusiness.logo ? (
-                      <img 
-                        src={currentBusiness.logo} 
-                        alt={`${currentBusiness.name} logo`}
-                        className="w-8 h-8 rounded-lg object-cover"
-                      />
-                    ) : (
-                      <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
-                        <span className="text-sm font-semibold">
-                          {currentBusiness.name.charAt(0)}
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
               </header>

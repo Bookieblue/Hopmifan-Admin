@@ -9,14 +9,12 @@ import {
 import { cn } from "@/lib/utils";
 
 interface SidebarHeaderProps {
-  businessData: any;
   isCollapsed: boolean;
   isMobile: boolean;
   toggleSidebar: () => void;
 }
 
 export function SidebarHeader({ 
-  businessData, 
   isCollapsed, 
   isMobile, 
   toggleSidebar 
@@ -25,12 +23,12 @@ export function SidebarHeader({
     <div className="flex items-center justify-between p-4 border-b border-gray-100">
       <Link to="/" className="flex items-center">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
+          <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center text-white font-bold">
             C
           </div>
           {!isCollapsed && (
             <span className="text-xl font-semibold text-gray-900 truncate">
-              Cordlo
+              Church Admin
             </span>
           )}
         </div>
