@@ -20,38 +20,20 @@ const menuItems = [
 ];
 
 const accountMenuItems = [
-  { icon: CreditCard, label: "Subscription", path: "/subscription" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
-interface EnabledDocuments {
-  invoices: boolean;
-  estimates: boolean;
-  receipts: boolean;
-}
-
 interface SidebarNavigationProps {
   isCollapsed: boolean;
-  enabledDocuments: EnabledDocuments;
-  isAccountOpen: boolean;
-  toggleAccount: () => void;
 }
 
-export function SidebarNavigation({ isCollapsed, enabledDocuments, isAccountOpen, toggleAccount }: SidebarNavigationProps) {
+export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
   const location = useLocation();
-
-  // Filter menu items based on enabled documents
-  const filteredMenuItems = menuItems.filter(item => {
-    if (!item.type) return true;
-    return enabledDocuments[item.type as keyof EnabledDocuments];
-  });
-
-  // Check if current path is an account menu item
-  const isAccountMenuItem = accountMenuItems.some(item => location.pathname === item.path);
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
 
   return (
     <nav className="flex-1 space-y-1">
-      {filteredMenuItems.map((item) => {
+      {menuItems.map((item) => {
         const Icon = item.icon;
         const isActive = location.pathname === item.path;
         return (
@@ -62,14 +44,14 @@ export function SidebarNavigation({ isCollapsed, enabledDocuments, isAccountOpen
               "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
               isCollapsed ? "justify-center" : "justify-start",
               isActive
-                ? "bg-blue-50 text-blue-600"
+                ? "bg-purple-50 text-purple-600"
                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
             )}
           >
             <Icon
               className={cn(
                 "w-5 h-5 flex-shrink-0",
-                isActive ? "text-blue-600" : "text-gray-500"
+                isActive ? "text-purple-600" : "text-gray-500"
               )}
             />
             {!isCollapsed && <span>{item.label}</span>}
@@ -77,40 +59,32 @@ export function SidebarNavigation({ isCollapsed, enabledDocuments, isAccountOpen
         );
       })}
 
-      {/* Account Menu with Dropdown */}
+      {/* Account Menu */}
       <div className="relative">
         <button
-          onClick={toggleAccount}
+          onClick={() => setIsAccountOpen(!isAccountOpen)}
           className={cn(
             "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
             isCollapsed ? "justify-center" : "justify-between",
-            !isAccountMenuItem && isAccountOpen
-              ? "bg-blue-50 text-blue-600"
-              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
           )}
         >
           <div className={cn("flex items-center gap-3", isCollapsed && "justify-center w-full")}>
-            <Users className={cn("w-5 h-5 flex-shrink-0", !isAccountMenuItem && isAccountOpen ? "text-blue-600" : "text-gray-500")} />
+            <Users className="w-5 h-5 text-gray-500" />
             {!isCollapsed && <span>Account</span>}
           </div>
           {!isCollapsed && (
             <ChevronRight
               className={cn(
-                "w-4 h-4 transition-transform flex-shrink-0",
+                "w-4 h-4 transition-transform",
                 isAccountOpen ? "rotate-90" : ""
               )}
             />
           )}
         </button>
 
-        {/* Account Submenu */}
-        {!isCollapsed && (
-          <div
-            className={cn(
-              "pl-4 space-y-1 overflow-hidden transition-all duration-200",
-              isAccountOpen ? "max-h-[500px] mt-1" : "max-h-0"
-            )}
-          >
+        {!isCollapsed && isAccountOpen && (
+          <div className="pl-4 space-y-1 mt-1">
             {accountMenuItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -121,14 +95,14 @@ export function SidebarNavigation({ isCollapsed, enabledDocuments, isAccountOpen
                   className={cn(
                     "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-blue-50 text-blue-600"
+                      ? "bg-purple-50 text-purple-600"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   )}
                 >
                   <Icon
                     className={cn(
                       "w-5 h-5 flex-shrink-0",
-                      isActive ? "text-blue-600" : "text-gray-500"
+                      isActive ? "text-purple-600" : "text-gray-500"
                     )}
                   />
                   {item.label}
