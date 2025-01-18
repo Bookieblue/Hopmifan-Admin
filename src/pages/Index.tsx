@@ -5,6 +5,7 @@ import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { calculateTotalEarnings, groupPaymentsByTimeRange, formatChartData, type Payment } from "@/utils/paymentCalculations";
 
+// Mock data moved to a separate constant
 const mockPayments: Payment[] = [
   { 
     date: "2025-03-14 10:00:00", 

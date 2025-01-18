@@ -9,19 +9,18 @@ import { useState } from "react";
 import { DocumentProvider } from "@/contexts/DocumentContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+// Next.js-like layout component
 export function Layout() {
   const isMobile = useIsMobile();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
   
-  // Check if current route is preview
   const isPreviewRoute = location.pathname.includes('/preview');
   
-  // Mock current business data - in a real app, this would come from a context or state management
   const currentBusiness = {
     name: "Acme Corp",
-    logo: null // Set to null to test the fallback letter
+    logo: null
   };
 
   const handleSidebarCollapse = (collapsed: boolean) => {
@@ -30,7 +29,6 @@ export function Layout() {
     }
   };
 
-  // If it's preview route, render without sidebar
   if (isPreviewRoute) {
     return (
       <DocumentProvider>
