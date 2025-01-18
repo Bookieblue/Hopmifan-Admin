@@ -90,6 +90,11 @@ export default function BlogList() {
   const endIndex = startIndex + postsPerPage;
   const currentBlogs = blogs.slice(startIndex, endIndex);
 
+  // Handler for page changes
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
@@ -139,7 +144,7 @@ export default function BlogList() {
           <Pagination
             total={totalPages}
             value={currentPage}
-            onChange={setCurrentPage}
+            onChange={handlePageChange}
           />
         </div>
       )}
