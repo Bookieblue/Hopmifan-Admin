@@ -4,12 +4,25 @@ import { DataTable } from "@/components/shared/DataTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function BlogList() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [blogToDelete, setBlogToDelete] = useState<string | null>(null);
   const postsPerPage = 15;
   
   // Mock data - in a real app this would come from an API
@@ -24,7 +37,6 @@ export default function BlogList() {
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [selectedBlogId, setSelectedBlogId] = useState<string>("");
-  const [bulkAction, setBulkAction] = useState("");
 
   const columns = [
     { header: "Title", accessor: "title" },
@@ -43,14 +55,36 @@ export default function BlogList() {
   ];
 
   const handleDelete = (blogId: string) => {
-    toast({
-      description: `Blog ${blogId} has been deleted successfully.`
-    });
+    setBlogToDelete(blogId);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (blogToDelete) {
+      // In a real app, this would be an API call
+      toast({
+        description: `Blog ${blogToDelete} has been deleted successfully.`
+      });
+      setDeleteDialogOpen(false);
+      setBlogToDelete(null);
+    }
   };
 
   const handleShare = (blogId: string) => {
-    setSelectedBlogId(blogId);
-    setShareDialogOpen(true);
+    // Create the URL for the blog post
+    const blogUrl = `${window.location.origin}/blog/${blogId}`;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(blogUrl).then(() => {
+      toast({
+        description: "Blog post link copied to clipboard!"
+      });
+    }).catch(() => {
+      toast({
+        description: "Failed to copy link",
+        variant: "destructive"
+      });
+    });
   };
 
   const handleBulkAction = () => {
@@ -135,7 +169,7 @@ export default function BlogList() {
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
-          onRowClick={(id) => `/blog/${id}`}
+          onRowClick={(id) => navigate(`/blog/${id}/edit`)}
         />
       </div>
 
@@ -148,6 +182,24 @@ export default function BlogList() {
           />
         </div>
       )}
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the blog post
+              and remove all of its data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <ShareModal 
         open={shareDialogOpen} 
