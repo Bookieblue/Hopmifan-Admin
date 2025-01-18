@@ -42,7 +42,7 @@ const mockPayments: Payment[] = [
 ];
 
 const timeRanges = ["24H", "1W", "1M", "3M", "1Y", "ALL"] as const;
-type TimeRange = typeof timeRanges[number];
+type TimeRange = (typeof timeRanges)[number];
 
 export default function Index() {
   const [timeRange, setTimeRange] = useState<TimeRange>("24H");
@@ -58,14 +58,14 @@ export default function Index() {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 4)
     .map(payment => ({
-      type: payment.type === 'Recurring' ? 'Donation' : 'Publication',
+      type: payment.type === 'Recurring' ? 'Donation' : 'Publication' as const,
       description: `${payment.type === 'Recurring' ? 'Donation' : 'Publication'} from ${payment.customer}`,
       amount: payment.amount,
       date: payment.date.split(' ')[0],
-      status: payment.type === 'Recurring' ? 'completed' : 'pending',
+      status: payment.type === 'Recurring' ? 'completed' as const : 'pending' as const,
       reference: payment.reference,
       member: payment.customer
-    })) as const;
+    }));
 
   return (
     <div className="space-y-8">
