@@ -28,7 +28,26 @@ export default function CreateBlog() {
   };
 
   const handleSave = (isDraft: boolean) => {
-    // TODO: Implement actual save logic
+    if (!title || !content || !author) {
+      toast({
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // In a real app, this would be an API call
+    const newPost = {
+      id: `BLG-${Math.floor(Math.random() * 1000)}`,
+      title,
+      content,
+      author,
+      publishDate: new Date().toISOString(),
+      status: isDraft ? "draft" : "published",
+      featureImage: imagePreview
+    };
+
+    // Simulate API call success
     toast({
       description: `Blog post ${isDraft ? 'saved as draft' : 'published'} successfully!`
     });

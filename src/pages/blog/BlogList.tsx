@@ -5,25 +5,21 @@ import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Pagination } from "@/components/ui/pagination";
 
 export default function BlogList() {
   const { toast } = useToast();
-  const [blogs] = useState([
-    { 
-      id: "BLG-001",
-      title: "Welcome to Our Church",
-      author: "Pastor John",
-      publishDate: "2024-03-15",
-      status: "published"
-    },
-    { 
-      id: "BLG-002",
-      title: "Sunday Service Highlights",
-      author: "Sarah Smith",
-      publishDate: "2024-03-14",
-      status: "draft"
-    },
-  ]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 15;
+  
+  // Mock data - in a real app this would come from an API
+  const [blogs] = useState(Array.from({ length: 32 }, (_, i) => ({ 
+    id: `BLG-${String(i + 1).padStart(3, '0')}`,
+    title: `Blog Post ${i + 1}`,
+    author: i % 2 === 0 ? "Pastor John" : "Sarah Smith",
+    publishDate: new Date(2024, 2, 15 - i).toISOString().split('T')[0],
+    status: i % 3 === 0 ? "draft" : "published"
+  })));
 
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
@@ -67,6 +63,16 @@ export default function BlogList() {
       toast({
         description: 'Blogs exported successfully.'
       });
+    } else if (bulkAction === 'publish') {
+      toast({
+        description: `${selectedBlogs.length} blogs have been published.`
+      });
+      setSelectedBlogs([]);
+    } else if (bulkAction === 'draft') {
+      toast({
+        description: `${selectedBlogs.length} blogs have been moved to draft.`
+      });
+      setSelectedBlogs([]);
     }
     setBulkAction("");
   };
@@ -77,6 +83,12 @@ export default function BlogList() {
     { value: "publish", label: "Publish Selected" },
     { value: "draft", label: "Move to Draft" },
   ];
+
+  // Calculate pagination
+  const totalPages = Math.ceil(blogs.length / postsPerPage);
+  const startIndex = (currentPage - 1) * postsPerPage;
+  const endIndex = startIndex + postsPerPage;
+  const currentBlogs = blogs.slice(startIndex, endIndex);
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
@@ -92,7 +104,7 @@ export default function BlogList() {
 
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
-          data={blogs}
+          data={currentBlogs}
           columns={columns}
           selectedItems={selectedBlogs}
           onSelectItem={(id, checked) => {
@@ -104,7 +116,7 @@ export default function BlogList() {
           }}
           onSelectAll={(checked) => {
             if (checked) {
-              setSelectedBlogs(blogs.map(blog => blog.id));
+              setSelectedBlogs(currentBlogs.map(blog => blog.id));
             } else {
               setSelectedBlogs([]);
             }
@@ -121,6 +133,16 @@ export default function BlogList() {
           onRowClick={(id) => `/blog/${id}`}
         />
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-4">
+          <Pagination
+            total={totalPages}
+            value={currentPage}
+            onChange={setCurrentPage}
+          />
+        </div>
+      )}
 
       <ShareModal 
         open={shareDialogOpen} 
