@@ -14,16 +14,14 @@ export default function BlogList() {
       title: "Welcome to Our Church",
       author: "Pastor John",
       publishDate: "2024-03-15",
-      status: "published",
-      category: "Announcements"
+      status: "published"
     },
     { 
       id: "BLG-002",
       title: "Sunday Service Highlights",
       author: "Sarah Smith",
       publishDate: "2024-03-14",
-      status: "draft",
-      category: "Events"
+      status: "draft"
     },
   ]);
 
@@ -34,7 +32,6 @@ export default function BlogList() {
   const columns = [
     { header: "Title", accessor: "title" },
     { header: "Author", accessor: "author" },
-    { header: "Category", accessor: "category" },
     { header: "Date", accessor: "publishDate" },
     { 
       header: "Status", 
