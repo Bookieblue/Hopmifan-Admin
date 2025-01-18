@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function CreateBlog() {
@@ -12,6 +12,20 @@ export default function CreateBlog() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState("");
+  const [featureImage, setFeatureImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFeatureImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSave = (isDraft: boolean) => {
     // TODO: Implement actual save logic
@@ -31,7 +45,7 @@ export default function CreateBlog() {
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold">Create New Blog Post</h1>
+        <h1 className="text-2xl font-bold">Add New Post</h1>
       </div>
 
       <div className="space-y-6">
@@ -56,9 +70,43 @@ export default function CreateBlog() {
         </div>
 
         <div>
+          <label htmlFor="featureImage" className="block text-sm font-medium mb-2">
+            Feature Image
+          </label>
+          <div className="mt-1 flex items-center gap-4">
+            <label
+              htmlFor="featureImage"
+              className="cursor-pointer flex items-center justify-center w-full h-48 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none hover:border-gray-400 focus:outline-none"
+            >
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="h-full object-cover rounded-md"
+                />
+              ) : (
+                <div className="flex flex-col items-center">
+                  <Upload className="w-12 h-12 text-gray-400" />
+                  <span className="mt-2 text-sm text-gray-500">
+                    Click to upload feature image
+                  </span>
+                </div>
+              )}
+              <input
+                type="file"
+                id="featureImage"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+            </label>
+          </div>
+        </div>
+
+        <div>
           <label htmlFor="content" className="block text-sm font-medium mb-2">Content</label>
           <Editor
-            apiKey="your-tinymce-api-key" // You'll need to get this from TinyMCE
+            apiKey="your-tinymce-api-key"
             init={{
               height: 500,
               menubar: false,

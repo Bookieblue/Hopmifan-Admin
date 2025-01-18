@@ -28,6 +28,7 @@ export default function BlogList() {
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [selectedBlogId, setSelectedBlogId] = useState<string>("");
+  const [bulkAction, setBulkAction] = useState("");
 
   const columns = [
     { header: "Title", accessor: "title" },
@@ -55,6 +56,27 @@ export default function BlogList() {
     setSelectedBlogId(blogId);
     setShareDialogOpen(true);
   };
+
+  const handleBulkAction = () => {
+    if (bulkAction === 'delete') {
+      toast({
+        description: `${selectedBlogs.length} blogs have been deleted.`
+      });
+      setSelectedBlogs([]);
+    } else if (bulkAction === 'export') {
+      toast({
+        description: 'Blogs exported successfully.'
+      });
+    }
+    setBulkAction("");
+  };
+
+  const bulkActions = [
+    { value: "delete", label: "Delete Selected" },
+    { value: "export", label: "Export as CSV" },
+    { value: "publish", label: "Publish Selected" },
+    { value: "draft", label: "Move to Draft" },
+  ];
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
@@ -92,6 +114,10 @@ export default function BlogList() {
             onDelete: handleDelete,
             onShare: handleShare,
           }}
+          bulkActions={bulkActions}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
           onRowClick={(id) => `/blog/${id}`}
         />
       </div>
