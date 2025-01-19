@@ -315,8 +315,11 @@ const BlogList = () => {
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold">Our Articles</h1>
-        <Link to="/articles/create" className="bg-[#695CAE] hover:bg-[#695CAE]/90 px-3 md:px-4">
-          <Plus className="h-4 w-4 mr-2" />
+        <Link 
+          to="/articles/create" 
+          className="bg-[#695CAE] hover:bg-[#695CAE]/90 text-white px-3 md:px-4 py-2 rounded-md flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
           New Article
         </Link>
       </div>
