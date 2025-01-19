@@ -148,6 +148,24 @@ export default function SermonList() {
     navigate(`/sermons/${id}/edit`);
   };
 
+  const columns = [
+    { header: "Title", accessor: "title" },
+    { header: "Preacher", accessor: "preacher" },
+    { 
+      header: "Date & Status", 
+      accessor: (sermon: any) => (
+        <div className="space-y-1">
+          <div>{sermon.date}</div>
+          <span className={`px-2 py-1 rounded-full text-xs ${
+            sermon.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            {sermon.status}
+          </span>
+        </div>
+      )
+    },
+  ];
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
@@ -186,6 +204,7 @@ export default function SermonList() {
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
           data={currentSermons}
+          columns={columns}
           selectedItems={selectedSermons}
           onSelectItem={(id, checked) => {
             if (checked) {
