@@ -130,6 +130,9 @@ export default function PaymentHistory() {
               onClick: handleDownloadReceipt
             }]
           }}
+          bulkActions={[
+            { value: "export", label: "Export as CSV" }
+          ]}
           CardComponent={({ item }) => (
             <div className="space-y-2">
               <div className="flex justify-between items-start">
