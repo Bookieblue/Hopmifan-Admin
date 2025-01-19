@@ -5,6 +5,7 @@ import { DataTable } from "@/components/shared/DataTable";
 import { BookCard } from "@/components/bookstore/BookCard";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import type { TableColumn } from "@/components/shared/DataTable";
 
 interface Book {
   id: string;
@@ -40,15 +41,15 @@ export default function BookstoreList() {
   const [selectedBooks, setSelectedBooks] = useState<string[]>([]);
   const [books] = useState<Book[]>(mockBooks);
 
-  const columns = [
-    { header: "Title", accessor: "title" },
-    { header: "Author", accessor: "author" },
+  const columns: TableColumn<Book>[] = [
+    { header: "Title", accessor: "title" as keyof Book },
+    { header: "Author", accessor: "author" as keyof Book },
     { 
       header: "Price", 
       accessor: (book: Book) => `$${book.price.toFixed(2)}` 
     },
-    { header: "Status", accessor: "status" },
-    { header: "Date Added", accessor: "publishDate" }
+    { header: "Status", accessor: "status" as keyof Book },
+    { header: "Date Added", accessor: "publishDate" as keyof Book }
   ];
 
   const handleDelete = (id: string) => {
