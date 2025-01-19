@@ -17,7 +17,7 @@ interface Activity {
 }
 
 const fetchDashboardStats = async (): Promise<DashboardStats> => {
-  // In a real app, these would be API calls
+  // Listen for changes in localStorage
   const donations = JSON.parse(localStorage.getItem('donations') || '[]');
   const books = JSON.parse(localStorage.getItem('books') || '[]');
   const prayerRequests = JSON.parse(localStorage.getItem('prayerRequests') || '[]');
@@ -32,7 +32,7 @@ const fetchDashboardStats = async (): Promise<DashboardStats> => {
 };
 
 const fetchRecentActivities = async (): Promise<Activity[]> => {
-  // In a real app, this would be an API call
+  // Fetch all activities from different sources
   const donations = JSON.parse(localStorage.getItem('donations') || '[]');
   const books = JSON.parse(localStorage.getItem('books') || '[]');
   const prayerRequests = JSON.parse(localStorage.getItem('prayerRequests') || '[]');
@@ -86,12 +86,14 @@ const fetchRecentActivities = async (): Promise<Activity[]> => {
 export const useDashboardData = () => {
   const stats = useQuery({
     queryKey: ['dashboardStats'],
-    queryFn: fetchDashboardStats
+    queryFn: fetchDashboardStats,
+    refetchInterval: 5000, // Refetch every 5 seconds
   });
 
   const activities = useQuery({
     queryKey: ['recentActivities'],
-    queryFn: fetchRecentActivities
+    queryFn: fetchRecentActivities,
+    refetchInterval: 5000, // Refetch every 5 seconds
   });
 
   return { stats, activities };
