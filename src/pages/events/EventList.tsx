@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { Filter, Plus, Search } from "lucide-react";
@@ -7,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/events/FilterModal";
+import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -240,9 +240,9 @@ export default function EventList() {
           getItemId={(item) => item.id}
           actions={{
             onDelete: handleDelete,
-            onDuplicate: handleDuplicate,
-            onEdit: (id) => navigate(`/events/${id}/edit`),
+            onDuplicate: handleDuplicate
           }}
+          onRowClick={(id) => navigate(`/events/${id}/edit`)}
           bulkActions={bulkActions}
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
