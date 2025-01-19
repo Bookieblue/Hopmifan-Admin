@@ -12,7 +12,8 @@ import {
   BookOpen,
   Newspaper,
   Calendar,
-  Mail
+  Mail,
+  DollarSign
 } from "lucide-react";
 
 const menuItems = [
@@ -32,6 +33,7 @@ const menuItems = [
     { label: "Events", path: "/events" }
   ] },
   { icon: Mail, label: "Contact", path: "/contacts" },
+  { icon: DollarSign, label: "Donations", path: "/donations" },
 ];
 
 const accountMenuItems = [
@@ -189,3 +191,4 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
     </nav>
   );
 }
+
