@@ -4,7 +4,7 @@ import { CustomerTransactions } from "@/components/customers/CustomerTransaction
 import { ShareModal } from "@/components/modals/ShareModal";
 import { useToast } from "@/hooks/use-toast";
 import { Customer } from "@/types/customer";
-import { Activity } from "@/types/activity";
+import { Activity, ActivityType } from "@/types/activity";
 
 const Index = () => {
   const { toast } = useToast();
@@ -20,10 +20,18 @@ const Index = () => {
       const mockCustomers: Customer[] = [
         {
           id: "CUST-001",
+          firstName: "John",
+          lastName: "Doe",
           name: "John Doe",
           email: "john@example.com",
           phone: "+1234567890",
+          country: "USA",
+          state: "CA",
+          city: "San Francisco",
           address: "123 Main St",
+          preferredContact: "email",
+          dateSubmitted: new Date().toISOString(),
+          status: "active",
           totalSpent: "$0",
           date: "2024-03-15",
           invoices: [],
@@ -32,10 +40,18 @@ const Index = () => {
         },
         {
           id: "CUST-002",
+          firstName: "Jane",
+          lastName: "Smith",
           name: "Jane Smith",
           email: "jane@example.com",
           phone: "+1987654321",
+          country: "USA",
+          state: "NY",
+          city: "New York",
           address: "456 Oak Ave",
+          preferredContact: "email",
+          dateSubmitted: new Date().toISOString(),
+          status: "active",
           totalSpent: "$0",
           date: "2024-03-15",
           invoices: [],
@@ -56,18 +72,20 @@ const Index = () => {
 
   const recentActivities: Activity[] = [
     {
+      id: "ACT-001",
       type: "Publication",
       description: "New blog post published",
-      amount: 0,
+      amount: "0",
       date: "2024-03-15",
       status: "completed",
       reference: "BLG-001",
       member: "John Doe"
     },
     {
+      id: "ACT-002",
       type: "Event",
       description: "Sunday Service",
-      amount: 0,
+      amount: "0",
       date: "2024-03-14",
       status: "pending",
       reference: "EVT-001",

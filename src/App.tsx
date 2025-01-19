@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import SignIn from "@/pages/auth/SignIn";
 import ForgotPassword from "@/pages/auth/ForgotPassword";
 import { Layout } from "@/components/layout/Layout";
@@ -9,7 +9,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   return (
-    <Router>
+    <>
       <Routes>
         <Route path="/auth/signin" element={<SignIn />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
@@ -24,7 +24,7 @@ function App() {
         } />
       </Routes>
       <Toaster />
-    </Router>
+    </>
   );
 }
 
