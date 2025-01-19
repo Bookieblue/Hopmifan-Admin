@@ -29,7 +29,6 @@ const menuItems = [
   { icon: MessageSquare, label: "Contact Messages", path: "/contacts" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
   { icon: Users, label: "New Members", path: "/new-members" },
-  { icon: BookOpen, label: "Sermons", path: "/sermons" },
   { icon: CreditCard, label: "Donations", path: "/donations" },
 ];
 
