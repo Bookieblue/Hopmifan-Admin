@@ -18,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { BlogCard } from "@/components/blog/BlogCard";
 
 export default function BlogList() {
   const { toast } = useToast();
@@ -254,6 +255,7 @@ export default function BlogList() {
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
           onRowClick={handleRowClick}
+          CardComponent={BlogCard}
         />
       </div>
 

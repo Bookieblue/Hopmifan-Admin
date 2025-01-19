@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { BulkActions } from "./BulkActions";
 import { TableBody } from "@/components/ui/table";
+import { BlogCard } from "@/components/blog/BlogCard";
 
 export interface TableColumn<T> {
   header: string;
@@ -77,7 +78,7 @@ export function DataTable<T>({
 
   if (isMobile && CardComponent) {
     return (
-      <div className="-mx-4">
+      <div className="px-4">
         {data.map((item) => (
           <CardComponent key={getItemId(item)} item={item} actions={actions} />
         ))}
