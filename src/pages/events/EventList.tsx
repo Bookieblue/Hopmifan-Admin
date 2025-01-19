@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DatePicker } from "@/components/ui/date-picker";
 
 export default function EventList() {
   const { toast } = useToast();
@@ -242,7 +243,7 @@ export default function EventList() {
           <Pagination
             total={totalPages}
             value={currentPage}
-            onValueChange={handlePageChange}
+            onChange={handlePageChange}
           />
         </div>
       )}

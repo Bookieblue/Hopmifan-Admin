@@ -4,7 +4,7 @@ import { CustomerTransactions } from "@/components/customers/CustomerTransaction
 import { ShareModal } from "@/components/modals/ShareModal";
 import { useToast } from "@/hooks/use-toast";
 import { Customer } from "@/types/customer";
-import { Activity, ActivityType } from "@/types/activity";
+import { Activity } from "@/types/activity";
 
 const Index = () => {
   const { toast } = useToast();
@@ -75,21 +75,19 @@ const Index = () => {
       id: "ACT-001",
       type: "Publication",
       description: "New blog post published",
-      amount: "0",
+      amount: "₦1,500.00",
       date: "2024-03-15",
       status: "completed",
-      reference: "BLG-001",
-      member: "John Doe"
+      reference: "BLG-001"
     },
     {
       id: "ACT-002",
       type: "Event",
       description: "Sunday Service",
-      amount: "0",
+      amount: "₦0.00",
       date: "2024-03-14",
       status: "pending",
-      reference: "EVT-001",
-      member: "Church Admin"
+      reference: "EVT-001"
     }
   ];
 
