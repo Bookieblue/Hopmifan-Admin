@@ -143,7 +143,15 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
               toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
               content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px }',
               branding: false,
-              promotion: false
+              promotion: false,
+              setup: (editor) => {
+                editor.on('init', () => {
+                  const notification = document.querySelector('.tox-notifications-container');
+                  if (notification) {
+                    notification.remove();
+                  }
+                });
+              }
             }}
             value={content}
             onEditorChange={(newContent) => setContent(newContent)}
