@@ -188,7 +188,6 @@ export default function BookstoreList() {
               }}
             />
           )}
-          showCheckboxes={true}
         />
       </div>
     </div>
