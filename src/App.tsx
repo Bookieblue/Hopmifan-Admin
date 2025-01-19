@@ -18,6 +18,27 @@ const router = createBrowserRouter([
         element: <Index />,
       },
       {
+        path: "dashboard",
+        children: [
+          {
+            path: "articles",
+            element: <BlogList />,
+          },
+          {
+            path: "articles/create",
+            element: <CreateBlog />,
+          },
+          {
+            path: "articles/:id/edit",
+            element: <EditBlog />,
+          },
+          {
+            path: "articles/:id",
+            element: <ViewBlog />,
+          }
+        ]
+      },
+      {
         path: "articles",
         element: <BlogList />,
       },
