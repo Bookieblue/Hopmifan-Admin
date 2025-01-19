@@ -20,6 +20,69 @@ import {
 } from "@/components/ui/alert-dialog";
 import { BlogCard } from "@/components/blog/BlogCard";
 
+const sampleArticles = {
+  "ART-001": {
+    title: "The Future of Web Development: AI and Machine Learning",
+    content: "<p>Artificial Intelligence and Machine Learning are revolutionizing how we build and maintain web applications. This article explores the latest trends and their impact on developers.</p>",
+    author: "Sarah Johnson",
+    publishDate: new Date(2024, 2, 15).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
+    status: "published",
+    imagePreview: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"
+  },
+  "ART-002": {
+    title: "Building Scalable React Applications",
+    content: "<p>Learn the best practices for building large-scale React applications that can handle growing user bases and complex features.</p>",
+    author: "Michael Chen",
+    publishDate: new Date(2024, 2, 14).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
+    status: "published",
+    imagePreview: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6"
+  },
+  "ART-003": {
+    title: "The Rise of TypeScript in Modern Development",
+    content: "<p>TypeScript has become an essential tool in modern web development. Discover why more developers are choosing TypeScript and how it improves code quality.</p>",
+    author: "Emily Rodriguez",
+    publishDate: new Date(2024, 2, 13).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
+    status: "draft",
+    imagePreview: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+  },
+  "ART-004": {
+    title: "Mastering CSS Grid and Flexbox",
+    content: "<p>A comprehensive guide to modern CSS layout techniques using Grid and Flexbox, with practical examples and best practices.</p>",
+    author: "David Kim",
+    publishDate: new Date(2024, 2, 12).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
+    status: "published",
+    imagePreview: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7"
+  },
+  "ART-005": {
+    title: "Introduction to Web Accessibility",
+    content: "<p>Learn why web accessibility is crucial and how to implement WCAG guidelines in your web applications to create inclusive experiences.</p>",
+    author: "Rachel Thompson",
+    publishDate: new Date(2024, 2, 11).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
+    status: "draft",
+    imagePreview: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
+  }
+};
+
 export default function BlogList() {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -31,7 +94,7 @@ export default function BlogList() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const postsPerPage = 15;
   
-  // Get articles from localStorage instead of using mock data
+  // Initialize articles with sample data if none exist
   const [blogs, setBlogs] = useState(() => {
     const stored = localStorage.getItem('articles');
     if (stored) {
@@ -41,7 +104,12 @@ export default function BlogList() {
         ...article
       }));
     }
-    return [];
+    // If no articles exist, store sample articles and return them
+    localStorage.setItem('articles', JSON.stringify(sampleArticles));
+    return Object.entries(sampleArticles).map(([id, article]) => ({
+      id,
+      ...article
+    }));
   });
 
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
@@ -285,4 +353,3 @@ export default function BlogList() {
     </div>
   );
 }
-
