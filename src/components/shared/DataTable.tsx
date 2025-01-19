@@ -33,6 +33,10 @@ export interface DataTableProps<T> {
   basePath?: string;
   actions?: Actions;
   showCheckboxes?: boolean;
+  bulkActions?: { value: string; label: string; }[];
+  bulkAction?: string;
+  setBulkAction?: (value: string) => void;
+  onBulkAction?: () => void;
 }
 
 export function DataTable<T>({
@@ -46,7 +50,11 @@ export function DataTable<T>({
   CardComponent,
   basePath = "articles",
   actions,
-  showCheckboxes = false
+  showCheckboxes = false,
+  bulkActions,
+  bulkAction,
+  setBulkAction,
+  onBulkAction
 }: DataTableProps<T>) {
   const isMobile = useIsMobile();
 
