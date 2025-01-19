@@ -1,7 +1,6 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BookForm } from "@/components/bookstore/BookForm";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useState } from "react";
 
 const mockBook = {
   title: "The Art of Programming",
@@ -18,14 +17,7 @@ const mockBook = {
 
 export default function EditBook() {
   const navigate = useNavigate();
-  const { id } = useParams();
   const { toast } = useToast();
-  const [book, setBook] = useState(mockBook);
-
-  useEffect(() => {
-    // In a real app, fetch book data here
-    setBook(mockBook);
-  }, [id]);
 
   const handleSubmit = (data: any) => {
     toast({
@@ -34,7 +26,5 @@ export default function EditBook() {
     navigate("/bookstore");
   };
 
-  if (!book) return null;
-
-  return <BookForm initialData={book} onSubmit={handleSubmit} isEdit />;
+  return <BookForm initialData={mockBook} onSubmit={handleSubmit} isEdit />;
 }
