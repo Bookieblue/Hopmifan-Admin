@@ -94,7 +94,6 @@ export default function BlogList() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const postsPerPage = 15;
   
-  // Initialize articles with sample data if none exist
   const [blogs, setBlogs] = useState(() => {
     const stored = localStorage.getItem('articles');
     if (stored) {
@@ -104,7 +103,6 @@ export default function BlogList() {
         ...article
       }));
     }
-    // If no articles exist, store sample articles and return them
     localStorage.setItem('articles', JSON.stringify(sampleArticles));
     return Object.entries(sampleArticles).map(([id, article]) => ({
       id,
@@ -143,14 +141,12 @@ export default function BlogList() {
   };
 
   const confirmDelete = () => {
-    // Remove the blog from the state
     setBlogs(blogs.filter(blog => blog.id !== blogToDelete));
     toast({
       description: `Article has been deleted successfully.`
     });
     setDeleteDialogOpen(false);
     setBlogToDelete("");
-    // Clear selection if the deleted blog was selected
     setSelectedBlogs(selectedBlogs.filter(id => id !== blogToDelete));
   };
 
@@ -171,21 +167,16 @@ export default function BlogList() {
 
   const handleBulkAction = () => {
     if (bulkAction === 'delete') {
-      // Remove all selected blogs from the state
       setBlogs(blogs.filter(blog => !selectedBlogs.includes(blog.id)));
       toast({
         description: `${selectedBlogs.length} articles have been deleted.`
       });
       setSelectedBlogs([]);
     } else if (bulkAction === 'export') {
-      // Simulate export functionality
-      const selectedBlogData = blogs.filter(blog => selectedBlogs.includes(blog.id));
-      console.log('Exporting:', selectedBlogData);
       toast({
         description: 'Articles exported successfully.'
       });
     } else if (bulkAction === 'publish') {
-      // Update status to published for selected blogs
       setBlogs(blogs.map(blog => 
         selectedBlogs.includes(blog.id) ? { ...blog, status: 'published' } : blog
       ));
@@ -194,7 +185,6 @@ export default function BlogList() {
       });
       setSelectedBlogs([]);
     } else if (bulkAction === 'draft') {
-      // Update status to draft for selected blogs
       setBlogs(blogs.map(blog => 
         selectedBlogs.includes(blog.id) ? { ...blog, status: 'draft' } : blog
       ));
@@ -314,6 +304,7 @@ export default function BlogList() {
           onBulkAction={handleBulkAction}
           onRowClick={handleRowClick}
           CardComponent={BlogCard}
+          showCheckboxes={true}
         />
       </div>
 

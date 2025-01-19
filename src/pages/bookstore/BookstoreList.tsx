@@ -4,9 +4,8 @@ import { DataTable } from "@/components/shared/DataTable";
 import { BookCard } from "@/components/bookstore/BookCard";
 import { Plus, Search, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { ActionButton } from "@/components/shared/ActionButton";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { TableColumn } from "@/components/shared/DataTable";
 
 interface Book {
@@ -53,6 +52,7 @@ export default function BookstoreList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [bulkAction, setBulkAction] = useState("");
   const postsPerPage = 15;
 
   const columns: TableColumn<Book>[] = [
@@ -83,32 +83,28 @@ export default function BookstoreList() {
     });
   };
 
-  const handleStatusChange = (id: string, status: string) => {
-    toast({
-      description: `Book ${status === 'published' ? 'published' : 'unpublished'} successfully`,
-    });
-  };
-
-  const handleSelectBook = (id: string, checked: boolean) => {
-    if (checked) {
-      setSelectedBooks([...selectedBooks, id]);
-    } else {
-      setSelectedBooks(selectedBooks.filter((bookId) => bookId !== id));
-    }
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedBooks(books.map((book) => book.id));
-    } else {
+  const handleBulkAction = () => {
+    if (bulkAction === 'delete') {
+      toast({
+        description: `${selectedBooks.length} books have been deleted.`
+      });
+      setSelectedBooks([]);
+    } else if (bulkAction === 'export') {
+      toast({
+        description: 'Books exported successfully.'
+      });
+    } else if (bulkAction === 'publish') {
+      toast({
+        description: `${selectedBooks.length} books have been published.`
+      });
+      setSelectedBooks([]);
+    } else if (bulkAction === 'draft') {
+      toast({
+        description: `${selectedBooks.length} books have been moved to draft.`
+      });
       setSelectedBooks([]);
     }
-  };
-
-  const handleBulkAction = () => {
-    toast({
-      description: "Bulk action completed successfully",
-    });
+    setBulkAction("");
   };
 
   const filteredBooks = books.filter(book => 
@@ -124,10 +120,13 @@ export default function BookstoreList() {
     <div className="max-w-7xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Book Publications</h1>
-        <ActionButton onClick={() => navigate("/bookstore/create")}>
+        <Button 
+          onClick={() => navigate("/bookstore/create")}
+          className="bg-purple-600 hover:bg-purple-700"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add New Book
-        </ActionButton>
+        </Button>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -158,8 +157,20 @@ export default function BookstoreList() {
           data={currentBooks}
           columns={columns}
           selectedItems={selectedBooks}
-          onSelectItem={handleSelectBook}
-          onSelectAll={handleSelectAll}
+          onSelectItem={(id, checked) => {
+            if (checked) {
+              setSelectedBooks([...selectedBooks, id]);
+            } else {
+              setSelectedBooks(selectedBooks.filter(bookId => bookId !== id));
+            }
+          }}
+          onSelectAll={(checked) => {
+            if (checked) {
+              setSelectedBooks(currentBooks.map(book => book.id));
+            } else {
+              setSelectedBooks([]);
+            }
+          }}
           getItemId={(book) => book.id}
           actions={{
             onDelete: handleDelete,
@@ -176,18 +187,11 @@ export default function BookstoreList() {
             { value: "publish", label: "Publish Selected" },
             { value: "draft", label: "Move to Draft" }
           ]}
-          bulkAction=""
-          setBulkAction={() => {}}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
-          CardComponent={({ item, actions }) => (
-            <BookCard
-              item={item}
-              actions={{
-                onDelete: actions?.onDelete,
-                onStatusChange: handleStatusChange
-              }}
-            />
-          )}
+          CardComponent={BookCard}
+          showCheckboxes={true}
         />
       </div>
     </div>
