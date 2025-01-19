@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { DataTable, type TableColumn } from "@/components/shared/DataTable";
 import { CustomerCard } from "@/components/invoices/CustomerCard";
-import { useState } from "react";
-import { ContactDetailsModal } from "@/components/contacts/ContactDetailsModal";
 
 interface Customer {
   id: string;
@@ -13,14 +11,6 @@ interface Customer {
   totalSpent: string;
   billingAddress?: string;
   profilePicture?: string;
-  firstName: string;
-  lastName: string;
-  country: string;
-  cityState: string;
-  preferredContact: string;
-  message: string;
-  dateSubmitted: string;
-  status: string;
 }
 
 interface CustomerTableProps {
@@ -30,7 +20,6 @@ interface CustomerTableProps {
   onSelectAll: (checked: boolean) => void;
   onDelete: (id: string) => void;
   onEdit: (customer: Customer) => void;
-  onStatusChange: (id: string, status: string) => void;
 }
 
 export const CustomerTable = ({
@@ -40,80 +29,57 @@ export const CustomerTable = ({
   onSelectAll,
   onDelete,
   onEdit,
-  onStatusChange,
 }: CustomerTableProps) => {
   const navigate = useNavigate();
-  const [selectedContact, setSelectedContact] = useState<Customer | null>(null);
 
   const columns: TableColumn<Customer>[] = [
-    { 
-      header: 'Name', 
-      accessor: (customer) => (
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">{`${customer.firstName} ${customer.lastName}`}</span>
-          <span className="text-sm text-gray-500">{customer.email}</span>
-        </div>
-      )
-    },
+    { header: 'Name', accessor: 'name' },
     {
       header: 'Contact',
       accessor: (customer) => (
         <div className="flex flex-col">
-          <span className="text-sm">{customer.phone}</span>
-          <span className="text-sm text-gray-500 capitalize">{customer.preferredContact}</span>
+          <span className="text-sm font-medium">{customer.email}</span>
+          <span className="text-sm text-gray-500">{customer.phone}</span>
         </div>
       )
     },
-    {
-      header: 'Location',
-      accessor: (customer) => (
-        <div className="flex flex-col">
-          <span className="text-sm">{customer.country}</span>
-          <span className="text-sm text-gray-500">{customer.cityState}</span>
-        </div>
-      )
-    },
-    {
-      header: 'Status & Date',
-      accessor: (customer) => (
-        <div className="flex flex-col">
-          <span className={`inline-flex px-2 py-1 rounded-full text-xs ${
-            customer.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {customer.status === 'replied' ? 'Replied' : 'Pending'}
-          </span>
-          <span className="text-sm text-gray-500 mt-1">{customer.dateSubmitted}</span>
-        </div>
-      )
-    }
+    { header: 'Total Spent', accessor: 'totalSpent' },
+    { header: 'Date Added', accessor: 'date' }
+  ];
+
+  const bulkActions = [
+    { value: "delete", label: "Delete Selected" },
+    { value: "export", label: "Export as CSV" }
   ];
 
   const handleRowClick = (id: string) => {
-    const contact = customers.find(c => c.id === id);
-    if (contact) {
-      setSelectedContact(contact);
-    }
+    navigate(`/customers/${id}`);
   };
 
   return (
-    <>
-      <DataTable
-        data={customers}
-        columns={columns}
-        selectedItems={selectedCustomers}
-        onSelectItem={onSelectCustomer}
-        onSelectAll={onSelectAll}
-        getItemId={(customer) => customer.id}
-        onRowClick={handleRowClick}
-        CardComponent={CustomerCard}
-      />
-
-      <ContactDetailsModal
-        isOpen={!!selectedContact}
-        onClose={() => setSelectedContact(null)}
-        contact={selectedContact}
-        onStatusChange={onStatusChange}
-      />
-    </>
+    <DataTable
+      data={customers}
+      columns={columns}
+      selectedItems={selectedCustomers}
+      onSelectItem={onSelectCustomer}
+      onSelectAll={onSelectAll}
+      getItemId={(customer) => customer.id}
+      onRowClick={handleRowClick}
+      actions={{
+        onDelete,
+        additionalActions: [
+          {
+            label: "Edit",
+            onClick: (id) => onEdit(customers.find(c => c.id === id)!)
+          },
+          {
+            label: "View",
+            onClick: (id) => navigate(`/customers/${id}`)
+          }
+        ]
+      }}
+      bulkActions={bulkActions}
+      CardComponent={CustomerCard}
+    />
   );
 };

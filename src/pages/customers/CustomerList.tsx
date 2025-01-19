@@ -7,9 +7,8 @@ import { CustomerTable } from "@/components/customers/CustomerTable";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CustomerForm } from "@/components/customers/CustomerForm";
-import { Customer } from "@/types/customer";
 
-const initialCustomers: Customer[] = [
+const initialCustomers = [
   { 
     id: "1",
     date: "15 Mar 2024",
@@ -19,19 +18,7 @@ const initialCustomers: Customer[] = [
     totalSpent: "₦12,500.00",
     street: "123 Business Ave",
     state: "Lagos",
-    postalCode: "100001",
-    firstName: "John",
-    lastName: "Doe",
-    country: "Nigeria",
-    cityState: "Lagos",
-    preferredContact: "email",
-    message: "Initial business inquiry",
-    dateSubmitted: "2024-03-15",
-    status: "pending",
-    address: "123 Business Ave, Lagos, Nigeria",
-    invoices: [],
-    estimates: [],
-    receipts: []
+    postalCode: "100001"
   },
   { 
     id: "2",
@@ -42,19 +29,7 @@ const initialCustomers: Customer[] = [
     totalSpent: "₦8,750.00",
     street: "456 Innovation Way",
     state: "Abuja",
-    postalCode: "900001",
-    firstName: "Jane",
-    lastName: "Smith",
-    country: "Nigeria",
-    cityState: "Abuja",
-    preferredContact: "phone",
-    message: "Software development project discussion",
-    dateSubmitted: "2024-03-14",
-    status: "replied",
-    address: "456 Innovation Way, Abuja, Nigeria",
-    invoices: [],
-    estimates: [],
-    receipts: []
+    postalCode: "900001"
   },
 ];
 
