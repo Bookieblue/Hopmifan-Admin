@@ -135,7 +135,7 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
         <div>
           <label htmlFor="content" className="block text-sm font-medium mb-2">Content</label>
           <Editor
-            apiKey={import.meta.env.VITE_TINYMCE_API_KEY || "your-api-key-here"}
+            apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
             init={{
               height: 500,
               menubar: false,
@@ -148,7 +148,9 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
                 'bold italic forecolor | alignleft aligncenter ' +
                 'alignright alignjustify | bullist numlist outdent indent | ' +
                 'removeformat | help',
-              content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px }'
+              content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px }',
+              branding: false,
+              promotion: false
             }}
             value={content}
             onEditorChange={(newContent) => setContent(newContent)}
