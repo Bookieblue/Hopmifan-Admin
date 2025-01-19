@@ -21,7 +21,7 @@ export default function EditBlog() {
       title: "Sample Article",
       content: "<p>This is the content of the article...</p>",
       author: "John Doe",
-      status: "draft", // This will now be properly passed to BlogForm
+      status: "draft" as "draft" | "published", // Explicitly type the status
     };
     setInitialData(mockArticle);
   }, [id]);
