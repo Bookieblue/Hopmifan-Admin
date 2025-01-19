@@ -78,9 +78,9 @@ export default function PrayerRequestList() {
       accessor: (request: any) => (
         <div>
           <span className={`px-2 py-1 rounded-full text-xs ${
-            request.status === 'prayed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+            request.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
           }`}>
-            {request.status === 'prayed' ? 'Prayed' : 'Pending'}
+            {request.status === 'replied' ? 'Replied' : 'Pending'}
           </span>
           <div className="text-sm text-gray-500 mt-1">{request.dateSubmitted}</div>
         </div>
@@ -197,9 +197,9 @@ export default function PrayerRequestList() {
                   <p className="text-sm text-gray-500">{item.email}</p>
                 </div>
                 <span className={`px-2 py-1 rounded-full text-xs ${
-                  item.status === 'prayed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
-                  {item.status === 'prayed' ? 'Prayed' : 'Pending'}
+                  {item.status === 'replied' ? 'Replied' : 'Pending'}
                 </span>
               </div>
               <div className="space-y-2">
