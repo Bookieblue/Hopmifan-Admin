@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -12,11 +12,13 @@ import {
   Calendar,
   MessageSquare,
   Users,
-  Book
+  Book,
+  LogOut
 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 const menuItems = [
-  { icon: LayoutGrid, label: "Overview", path: "/" },
+  { icon: LayoutGrid, label: "Overview", path: "/dashboard" },
   {
     icon: FileText,
     label: "Publications",
@@ -33,6 +35,7 @@ const menuItems = [
   { icon: Users, label: "New Members", path: "/new-members" },
   { icon: Book, label: "Sermons", path: "/sermons" },
   { icon: CreditCard, label: "Donations", path: "/donations" },
+  { icon: LogOut, label: "Logout", path: "/auth/signin" },
 ];
 
 interface SidebarNavigationProps {
@@ -41,10 +44,24 @@ interface SidebarNavigationProps {
 
 export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const toggleSubmenu = (label: string) => {
     setOpenSubmenu(openSubmenu === label ? null : label);
+  };
+
+  const handleLogout = (path: string) => {
+    if (path === "/auth/signin") {
+      // TODO: Implement actual logout logic
+      toast({
+        title: "Logged out successfully",
+        description: "See you soon!",
+      });
+      navigate(path);
+      return;
+    }
   };
 
   return (
@@ -109,6 +126,7 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
             ) : (
               <Link
                 to={item.path}
+                onClick={() => handleLogout(item.path)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative",
                   isCollapsed ? "justify-center" : "justify-start",

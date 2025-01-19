@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import Index from "@/pages/index";
 import BlogList from "@/pages/blog/BlogList";
@@ -24,15 +24,21 @@ import ViewSermon from "@/pages/sermons/ViewSermon";
 import PrayerRequestList from "@/pages/prayer-requests/PrayerRequestList";
 import SignIn from "@/pages/auth/SignIn";
 import ForgotPassword from "@/pages/auth/ForgotPassword";
+import OtpVerification from "@/pages/auth/OtpVerification";
+import SetNewPassword from "@/pages/auth/SetNewPassword";
 
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Navigate to="/auth/signin" replace />,
+  },
+  {
+    path: "/dashboard",
     element: <Layout />,
     errorElement: <NotFound />,
     children: [
       {
-        path: "/",
+        path: "/dashboard",
         element: <Index />,
       },
       {
@@ -124,6 +130,14 @@ const router = createBrowserRouter([
   {
     path: "/auth/forgot-password",
     element: <ForgotPassword />,
+  },
+  {
+    path: "/auth/otp-verification",
+    element: <OtpVerification />,
+  },
+  {
+    path: "/auth/set-new-password",
+    element: <SetNewPassword />,
   },
 ]);
 

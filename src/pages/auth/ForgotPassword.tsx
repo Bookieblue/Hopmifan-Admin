@@ -15,10 +15,10 @@ export default function ForgotPassword() {
     e.preventDefault();
     // TODO: Implement actual password reset
     toast({
-      title: "Reset link sent",
-      description: "Check your email for password reset instructions",
+      title: "OTP sent",
+      description: "Check your email for the verification code",
     });
-    navigate("/auth/signin");
+    navigate("/auth/otp-verification");
   };
 
   return (
