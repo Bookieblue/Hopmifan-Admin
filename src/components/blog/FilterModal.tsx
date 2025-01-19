@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface FilterModalProps {
   open: boolean;
@@ -25,11 +26,17 @@ export function FilterModal({
   setDateFilter,
   uniqueAuthors,
 }: FilterModalProps) {
+  const handleReset = () => {
+    setAuthorFilter("all");
+    setStatusFilter("all");
+    setDateFilter("");
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Filter Blog Posts</DialogTitle>
+          <DialogTitle>Filter Articles</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="space-y-2">
@@ -66,6 +73,15 @@ export function FilterModal({
               onChange={(e) => setDateFilter(e.target.value)}
               className="h-10"
             />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" onClick={handleReset}>
+              Reset
+            </Button>
+            <Button onClick={() => onOpenChange(false)}>
+              Apply Filters
+            </Button>
           </div>
         </div>
       </DialogContent>

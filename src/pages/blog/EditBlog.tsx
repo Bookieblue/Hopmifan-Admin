@@ -21,8 +21,8 @@ export default function EditBlog() {
   // Mock data fetch - in a real app this would be an API call
   useEffect(() => {
     // Simulate API call
-    setTitle("Sample Blog Post");
-    setContent("<p>This is the content of the blog post...</p>");
+    setTitle("Sample Article");
+    setContent("<p>This is the content of the article...</p>");
     setAuthor("John Doe");
     setStatus("draft");
   }, [id]);
@@ -60,9 +60,9 @@ export default function EditBlog() {
 
     // Simulate API call success
     toast({
-      description: `Blog post ${isDraft ? 'saved as draft' : 'published'} successfully!`
+      description: `Article ${isDraft ? 'saved as draft' : 'published'} successfully!`
     });
-    navigate("/blog");
+    navigate("/articles");
   };
 
   return (
@@ -71,11 +71,11 @@ export default function EditBlog() {
         <Button 
           variant="ghost" 
           size="icon"
-          onClick={() => navigate("/blog")}
+          onClick={() => navigate("/articles")}
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold">Edit Blog Post</h1>
+        <h1 className="text-2xl font-bold">Edit Article</h1>
       </div>
 
       <div className="space-y-6">
@@ -85,7 +85,7 @@ export default function EditBlog() {
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter blog title"
+            placeholder="Enter article title"
           />
         </div>
 
@@ -136,7 +136,7 @@ export default function EditBlog() {
         <div>
           <label htmlFor="content" className="block text-sm font-medium mb-2">Content</label>
           <Editor
-            apiKey="your-tinymce-api-key"
+            apiKey="qagffr3pkuv17a8on1afax661irst1hbr4e6tbv888sz91jc"
             init={{
               height: 500,
               menubar: false,

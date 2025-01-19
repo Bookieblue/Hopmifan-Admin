@@ -49,11 +49,11 @@ export default function CreateBlog() {
 
     // Simulate API call success
     toast({
-      description: `Blog post ${isDraft ? 'saved as draft' : 'published'} successfully!`
+      description: `Article ${isDraft ? 'saved as draft' : 'published'} successfully!`
     });
     
     // Navigate after successful save
-    navigate("/blog");
+    navigate("/articles");
   };
 
   return (
@@ -62,11 +62,11 @@ export default function CreateBlog() {
         <Button 
           variant="ghost" 
           size="icon"
-          onClick={() => navigate("/blog")}
+          onClick={() => navigate("/articles")}
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold">Add New Post</h1>
+        <h1 className="text-2xl font-bold">Add New Article</h1>
       </div>
 
       <div className="space-y-6">
@@ -76,7 +76,7 @@ export default function CreateBlog() {
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter blog title"
+            placeholder="Enter article title"
           />
         </div>
 
@@ -127,7 +127,7 @@ export default function CreateBlog() {
         <div>
           <label htmlFor="content" className="block text-sm font-medium mb-2">Content</label>
           <Editor
-            apiKey="your-tinymce-api-key"
+            apiKey="qagffr3pkuv17a8on1afax661irst1hbr4e6tbv888sz91jc"
             init={{
               height: 500,
               menubar: false,
