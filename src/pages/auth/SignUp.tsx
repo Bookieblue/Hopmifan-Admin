@@ -6,7 +6,9 @@ import { Eye, EyeOff, HelpCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function SignIn() {
+export default function SignUp() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -19,8 +21,8 @@ export default function SignIn() {
     setIsLoading(true);
 
     try {
-      // Validate email and password
-      if (!email || !password) {
+      // Validate all fields
+      if (!firstName || !lastName || !email || !password) {
         throw new Error("Please fill in all fields");
       }
 
@@ -32,12 +34,12 @@ export default function SignIn() {
         throw new Error("Password must be at least 6 characters long");
       }
 
-      // TODO: Implement actual authentication
+      // TODO: Implement actual registration
       toast({
-        title: "Success",
-        description: "Welcome back to Cordlo!",
+        title: "Account created successfully",
+        description: "Welcome to Cordlo!",
       });
-      navigate("/");
+      navigate("/onboarding/business");
     } catch (error) {
       toast({
         variant: "destructive",
@@ -72,25 +74,54 @@ export default function SignIn() {
       <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8 h-[calc(100vh-73px)]">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl font-bold tracking-tight">Welcome back</h2>
+            <h2 className="text-3xl font-bold tracking-tight">Create an account</h2>
             <p className="text-muted-foreground">
-              Sign in to your account
+              Get started with Cordlo
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    type="text"
+                    placeholder="John"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                    disabled={isLoading}
+                    className="h-14"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    placeholder="Doe"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                    disabled={isLoading}
+                    className="h-14"
+                  />
+                </div>
+              </div>
+
               <div>
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
                   required
                   disabled={isLoading}
-                  className="h-14" // Set height to 56px (14 = 3.5rem = 56px)
+                  className="h-14"
                 />
               </div>
 
@@ -104,7 +135,7 @@ export default function SignIn() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={isLoading}
-                    className="h-14" // Set height to 56px
+                    className="h-14"
                   />
                   <button
                     type="button"
@@ -122,23 +153,14 @@ export default function SignIn() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end">
-              <Link
-                to="/auth/forgot-password"
-                className="text-sm text-primary hover:underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
-
             <Button type="submit" className="w-full h-14" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? "Creating account..." : "Create account"}
             </Button>
 
             <p className="text-center text-sm">
-              Don't have an account?{" "}
-              <Link to="/auth/signup" className="text-primary hover:underline">
-                Sign up
+              Already have an account?{" "}
+              <Link to="/auth/signin" className="text-primary hover:underline">
+                Sign in
               </Link>
             </p>
           </form>

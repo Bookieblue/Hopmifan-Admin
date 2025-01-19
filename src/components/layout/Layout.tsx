@@ -12,9 +12,16 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 export function Layout() {
   const isMobile = useIsMobile();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
   
   const isPreviewRoute = location.pathname.includes('/preview');
+
+  const handleSidebarCollapse = (collapsed: boolean) => {
+    if (!isMobile) {
+      setIsCollapsed(collapsed);
+    }
+  };
 
   if (isPreviewRoute) {
     return (
@@ -50,7 +57,7 @@ export function Layout() {
                       </SheetTrigger>
                       <SheetContent side="left" className="p-0 w-[280px]">
                         <div className="h-full overflow-y-auto">
-                          <Sidebar />
+                          <Sidebar onCollapse={handleSidebarCollapse} />
                         </div>
                       </SheetContent>
                     </Sheet>
@@ -73,8 +80,8 @@ export function Layout() {
             </>
           ) : (
             <>
-              <Sidebar />
-              <main className="flex-1 p-4 md:p-8 overflow-x-hidden bg-white ml-64">
+              <Sidebar onCollapse={handleSidebarCollapse} />
+              <main className={`flex-1 p-4 md:p-8 overflow-x-hidden bg-white transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
                 <div className="max-w-7xl mx-auto">
                   <Outlet />
                 </div>

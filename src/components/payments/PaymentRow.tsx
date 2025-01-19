@@ -17,7 +17,7 @@ interface PaymentRowProps {
     amount: string;
     method: string;
     reference: string;
-    type: "Book" | "Donation";
+    type: string;
   };
   isSelected: boolean;
   onSelect: (reference: string, checked: boolean) => void;
@@ -40,13 +40,7 @@ export function PaymentRow({ payment, isSelected, onSelect, onDownloadReceipt }:
       <TableCell>{payment.customer}</TableCell>
       <TableCell>{payment.amount}</TableCell>
       <TableCell>{payment.method}</TableCell>
-      <TableCell>
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          payment.type === 'Book' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
-        }`}>
-          {payment.type}
-        </span>
-      </TableCell>
+      <TableCell>{payment.type}</TableCell>
       <TableCell>{payment.reference}</TableCell>
       <TableCell>
         <DropdownMenu>

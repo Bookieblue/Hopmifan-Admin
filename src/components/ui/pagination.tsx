@@ -16,12 +16,6 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
   ({ className, total = 1, value = 1, onChange, ...props }, ref) => {
     const pages = Array.from({ length: total }, (_, i) => i + 1);
 
-    const handlePageChange = (page: number) => {
-      if (onChange) {
-        onChange(page);
-      }
-    };
-
     return (
       <nav
         ref={ref}
@@ -33,7 +27,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious 
-              onClick={() => handlePageChange(Math.max(1, value - 1))}
+              onClick={() => onChange?.(Math.max(1, value - 1))}
               aria-disabled={value === 1}
               className={value === 1 ? "pointer-events-none opacity-50" : ""}
             />
@@ -41,7 +35,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
           {pages.map((page) => (
             <PaginationItem key={page}>
               <PaginationLink
-                onClick={() => handlePageChange(page)}
+                onClick={() => onChange?.(page)}
                 isActive={page === value}
               >
                 {page}
@@ -50,7 +44,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
           ))}
           <PaginationItem>
             <PaginationNext
-              onClick={() => handlePageChange(Math.min(total, value + 1))}
+              onClick={() => onChange?.(Math.min(total, value + 1))}
               aria-disabled={value === total}
               className={value === total ? "pointer-events-none opacity-50" : ""}
             />
