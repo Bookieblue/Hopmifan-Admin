@@ -11,7 +11,8 @@ import {
   ChevronRight,
   BookOpen,
   Newspaper,
-  Calendar
+  Calendar,
+  Mail
 } from "lucide-react";
 
 const menuItems = [
@@ -30,6 +31,7 @@ const menuItems = [
     { label: "Members", path: "/customers" },
     { label: "Events", path: "/events" }
   ] },
+  { icon: Mail, label: "Contact", path: "/contacts" },
 ];
 
 const accountMenuItems = [

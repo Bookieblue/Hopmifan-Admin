@@ -20,6 +20,7 @@ import EventList from "@/pages/events/EventList";
 import CreateEvent from "@/pages/events/CreateEvent";
 import Payments from "@/pages/payments/Index";
 import Settings from "@/pages/settings/Index";
+import ContactList from "@/pages/contacts/ContactList";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="/events/create" element={<CreateEvent />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/contacts" element={<ContactList />} />
       </Route>
       <Route path="/auth/signin" element={<SignIn />} />
       <Route path="/auth/signup" element={<SignUp />} />
