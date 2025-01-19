@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { Filter, Plus, Search } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/events/FilterModal";
@@ -43,6 +43,7 @@ const sampleEvents = {
 
 export default function EventList() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [locationFilter, setLocationFilter] = useState("all");
@@ -95,6 +96,29 @@ export default function EventList() {
   const handleDelete = (eventId: string) => {
     setEventToDelete(eventId);
     setDeleteDialogOpen(true);
+  };
+
+  const handleDuplicate = (eventId: string) => {
+    const eventToDuplicate = events.find(event => event.id === eventId);
+    if (eventToDuplicate) {
+      const newId = `EVT-${String(events.length + 1).padStart(3, '0')}`;
+      const duplicatedEvent = {
+        ...eventToDuplicate,
+        id: newId,
+        title: `${eventToDuplicate.title} (Copy)`,
+        status: 'draft'
+      };
+      setEvents([...events, duplicatedEvent]);
+      
+      // Update localStorage
+      const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
+      storedEvents[newId] = duplicatedEvent;
+      localStorage.setItem('events', JSON.stringify(storedEvents));
+      
+      toast({
+        description: "Event duplicated successfully"
+      });
+    }
   };
 
   const confirmDelete = () => {
@@ -216,6 +240,8 @@ export default function EventList() {
           getItemId={(item) => item.id}
           actions={{
             onDelete: handleDelete,
+            onDuplicate: handleDuplicate,
+            onEdit: (id) => navigate(`/events/${id}/edit`),
           }}
           bulkActions={bulkActions}
           bulkAction={bulkAction}
