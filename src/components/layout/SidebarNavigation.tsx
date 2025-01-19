@@ -21,7 +21,7 @@ const menuItems = [
     label: "Publications",
     path: "/publications",
     submenu: [
-      { label: "Blog", path: "/publications/blog", icon: Newspaper },
+      { label: "Articles", path: "/publications/blog", icon: Newspaper },
       { label: "Bookstore", path: "/publications/bookstore", icon: BookOpen }
     ]
   },

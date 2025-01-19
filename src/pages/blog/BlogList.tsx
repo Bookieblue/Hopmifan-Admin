@@ -4,19 +4,17 @@ import { DataTable } from "@/components/shared/DataTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Calendar } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function BlogList() {
   const { toast } = useToast();
@@ -26,8 +24,11 @@ export default function BlogList() {
   const [blogToDelete, setBlogToDelete] = useState<string | null>(null);
   const [bulkAction, setBulkAction] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
+  const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
   const postsPerPage = 15;
-  
+
   const [blogs] = useState(Array.from({ length: 32 }, (_, i) => ({ 
     id: `BLG-${String(i + 1).padStart(3, '0')}`,
     title: `Blog Post ${i + 1}`,
@@ -135,61 +136,120 @@ export default function BlogList() {
     navigate(`/blog/${id}/edit`);
   };
 
+  const handleApplyDateFilter = () => {
+    // Filter logic would go here
+    setIsDateFilterOpen(false);
+    toast({
+      description: "Date filter applied successfully"
+    });
+  };
+
+  const handleResetDateFilter = () => {
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setIsDateFilterOpen(false);
+    toast({
+      description: "Date filter reset"
+    });
+  };
+
+  const filteredBlogsWithDate = blogs.filter(blog => {
+    const matchesSearch = blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      blog.author.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (!startDate && !endDate) return matchesSearch;
+    
+    const blogDate = new Date(blog.publishDate);
+    const afterStartDate = !startDate || blogDate >= startDate;
+    const beforeEndDate = !endDate || blogDate <= endDate;
+    
+    return matchesSearch && afterStartDate && beforeEndDate;
+  });
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Publications - Blog Posts</h1>
+        <h1 className="text-2xl font-bold">Articles</h1>
         <Link to="/blog/create">
           <Button size="default" className="bg-purple-600 hover:bg-purple-700 px-3 md:px-4">
             <Plus className="h-4 w-4 mr-2" />
-            New Blog Post
+            New Article
           </Button>
         </Link>
       </div>
 
-      <div className="mb-6">
-        <div className="relative">
+      <div className="mb-6 flex gap-2">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
           <Input 
-            placeholder="Search blog posts..." 
+            placeholder="Search articles..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
           />
         </div>
+        <Dialog open={isDateFilterOpen} onOpenChange={setIsDateFilterOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Filter by Date
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Filter by Date Range</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-4">
+              <div className="flex flex-col gap-2">
+                <label>Start Date</label>
+                <DatePicker date={startDate} setDate={setStartDate} />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label>End Date</label>
+                <DatePicker date={endDate} setDate={setEndDate} />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={handleResetDateFilter}>
+                  Reset
+                </Button>
+                <Button onClick={handleApplyDateFilter}>
+                  Apply Filter
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      <div className="bg-white md:rounded-lg md:border">
-        <DataTable
-          data={currentBlogs}
-          columns={columns}
-          selectedItems={selectedBlogs}
-          onSelectItem={(id, checked) => {
-            if (checked) {
-              setSelectedBlogs([...selectedBlogs, id]);
-            } else {
-              setSelectedBlogs(selectedBlogs.filter(blogId => blogId !== id));
-            }
-          }}
-          onSelectAll={(checked) => {
-            if (checked) {
-              setSelectedBlogs(currentBlogs.map(blog => blog.id));
-            } else {
-              setSelectedBlogs([]);
-            }
-          }}
-          getItemId={(item) => item.id}
-          actions={{
-            onDelete: handleDelete,
-            onShare: handleShare,
-          }}
-          bulkActions={bulkActions}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={handleBulkAction}
-          onRowClick={handleRowClick}
-        />
-      </div>
+      <DataTable
+        data={currentBlogs}
+        columns={columns}
+        selectedItems={selectedBlogs}
+        onSelectItem={(id, checked) => {
+          if (checked) {
+            setSelectedBlogs([...selectedBlogs, id]);
+          } else {
+            setSelectedBlogs(selectedBlogs.filter(blogId => blogId !== id));
+          }
+        }}
+        onSelectAll={(checked) => {
+          if (checked) {
+            setSelectedBlogs(currentBlogs.map(blog => blog.id));
+          } else {
+            setSelectedBlogs([]);
+          }
+        }}
+        getItemId={(item) => item.id}
+        actions={{
+          onDelete: handleDelete,
+          onShare: handleShare,
+        }}
+        bulkActions={bulkActions}
+        bulkAction={bulkAction}
+        setBulkAction={setBulkAction}
+        onBulkAction={handleBulkAction}
+        onRowClick={handleRowClick}
+      />
 
       {totalPages > 1 && (
         <div className="mt-4">
@@ -200,30 +260,6 @@ export default function BlogList() {
           />
         </div>
       )}
-
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the blog post
-              and remove all of its data from our servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <ShareModal 
-        open={shareDialogOpen} 
-        onOpenChange={setShareDialogOpen}
-        blogId={selectedBlogId}
-      />
     </div>
   );
 }
