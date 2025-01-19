@@ -13,15 +13,11 @@ function App() {
       <Routes>
         <Route path="/auth/signin" element={<SignIn />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-        <Route path="/*" element={
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/bookstore" element={<BookstoreList />} />
-              <Route path="/bookstore/create" element={<CreateBook />} />
-            </Routes>
-          </Layout>
-        } />
+        <Route element={<Layout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/bookstore" element={<BookstoreList />} />
+          <Route path="/bookstore/create" element={<CreateBook />} />
+        </Route>
       </Routes>
       <Toaster />
     </>

@@ -10,16 +10,9 @@ export interface Customer {
   city: string;
   address: string;
   preferredContact: string;
-  prayerRequest?: string;
   dateSubmitted: string;
   status: 'active' | 'inactive';
-  billingAddress?: {
-    street: string;
-    city: string;
-    state: string;
-    zip: string;
-    country: string;
-  };
+  billingAddress?: string;
   profilePicture?: string;
   totalSpent: string;
   date: string;
