@@ -75,7 +75,7 @@ export function StatsGrid() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <CircleDot className="text-purple-500 h-4 w-4" />
-              <span className="text-lg font-medium">Membership Requests</span>
+              <span className="text-lg font-medium">Members Request</span>
             </div>
             <span className="text-3xl font-bold block">{membershipRequests}</span>
           </div>
