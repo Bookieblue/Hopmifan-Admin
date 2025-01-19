@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/events/FilterModal";
 import { useToast } from "@/hooks/use-toast";
 import { EventCard } from "@/components/events/EventCard";
+import { BulkActions } from "@/components/shared/BulkActions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -250,6 +251,7 @@ export default function EventList() {
           }}
           onRowClick={handleEdit}
           CardComponent={EventCard}
+          showCheckboxes={true}
           bulkActions={bulkActions}
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
