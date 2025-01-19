@@ -8,6 +8,7 @@ import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
+  InputOTPSeparator,
 } from "@/components/ui/input-otp";
 
 export default function OtpVerification() {
@@ -55,7 +56,7 @@ export default function OtpVerification() {
         <Link 
           to="#" 
           className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
-          onClick={() => window.open('mailto:support@cordlo.com')}
+          onClick={() => window.open('mailto:support@church.com')}
         >
           <HelpCircle className="w-4 h-4 mr-2" />
           Support
@@ -72,16 +73,19 @@ export default function OtpVerification() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="otp">Verification Code</Label>
               <InputOTP
-                value={otp}
-                onChange={(value) => setOtp(value)}
                 maxLength={6}
+                value={otp}
+                onChange={setOtp}
                 render={({ slots }) => (
-                  <InputOTPGroup className="gap-2">
+                  <InputOTPGroup>
                     {slots.map((slot, idx) => (
-                      <InputOTPSlot key={idx} {...slot} index={idx} />
+                      <React.Fragment key={idx}>
+                        <InputOTPSlot {...slot} index={idx} />
+                        {idx !== slots.length - 1 && <InputOTPSeparator />}
+                      </React.Fragment>
                     ))}
                   </InputOTPGroup>
                 )}
