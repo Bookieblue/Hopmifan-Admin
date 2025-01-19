@@ -4,7 +4,7 @@ import { DataTable } from "@/components/shared/DataTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Search } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,6 +27,7 @@ import {
 
 export default function BlogList() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [authorFilter, setAuthorFilter] = useState("");
@@ -144,6 +145,10 @@ export default function BlogList() {
     { value: "draft", label: "Move to Draft" },
   ];
 
+  const handleRowClick = (id: string) => {
+    navigate(`/blog/${id}/edit`);
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
@@ -229,7 +234,7 @@ export default function BlogList() {
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
-          onRowClick={(id) => `/blog/${id}/edit`}
+          onRowClick={handleRowClick}
         />
       </div>
 

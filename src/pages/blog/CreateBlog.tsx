@@ -27,7 +27,7 @@ export default function CreateBlog() {
     }
   };
 
-  const handleSave = (isDraft: boolean) => {
+  const handleSave = async (isDraft: boolean) => {
     if (!title || !content || !author) {
       toast({
         description: "Please fill in all required fields",
@@ -51,6 +51,8 @@ export default function CreateBlog() {
     toast({
       description: `Blog post ${isDraft ? 'saved as draft' : 'published'} successfully!`
     });
+    
+    // Navigate after successful save
     navigate("/blog");
   };
 
