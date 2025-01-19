@@ -10,6 +10,7 @@ import {
   InputOTPSlot,
   InputOTPSeparator,
 } from "@/components/ui/input-otp";
+import * as React from "react";
 
 export default function OtpVerification() {
   const [otp, setOtp] = useState("");
