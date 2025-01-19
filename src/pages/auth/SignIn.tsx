@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, HelpCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -69,16 +69,16 @@ export default function SignIn() {
       </header>
 
       <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8 h-[calc(100vh-73px)]">
-        <div className="w-full max-w-md space-y-8">
-          <div className="text-center space-y-4">
-            <h2 className="text-3xl font-bold tracking-tight">Welcome back</h2>
-            <p className="text-muted-foreground">
+        <div className="w-full max-w-md space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-bold tracking-tight">Welcome back</h2>
+            <p className="text-sm text-muted-foreground">
               Sign in to your account
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-3">
               <div>
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -89,7 +89,7 @@ export default function SignIn() {
                   placeholder="you@example.com"
                   required
                   disabled={isLoading}
-                  className="h-14"
+                  className="h-10"
                 />
               </div>
 
@@ -103,7 +103,7 @@ export default function SignIn() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={isLoading}
-                    className="h-14"
+                    className="h-10"
                   />
                   <button
                     type="button"
@@ -130,7 +130,7 @@ export default function SignIn() {
               </Link>
             </div>
 
-            <Button type="submit" className="w-full h-14" disabled={isLoading}>
+            <Button type="submit" className="w-full h-10" disabled={isLoading}>
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
