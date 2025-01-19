@@ -169,23 +169,27 @@ export default function BlogList() {
     }
   };
 
+  const bulkActions = [
+    { value: "delete", label: "Delete Selected" },
+    { value: "export", label: "Export as CSV" },
+    { value: "publish", label: "Publish Selected" },
+    { value: "draft", label: "Move to Draft" },
+  ];
+
   const handleBulkAction = () => {
     if (bulkAction === 'delete') {
-      // Remove all selected blogs from the state
       setBlogs(blogs.filter(blog => !selectedBlogs.includes(blog.id)));
       toast({
         description: `${selectedBlogs.length} articles have been deleted.`
       });
       setSelectedBlogs([]);
     } else if (bulkAction === 'export') {
-      // Simulate export functionality
       const selectedBlogData = blogs.filter(blog => selectedBlogs.includes(blog.id));
       console.log('Exporting:', selectedBlogData);
       toast({
         description: 'Articles exported successfully.'
       });
     } else if (bulkAction === 'publish') {
-      // Update status to published for selected blogs
       setBlogs(blogs.map(blog => 
         selectedBlogs.includes(blog.id) ? { ...blog, status: 'published' } : blog
       ));
@@ -194,7 +198,6 @@ export default function BlogList() {
       });
       setSelectedBlogs([]);
     } else if (bulkAction === 'draft') {
-      // Update status to draft for selected blogs
       setBlogs(blogs.map(blog => 
         selectedBlogs.includes(blog.id) ? { ...blog, status: 'draft' } : blog
       ));
@@ -225,17 +228,6 @@ export default function BlogList() {
   };
 
   const uniqueAuthors = Array.from(new Set(blogs.map(blog => blog.author)));
-
-  const bulkActions = [
-    { value: "delete", label: "Delete Selected" },
-    { value: "export", label: "Export as CSV" },
-    { value: "publish", label: "Publish Selected" },
-    { value: "draft", label: "Move to Draft" },
-  ];
-
-  const handleRowClick = (id: string) => {
-    navigate(`/articles/${id}/edit`);
-  };
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
@@ -312,8 +304,9 @@ export default function BlogList() {
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
-          onRowClick={handleRowClick}
+          onRowClick={(id) => navigate(`/articles/${id}/edit`)}
           CardComponent={BlogCard}
+          showCheckboxes={true}
         />
       </div>
 
