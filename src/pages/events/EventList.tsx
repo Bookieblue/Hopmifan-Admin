@@ -254,6 +254,7 @@ export default function EventList() {
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
+          basePath="events"
         />
       </div>
 

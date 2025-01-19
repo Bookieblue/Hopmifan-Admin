@@ -12,7 +12,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { BulkActions } from "./BulkActions";
 import { TableBody } from "@/components/ui/table";
-import { BlogCard } from "@/components/blog/BlogCard";
 
 export interface TableColumn<T> {
   header: string;
@@ -46,6 +45,7 @@ interface DataTableProps<T> {
   onBulkAction?: () => void;
   onRowClick?: (id: string) => void;
   CardComponent?: React.ComponentType<{ item: T; actions?: DataTableProps<T>['actions'] }>;
+  basePath?: string; // New prop for dynamic routing
 }
 
 export function DataTable<T>({
@@ -61,7 +61,8 @@ export function DataTable<T>({
   setBulkAction = () => {},
   onBulkAction = () => {},
   onRowClick,
-  CardComponent
+  CardComponent,
+  basePath = "articles" // Default to articles for backward compatibility
 }: DataTableProps<T>) {
   const isMobile = useIsMobile();
 
@@ -171,10 +172,10 @@ export function DataTable<T>({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                      {onRowClick && (
-                        <Link to={`/articles/${id}/edit`}>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                        </Link>
+                      {actions?.onEdit && (
+                        <DropdownMenuItem onClick={() => actions.onEdit(id)}>
+                          Edit
+                        </DropdownMenuItem>
                       )}
                       {onRowClick && (
                         <DropdownMenuItem
