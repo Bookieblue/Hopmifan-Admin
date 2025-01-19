@@ -17,6 +17,7 @@ import PaymentHistory from "@/pages/payments/Index";
 import DonationHistory from "@/pages/donations/DonationHistory";
 import ContactMessages from "@/pages/contacts/ContactMessages";
 import NewMembers from "@/pages/members/NewMembers";
+import SermonList from "@/pages/sermons/SermonList";
 
 const router = createBrowserRouter([
   {
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
       {
         path: "/donations",
         element: <DonationHistory />,
+      },
+      {
+        path: "/sermons",
+        element: <SermonList />,
       }
     ],
   },
