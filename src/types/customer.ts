@@ -1,43 +1,23 @@
-export interface Customer {
+export interface Member {
   id: string;
-  name: string;
-  email: string;
-  street?: string;
-  country?: string;
-  state?: string;
-  postalCode?: string;
-  billingAddress?: string;
+  firstName: string;
+  lastName: string;
   phone: string;
-  address: string;
-  totalSpent: string;
-  date: string;
-  profilePicture?: string;
-  invoices: {
-    id: string;
-    date: string;
-    amount: string;
-    status: string;
-  }[];
-  estimates: {
-    id: string;
-    date: string;
-    amount: string;
-    status: string;
-  }[];
-  receipts: {
-    id: string;
-    date: string;
-    amount: string;
-    status: string;
-  }[];
+  email: string;
+  country: string;
+  cityState: string;
+  preferredContact: string;
+  prayerRequest: string;
+  dateSubmitted: string;
 }
 
-export interface NewCustomer {
-  name: string;
+export interface NewMember {
+  firstName: string;
+  lastName: string;
+  phone: string;
   email: string;
-  street?: string;
-  country?: string;
-  state?: string;
-  postalCode?: string;
-  billingAddress?: string;
+  country: string;
+  cityState: string;
+  preferredContact: string;
+  prayerRequest: string;
 }

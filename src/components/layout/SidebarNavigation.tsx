@@ -25,7 +25,7 @@ const menuItems = [
     ]
   },
   { icon: CreditCard, label: "Payments", path: "/payments" },
-  { icon: Users, label: "Members", path: "/customers" },
+  { icon: Users, label: "New Members", path: "/customers" },
 ];
 
 const accountMenuItems = [
