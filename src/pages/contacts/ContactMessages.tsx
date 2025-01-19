@@ -111,8 +111,6 @@ export default function ContactMessages() {
     return matchesSearch && matchesCountry && matchesStatus && matchesDate;
   });
 
-  const uniqueCountries = Array.from(new Set(contacts.map(contact => contact.country)));
-
   const handleRowClick = (id: string) => {
     const contact = contacts.find(c => c.id === id);
     if (contact) {
@@ -159,7 +157,7 @@ export default function ContactMessages() {
         setStatusFilter={setStatusFilter}
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
-        uniqueCountries={uniqueCountries}
+        uniqueCountries={Array.from(new Set(contacts.map(contact => contact.country)))}
       />
 
       <ContactDetailsModal
@@ -179,6 +177,39 @@ export default function ContactMessages() {
           getItemId={(item) => item.id}
           onRowClick={handleRowClick}
           showCheckboxes={false}
+          CardComponent={({ item }) => (
+            <div className="p-4 border-b last:border-b-0">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
+                  <p className="text-sm text-gray-500">{item.email}</p>
+                </div>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {item.status === 'replied' ? 'Replied' : 'Pending'}
+                </span>
+              </div>
+              <div className="text-sm text-gray-500 space-y-1">
+                <div className="flex justify-between">
+                  <span>Phone:</span>
+                  <span>{item.phone}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Preferred Contact:</span>
+                  <span className="capitalize">{item.preferredContact}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Location:</span>
+                  <span>{`${item.country}, ${item.cityState}`}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Date:</span>
+                  <span>{item.dateSubmitted}</span>
+                </div>
+              </div>
+            </div>
+          )}
         />
       </div>
     </div>
