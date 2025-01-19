@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export type Activity = {
   type: "Publication" | "Event" | "Contact" | "Donation" | "Members Request" | "Sermon";
@@ -39,6 +40,44 @@ export function RecentActivity({
   className,
   titleClassName
 }: RecentActivityProps) {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div className="space-y-4">
+        <h2 className={cn("text-[18px] font-semibold", titleClassName)}>{title}</h2>
+        {activities.map((activity, index) => (
+          <div key={index} className="py-4 border-b last:border-b-0">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <CircleIcon className="h-2 w-2 text-gray-500 flex-shrink-0" />
+                    <h3 className="font-semibold text-left mb-2 line-clamp-2">{activity.description}</h3>
+                  </div>
+                  <div className="text-sm text-muted-foreground text-left space-y-1">
+                    <p className="truncate">{activity.type}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span>{format(new Date(activity.date), 'dd/MM/yyyy')}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(activity.status)}`}>
+                        {activity.status}
+                      </span>
+                    </div>
+                    {activity.amount && (
+                      <p className="text-sm font-medium">
+                        ₦{activity.amount.toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <Card className={className}>
       <CardHeader>
