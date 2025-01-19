@@ -2,12 +2,18 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataTable } from "@/components/shared/DataTable";
 import { BookCard } from "@/components/bookstore/BookCard";
-import { Plus, Search, Filter } from "lucide-react";
+import { Plus, Search, Filter, MoreVertical, Edit, Trash2, CheckSquare, XSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ActionButton } from "@/components/shared/ActionButton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BulkActions } from "@/components/shared/BulkActions";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -113,8 +119,8 @@ export default function BookstoreList() {
   };
 
   const columns: TableColumn<Book>[] = [
-    { header: "Title", accessor: "title" as keyof Book },
-    { header: "Author", accessor: "author" as keyof Book },
+    { header: "Title", accessor: "title" },
+    { header: "Author", accessor: "author" },
     { 
       header: "Price", 
       accessor: (book: Book) => `$${book.price.toFixed(2)}` 
@@ -131,6 +137,47 @@ export default function BookstoreList() {
           </span>
         </div>
       )
+    },
+    {
+      header: "Actions",
+      accessor: (book: Book) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[200px]">
+            <DropdownMenuItem onClick={() => navigate(`/bookstore/${book.id}/edit`)}>
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleStatusChange(book.id, book.status === 'published' ? 'draft' : 'published')}
+            >
+              {book.status === 'published' ? (
+                <>
+                  <XSquare className="h-4 w-4 mr-2" />
+                  Unpublish
+                </>
+              ) : (
+                <>
+                  <CheckSquare className="h-4 w-4 mr-2" />
+                  Publish
+                </>
+              )}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleDelete(book.id)}
+              className="text-red-600"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+      className: "w-[50px]"
     }
   ];
 
