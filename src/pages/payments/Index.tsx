@@ -6,6 +6,17 @@ import { PaymentRow } from "@/components/payments/PaymentRow";
 import { PaymentFilters } from "@/components/payments/PaymentFilters";
 import { BulkActions } from "@/components/shared/BulkActions";
 
+type PaymentType = "Book" | "Donation";
+
+interface Payment {
+  date: string;
+  customer: string;
+  amount: string;
+  method: string;
+  reference: string;
+  type: PaymentType;
+}
+
 const payments = [
   { 
     date: "14 Mar 2025", 
@@ -259,3 +270,4 @@ export default function PaymentHistory() {
     </div>
   );
 }
+

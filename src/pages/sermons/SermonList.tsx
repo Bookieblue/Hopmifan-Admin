@@ -1,115 +1,264 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
-import { Badge } from "@/components/ui/badge";
-import { Sermon } from "@/types/sermon";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Plus, Search, Calendar } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Pagination } from "@/components/ui/pagination";
+import { DatePicker } from "@/components/ui/date-picker";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function SermonList() {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [sermonToDelete, setSermonToDelete] = useState<string | null>(null);
   const [bulkAction, setBulkAction] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
+  const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
+  const postsPerPage = 15;
 
-  // Mock data - replace with actual data fetching
-  const sermons: Sermon[] = [
-    {
-      id: "1",
-      title: "Sunday Service - The Power of Faith",
-      date: "2024-03-10",
-      youtubeLink: "https://youtube.com/watch?v=example1",
-      thumbnailUrl: "/placeholder.svg",
-      isPublished: true,
-    },
-    {
-      id: "2",
-      title: "Wednesday Bible Study - Prayer",
-      date: "2024-03-13",
-      youtubeLink: "https://youtube.com/watch?v=example2",
-      thumbnailUrl: "/placeholder.svg",
-      isPublished: false,
-    },
-  ];
+  const [sermons] = useState(Array.from({ length: 32 }, (_, i) => ({ 
+    id: `SRM-${String(i + 1).padStart(3, '0')}`,
+    title: `Sermon ${i + 1}`,
+    speaker: i % 2 === 0 ? "Pastor John" : "Sarah Smith",
+    date: new Date(2024, 2, 15 - i).toISOString().split('T')[0],
+    status: i % 3 === 0 ? "draft" : "published"
+  })));
+
+  const [selectedSermons, setSelectedSermons] = useState<string[]>([]);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [selectedSermonId, setSelectedSermonId] = useState<string>("");
 
   const columns = [
     { header: "Title", accessor: "title" },
+    { header: "Speaker", accessor: "speaker" },
     { header: "Date", accessor: "date" },
     { 
       header: "Status", 
-      accessor: (sermon: Sermon) => (
-        <Badge variant={sermon.isPublished ? "default" : "secondary"}>
-          {sermon.isPublished ? "Published" : "Draft"}
-        </Badge>
-      )
-    },
-    { 
-      header: "YouTube Link", 
-      accessor: (sermon: Sermon) => (
-        <a 
-          href={sermon.youtubeLink} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
-        >
-          View
-        </a>
+      accessor: (sermon: any) => (
+        <span className={`px-2 py-1 rounded-full text-xs ${
+          sermon.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+        }`}>
+          {sermon.status}
+        </span>
       )
     },
   ];
 
-  const handleSelectItem = (id: string, checked: boolean) => {
-    setSelectedItems(prev =>
-      checked ? [...prev, id] : prev.filter(item => item !== id)
-    );
+  const handlePageChange = (value: number) => {
+    setCurrentPage(value);
   };
 
-  const handleSelectAll = (checked: boolean) => {
-    setSelectedItems(checked ? sermons.map(sermon => sermon.id) : []);
+  const handleDelete = (sermonId: string) => {
+    setSermonToDelete(sermonId);
+    setDeleteDialogOpen(true);
   };
+
+  const confirmDelete = () => {
+    if (sermonToDelete) {
+      toast({
+        description: `Sermon ${sermonToDelete} has been deleted successfully.`
+      });
+      setDeleteDialogOpen(false);
+      setSermonToDelete(null);
+    }
+  };
+
+  const handleShare = (sermonId: string) => {
+    const sermonUrl = `${window.location.origin}/sermons/${sermonId}`;
+    
+    navigator.clipboard.writeText(sermonUrl).then(() => {
+      toast({
+        description: "Sermon link copied to clipboard!"
+      });
+    }).catch(() => {
+      toast({
+        description: "Failed to copy link",
+        variant: "destructive"
+      });
+    });
+  };
+
+  const handleBulkAction = () => {
+    if (bulkAction === 'delete') {
+      toast({
+        description: `${selectedSermons.length} sermons have been deleted.`
+      });
+      setSelectedSermons([]);
+    } else if (bulkAction === 'export') {
+      toast({
+        description: 'Sermons exported successfully.'
+      });
+    } else if (bulkAction === 'publish') {
+      toast({
+        description: `${selectedSermons.length} sermons have been published.`
+      });
+      setSelectedSermons([]);
+    } else if (bulkAction === 'draft') {
+      toast({
+        description: `${selectedSermons.length} sermons have been moved to draft.`
+      });
+      setSelectedSermons([]);
+    }
+    setBulkAction("");
+  };
+
+  const bulkActions = [
+    { value: "delete", label: "Delete Selected" },
+    { value: "export", label: "Export as CSV" },
+    { value: "publish", label: "Publish Selected" },
+    { value: "draft", label: "Move to Draft" },
+  ];
+
+  const filteredSermons = sermons.filter(sermon => 
+    sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    sermon.speaker.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredSermons.length / postsPerPage);
+  const startIndex = (currentPage - 1) * postsPerPage;
+  const endIndex = startIndex + postsPerPage;
+  const currentSermons = filteredSermons.slice(startIndex, endIndex);
+
+  const handleRowClick = (id: string) => {
+    navigate(`/sermons/${id}/edit`);
+  };
+
+  const handleApplyDateFilter = () => {
+    // Filter logic would go here
+    setIsDateFilterOpen(false);
+    toast({
+      description: "Date filter applied successfully"
+    });
+  };
+
+  const handleResetDateFilter = () => {
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setIsDateFilterOpen(false);
+    toast({
+      description: "Date filter reset"
+    });
+  };
+
+  const filteredSermonsWithDate = sermons.filter(sermon => {
+    const matchesSearch = sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sermon.speaker.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (!startDate && !endDate) return matchesSearch;
+    
+    const sermonDate = new Date(sermon.date);
+    const afterStartDate = !startDate || sermonDate >= startDate;
+    const beforeEndDate = !endDate || sermonDate <= endDate;
+    
+    return matchesSearch && afterStartDate && beforeEndDate;
+  });
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Sermons</h1>
+    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+      <div className="flex items-center justify-between gap-2 mb-6">
+        <h1 className="text-2xl font-bold">Sermons</h1>
         <Link to="/sermons/create">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Add New Sermon
+          <Button size="default" className="bg-purple-600 hover:bg-purple-700 px-3 md:px-4">
+            <Plus className="h-4 w-4 mr-2" />
+            New Sermon
           </Button>
         </Link>
       </div>
 
+      <div className="mb-6 flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+          <Input 
+            placeholder="Search sermons..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Dialog open={isDateFilterOpen} onOpenChange={setIsDateFilterOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Filter by Date
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Filter by Date Range</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-4">
+              <div className="flex flex-col gap-2">
+                <label>Start Date</label>
+                <DatePicker date={startDate} setDate={setStartDate} />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label>End Date</label>
+                <DatePicker date={endDate} setDate={setEndDate} />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={handleResetDateFilter}>
+                  Reset
+                </Button>
+                <Button onClick={handleApplyDateFilter}>
+                  Apply Filter
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
       <DataTable
-        data={sermons}
+        data={currentSermons}
         columns={columns}
-        selectedItems={selectedItems}
-        onSelectItem={handleSelectItem}
-        onSelectAll={handleSelectAll}
-        getItemId={(item) => item.id}
-        onRowClick={(id) => `/sermons/${id}/edit`}
-        actions={{
-          onDelete: (id) => {
-            console.log("Delete sermon:", id);
-          },
-          additionalActions: [
-            {
-              label: "Toggle Publish",
-              onClick: (id) => {
-                console.log("Toggle publish:", id);
-              },
-            },
-          ],
+        selectedItems={selectedSermons}
+        onSelectItem={(id, checked) => {
+          if (checked) {
+            setSelectedSermons([...selectedSermons, id]);
+          } else {
+            setSelectedSermons(selectedSermons.filter(sermonId => sermonId !== id));
+          }
         }}
-        bulkActions={[
-          { value: "delete", label: "Delete Selected" },
-          { value: "publish", label: "Publish Selected" },
-          { value: "unpublish", label: "Unpublish Selected" },
-        ]}
+        onSelectAll={(checked) => {
+          if (checked) {
+            setSelectedSermons(currentSermons.map(sermon => sermon.id));
+          } else {
+            setSelectedSermons([]);
+          }
+        }}
+        getItemId={(item) => item.id}
+        actions={{
+          onDelete: handleDelete,
+          onShare: handleShare,
+        }}
+        bulkActions={bulkActions}
         bulkAction={bulkAction}
         setBulkAction={setBulkAction}
-        onBulkAction={() => {
-          console.log("Bulk action:", bulkAction, "on", selectedItems);
-        }}
+        onBulkAction={handleBulkAction}
+        onRowClick={handleRowClick}
       />
+
+      {totalPages > 1 && (
+        <div className="mt-4">
+          <Pagination
+            total={totalPages}
+            value={currentPage}
+            onValueChange={handlePageChange}
+          />
+        </div>
+      )}
     </div>
   );
 }

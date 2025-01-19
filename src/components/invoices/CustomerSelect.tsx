@@ -26,7 +26,13 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
   const [newCustomer, setNewCustomer] = useState<NewCustomer>({
     name: "",
     email: "",
-    billingAddress: "",
+    billingAddress: {
+      street: "",
+      city: "",
+      state: "",
+      zip: "",
+      country: ""
+    }
   });
 
   const [customers] = useState<Customer[]>([
@@ -130,7 +136,13 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
     setNewCustomer({
       name: "",
       email: "",
-      billingAddress: "",
+      billingAddress: {
+        street: "",
+        city: "",
+        state: "",
+        zip: "",
+        country: ""
+      }
     });
     setIsDialogOpen(false);
     
