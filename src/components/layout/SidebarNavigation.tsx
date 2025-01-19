@@ -17,10 +17,10 @@ const menuItems = [
   { icon: LayoutGrid, label: "Overview", path: "/" },
   {
     icon: FileText,
-    label: "Articles",
+    label: "Publications",
     path: "/publications",
     submenu: [
-      { label: "Articles", path: "/blog" },
+      { label: "Articles", path: "/articles" },
       { label: "Bookstore", path: "/bookstore" }
     ]
   },
@@ -81,7 +81,7 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
                   <div className="pl-4 space-y-1 mt-1">
                     {item.submenu.map((subItem) => {
                       const isSubActive = location.pathname === subItem.path;
-                      const SubIcon = subItem.label === "Blog" ? Newspaper : BookOpen;
+                      const SubIcon = subItem.label === "Articles" ? Newspaper : BookOpen;
                       return (
                         <Link
                           key={subItem.path}

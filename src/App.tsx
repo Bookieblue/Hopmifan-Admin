@@ -1,49 +1,25 @@
-import { Routes, Route } from "react-router-dom";
-import { Layout } from "@/components/layout/Layout";
-import SignIn from "@/pages/auth/SignIn";
-import SignUp from "@/pages/auth/SignUp";
-import ForgotPassword from "@/pages/auth/ForgotPassword";
-import Index from "@/pages/Index";
+import { createBrowserRouter } from "react-router-dom";
+import Layout from "@/components/layout/Layout";
+import Index from "@/pages/index";
 import BlogList from "@/pages/blog/BlogList";
 import CreateBlog from "@/pages/blog/CreateBlog";
-import ViewBlog from "@/pages/blog/ViewBlog";
 import EditBlog from "@/pages/blog/EditBlog";
-import PreviewBlog from "@/pages/blog/PreviewBlog";
+import ViewBlog from "@/pages/blog/ViewBlog";
 import BookstoreList from "@/pages/bookstore/BookstoreList";
-import CreateBook from "@/pages/bookstore/CreateBook";
-import ViewBook from "@/pages/bookstore/ViewBook";
-import EditBook from "@/pages/bookstore/EditBook";
-import CustomerList from "@/pages/customers/CustomerList";
-import CreateCustomer from "@/pages/customers/CreateCustomer";
-import Payments from "@/pages/payments/Index";
-import Settings from "@/pages/settings/Index";
-import CustomerDetail from "@/pages/customers/CustomerDetail";
 
-function App() {
-  return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Index />} />
-        <Route path="/blog" element={<BlogList />} />
-        <Route path="/blog/create" element={<CreateBlog />} />
-        <Route path="/blog/:id" element={<ViewBlog />} />
-        <Route path="/blog/:id/edit" element={<EditBlog />} />
-        <Route path="/blog/:id/preview" element={<PreviewBlog />} />
-        <Route path="/bookstore" element={<BookstoreList />} />
-        <Route path="/bookstore/create" element={<CreateBook />} />
-        <Route path="/bookstore/:id" element={<ViewBook />} />
-        <Route path="/bookstore/:id/edit" element={<EditBook />} />
-        <Route path="/customers" element={<CustomerList />} />
-        <Route path="/customers/create" element={<CreateCustomer />} />
-        <Route path="/customers/:id" element={<CustomerDetail />} />
-        <Route path="/payments" element={<Payments />} />
-        <Route path="/settings" element={<Settings />} />
-      </Route>
-      <Route path="/auth/signin" element={<SignIn />} />
-      <Route path="/auth/signup" element={<SignUp />} />
-      <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-    </Routes>
-  );
-}
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      { path: "/", element: <Index /> },
+      { path: "/articles", element: <BlogList /> },
+      { path: "/articles/create", element: <CreateBlog /> },
+      { path: "/articles/:id/edit", element: <EditBlog /> },
+      { path: "/articles/:id", element: <ViewBlog /> },
+      { path: "/bookstore", element: <BookstoreList /> },
+    ],
+  },
+]);
 
-export default App;
+export default router;
