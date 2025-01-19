@@ -8,7 +8,7 @@ export default function Index() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight mb-2">Dashboard Overview</h1>
+        <h1 className="text-3xl font-bold tracking-tight mb-2">Overview</h1>
         <p className="text-muted-foreground">
           Welcome to your church management dashboard. Here's what's happening.
         </p>
@@ -20,8 +20,10 @@ export default function Index() {
 
       <div className="grid grid-cols-1">
         <RecentActivity 
-          activities={activities.data || []}
+          activities={activities.data?.slice(0, 8) || []}
           title="Recent Activities"
+          className="p-4"
+          titleClassName="text-lg"
         />
       </div>
     </div>

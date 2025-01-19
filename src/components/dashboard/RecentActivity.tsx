@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleIcon } from "lucide-react";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 export type Activity = {
   type: "Publication" | "Event" | "Contact" | "Donation" | "Members Request" | "Sermon";
@@ -15,6 +16,8 @@ export type Activity = {
 interface RecentActivityProps {
   activities?: Activity[];
   title?: string;
+  className?: string;
+  titleClassName?: string;
 }
 
 const getStatusColor = (status: "completed" | "pending" | "upcoming") => {
@@ -30,11 +33,16 @@ const getStatusColor = (status: "completed" | "pending" | "upcoming") => {
   }
 };
 
-export function RecentActivity({ activities = [], title = "Recent Activity" }: RecentActivityProps) {
+export function RecentActivity({ 
+  activities = [], 
+  title = "Recent Activity",
+  className,
+  titleClassName
+}: RecentActivityProps) {
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className={cn("text-[18px]", titleClassName)}>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>

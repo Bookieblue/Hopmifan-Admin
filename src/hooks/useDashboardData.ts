@@ -17,11 +17,12 @@ interface Activity {
 }
 
 const fetchDashboardStats = async (): Promise<DashboardStats> => {
-  // Listen for changes in localStorage
+  // Fetch data from localStorage
   const donations = JSON.parse(localStorage.getItem('donations') || '[]');
   const books = JSON.parse(localStorage.getItem('books') || '[]');
   const prayerRequests = JSON.parse(localStorage.getItem('prayerRequests') || '[]');
   const memberRequests = JSON.parse(localStorage.getItem('memberRequests') || '[]');
+  const payments = JSON.parse(localStorage.getItem('payments') || '[]');
 
   return {
     totalDonations: donations.reduce((sum: number, d: any) => sum + (d.amount || 0), 0),
@@ -38,6 +39,9 @@ const fetchRecentActivities = async (): Promise<Activity[]> => {
   const prayerRequests = JSON.parse(localStorage.getItem('prayerRequests') || '[]');
   const memberRequests = JSON.parse(localStorage.getItem('memberRequests') || '[]');
   const sermons = JSON.parse(localStorage.getItem('sermons') || '[]');
+  const events = JSON.parse(localStorage.getItem('events') || '[]');
+  const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+  const payments = JSON.parse(localStorage.getItem('payments') || '[]');
 
   const activities: Activity[] = [
     ...donations.map((d: any) => ({
@@ -76,9 +80,22 @@ const fetchRecentActivities = async (): Promise<Activity[]> => {
       date: s.date,
       status: s.status === 'published' ? 'completed' : 'pending',
       reference: s.id
+    })),
+    ...events.map((e: any) => ({
+      type: "Event",
+      description: e.title,
+      date: e.date,
+      status: new Date(e.date) > new Date() ? 'upcoming' : 'completed',
+      reference: e.id
+    })),
+    ...contacts.map((c: any) => ({
+      type: "Contact",
+      description: `Message from ${c.firstName} ${c.lastName}`,
+      date: c.dateSubmitted,
+      status: c.status === 'replied' ? 'completed' : 'pending',
+      reference: c.id
     }))
-  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-   .slice(0, 10); // Get only the 10 most recent activities
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return activities;
 };
