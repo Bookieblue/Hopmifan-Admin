@@ -169,18 +169,14 @@ export default function ContactMessages() {
         open={detailsModalOpen}
         onOpenChange={setDetailsModalOpen}
         contact={selectedContact}
-        onStatusChange={(status) => {
-          if (selectedContact) {
-            setContacts(contacts.map(contact => 
-              contact.id === selectedContact.id 
-                ? { ...contact, status }
-                : contact
-            ));
-          }
-        }}
+        onStatusChange={handleStatusChange}
       />
 
       <div className="bg-white md:rounded-lg md:border">
+        <div className="md:hidden flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
+          <h2 className="font-medium text-sm text-gray-600">Member</h2>
+          <h2 className="font-medium text-sm text-gray-600">Status</h2>
+        </div>
         <DataTable
           data={filteredContacts}
           columns={columns}
@@ -191,26 +187,20 @@ export default function ContactMessages() {
           onRowClick={handleCardClick}
           showCheckboxes={false}
           CardComponent={({ item }) => (
-            <div>
-              <div className="flex justify-between items-center px-4 py-2 border-b bg-gray-50">
-                <h2 className="font-medium text-sm text-gray-600">Member</h2>
-                <h2 className="font-medium text-sm text-gray-600">Status</h2>
-              </div>
-              <div 
-                className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
-                onClick={() => handleCardClick(item)}
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
-                    <p className="text-sm text-gray-500">{item.email}</p>
-                  </div>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {item.status === 'replied' ? 'Replied' : 'Pending'}
-                  </span>
+            <div 
+              className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => handleCardClick(item)}
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
+                  <p className="text-sm text-gray-500">{item.email}</p>
                 </div>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {item.status === 'replied' ? 'Replied' : 'Pending'}
+                </span>
               </div>
             </div>
           )}
