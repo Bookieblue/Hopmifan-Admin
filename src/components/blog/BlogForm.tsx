@@ -98,6 +98,23 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
           />
         </div>
 
+        <div className="space-y-2">
+          <div>
+            <label className="block text-sm font-medium mb-2">Date</label>
+            <Input
+              type="date"
+              value={new Date().toISOString().split('T')[0]}
+              readOnly
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Status</label>
+            <div className="text-sm text-muted-foreground">
+              {initialData?.status ? initialData.status.charAt(0).toUpperCase() + initialData.status.slice(1) : 'Draft'}
+            </div>
+          </div>
+        </div>
+
         <div>
           <label htmlFor="featureImage" className="block text-sm font-medium mb-2">
             Feature Image
@@ -135,7 +152,7 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
         <div>
           <label htmlFor="content" className="block text-sm font-medium mb-2">Content</label>
           <Editor
-            apiKey="your-api-key-here"
+            apiKey={import.meta.env.VITE_TINYMCE_API_KEY || "your-api-key-here"}
             init={{
               height: 500,
               menubar: false,
