@@ -5,6 +5,7 @@ import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ContactFilterModal } from "@/components/contacts/FilterModal";
 import { ContactDetailsModal } from "@/components/contacts/ContactDetailsModal";
+import { Card } from "@/components/ui/card";
 
 const sampleContacts = [
   {
@@ -119,6 +120,11 @@ export default function ContactMessages() {
     }
   };
 
+  const handleCardClick = (contact: any) => {
+    setSelectedContact(contact);
+    setDetailsModalOpen(true);
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
@@ -164,7 +170,15 @@ export default function ContactMessages() {
         open={detailsModalOpen}
         onOpenChange={setDetailsModalOpen}
         contact={selectedContact}
-        onStatusChange={handleStatusChange}
+        onStatusChange={(status) => {
+          if (selectedContact) {
+            setContacts(contacts.map(contact => 
+              contact.id === selectedContact.id 
+                ? { ...contact, status }
+                : contact
+            ));
+          }
+        }}
       />
 
       <div className="bg-white md:rounded-lg md:border">
@@ -175,11 +189,14 @@ export default function ContactMessages() {
           onSelectItem={() => {}}
           onSelectAll={() => {}}
           getItemId={(item) => item.id}
-          onRowClick={handleRowClick}
+          onRowClick={handleCardClick}
           showCheckboxes={false}
           CardComponent={({ item }) => (
-            <div className="p-4 border-b last:border-b-0">
-              <div className="flex justify-between items-start mb-2">
+            <Card 
+              className="p-4 mb-4 cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => handleCardClick(item)}
+            >
+              <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
                   <p className="text-sm text-gray-500">{item.email}</p>
@@ -190,25 +207,7 @@ export default function ContactMessages() {
                   {item.status === 'replied' ? 'Replied' : 'Pending'}
                 </span>
               </div>
-              <div className="text-sm text-gray-500 space-y-1">
-                <div className="flex justify-between">
-                  <span>Phone:</span>
-                  <span>{item.phone}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Preferred Contact:</span>
-                  <span className="capitalize">{item.preferredContact}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Location:</span>
-                  <span>{`${item.country}, ${item.cityState}`}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Date:</span>
-                  <span>{item.dateSubmitted}</span>
-                </div>
-              </div>
-            </div>
+            </Card>
           )}
         />
       </div>
