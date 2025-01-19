@@ -31,7 +31,7 @@ export function PrayerRequestDetailsModal({
             </div>
             <div>
               <h3 className="font-medium text-gray-500">Status</h3>
-              <Badge variant={request.status === 'prayed' ? 'success' : 'warning'}>
+              <Badge variant={request.status === 'prayed' ? 'default' : 'secondary'}>
                 {request.status === 'prayed' ? 'Prayed' : 'Pending'}
               </Badge>
             </div>

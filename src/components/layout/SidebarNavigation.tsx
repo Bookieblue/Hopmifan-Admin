@@ -12,8 +12,7 @@ import {
   Calendar,
   MessageSquare,
   Users,
-  Book,
-  PrayingHands
+  Book
 } from "lucide-react";
 
 const menuItems = [
@@ -29,7 +28,7 @@ const menuItems = [
   },
   { icon: Calendar, label: "Events", path: "/events" },
   { icon: MessageSquare, label: "Contact Messages", path: "/contacts" },
-  { icon: PrayingHands, label: "Prayer Requests", path: "/prayer-requests" },
+  { icon: BookOpen, label: "Prayer Requests", path: "/prayer-requests" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
   { icon: Users, label: "New Members", path: "/new-members" },
   { icon: Book, label: "Sermons", path: "/sermons" },
