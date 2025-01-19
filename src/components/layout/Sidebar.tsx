@@ -22,7 +22,7 @@ export function Sidebar({ isCollapsed = false }: SidebarProps) {
         isMobile={isMobile}
       />
 
-      <div className="mt-16">
+      <div className="mt-8">
         <SidebarNavigation isCollapsed={isCollapsed} />
       </div>
     </div>
