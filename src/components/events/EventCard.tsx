@@ -1,4 +1,4 @@
-import { MoreVertical, Edit, Trash2 } from "lucide-react";
+import { MoreVertical, Edit, Trash2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -62,7 +62,7 @@ export const EventCard = ({ item, actions }: EventCardProps) => {
                 </DropdownMenuItem>
                 {actions?.onDuplicate && (
                   <DropdownMenuItem onClick={() => actions.onDuplicate(item.id)}>
-                    <Edit className="h-4 w-4 mr-2" />
+                    <Copy className="h-4 w-4 mr-2" />
                     Duplicate
                   </DropdownMenuItem>
                 )}

@@ -94,6 +94,10 @@ export default function EventList() {
     },
   ];
 
+  const handleEdit = (id: string) => {
+    navigate(`/events/${id}/edit`);
+  };
+
   const handleDelete = (eventId: string) => {
     setEventToDelete(eventId);
     setDeleteDialogOpen(true);
@@ -243,12 +247,12 @@ export default function EventList() {
             onDelete: handleDelete,
             onDuplicate: handleDuplicate
           }}
-          onRowClick={(id) => navigate(`/events/${id}/edit`)}
+          onRowClick={handleEdit}
+          CardComponent={EventCard}
           bulkActions={bulkActions}
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
-          CardComponent={EventCard}
         />
       </div>
 
