@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import Layout from "@/components/layout/Layout";
+import { Layout } from "@/components/layout/Layout";
 import Index from "@/pages/index";
 import BlogList from "@/pages/blog/BlogList";
 import CreateBlog from "@/pages/blog/CreateBlog";
