@@ -26,26 +26,8 @@ interface DataTableProps<T> {
   onSelectItem: (id: string, checked: boolean) => void;
   onSelectAll: (checked: boolean) => void;
   getItemId: (item: T) => string;
-  actions?: {
-    onDelete?: (id: string) => void;
-    onDuplicate?: (id: string) => void;
-    onShare?: (id: string) => void;
-    onEdit?: (id: string) => void;
-    additionalActions?: Array<{
-      label: string;
-      onClick: (id: string) => void;
-    }>;
-  };
-  bulkActions?: {
-    value: string;
-    label: string;
-  }[];
-  bulkAction?: string;
-  setBulkAction?: (value: string) => void;
-  onBulkAction?: () => void;
   onRowClick?: (id: string) => void;
-  CardComponent?: React.ComponentType<{ item: T; actions?: DataTableProps<T>['actions'] }>;
-  basePath?: string; // New prop for dynamic routing
+  CardComponent?: React.ComponentType<{ item: T }>;
 }
 
 export function DataTable<T>({
@@ -55,22 +37,14 @@ export function DataTable<T>({
   onSelectItem,
   onSelectAll,
   getItemId,
-  actions,
-  bulkActions,
-  bulkAction = "",
-  setBulkAction = () => {},
-  onBulkAction = () => {},
   onRowClick,
   CardComponent,
-  basePath = "articles" // Default to articles for backward compatibility
 }: DataTableProps<T>) {
   const isMobile = useIsMobile();
 
   const handleRowClick = (e: React.MouseEvent, id: string) => {
     if (
-      (e.target as HTMLElement).closest('.checkbox-cell') ||
-      (e.target as HTMLElement).closest('[role="menuitem"]') ||
-      (e.target as HTMLElement).closest('button')
+      (e.target as HTMLElement).closest('.checkbox-cell')
     ) {
       return;
     }
@@ -95,18 +69,11 @@ export function DataTable<T>({
                 onCheckedChange={(checked) => onSelectItem(getItemId(item), checked as boolean)}
               />
               <div className="flex-1">
-                <CardComponent item={item} actions={actions} />
+                <CardComponent item={item} />
               </div>
             </div>
           ))}
         </div>
-        <BulkActions
-          selectedCount={selectedItems.length}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={onBulkAction}
-          actions={bulkActions}
-        />
       </div>
     );
   }
@@ -133,9 +100,6 @@ export function DataTable<T>({
                 {column.header}
               </th>
             ))}
-            <th className="px-4 py-3 text-right text-sm font-medium text-gray-500">
-              Actions
-            </th>
           </tr>
         </thead>
         <TableBody>
@@ -164,88 +128,11 @@ export function DataTable<T>({
                       : String(item[column.accessor])}
                   </td>
                 ))}
-                <td className="px-4 py-3 text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button variant="ghost" size="sm">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                      {actions?.onEdit && (
-                        <DropdownMenuItem onClick={() => actions.onEdit(id)}>
-                          Edit
-                        </DropdownMenuItem>
-                      )}
-                      {onRowClick && (
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.preventDefault();
-                            window.open(`preview`, '_blank');
-                          }}
-                        >
-                          View
-                        </DropdownMenuItem>
-                      )}
-                      {actions?.onDuplicate && (
-                        <DropdownMenuItem 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            actions.onDuplicate?.(id);
-                          }}
-                        >
-                          Duplicate
-                        </DropdownMenuItem>
-                      )}
-                      {actions?.onShare && (
-                        <DropdownMenuItem 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            actions.onShare?.(id);
-                          }}
-                        >
-                          Share
-                        </DropdownMenuItem>
-                      )}
-                      {actions?.additionalActions?.map((action, index) => (
-                        <DropdownMenuItem
-                          key={index}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            action.onClick(id);
-                          }}
-                        >
-                          {action.label}
-                        </DropdownMenuItem>
-                      ))}
-                      {actions?.onDelete && (
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.preventDefault();
-                            actions.onDelete?.(id);
-                          }}
-                          className="text-red-600"
-                        >
-                          Delete
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </td>
               </tr>
             );
           })}
         </TableBody>
       </table>
-      {!isMobile && (
-        <BulkActions
-          selectedCount={selectedItems.length}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={onBulkAction}
-          actions={bulkActions}
-        />
-      )}
     </div>
   );
 }
