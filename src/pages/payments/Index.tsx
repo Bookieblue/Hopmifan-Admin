@@ -97,6 +97,15 @@ const payments = [
   }
 ];
 
+const payment = {
+  date: new Date().toISOString(),
+  customer: "John Doe",
+  amount: "₦1000",
+  method: "Card",
+  reference: "PAY-001",
+  type: "Donation" as const
+};
+
 export default function PaymentHistory() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");

@@ -45,7 +45,7 @@ export default function ContactList() {
     { 
       header: "Status", 
       accessor: (contact) => (
-        <Badge variant={contact.replied ? "success" : "secondary"}>
+        <Badge variant={contact.replied ? "default" : "secondary"}>
           {contact.replied ? "Replied" : "Pending"}
         </Badge>
       )

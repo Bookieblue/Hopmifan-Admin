@@ -1,11 +1,10 @@
-export type ActivityType = "Publication" | "Event" | "Contact" | "Donation" | "Membership" | "Sermon";
-
 export interface Activity {
-  type: ActivityType;
+  id: string;
+  type: string;
   description: string;
-  amount: number;
   date: string;
-  status: "completed" | "pending";
+  amount: string;
+  status: 'completed' | 'pending' | 'failed';
   reference: string;
-  member: string;
+  member?: string;
 }
