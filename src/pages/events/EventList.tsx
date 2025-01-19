@@ -245,7 +245,8 @@ export default function EventList() {
           getItemId={(item) => item.id}
           actions={{
             onDelete: handleDelete,
-            onDuplicate: handleDuplicate
+            onDuplicate: handleDuplicate,
+            onEdit: handleEdit
           }}
           onRowClick={handleEdit}
           CardComponent={EventCard}

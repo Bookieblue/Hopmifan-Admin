@@ -6,7 +6,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useNavigate } from "react-router-dom";
 
 interface EventCardProps {
   item: {
@@ -20,16 +19,11 @@ interface EventCardProps {
   actions?: {
     onDelete?: (id: string) => void;
     onDuplicate?: (id: string) => void;
+    onEdit?: (id: string) => void;
   };
 }
 
 export const EventCard = ({ item, actions }: EventCardProps) => {
-  const navigate = useNavigate();
-  
-  const handleEdit = (id: string) => {
-    navigate(`/events/${id}/edit`);
-  };
-  
   return (
     <div className="py-4 border-b last:border-b-0">
       <div className="flex flex-col gap-4">
@@ -56,10 +50,12 @@ export const EventCard = ({ item, actions }: EventCardProps) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuItem onClick={() => handleEdit(item.id)}>
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </DropdownMenuItem>
+                {actions?.onEdit && (
+                  <DropdownMenuItem onClick={() => actions.onEdit(item.id)}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                )}
                 {actions?.onDuplicate && (
                   <DropdownMenuItem onClick={() => actions.onDuplicate(item.id)}>
                     <Copy className="h-4 w-4 mr-2" />

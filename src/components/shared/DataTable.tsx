@@ -31,6 +31,7 @@ interface DataTableProps<T> {
     onDelete?: (id: string) => void;
     onDuplicate?: (id: string) => void;
     onShare?: (id: string) => void;
+    onEdit?: (id: string) => void;
     additionalActions?: Array<{
       label: string;
       onClick: (id: string) => void;
