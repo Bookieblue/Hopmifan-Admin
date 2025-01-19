@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { PaymentFilters } from "@/components/payments/PaymentFilters";
 import { DataTable, TableColumn } from "@/components/shared/DataTable";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Sample data - in a real app this would come from an API
 const payments = [
@@ -43,6 +44,7 @@ type Payment = typeof payments[0];
 
 export default function PaymentHistory() {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
@@ -160,6 +162,13 @@ Method: ${payment.method}
         handleApplyFilter={handleApplyFilter}
       />
 
+      {isMobile && (
+        <div className="flex justify-between items-center px-4 py-2 bg-gray-50 mb-4">
+          <span className="text-sm font-medium text-gray-600">Member</span>
+          <span className="text-sm font-medium text-gray-600">Status</span>
+        </div>
+      )}
+
       <div className="bg-white rounded-lg border">
         <DataTable
           data={filteredPayments}
@@ -186,7 +195,7 @@ Method: ${payment.method}
             { value: "export", label: "Export as CSV" }
           ]}
           CardComponent={({ item }) => (
-            <div className="space-y-2">
+            <div className="py-4 px-4 border-b last:border-b-0">
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-medium">{item.customer}</h3>
@@ -194,7 +203,7 @@ Method: ${payment.method}
                 </div>
                 <span className="text-sm font-medium">{item.amount}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
                 <span>{item.type}</span>
                 <span>•</span>
                 <span>{item.method}</span>
