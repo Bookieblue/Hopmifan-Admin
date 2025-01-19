@@ -9,11 +9,10 @@ export type Activity = {
   date: string;
   status: "completed" | "pending" | "upcoming";
   reference: string;
-  member?: string;
 }
 
 interface RecentActivityProps {
-  activities: Activity[];
+  activities?: Activity[];
   title?: string;
 }
 
@@ -30,7 +29,7 @@ const getStatusColor = (status: "completed" | "pending" | "upcoming") => {
   }
 };
 
-export function RecentActivity({ activities, title = "Recent Activity" }: RecentActivityProps) {
+export function RecentActivity({ activities = [], title = "Recent Activity" }: RecentActivityProps) {
   return (
     <Card>
       <CardHeader>
