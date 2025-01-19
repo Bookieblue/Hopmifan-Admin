@@ -29,10 +29,15 @@ const menuItems = [
     ]
   },
   { icon: CreditCard, label: "Payments", path: "/payments" },
-  { icon: Users, label: "New Members", path: "/customers", submenu: [
-    { label: "Members", path: "/customers" },
-    { label: "Events", path: "/events" }
-  ] },
+  { 
+    icon: Users, 
+    label: "New Members", 
+    path: "/customers", 
+    submenu: [
+      { label: "Members", path: "/customers" },
+      { label: "Events", path: "/events" }
+    ] 
+  },
   { icon: Speaker, label: "Sermons", path: "/sermons" },
   { icon: Mail, label: "Contact", path: "/contacts" },
   { icon: DollarSign, label: "Donations", path: "/donations" },
@@ -92,7 +97,9 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
                   <div className="pl-4 space-y-1 mt-1">
                     {item.submenu.map((subItem) => {
                       const isSubActive = location.pathname === subItem.path;
-                      const SubIcon = subItem.label === "Blog" ? Newspaper : BookOpen;
+                      const SubIcon = subItem.label === "Blog" ? Newspaper : 
+                                    subItem.label === "Events" ? Calendar :
+                                    BookOpen;
                       return (
                         <Link
                           key={subItem.path}
@@ -194,4 +201,3 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
     </nav>
   );
 }
-
