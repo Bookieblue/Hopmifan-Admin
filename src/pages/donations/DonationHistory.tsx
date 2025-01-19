@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { DataTable } from "@/components/shared/DataTable";
+import { DataTable, TableColumn } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -64,13 +64,32 @@ export default function DonationHistory() {
   const [selectedDonations, setSelectedDonations] = useState<string[]>([]);
   const [filteredDonations, setFilteredDonations] = useState(donations);
 
-  const columns = [
-    { header: "Donor Name", accessor: "donorName" },
-    { header: "Amount", accessor: "amount" },
-    { header: "Date", accessor: "date" },
-    { header: "Giving Type", accessor: "givingType" },
-    { header: "State", accessor: "state" },
-    { header: "Payment Method", accessor: "paymentMethod" }
+  const columns: TableColumn<Donation>[] = [
+    { 
+      header: "Donor Name", 
+      accessor: "donorName" 
+    },
+    { 
+      header: "Amount", 
+      accessor: "amount" 
+    },
+    { 
+      header: "Giving Type", 
+      accessor: "givingType" 
+    },
+    { 
+      header: "State", 
+      accessor: "state" 
+    },
+    { 
+      header: "Payment Info", 
+      accessor: (donation: Donation) => (
+        <div className="space-y-1">
+          <div>{donation.paymentMethod}</div>
+          <div className="text-sm text-gray-500">{donation.date}</div>
+        </div>
+      )
+    }
   ];
 
   const handleSearch = (query: string) => {
@@ -156,18 +175,27 @@ export default function DonationHistory() {
           getItemId={(item) => item.id}
           showCheckboxes={false}
           CardComponent={({ item }) => (
-            <div className="space-y-2">
-              <div className="flex justify-between items-start">
+            <div className="p-4 border-b last:border-b-0">
+              <div className="flex justify-between items-start mb-2">
                 <div>
                   <h3 className="font-medium">{item.donorName}</h3>
-                  <p className="text-sm text-gray-500">{item.date}</p>
+                  <p className="text-sm text-gray-500">{item.givingType}</p>
                 </div>
-                <span className="text-sm font-medium">{item.amount}</span>
+                <span className="font-medium">{item.amount}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <span>{item.givingType}</span>
-                <span>•</span>
-                <span>{item.paymentMethod}</span>
+              <div className="text-sm text-gray-500 space-y-1">
+                <div className="flex justify-between">
+                  <span>Payment Method:</span>
+                  <span>{item.paymentMethod}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Date:</span>
+                  <span>{item.date}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>State:</span>
+                  <span>{item.state}</span>
+                </div>
               </div>
             </div>
           )}
