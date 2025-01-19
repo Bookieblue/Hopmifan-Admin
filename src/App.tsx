@@ -21,7 +21,6 @@ import CreateEvent from "@/pages/events/CreateEvent";
 import SermonList from "@/pages/sermons/SermonList";
 import CreateSermon from "@/pages/sermons/CreateSermon";
 import Payments from "@/pages/payments/Index";
-import Settings from "@/pages/settings/Index";
 import ContactList from "@/pages/contacts/ContactList";
 import DonationList from "@/pages/donations/DonationList";
 import PrayerRequestList from "@/pages/prayers/PrayerRequestList";
@@ -48,7 +47,6 @@ function App() {
         <Route path="/sermons" element={<SermonList />} />
         <Route path="/sermons/create" element={<CreateSermon />} />
         <Route path="/payments" element={<Payments />} />
-        <Route path="/settings" element={<Settings />} />
         <Route path="/contacts" element={<ContactList />} />
         <Route path="/donations" element={<DonationList />} />
         <Route path="/prayers" element={<PrayerRequestList />} />
