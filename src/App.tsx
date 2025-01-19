@@ -26,6 +26,9 @@ import Settings from "@/pages/settings/Index";
 import Subscription from "@/pages/subscription/Index";
 import Pricing from "@/pages/pricing/Index";
 import { Toaster } from "@/components/ui/toaster";
+import BlogList from "@/pages/blog/BlogList";
+import CreateArticle from "@/pages/blog/CreateArticle";
+import EditArticle from "@/pages/blog/EditArticle";
 
 function App() {
   return (
@@ -33,38 +36,34 @@ function App() {
       <Routes>
         <Route path="/auth/signin" element={<SignIn />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-        <Route
-          path="/*"
-          element={
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/customers" element={<Customers />} />
-                <Route path="/customers/create" element={<CreateCustomer />} />
-                <Route path="/customers/:id" element={<CustomerDetails />} />
-                <Route path="/customers/:id/edit" element={<EditCustomer />} />
-                <Route path="/invoices" element={<Invoices />} />
-                <Route path="/invoices/create" element={<CreateInvoice />} />
-                <Route path="/invoices/:id/edit" element={<EditInvoice />} />
-                <Route path="/invoices/:id/preview" element={<PreviewInvoice />} />
-                <Route path="/invoices/:id" element={<ViewInvoice />} />
-                <Route path="/estimates" element={<Estimates />} />
-                <Route path="/estimates/create" element={<CreateEstimate />} />
-                <Route path="/estimates/:id/edit" element={<EditEstimate />} />
-                <Route path="/estimates/:id/preview" element={<PreviewEstimate />} />
-                <Route path="/estimates/:id" element={<ViewEstimate />} />
-                <Route path="/receipts" element={<Receipts />} />
-                <Route path="/receipts/create" element={<CreateReceipt />} />
-                <Route path="/receipts/:id/edit" element={<EditReceipt />} />
-                <Route path="/receipts/:id/preview" element={<PreviewReceipt />} />
-                <Route path="/receipts/:id" element={<ViewReceipt />} />
-                <Route path="/settings/*" element={<Settings />} />
-                <Route path="/subscription" element={<Subscription />} />
-                <Route path="/pricing" element={<Pricing />} />
-              </Routes>
-            </Layout>
-          }
-        />
+        <Route path="/*" element={<Layout><Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/customers" element={<Customers />} />
+          <Route path="/customers/create" element={<CreateCustomer />} />
+          <Route path="/customers/:id" element={<CustomerDetails />} />
+          <Route path="/customers/:id/edit" element={<EditCustomer />} />
+          <Route path="/invoices" element={<Invoices />} />
+          <Route path="/invoices/create" element={<CreateInvoice />} />
+          <Route path="/invoices/:id/edit" element={<EditInvoice />} />
+          <Route path="/invoices/:id/preview" element={<PreviewInvoice />} />
+          <Route path="/invoices/:id" element={<ViewInvoice />} />
+          <Route path="/estimates" element={<Estimates />} />
+          <Route path="/estimates/create" element={<CreateEstimate />} />
+          <Route path="/estimates/:id/edit" element={<EditEstimate />} />
+          <Route path="/estimates/:id/preview" element={<PreviewEstimate />} />
+          <Route path="/estimates/:id" element={<ViewEstimate />} />
+          <Route path="/receipts" element={<Receipts />} />
+          <Route path="/receipts/create" element={<CreateReceipt />} />
+          <Route path="/receipts/:id/edit" element={<EditReceipt />} />
+          <Route path="/receipts/:id/preview" element={<PreviewReceipt />} />
+          <Route path="/receipts/:id" element={<ViewReceipt />} />
+          <Route path="/blog" element={<BlogList />} />
+          <Route path="/blog/create" element={<CreateArticle />} />
+          <Route path="/blog/:id/edit" element={<EditArticle />} />
+          <Route path="/settings/*" element={<Settings />} />
+          <Route path="/subscription" element={<Subscription />} />
+          <Route path="/pricing" element={<Pricing />} />
+        </Routes></Layout>} />
       </Routes>
       <Toaster />
     </Router>
