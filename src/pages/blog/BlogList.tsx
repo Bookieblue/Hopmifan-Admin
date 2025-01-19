@@ -1,13 +1,12 @@
+<lov-code>
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
-import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
-import { Filter, Plus, Search } from "lucide-react";
+import { Plus, Filter, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
-import { FilterModal } from "@/components/blog/FilterModal";
+import { BlogCard } from "@/components/blog/BlogCard";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +17,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { BlogCard } from "@/components/blog/BlogCard";
 
 const sampleArticles = {
   "ART-001": {
@@ -88,36 +86,11 @@ export default function BlogList() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [authorFilter, setAuthorFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [dateFilter, setDateFilter] = useState("");
-  const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const postsPerPage = 15;
-  
-  // Initialize articles with sample data if none exist
-  const [blogs, setBlogs] = useState(() => {
-    const stored = localStorage.getItem('articles');
-    if (stored) {
-      const articles = JSON.parse(stored);
-      return Object.entries(articles).map(([id, article]: [string, any]) => ({
-        id,
-        ...article
-      }));
-    }
-    // If no articles exist, store sample articles and return them
-    localStorage.setItem('articles', JSON.stringify(sampleArticles));
-    return Object.entries(sampleArticles).map(([id, article]) => ({
-      id,
-      ...article
-    }));
-  });
-
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
-  const [shareDialogOpen, setShareDialogOpen] = useState(false);
-  const [selectedBlogId, setSelectedBlogId] = useState<string>("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState<string>("");
   const [bulkAction, setBulkAction] = useState("");
+  const postsPerPage = 15;
 
   const columns = [
     { header: "Title", accessor: "title" },
@@ -143,20 +116,22 @@ export default function BlogList() {
   };
 
   const confirmDelete = () => {
-    // Remove the blog from the state
-    setBlogs(blogs.filter(blog => blog.id !== blogToDelete));
+    const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
+    delete storedArticles[blogToDelete];
+    localStorage.setItem('articles', JSON.stringify(storedArticles));
+    
     toast({
-      description: `Article has been deleted successfully.`
+      description: "Article has been deleted successfully."
     });
     setDeleteDialogOpen(false);
     setBlogToDelete("");
-    // Clear selection if the deleted blog was selected
     setSelectedBlogs(selectedBlogs.filter(id => id !== blogToDelete));
+    window.location.reload();
   };
 
   const handleShare = async (blogId: string) => {
     try {
-      const url = `${window.location.origin}/blog/${blogId}`;
+      const url = `${window.location.origin}/articles/${blogId}`;
       await navigator.clipboard.writeText(url);
       toast({
         description: "Article link copied to clipboard!"
@@ -170,79 +145,67 @@ export default function BlogList() {
   };
 
   const handleBulkAction = () => {
+    const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
+    
     if (bulkAction === 'delete') {
-      // Remove all selected blogs from the state
-      setBlogs(blogs.filter(blog => !selectedBlogs.includes(blog.id)));
+      selectedBlogs.forEach(id => {
+        delete storedArticles[id];
+      });
+      localStorage.setItem('articles', JSON.stringify(storedArticles));
       toast({
         description: `${selectedBlogs.length} articles have been deleted.`
       });
       setSelectedBlogs([]);
-    } else if (bulkAction === 'export') {
-      // Simulate export functionality
-      const selectedBlogData = blogs.filter(blog => selectedBlogs.includes(blog.id));
-      console.log('Exporting:', selectedBlogData);
-      toast({
-        description: 'Articles exported successfully.'
-      });
+      window.location.reload();
     } else if (bulkAction === 'publish') {
-      // Update status to published for selected blogs
-      setBlogs(blogs.map(blog => 
-        selectedBlogs.includes(blog.id) ? { ...blog, status: 'published' } : blog
-      ));
+      selectedBlogs.forEach(id => {
+        if (storedArticles[id]) {
+          storedArticles[id].status = 'published';
+        }
+      });
+      localStorage.setItem('articles', JSON.stringify(storedArticles));
       toast({
         description: `${selectedBlogs.length} articles have been published.`
       });
       setSelectedBlogs([]);
+      window.location.reload();
     } else if (bulkAction === 'draft') {
-      // Update status to draft for selected blogs
-      setBlogs(blogs.map(blog => 
-        selectedBlogs.includes(blog.id) ? { ...blog, status: 'draft' } : blog
-      ));
+      selectedBlogs.forEach(id => {
+        if (storedArticles[id]) {
+          storedArticles[id].status = 'draft';
+        }
+      });
+      localStorage.setItem('articles', JSON.stringify(storedArticles));
       toast({
         description: `${selectedBlogs.length} articles have been moved to draft.`
       });
       setSelectedBlogs([]);
+      window.location.reload();
     }
     setBulkAction("");
   };
-
-  const filteredBlogs = blogs.filter(blog => {
-    const matchesSearch = blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         blog.author.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesAuthor = authorFilter === 'all' || blog.author === authorFilter;
-    const matchesStatus = statusFilter === 'all' || blog.status === statusFilter;
-    const matchesDate = !dateFilter || blog.publishDate === dateFilter;
-    
-    return matchesSearch && matchesAuthor && matchesStatus && matchesDate;
-  });
-
-  const totalPages = Math.ceil(filteredBlogs.length / postsPerPage);
-  const startIndex = (currentPage - 1) * postsPerPage;
-  const currentBlogs = filteredBlogs.slice(startIndex, startIndex + postsPerPage);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const uniqueAuthors = Array.from(new Set(blogs.map(blog => blog.author)));
-
-  const bulkActions = [
-    { value: "delete", label: "Delete Selected" },
-    { value: "export", label: "Export as CSV" },
-    { value: "publish", label: "Publish Selected" },
-    { value: "draft", label: "Move to Draft" },
-  ];
 
   const handleRowClick = (id: string) => {
     navigate(`/articles/${id}/edit`);
   };
 
+  const bulkActions = [
+    { value: "delete", label: "Delete Selected" },
+    { value: "publish", label: "Publish Selected" },
+    { value: "draft", label: "Move to Draft" },
+  ];
+
+  const filteredBlogs = Object.entries(sampleArticles).map(([id, article]) => ({
+    id,
+    ...article
+  }));
+
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+    <div className="w-full max-w-[1400px] mx-auto px-4 py-6">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Our Articles</h1>
+        <h1 className="text-2xl font-bold">Articles</h1>
         <Link to="/articles/create">
-          <Button size="default" className="bg-purple-600 hover:bg-purple-700 px-3 md:px-4">
+          <Button className="bg-purple-600 hover:bg-purple-700">
             <Plus className="h-4 w-4 mr-2" />
             New Article
           </Button>
@@ -264,7 +227,6 @@ export default function BlogList() {
           <Button
             variant="outline"
             className="flex items-center gap-2"
-            onClick={() => setFilterModalOpen(true)}
           >
             <Filter className="h-4 w-4" />
             Filters
@@ -272,21 +234,9 @@ export default function BlogList() {
         </div>
       </div>
 
-      <FilterModal
-        open={filterModalOpen}
-        onOpenChange={setFilterModalOpen}
-        authorFilter={authorFilter}
-        setAuthorFilter={setAuthorFilter}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        uniqueAuthors={uniqueAuthors}
-      />
-
-      <div className="bg-white md:rounded-lg md:border">
+      <div className="bg-white rounded-lg border">
         <DataTable
-          data={currentBlogs}
+          data={filteredBlogs}
           columns={columns}
           selectedItems={selectedBlogs}
           onSelectItem={(id, checked) => {
@@ -298,7 +248,7 @@ export default function BlogList() {
           }}
           onSelectAll={(checked) => {
             if (checked) {
-              setSelectedBlogs(currentBlogs.map(blog => blog.id));
+              setSelectedBlogs(filteredBlogs.map(blog => blog.id));
             } else {
               setSelectedBlogs([]);
             }
@@ -314,24 +264,9 @@ export default function BlogList() {
           onBulkAction={handleBulkAction}
           onRowClick={handleRowClick}
           CardComponent={BlogCard}
+          showCheckboxes={true}
         />
       </div>
-
-      {totalPages > 1 && (
-        <div className="mt-4">
-          <Pagination
-            total={totalPages}
-            value={currentPage}
-            onChange={handlePageChange}
-          />
-        </div>
-      )}
-
-      <ShareModal 
-        open={shareDialogOpen} 
-        onOpenChange={setShareDialogOpen}
-        blogId={selectedBlogId}
-      />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
@@ -345,11 +280,3 @@ export default function BlogList() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
-  );
-}
