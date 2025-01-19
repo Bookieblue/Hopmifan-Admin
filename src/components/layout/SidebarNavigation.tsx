@@ -6,8 +6,6 @@ import {
   FileText,
   Receipt,
   CreditCard,
-  Users,
-  Settings,
   ChevronRight,
   BookOpen,
   Newspaper,
@@ -30,11 +28,6 @@ const menuItems = [
   { icon: MessageSquare, label: "Contact Messages", path: "/contacts" },
   { icon: CreditCard, label: "Donations", path: "/donations" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
-  { icon: Users, label: "Members", path: "/customers" },
-];
-
-const accountMenuItems = [
-  { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
 interface SidebarNavigationProps {
@@ -43,7 +36,6 @@ interface SidebarNavigationProps {
 
 export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
   const location = useLocation();
-  const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
   const toggleSubmenu = (label: string) => {
@@ -132,59 +124,6 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
           </div>
         );
       })}
-
-      <div className="relative">
-        <button
-          onClick={() => setIsAccountOpen(!isAccountOpen)}
-          className={cn(
-            "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-            isCollapsed ? "justify-center" : "justify-between",
-            "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-          )}
-        >
-          <div className={cn("flex items-center gap-3", isCollapsed && "justify-center w-full")}>
-            <Users className="w-5 h-5 text-gray-500" />
-            {!isCollapsed && <span>Account</span>}
-          </div>
-          {!isCollapsed && (
-            <ChevronRight
-              className={cn(
-                "w-4 h-4 transition-transform",
-                isAccountOpen ? "rotate-90" : ""
-              )}
-            />
-          )}
-        </button>
-
-        {!isCollapsed && isAccountOpen && (
-          <div className="pl-4 space-y-1 mt-1">
-            {accountMenuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-purple-50 text-purple-600"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  )}
-                >
-                  <Icon
-                    className={cn(
-                      "w-5 h-5 flex-shrink-0",
-                      isActive ? "text-purple-600" : "text-gray-500"
-                    )}
-                  />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </div>
     </nav>
   );
 }
