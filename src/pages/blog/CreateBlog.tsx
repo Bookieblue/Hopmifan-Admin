@@ -23,13 +23,7 @@ export default function CreateBlog() {
       
       // Add new article
       articles[newId] = {
-        id: newId,
         ...data,
-        publishDate: new Date().toLocaleDateString('en-US', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
-        }),
         imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : undefined
       };
       

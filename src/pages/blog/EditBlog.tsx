@@ -11,6 +11,14 @@ type BlogData = {
   imagePreview?: string;
 };
 
+const getStoredArticles = (): Record<string, BlogData> => {
+  const stored = localStorage.getItem('articles');
+  if (stored) {
+    return JSON.parse(stored);
+  }
+  return {};
+};
+
 export default function EditBlog() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -18,18 +26,15 @@ export default function EditBlog() {
   const [initialData, setInitialData] = useState<BlogData | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem('articles');
-    if (stored && id) {
-      const articles = JSON.parse(stored);
-      if (articles[id]) {
-        setInitialData(articles[id]);
-      } else {
-        toast({
-          variant: "destructive",
-          description: "Article not found"
-        });
-        navigate("/articles");
-      }
+    const articles = getStoredArticles();
+    if (id && articles[id]) {
+      setInitialData(articles[id]);
+    } else {
+      toast({
+        variant: "destructive",
+        description: "Article not found"
+      });
+      navigate("/articles");
     }
   }, [id, navigate, toast]);
 
@@ -41,15 +46,11 @@ export default function EditBlog() {
     featureImage: File | null;
   }) => {
     try {
-      const stored = localStorage.getItem('articles');
-      if (stored && id) {
-        const articles = JSON.parse(stored);
+      const articles = getStoredArticles();
+      if (id) {
         articles[id] = {
-          ...articles[id],
           ...data,
-          imagePreview: data.featureImage 
-            ? URL.createObjectURL(data.featureImage) 
-            : articles[id].imagePreview
+          imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : articles[id].imagePreview
         };
         localStorage.setItem('articles', JSON.stringify(articles));
       }
