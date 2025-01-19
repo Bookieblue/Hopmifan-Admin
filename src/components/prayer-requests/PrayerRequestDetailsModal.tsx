@@ -30,9 +30,9 @@ export function PrayerRequestDetailsModal({
   const { toast } = useToast();
 
   const handleStatusChange = () => {
-    onStatusChange('replied');
+    onStatusChange('prayed');
     toast({
-      description: "Prayer request marked as replied"
+      description: "Prayer request marked as prayed"
     });
   };
 
@@ -78,15 +78,15 @@ export function PrayerRequestDetailsModal({
           <div className="flex justify-between items-center mt-4">
             <div className="flex items-center gap-2">
               <span className={`px-2 py-1 rounded-full text-xs ${
-                request.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                request.status === 'prayed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
               }`}>
-                {request.status === 'replied' ? 'Replied' : 'Pending'}
+                {request.status === 'prayed' ? 'Prayed' : 'Pending'}
               </span>
             </div>
             {request.status === 'pending' && (
-              <Button onClick={handleStatusChange} className="bg-green-600 hover:bg-green-700">
+              <Button onClick={handleStatusChange} variant="default" className="bg-green-600 hover:bg-green-700">
                 <Check className="h-4 w-4 mr-2" />
-                Mark as Replied
+                Mark as Prayed
               </Button>
             )}
           </div>
