@@ -10,7 +10,7 @@ type CustomPaginationProps = {
   onChange?: (page: number) => void;
 }
 
-type PaginationProps = React.HTMLAttributes<HTMLElement> & CustomPaginationProps;
+type PaginationProps = Omit<React.HTMLAttributes<HTMLElement>, 'onChange'> & CustomPaginationProps;
 
 const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
   ({ className, total = 1, value = 1, onChange, ...props }, ref) => {
