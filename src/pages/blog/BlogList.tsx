@@ -173,7 +173,7 @@ export default function BlogList() {
   ];
 
   const handleRowClick = (id: string) => {
-    navigate(`/blog/${id}/edit`);
+    navigate(`/articles/${id}/edit`);
   };
 
   return (
