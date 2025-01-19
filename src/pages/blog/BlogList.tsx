@@ -30,8 +30,8 @@ export default function BlogList() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [authorFilter, setAuthorFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [authorFilter, setAuthorFilter] = useState("all");  // Changed from empty string
+  const [statusFilter, setStatusFilter] = useState("all");  // Changed from empty string
   const [dateFilter, setDateFilter] = useState("");
   const postsPerPage = 15;
   
@@ -121,8 +121,8 @@ export default function BlogList() {
   const filteredBlogs = blogs.filter(blog => {
     const matchesSearch = blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          blog.author.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesAuthor = !authorFilter || blog.author === authorFilter;
-    const matchesStatus = !statusFilter || blog.status === statusFilter;
+    const matchesAuthor = authorFilter === 'all' || blog.author === authorFilter;
+    const matchesStatus = statusFilter === 'all' || blog.status === statusFilter;
     const matchesDate = !dateFilter || blog.publishDate === dateFilter;
     
     return matchesSearch && matchesAuthor && matchesStatus && matchesDate;
@@ -179,7 +179,7 @@ export default function BlogList() {
               <SelectValue placeholder="Filter by Author" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem key="all-authors" value="">All Authors</SelectItem>
+              <SelectItem value="all">All Authors</SelectItem>
               {uniqueAuthors.map((author) => (
                 <SelectItem key={author} value={author}>{author}</SelectItem>
               ))}
@@ -191,9 +191,9 @@ export default function BlogList() {
               <SelectValue placeholder="Filter by Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem key="all-statuses" value="">All Statuses</SelectItem>
-              <SelectItem key="published" value="published">Published</SelectItem>
-              <SelectItem key="draft" value="draft">Draft</SelectItem>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="published">Published</SelectItem>
+              <SelectItem value="draft">Draft</SelectItem>
             </SelectContent>
           </Select>
 
