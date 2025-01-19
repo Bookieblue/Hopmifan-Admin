@@ -1,4 +1,4 @@
-import { CustomerList } from "./CustomerList";
+import CustomerList from "./CustomerList";
 
 export default function Customers() {
   return <CustomerList />;

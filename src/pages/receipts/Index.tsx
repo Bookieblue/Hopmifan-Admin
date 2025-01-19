@@ -1,4 +1,4 @@
-import { ReceiptList } from "./ReceiptList";
+import ReceiptList from "./ReceiptList";
 
 export default function Receipts() {
   return <ReceiptList />;
