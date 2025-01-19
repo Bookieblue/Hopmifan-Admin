@@ -40,12 +40,12 @@ export function PaymentFilters({
         <div className="flex gap-4">
           <DatePicker
             date={startDate}
-            onSelect={setStartDate}
+            setDate={setStartDate}
             placeholder="Start date"
           />
           <DatePicker
             date={endDate}
-            onSelect={setEndDate}
+            setDate={setEndDate}
             placeholder="End date"
           />
           <Button onClick={handleApplyFilter} variant="outline">
