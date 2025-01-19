@@ -21,6 +21,7 @@ import SermonList from "@/pages/sermons/SermonList";
 import CreateSermon from "@/pages/sermons/CreateSermon";
 import EditSermon from "@/pages/sermons/EditSermon";
 import ViewSermon from "@/pages/sermons/ViewSermon";
+import PrayerRequestList from "@/pages/prayer-requests/PrayerRequestList";
 
 const router = createBrowserRouter([
   {
@@ -107,6 +108,10 @@ const router = createBrowserRouter([
       {
         path: "/sermons/:id",
         element: <ViewSermon />,
+      },
+      {
+        path: "/prayer-requests",
+        element: <PrayerRequestList />,
       }
     ],
   },
