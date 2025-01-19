@@ -39,12 +39,12 @@ export function PaymentFilters({
         </div>
         <div className="flex gap-4">
           <DatePicker
-            selected={startDate}
+            date={startDate}
             onSelect={setStartDate}
             placeholder="Start date"
           />
           <DatePicker
-            selected={endDate}
+            date={endDate}
             onSelect={setEndDate}
             placeholder="End date"
           />
