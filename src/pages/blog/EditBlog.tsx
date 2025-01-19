@@ -3,25 +3,26 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { BlogForm } from "@/components/blog/BlogForm";
 
+type BlogData = {
+  title: string;
+  content: string;
+  author: string;
+  status: "draft" | "published";
+};
+
 export default function EditBlog() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { id } = useParams();
-  const [initialData, setInitialData] = useState<{
-    title: string;
-    content: string;
-    author: string;
-    status: "draft" | "published";
-  } | null>(null);
+  const [initialData, setInitialData] = useState<BlogData | null>(null);
 
   useEffect(() => {
     // Mock data fetch - in a real app this would be an API call
-    // Here we're simulating fetching the article with its current status
-    const mockArticle = {
+    const mockArticle: BlogData = {
       title: "Sample Article",
       content: "<p>This is the content of the article...</p>",
       author: "John Doe",
-      status: "draft" as "draft" | "published", // Explicitly type the status
+      status: "draft"
     };
     setInitialData(mockArticle);
   }, [id]);
