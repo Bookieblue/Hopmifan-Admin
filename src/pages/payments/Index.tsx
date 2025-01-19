@@ -84,10 +84,62 @@ export default function PaymentHistory() {
   };
 
   const handleDownloadReceipt = (id: string) => {
-    // Here you would typically generate and download the receipt
+    // Generate receipt content
+    const payment = payments.find(p => p.id === id);
+    if (!payment) return;
+
+    const receiptContent = `
+Receipt
+-------
+Date: ${payment.date}
+Customer: ${payment.customer}
+Amount: ${payment.amount}
+Type: ${payment.type}
+Method: ${payment.method}
+    `;
+
+    // Create blob and download
+    const blob = new Blob([receiptContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `receipt-${id}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
     toast({
       title: "Receipt Downloaded",
       description: "Your receipt has been downloaded successfully",
+    });
+  };
+
+  const handleExportCSV = () => {
+    const selectedData = selectedPayments.length > 0 
+      ? filteredPayments.filter(p => selectedPayments.includes(p.id))
+      : filteredPayments;
+
+    const csvContent = [
+      ["Date", "Customer", "Type", "Amount", "Method"].join(","),
+      ...selectedData.map(payment => 
+        [payment.date, payment.customer, payment.type, payment.amount, payment.method].join(",")
+      )
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'payments.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "CSV Exported",
+      description: "Your payment data has been exported successfully",
     });
   };
 
@@ -131,7 +183,7 @@ export default function PaymentHistory() {
             }]
           }}
           bulkActions={[
-            { value: "export", label: "Export as CSV" }
+            { value: "export", label: "Export as CSV", onClick: handleExportCSV }
           ]}
           CardComponent={({ item }) => (
             <div className="space-y-2">
