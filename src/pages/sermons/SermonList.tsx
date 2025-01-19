@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
-import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
 import { Filter, Plus, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -30,7 +29,8 @@ const sampleSermons = {
       year: 'numeric'
     }),
     status: "published",
-    youtubeLink: "https://youtube.com/watch?v=example1"
+    youtubeLink: "https://youtube.com/watch?v=example1",
+    thumbnailUrl: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9"
   },
   "SER-002": {
     title: "The Power of Prayer",
@@ -42,7 +42,8 @@ const sampleSermons = {
       year: 'numeric'
     }),
     status: "published",
-    youtubeLink: "https://youtube.com/watch?v=example2"
+    youtubeLink: "https://youtube.com/watch?v=example2",
+    thumbnailUrl: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9"
   }
 };
 
@@ -164,6 +165,20 @@ export default function SermonList() {
         </div>
       )
     },
+    {
+      header: "YouTube",
+      accessor: (sermon: any) => (
+        <a 
+          href={sermon.youtubeLink} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline"
+          onClick={(e) => e.stopPropagation()}
+        >
+          Watch
+        </a>
+      )
+    }
   ];
 
   return (
@@ -230,6 +245,7 @@ export default function SermonList() {
           onBulkAction={handleBulkAction}
           onRowClick={handleRowClick}
           CardComponent={SermonCard}
+          showCheckboxes={true}
         />
       </div>
 
