@@ -53,50 +53,16 @@ export default function Index() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <StatsGrid />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-2">
+      <div className="grid grid-cols-1">
+        <Card>
           <RecentActivity 
             activities={recentActivities}
             title="Recent Activities"
           />
-        </Card>
-
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-          <div className="space-y-4">
-            <a 
-              href="/prayer-requests" 
-              className="block p-4 rounded-lg border border-border hover:bg-accent transition-colors"
-            >
-              <h3 className="font-medium">Prayer Requests</h3>
-              <p className="text-sm text-muted-foreground">View and respond to prayer requests</p>
-            </a>
-            <a 
-              href="/sermons" 
-              className="block p-4 rounded-lg border border-border hover:bg-accent transition-colors"
-            >
-              <h3 className="font-medium">Sermons</h3>
-              <p className="text-sm text-muted-foreground">Upload and manage sermons</p>
-            </a>
-            <a 
-              href="/events" 
-              className="block p-4 rounded-lg border border-border hover:bg-accent transition-colors"
-            >
-              <h3 className="font-medium">Events</h3>
-              <p className="text-sm text-muted-foreground">Create and manage church events</p>
-            </a>
-            <a 
-              href="/donations" 
-              className="block p-4 rounded-lg border border-border hover:bg-accent transition-colors"
-            >
-              <h3 className="font-medium">Donations</h3>
-              <p className="text-sm text-muted-foreground">Track and manage donations</p>
-            </a>
-          </div>
         </Card>
       </div>
     </div>

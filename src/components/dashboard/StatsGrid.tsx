@@ -30,73 +30,57 @@ export function StatsGrid() {
 
   return (
     <>
-      <Link to="/donations" className="flex flex-col items-start space-y-2 group hover:bg-gray-50 p-4 rounded-lg transition-colors">
-        <div className="flex flex-col w-full">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center gap-2">
-                <CircleDot className="text-green-500 h-4 w-4" />
-                <span className="text-lg">Total Donations</span>
-              </div>
-              <span className="text-[34px] font-semibold leading-none">
-                ₦{totalDonations.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-              </span>
+      <Card className="p-6 hover:shadow-lg transition-shadow">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <CircleDot className="text-green-500 h-4 w-4" />
+              <span className="text-lg font-medium">Total Donations</span>
             </div>
-            <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors self-center" />
+            <span className="text-3xl font-bold block">
+              ₦{totalDonations.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+            </span>
           </div>
         </div>
-      </Link>
+      </Card>
 
-      <Link to="/bookstore" className="flex flex-col items-start space-y-2 group hover:bg-gray-50 p-4 rounded-lg transition-colors">
-        <div className="flex flex-col w-full">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center gap-2">
-                <CircleDot className="text-orange-500 h-4 w-4" />
-                <span className="text-lg">Bookstore Sales</span>
-              </div>
-              <span className="text-[34px] font-semibold leading-none">
-                ₦{bookstoreSales.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
-              </span>
+      <Card className="p-6 hover:shadow-lg transition-shadow">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <CircleDot className="text-orange-500 h-4 w-4" />
+              <span className="text-lg font-medium">Bookstore Sales</span>
             </div>
-            <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors self-center" />
+            <span className="text-3xl font-bold block">
+              ₦{bookstoreSales.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+            </span>
           </div>
         </div>
-      </Link>
+      </Card>
 
-      <Link to="/prayer-requests" className="flex flex-col items-start space-y-2 group hover:bg-gray-50 p-4 rounded-lg transition-colors">
-        <div className="flex flex-col w-full">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center gap-2">
-                <CircleDot className="text-blue-500 h-4 w-4" />
-                <span className="text-lg">{prayerRequests} Prayer Requests</span>
-              </div>
-              <span className="text-[34px] font-semibold leading-none">
-                {prayerRequests}
-              </span>
+      <Card className="p-6 hover:shadow-lg transition-shadow">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <CircleDot className="text-blue-500 h-4 w-4" />
+              <span className="text-lg font-medium">Prayer Requests</span>
             </div>
-            <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors self-center" />
+            <span className="text-3xl font-bold block">{prayerRequests}</span>
           </div>
         </div>
-      </Link>
+      </Card>
 
-      <Link to="/membership" className="flex flex-col items-start space-y-2 group hover:bg-gray-50 p-4 rounded-lg transition-colors">
-        <div className="flex flex-col w-full">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center gap-2">
-                <CircleDot className="text-purple-500 h-4 w-4" />
-                <span className="text-lg">{membershipRequests} Membership Requests</span>
-              </div>
-              <span className="text-[34px] font-semibold leading-none">
-                {membershipRequests}
-              </span>
+      <Card className="p-6 hover:shadow-lg transition-shadow">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <CircleDot className="text-purple-500 h-4 w-4" />
+              <span className="text-lg font-medium">Membership Requests</span>
             </div>
-            <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors self-center" />
+            <span className="text-3xl font-bold block">{membershipRequests}</span>
           </div>
         </div>
-      </Link>
+      </Card>
     </>
   );
 }
