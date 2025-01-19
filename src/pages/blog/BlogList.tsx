@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
@@ -98,6 +97,10 @@ const BlogList = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
+  const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [blogToDelete, setBlogToDelete] = useState<string>("");
+  const [bulkAction, setBulkAction] = useState("");
   const postsPerPage = 15;
   
   const [blogs, setBlogs] = useState(() => {
@@ -115,11 +118,6 @@ const BlogList = () => {
       ...article
     }));
   });
-
-  const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [blogToDelete, setBlogToDelete] = useState<string>("");
-  const [bulkAction, setBulkAction] = useState("");
 
   const handleDelete = (blogId: string) => {
     setBlogToDelete(blogId);
