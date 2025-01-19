@@ -163,7 +163,6 @@ export default function BookstoreList() {
           getItemId={(book) => book.id}
           actions={{
             onDelete: handleDelete,
-            onStatusChange: handleStatusChange,
             additionalActions: [
               {
                 label: "Edit",
