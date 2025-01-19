@@ -1,4 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface MemberDetailsModalProps {
   open: boolean;
@@ -13,14 +16,26 @@ interface MemberDetailsModalProps {
     preferredContact: string;
     prayerRequest: string;
     dateSubmitted: string;
+    status: string;
   } | null;
+  onStatusChange: (status: string) => void;
 }
 
 export function MemberDetailsModal({
   open,
   onOpenChange,
   member,
+  onStatusChange,
 }: MemberDetailsModalProps) {
+  const { toast } = useToast();
+
+  const handleStatusChange = () => {
+    onStatusChange('replied');
+    toast({
+      description: "Member marked as replied"
+    });
+  };
+
   if (!member) return null;
 
   return (
@@ -59,6 +74,21 @@ export function MemberDetailsModal({
           <div>
             <h3 className="font-medium mb-2">Prayer Request</h3>
             <p className="text-gray-600 whitespace-pre-wrap">{member.prayerRequest}</p>
+          </div>
+          <div className="flex justify-between items-center mt-4">
+            <div className="flex items-center gap-2">
+              <span className={`px-2 py-1 rounded-full text-xs ${
+                member.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+              }`}>
+                {member.status === 'replied' ? 'Replied' : 'Pending'}
+              </span>
+            </div>
+            {member.status === 'pending' && (
+              <Button onClick={handleStatusChange} className="bg-green-600 hover:bg-green-700">
+                <Check className="h-4 w-4 mr-2" />
+                Mark as Replied
+              </Button>
+            )}
           </div>
         </div>
       </DialogContent>

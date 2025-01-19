@@ -16,7 +16,6 @@ import {
 
 const menuItems = [
   { icon: LayoutGrid, label: "Overview", path: "/" },
-  { icon: Users, label: "New Members", path: "/new-members" },
   {
     icon: FileText,
     label: "Publications",
@@ -28,8 +27,9 @@ const menuItems = [
   },
   { icon: Calendar, label: "Events", path: "/events" },
   { icon: MessageSquare, label: "Contact Messages", path: "/contacts" },
-  { icon: CreditCard, label: "Donations", path: "/donations" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
+  { icon: Users, label: "New Members", path: "/new-members" },
+  { icon: CreditCard, label: "Donations", path: "/donations" },
 ];
 
 interface SidebarNavigationProps {

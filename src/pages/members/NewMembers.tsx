@@ -17,7 +17,8 @@ const sampleMembers = [
     cityState: "Lagos, LA",
     preferredContact: "whatsapp",
     prayerRequest: "Please pray for my family's health and well-being.",
-    dateSubmitted: new Date(2024, 2, 15).toLocaleDateString()
+    dateSubmitted: new Date(2024, 2, 15).toLocaleDateString(),
+    status: "pending"
   },
   {
     id: "2",
@@ -29,7 +30,8 @@ const sampleMembers = [
     cityState: "Abuja, FC",
     preferredContact: "phone",
     prayerRequest: "I need prayers for my upcoming job interview.",
-    dateSubmitted: new Date(2024, 2, 14).toLocaleDateString()
+    dateSubmitted: new Date(2024, 2, 14).toLocaleDateString(),
+    status: "replied"
   }
 ];
 
@@ -69,12 +71,30 @@ export default function NewMembers() {
       )
     },
     { 
-      header: "Date Submitted", 
+      header: "Status & Date", 
       accessor: (member: any) => (
-        <div className="text-sm">{member.dateSubmitted}</div>
+        <div>
+          <span className={`px-2 py-1 rounded-full text-xs ${
+            member.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            {member.status === 'replied' ? 'Replied' : 'Pending'}
+          </span>
+          <div className="text-sm text-gray-500 mt-1">{member.dateSubmitted}</div>
+        </div>
       )
     },
   ];
+
+  const handleStatusChange = (status: string) => {
+    if (selectedMember) {
+      setMembers(members.map(member => 
+        member.id === selectedMember.id 
+          ? { ...member, status }
+          : member
+      ));
+      setDetailsModalOpen(false);
+    }
+  };
 
   const filteredMembers = members.filter(member => {
     const searchString = searchQuery.toLowerCase();
@@ -122,6 +142,7 @@ export default function NewMembers() {
         open={detailsModalOpen}
         onOpenChange={setDetailsModalOpen}
         member={selectedMember}
+        onStatusChange={handleStatusChange}
       />
 
       <div className="bg-white md:rounded-lg md:border">
@@ -150,7 +171,11 @@ export default function NewMembers() {
                   <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
                   <p className="text-sm text-gray-500">{item.email}</p>
                 </div>
-                <span className="text-sm text-gray-500">{item.dateSubmitted}</span>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {item.status === 'replied' ? 'Replied' : 'Pending'}
+                </span>
               </div>
             </div>
           )}
