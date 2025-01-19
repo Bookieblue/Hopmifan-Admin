@@ -9,27 +9,27 @@ import { ContactDetailsModal } from "@/components/contacts/ContactDetailsModal";
 const sampleContacts = [
   {
     id: "1",
-    firstName: "John",
-    lastName: "Doe",
-    phone: "+1 234 567 8900",
-    email: "john.doe@example.com",
-    country: "United States",
-    cityState: "New York, NY",
-    preferredContact: "email",
-    message: "I'm interested in your services",
+    firstName: "Oluwaseun",
+    lastName: "Adebayo",
+    phone: "+234 801 234 5678",
+    email: "oluwaseun.adebayo@gmail.com",
+    country: "Nigeria",
+    cityState: "Lagos, LA",
+    preferredContact: "whatsapp",
+    message: "I would like to join the church choir ministry. When are the rehearsals scheduled?",
     dateSubmitted: new Date(2024, 2, 15).toLocaleDateString(),
     status: "pending"
   },
   {
     id: "2",
-    firstName: "Jane",
-    lastName: "Smith",
-    phone: "+1 234 567 8901",
-    email: "jane.smith@example.com",
-    country: "Canada",
-    cityState: "Toronto, ON",
+    firstName: "Chioma",
+    lastName: "Okonkwo",
+    phone: "+234 802 345 6789",
+    email: "chioma.okonkwo@yahoo.com",
+    country: "Nigeria",
+    cityState: "Abuja, FC",
     preferredContact: "phone",
-    message: "Please contact me regarding your products",
+    message: "God bless you. I'm interested in the youth fellowship program. Please provide more information.",
     dateSubmitted: new Date(2024, 2, 14).toLocaleDateString(),
     status: "replied"
   }
@@ -60,7 +60,7 @@ export default function ContactMessages() {
       accessor: (contact: any) => (
         <div>
           <div>{contact.phone}</div>
-          <div className="text-sm text-gray-500">{contact.preferredContact === 'email' ? 'Prefers Email' : 'Prefers Phone'}</div>
+          <div className="text-sm text-gray-500 capitalize">{contact.preferredContact} preferred</div>
         </div>
       )
     },
@@ -178,6 +178,7 @@ export default function ContactMessages() {
           onSelectAll={() => {}}
           getItemId={(item) => item.id}
           onRowClick={handleRowClick}
+          showCheckboxes={false}
         />
       </div>
     </div>

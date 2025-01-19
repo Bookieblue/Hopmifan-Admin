@@ -32,10 +32,7 @@ export interface DataTableProps<T> {
   CardComponent?: React.ComponentType<{ item: T; actions?: Actions }>;
   basePath?: string;
   actions?: Actions;
-  bulkAction?: string;
-  setBulkAction?: (value: string) => void;
-  onBulkAction?: () => void;
-  bulkActions?: { value: string; label: string }[];
+  showCheckboxes?: boolean;
 }
 
 export function DataTable<T>({
@@ -49,10 +46,7 @@ export function DataTable<T>({
   CardComponent,
   basePath = "articles",
   actions,
-  bulkAction,
-  setBulkAction,
-  onBulkAction,
-  bulkActions
+  showCheckboxes = false
 }: DataTableProps<T>) {
   const isMobile = useIsMobile();
 
@@ -68,20 +62,24 @@ export function DataTable<T>({
   if (isMobile && CardComponent) {
     return (
       <div className="space-y-4">
-        <div className="px-4 py-2 flex items-center gap-3 border-b">
-          <Checkbox
-            checked={selectedItems.length === data.length}
-            onCheckedChange={onSelectAll}
-          />
-          <h2 className="font-semibold text-lg">Items</h2>
-        </div>
+        {showCheckboxes && (
+          <div className="px-4 py-2 flex items-center gap-3 border-b">
+            <Checkbox
+              checked={selectedItems.length === data.length}
+              onCheckedChange={onSelectAll}
+            />
+            <h2 className="font-semibold text-lg">Items</h2>
+          </div>
+        )}
         <div className="px-4">
           {data.map((item) => (
             <div key={getItemId(item)} className="flex items-center gap-2">
-              <Checkbox
-                checked={selectedItems.includes(getItemId(item))}
-                onCheckedChange={(checked) => onSelectItem(getItemId(item), checked as boolean)}
-              />
+              {showCheckboxes && (
+                <Checkbox
+                  checked={selectedItems.includes(getItemId(item))}
+                  onCheckedChange={(checked) => onSelectItem(getItemId(item), checked as boolean)}
+                />
+              )}
               <div className="flex-1">
                 <CardComponent item={item} actions={actions} />
               </div>
@@ -97,12 +95,14 @@ export function DataTable<T>({
       <table className="w-full">
         <thead>
           <tr className="border-b">
-            <th className="px-4 py-3 text-left">
-              <Checkbox
-                checked={selectedItems.length === data.length}
-                onCheckedChange={onSelectAll}
-              />
-            </th>
+            {showCheckboxes && (
+              <th className="px-4 py-3 text-left">
+                <Checkbox
+                  checked={selectedItems.length === data.length}
+                  onCheckedChange={onSelectAll}
+                />
+              </th>
+            )}
             {columns.map((column, index) => (
               <th
                 key={index}
@@ -125,13 +125,15 @@ export function DataTable<T>({
                 className="border-b last:border-b-0 hover:bg-gray-50 cursor-pointer"
                 onClick={(e) => handleRowClick(e, id)}
               >
-                <td className="px-4 py-3 checkbox-cell">
-                  <Checkbox
-                    checked={selectedItems.includes(id)}
-                    onCheckedChange={(checked) => onSelectItem(id, checked as boolean)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </td>
+                {showCheckboxes && (
+                  <td className="px-4 py-3 checkbox-cell">
+                    <Checkbox
+                      checked={selectedItems.includes(id)}
+                      onCheckedChange={(checked) => onSelectItem(id, checked as boolean)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </td>
+                )}
                 {columns.map((column, index) => (
                   <td
                     key={index}
