@@ -13,18 +13,33 @@ export default function CreateBlog() {
     status: "draft" | "published";
     featureImage: File | null;
   }) => {
-    // In a real app, this would be an API call
-    const newPost = {
-      id: `BLG-${Math.floor(Math.random() * 1000)}`,
-      ...data,
-      publishDate: new Date().toISOString(),
-    };
-
-    toast({
-      description: `Article ${data.status === 'draft' ? 'saved as draft' : 'published'} successfully!`
-    });
-    
-    navigate("/articles");
+    try {
+      // Get existing articles
+      const stored = localStorage.getItem('articles');
+      const articles = stored ? JSON.parse(stored) : {};
+      
+      // Generate a new ID
+      const newId = `ART-${String(Object.keys(articles).length + 1).padStart(3, '0')}`;
+      
+      // Add new article
+      articles[newId] = {
+        ...data,
+        imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : undefined
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('articles', JSON.stringify(articles));
+      
+      toast({
+        description: `Article ${data.status === 'draft' ? 'saved as draft' : 'published'} successfully!`
+      });
+      navigate("/articles");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Failed to create article"
+      });
+    }
   };
 
   return <BlogForm onSubmit={handleSubmit} />;

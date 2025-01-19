@@ -31,28 +31,18 @@ export default function BlogList() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const postsPerPage = 15;
   
-  const [blogs, setBlogs] = useState(Array.from({ length: 32 }, (_, i) => ({ 
-    id: `ART-${String(i + 1).padStart(3, '0')}`,
-    title: [
-      "The Rise of African Pentecostalism in Modern Times",
-      "Understanding African Traditional Religion and Christianity",
-      "The Impact of African Church Leaders in Global Christianity",
-      "Revival Movements in East African Churches",
-      "African Women in Church Leadership",
-      "The Role of Music in African Christian Worship",
-      "African Christian Theology: A Contemporary Perspective",
-      "Church Growth in Sub-Saharan Africa",
-      "African Christian Youth Movements",
-      "The Influence of African Spirituality on Global Christianity"
-    ][i % 10],
-    author: i % 2 === 0 ? "Pastor John" : "Sarah Smith",
-    publishDate: new Date(2024, 2, 15 - i).toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    }).replace(',', ''),
-    status: i % 3 === 0 ? "draft" : "published"
-  })));
+  // Get articles from localStorage instead of using mock data
+  const [blogs, setBlogs] = useState(() => {
+    const stored = localStorage.getItem('articles');
+    if (stored) {
+      const articles = JSON.parse(stored);
+      return Object.entries(articles).map(([id, article]: [string, any]) => ({
+        id,
+        ...article
+      }));
+    }
+    return [];
+  });
 
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
@@ -295,3 +285,4 @@ export default function BlogList() {
     </div>
   );
 }
+

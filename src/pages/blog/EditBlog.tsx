@@ -11,29 +11,12 @@ type BlogData = {
   imagePreview?: string;
 };
 
-// This would typically come from your backend/API
-// For now, we'll store it in localStorage to persist the data
 const getStoredArticles = (): Record<string, BlogData> => {
   const stored = localStorage.getItem('articles');
   if (stored) {
     return JSON.parse(stored);
   }
-  // Default articles if none stored
-  return {
-    "1": {
-      title: "How to Build React Apps",
-      content: "<p>React is a powerful library for building user interfaces...</p>",
-      author: "John Doe",
-      status: "draft",
-      imagePreview: "/path/to/image.jpg"
-    },
-    "2": {
-      title: "TypeScript Best Practices",
-      content: "<p>TypeScript adds static typing to JavaScript...</p>",
-      author: "Jane Smith",
-      status: "published"
-    }
-  };
+  return {};
 };
 
 export default function EditBlog() {
@@ -63,8 +46,6 @@ export default function EditBlog() {
     featureImage: File | null;
   }) => {
     try {
-      // In a real app, this would be an API call
-      // For now, we'll update localStorage
       const articles = getStoredArticles();
       if (id) {
         articles[id] = {
