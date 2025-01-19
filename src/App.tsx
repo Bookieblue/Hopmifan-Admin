@@ -22,6 +22,8 @@ import CreateSermon from "@/pages/sermons/CreateSermon";
 import EditSermon from "@/pages/sermons/EditSermon";
 import ViewSermon from "@/pages/sermons/ViewSermon";
 import PrayerRequestList from "@/pages/prayer-requests/PrayerRequestList";
+import SignIn from "@/pages/auth/SignIn";
+import ForgotPassword from "@/pages/auth/ForgotPassword";
 
 const router = createBrowserRouter([
   {
@@ -114,6 +116,14 @@ const router = createBrowserRouter([
         element: <PrayerRequestList />,
       }
     ],
+  },
+  {
+    path: "/auth/signin",
+    element: <SignIn />,
+  },
+  {
+    path: "/auth/forgot-password",
+    element: <ForgotPassword />,
   },
 ]);
 

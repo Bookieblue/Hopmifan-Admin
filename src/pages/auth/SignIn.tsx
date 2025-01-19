@@ -90,7 +90,7 @@ export default function SignIn() {
                   placeholder="you@example.com"
                   required
                   disabled={isLoading}
-                  className="h-14" // Set height to 56px (14 = 3.5rem = 56px)
+                  className="h-14"
                 />
               </div>
 
@@ -104,7 +104,7 @@ export default function SignIn() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={isLoading}
-                    className="h-14" // Set height to 56px
+                    className="h-14"
                   />
                   <button
                     type="button"
