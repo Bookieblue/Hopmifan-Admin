@@ -19,7 +19,6 @@ export default function SignIn() {
     setIsLoading(true);
 
     try {
-      // Validate email and password
       if (!email || !password) {
         throw new Error("Please fill in all fields");
       }
@@ -32,7 +31,6 @@ export default function SignIn() {
         throw new Error("Password must be at least 6 characters long");
       }
 
-      // TODO: Implement actual authentication
       toast({
         title: "Success",
         description: "Welcome back to Cordlo!",
@@ -54,8 +52,8 @@ export default function SignIn() {
       <header className="w-full p-6 flex justify-between items-center">
         <Link to="/" className="flex items-center">
           <img 
-            src="/lovable-uploads/43d04b44-fc73-46eb-8543-89f240871e1d.png" 
-            alt="Cordlo Logo" 
+            src="/lovable-uploads/6a8f39bd-d44e-4077-910a-9365f8d34d90.png" 
+            alt="Logo" 
             className="h-8 w-auto"
           />
         </Link>
@@ -70,7 +68,7 @@ export default function SignIn() {
       </header>
 
       <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8 h-[calc(100vh-73px)]">
-        <div className="w-full max-w-md space-y-8">
+        <div className="w-full max-w-sm space-y-8">
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-bold tracking-tight">Welcome back</h2>
             <p className="text-muted-foreground">
@@ -90,7 +88,7 @@ export default function SignIn() {
                   placeholder="you@example.com"
                   required
                   disabled={isLoading}
-                  className="h-14" // Set height to 56px (14 = 3.5rem = 56px)
+                  className="h-10" // Reduced height from h-14 to h-10
                 />
               </div>
 
@@ -104,7 +102,7 @@ export default function SignIn() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={isLoading}
-                    className="h-14" // Set height to 56px
+                    className="h-10" // Reduced height from h-14 to h-10
                   />
                   <button
                     type="button"
@@ -131,16 +129,9 @@ export default function SignIn() {
               </Link>
             </div>
 
-            <Button type="submit" className="w-full h-14" disabled={isLoading}>
+            <Button type="submit" className="w-full h-10" disabled={isLoading}>
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
-
-            <p className="text-center text-sm">
-              Don't have an account?{" "}
-              <Link to="/auth/signup" className="text-primary hover:underline">
-                Sign up
-              </Link>
-            </p>
           </form>
         </div>
       </div>
