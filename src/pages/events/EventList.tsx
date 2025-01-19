@@ -7,6 +7,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/events/FilterModal";
 import { useToast } from "@/hooks/use-toast";
+import { EventCard } from "@/components/events/EventCard";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -247,6 +248,7 @@ export default function EventList() {
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
+          CardComponent={EventCard}
         />
       </div>
 
