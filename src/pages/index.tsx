@@ -35,7 +35,7 @@ const recentActivities: Activity[] = [
     reference: "EVT001"
   },
   {
-    type: "Contact",
+    type: "Members Request",
     description: "New contact message regarding membership",
     date: "2024-03-16",
     status: "pending",
@@ -58,12 +58,10 @@ export default function Index() {
       </div>
 
       <div className="grid grid-cols-1">
-        <Card>
-          <RecentActivity 
-            activities={recentActivities}
-            title="Recent Activities"
-          />
-        </Card>
+        <RecentActivity 
+          activities={recentActivities}
+          title="Recent Activities"
+        />
       </div>
     </div>
   );

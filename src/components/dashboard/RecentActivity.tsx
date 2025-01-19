@@ -1,9 +1,10 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleIcon } from "lucide-react";
+import { format } from "date-fns";
 
 export type Activity = {
-  type: "Publication" | "Event" | "Contact" | "Donation" | "Membership" | "Sermon";
+  type: "Publication" | "Event" | "Contact" | "Donation" | "Members Request" | "Sermon";
   description: string;
   amount?: number;
   date: string;
@@ -70,7 +71,7 @@ export function RecentActivity({ activities = [], title = "Recent Activity" }: R
                   </span>
                 </TableCell>
                 <TableCell className="whitespace-nowrap">
-                  {activity.date}
+                  {format(new Date(activity.date), 'dd/MM/yyyy')}
                 </TableCell>
               </TableRow>
             ))}
