@@ -3,7 +3,7 @@ import { Table } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { PaymentTableHeader } from "@/components/payments/PaymentTableHeader";
 import { PaymentFilters } from "@/components/payments/PaymentFilters";
-import { DataTable } from "@/components/shared/DataTable";
+import { DataTable, TableColumn } from "@/components/shared/DataTable";
 
 // Sample data - in a real app this would come from an API
 const payments = [
@@ -45,6 +45,8 @@ const payments = [
   }
 ];
 
+type Payment = typeof payments[0];
+
 export default function PaymentHistory() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,7 +56,7 @@ export default function PaymentHistory() {
   const [bulkAction, setBulkAction] = useState<string>("");
   const [filteredPayments, setFilteredPayments] = useState(payments);
 
-  const columns = [
+  const columns: TableColumn<Payment>[] = [
     { header: "Date", accessor: "date" },
     { header: "Customer", accessor: "customer" },
     { header: "Amount", accessor: "amount" },
