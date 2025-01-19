@@ -71,7 +71,10 @@ export function StatsGrid() {
               <CircleDot className="text-blue-500 h-4 w-4" />
               <span className="text-lg font-medium">Prayer Requests</span>
             </div>
-            <span className="text-3xl font-bold block">{data.prayerRequests}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-3xl font-bold">{data.prayerRequests}</span>
+              <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Pending</span>
+            </div>
           </div>
         </div>
       </Card>
@@ -83,7 +86,10 @@ export function StatsGrid() {
               <CircleDot className="text-purple-500 h-4 w-4" />
               <span className="text-lg font-medium">Members Request</span>
             </div>
-            <span className="text-3xl font-bold block">{data.membershipRequests}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-3xl font-bold">{data.membershipRequests}</span>
+              <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Pending</span>
+            </div>
           </div>
         </div>
       </Card>

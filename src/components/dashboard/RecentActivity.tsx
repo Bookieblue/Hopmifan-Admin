@@ -111,10 +111,10 @@ export function RecentActivity({
 
   return (
     <Card className={className}>
-      <CardHeader>
+      <CardHeader className="pb-2">
         <CardTitle className={cn("text-[18px]", titleClassName)}>{title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-2">
         <Table>
           <TableHeader>
             <TableRow>
