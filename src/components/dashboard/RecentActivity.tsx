@@ -1,9 +1,10 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CircleIcon } from "lucide-react";
+import { CircleIcon, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 
 export type Activity = {
   type: "Publication" | "Event" | "Contact" | "Donation" | "Members Request" | "Sermon";
@@ -34,6 +35,25 @@ const getStatusColor = (status: "completed" | "pending" | "upcoming") => {
   }
 };
 
+const getActivityPath = (activity: Activity) => {
+  switch (activity.type) {
+    case "Publication":
+      return "/blog";
+    case "Event":
+      return "/events";
+    case "Contact":
+      return "/contacts";
+    case "Donation":
+      return "/donations";
+    case "Members Request":
+      return "/members";
+    case "Sermon":
+      return "/sermons";
+    default:
+      return "/";
+  }
+};
+
 export function RecentActivity({ 
   activities = [], 
   title = "Recent Activity",
@@ -41,13 +61,23 @@ export function RecentActivity({
   titleClassName
 }: RecentActivityProps) {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+
+  const handleActivityClick = (activity: Activity) => {
+    const path = getActivityPath(activity);
+    navigate(path);
+  };
 
   if (isMobile) {
     return (
       <div className="space-y-4">
         <h2 className={cn("text-[18px] font-semibold", titleClassName)}>{title}</h2>
         {activities.map((activity, index) => (
-          <div key={index} className="py-4 border-b last:border-b-0">
+          <div 
+            key={index} 
+            className="py-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={() => handleActivityClick(activity)}
+          >
             <div className="flex flex-col gap-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
@@ -70,6 +100,7 @@ export function RecentActivity({
                     )}
                   </div>
                 </div>
+                <ChevronRight className="h-5 w-5 text-gray-400" />
               </div>
             </div>
           </div>
@@ -95,7 +126,11 @@ export function RecentActivity({
           </TableHeader>
           <TableBody>
             {activities.map((activity, index) => (
-              <TableRow key={index}>
+              <TableRow 
+                key={index}
+                className="cursor-pointer hover:bg-gray-50 transition-colors"
+                onClick={() => handleActivityClick(activity)}
+              >
                 <TableCell className="pl-0 md:pl-4 max-w-[200px]">
                   <div className="flex items-center gap-2">
                     <CircleIcon className="h-2 w-2 text-gray-500 flex-shrink-0" />
