@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/shared/DataTable";
 import { BookCard } from "@/components/bookstore/BookCard";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { TableColumn } from "@/components/shared/DataTable";
+import { Input } from "@/components/ui/input";
+import { ActionButton } from "@/components/shared/ActionButton";
+import { format } from "date-fns";
 
 interface Book {
   id: string;
@@ -40,6 +43,12 @@ export default function BookstoreList() {
   const { toast } = useToast();
   const [selectedBooks, setSelectedBooks] = useState<string[]>([]);
   const [books] = useState<Book[]>(mockBooks);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredBooks = books.filter(book => 
+    book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    book.author.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const columns: TableColumn<Book>[] = [
     { header: "Title", accessor: "title" as keyof Book },
@@ -48,22 +57,32 @@ export default function BookstoreList() {
       header: "Price", 
       accessor: (book: Book) => `$${book.price.toFixed(2)}` 
     },
-    { header: "Status", accessor: "status" as keyof Book },
-    { header: "Date Added", accessor: "publishDate" as keyof Book }
+    { 
+      header: "Status", 
+      accessor: (book: Book) => (
+        <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+          book.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+        }`}>
+          {book.status === 'published' ? 'Published' : 'Draft'}
+        </span>
+      )
+    },
+    { 
+      header: "Date Added", 
+      accessor: (book: Book) => format(new Date(book.publishDate), 'MMM dd, yyyy')
+    }
   ];
 
   const handleDelete = (id: string) => {
     toast({
       description: "Book deleted successfully",
     });
-    // Implement delete functionality
   };
 
   const handleStatusChange = (id: string, status: string) => {
     toast({
       description: `Book ${status === 'published' ? 'published' : 'unpublished'} successfully`,
     });
-    // Implement status change functionality
   };
 
   const handleSelectBook = (id: string, checked: boolean) => {
@@ -82,25 +101,36 @@ export default function BookstoreList() {
     }
   };
 
-  const handleExportCSV = () => {
+  const handleBulkAction = () => {
     toast({
-      description: "Books exported successfully",
+      description: "Bulk action completed successfully",
     });
-    // Implement CSV export functionality
   };
 
   return (
     <div className="max-w-7xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Books</h1>
-        <Button onClick={() => navigate("/bookstore/create")}>
+        <h1 className="text-2xl font-bold">Book Publications</h1>
+        <ActionButton onClick={() => navigate("/bookstore/create")}>
           <Plus className="h-4 w-4 mr-2" />
           Add New Book
-        </Button>
+        </ActionButton>
+      </div>
+
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
+          <Input
+            className="pl-10"
+            placeholder="Search books..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       <DataTable
-        data={books}
+        data={filteredBooks}
         columns={columns}
         selectedItems={selectedBooks}
         onSelectItem={handleSelectBook}
@@ -116,6 +146,7 @@ export default function BookstoreList() {
           ]
         }}
         bulkActions={[
+          { value: "delete", label: "Delete Selected" },
           { value: "export", label: "Export as CSV" }
         ]}
         CardComponent={({ item, actions }) => (
