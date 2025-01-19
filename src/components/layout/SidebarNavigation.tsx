@@ -13,7 +13,8 @@ import {
   Newspaper,
   Calendar,
   Mail,
-  DollarSign
+  DollarSign,
+  Speaker
 } from "lucide-react";
 
 const menuItems = [
@@ -32,6 +33,7 @@ const menuItems = [
     { label: "Members", path: "/customers" },
     { label: "Events", path: "/events" }
   ] },
+  { icon: Speaker, label: "Sermons", path: "/sermons" },
   { icon: Mail, label: "Contact", path: "/contacts" },
   { icon: DollarSign, label: "Donations", path: "/donations" },
 ];

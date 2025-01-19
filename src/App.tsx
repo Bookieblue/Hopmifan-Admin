@@ -18,6 +18,8 @@ import CreateCustomer from "@/pages/customers/CreateCustomer";
 import CustomerDetail from "@/pages/customers/CustomerDetail";
 import EventList from "@/pages/events/EventList";
 import CreateEvent from "@/pages/events/CreateEvent";
+import SermonList from "@/pages/sermons/SermonList";
+import CreateSermon from "@/pages/sermons/CreateSermon";
 import Payments from "@/pages/payments/Index";
 import Settings from "@/pages/settings/Index";
 import ContactList from "@/pages/contacts/ContactList";
@@ -42,6 +44,8 @@ function App() {
         <Route path="/customers/:id" element={<CustomerDetail />} />
         <Route path="/events" element={<EventList />} />
         <Route path="/events/create" element={<CreateEvent />} />
+        <Route path="/sermons" element={<SermonList />} />
+        <Route path="/sermons/create" element={<CreateSermon />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/contacts" element={<ContactList />} />
