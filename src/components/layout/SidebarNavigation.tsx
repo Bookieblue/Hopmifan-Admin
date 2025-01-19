@@ -28,6 +28,7 @@ const menuItems = [
   },
   { icon: Calendar, label: "Events", path: "/events" },
   { icon: MessageSquare, label: "Contact Messages", path: "/contacts" },
+  { icon: CreditCard, label: "Donations", path: "/donations" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
   { icon: Users, label: "Members", path: "/customers" },
 ];

@@ -14,6 +14,7 @@ import EventList from "@/pages/events/EventList";
 import CreateEvent from "@/pages/events/CreateEvent";
 import EditEvent from "@/pages/events/EditEvent";
 import PaymentHistory from "@/pages/payments/Index";
+import DonationHistory from "@/pages/donations/DonationHistory";
 import ContactMessages from "@/pages/contacts/ContactMessages";
 
 const router = createBrowserRouter([
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
       {
         path: "/payments",
         element: <PaymentHistory />,
+      },
+      {
+        path: "/donations",
+        element: <DonationHistory />,
       }
     ],
   },
