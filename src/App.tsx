@@ -1,32 +1,23 @@
-import { createBrowserRouter } from "react-router-dom";
-import { Layout } from "@/components/layout/Layout";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "@/components/layout/Layout";
 import PaymentHistory from "@/pages/payments/Index";
-import Home from "@/pages/Home";
-import About from "@/pages/About";
-import NotFound from "@/pages/NotFound";
+import Home from "@/pages/Home"; // Example import for home page
+import About from "@/pages/About"; // Example import for about page
+import NotFound from "@/pages/NotFound"; // Example import for not found page
 
-const router = createBrowserRouter([
-  {
-    element: <Layout />,
-    children: [
-      {
-        path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/about",
-        element: <About />,
-      },
-      {
-        path: "/payments",
-        element: <PaymentHistory />,
-      },
-      {
-        path: "*",
-        element: <NotFound />,
-      },
-    ],
-  },
-]);
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/payments" element={<PaymentHistory />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
+}
 
-export default router;
+export default App;
