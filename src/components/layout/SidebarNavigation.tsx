@@ -10,7 +10,8 @@ import {
   Settings,
   ChevronRight,
   BookOpen,
-  Newspaper
+  Newspaper,
+  Calendar
 } from "lucide-react";
 
 const menuItems = [
@@ -25,7 +26,10 @@ const menuItems = [
     ]
   },
   { icon: CreditCard, label: "Payments", path: "/payments" },
-  { icon: Users, label: "New Members", path: "/customers" },
+  { icon: Users, label: "New Members", path: "/customers", submenu: [
+    { label: "Members", path: "/customers" },
+    { label: "Events", path: "/events" }
+  ] },
 ];
 
 const accountMenuItems = [

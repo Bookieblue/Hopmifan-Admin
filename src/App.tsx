@@ -15,9 +15,11 @@ import ViewBook from "@/pages/bookstore/ViewBook";
 import EditBook from "@/pages/bookstore/EditBook";
 import CustomerList from "@/pages/customers/CustomerList";
 import CreateCustomer from "@/pages/customers/CreateCustomer";
+import CustomerDetail from "@/pages/customers/CustomerDetail";
+import EventList from "@/pages/events/EventList";
+import CreateEvent from "@/pages/events/CreateEvent";
 import Payments from "@/pages/payments/Index";
 import Settings from "@/pages/settings/Index";
-import CustomerDetail from "@/pages/customers/CustomerDetail";
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
         <Route path="/customers" element={<CustomerList />} />
         <Route path="/customers/create" element={<CreateCustomer />} />
         <Route path="/customers/:id" element={<CustomerDetail />} />
+        <Route path="/events" element={<EventList />} />
+        <Route path="/events/create" element={<CreateEvent />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
