@@ -3,7 +3,8 @@ import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Plus, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import {
@@ -24,6 +25,7 @@ export default function BlogList() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState<string | null>(null);
   const [bulkAction, setBulkAction] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const postsPerPage = 15;
   
   const [blogs] = useState(Array.from({ length: 32 }, (_, i) => ({ 
@@ -65,7 +67,6 @@ export default function BlogList() {
 
   const confirmDelete = () => {
     if (blogToDelete) {
-      // In a real app, this would be an API call
       toast({
         description: `Blog ${blogToDelete} has been deleted successfully.`
       });
@@ -75,10 +76,8 @@ export default function BlogList() {
   };
 
   const handleShare = (blogId: string) => {
-    // Create the URL for the blog post
     const blogUrl = `${window.location.origin}/blog/${blogId}`;
     
-    // Copy to clipboard
     navigator.clipboard.writeText(blogUrl).then(() => {
       toast({
         description: "Blog post link copied to clipboard!"
@@ -122,11 +121,15 @@ export default function BlogList() {
     { value: "draft", label: "Move to Draft" },
   ];
 
-  // Calculate pagination
-  const totalPages = Math.ceil(blogs.length / postsPerPage);
+  const filteredBlogs = blogs.filter(blog => 
+    blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    blog.author.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredBlogs.length / postsPerPage);
   const startIndex = (currentPage - 1) * postsPerPage;
   const endIndex = startIndex + postsPerPage;
-  const currentBlogs = blogs.slice(startIndex, endIndex);
+  const currentBlogs = filteredBlogs.slice(startIndex, endIndex);
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
@@ -138,6 +141,18 @@ export default function BlogList() {
             New Blog Post
           </Button>
         </Link>
+      </div>
+
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+          <Input 
+            placeholder="Search blog posts..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
       </div>
 
       <div className="bg-white md:rounded-lg md:border">
