@@ -3,10 +3,17 @@ import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +29,9 @@ export default function BlogList() {
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [authorFilter, setAuthorFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
   const postsPerPage = 15;
   
   // Mock data - in a real app this would come from an API
@@ -108,11 +118,16 @@ export default function BlogList() {
     setBulkAction("");
   };
 
-  // Filter blogs based on search query
-  const filteredBlogs = blogs.filter(blog => 
-    blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    blog.author.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter blogs based on all criteria
+  const filteredBlogs = blogs.filter(blog => {
+    const matchesSearch = blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         blog.author.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesAuthor = !authorFilter || blog.author === authorFilter;
+    const matchesStatus = !statusFilter || blog.status === statusFilter;
+    const matchesDate = !dateFilter || blog.publishDate === dateFilter;
+    
+    return matchesSearch && matchesAuthor && matchesStatus && matchesDate;
+  });
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredBlogs.length / postsPerPage);
@@ -122,6 +137,8 @@ export default function BlogList() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
+  const uniqueAuthors = Array.from(new Set(blogs.map(blog => blog.author)));
 
   const bulkActions = [
     { value: "delete", label: "Delete Selected" },
@@ -142,7 +159,7 @@ export default function BlogList() {
         </Link>
       </div>
 
-      <div className="mb-4">
+      <div className="space-y-4 mb-6">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
@@ -151,6 +168,40 @@ export default function BlogList() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Select value={authorFilter} onValueChange={setAuthorFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by Author" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">All Authors</SelectItem>
+              {uniqueAuthors.map((author) => (
+                <SelectItem key={author} value={author}>
+                  {author}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">All Statuses</SelectItem>
+              <SelectItem value="published">Published</SelectItem>
+              <SelectItem value="draft">Draft</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Input
+            type="date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="h-10"
           />
         </div>
       </div>
@@ -183,7 +234,7 @@ export default function BlogList() {
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
-          onRowClick={(id) => `/blog/${id}`}
+          onRowClick={(id) => `/blog/${id}/edit`}
         />
       </div>
 
