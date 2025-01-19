@@ -11,7 +11,8 @@ import {
   ChevronRight,
   BookOpen,
   Newspaper,
-  Calendar
+  Calendar,
+  MessageSquare
 } from "lucide-react";
 
 const menuItems = [
@@ -26,6 +27,7 @@ const menuItems = [
     ]
   },
   { icon: Calendar, label: "Events", path: "/events" },
+  { icon: MessageSquare, label: "Contact Messages", path: "/contacts" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
   { icon: Users, label: "Members", path: "/customers" },
 ];

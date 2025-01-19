@@ -14,6 +14,7 @@ import EventList from "@/pages/events/EventList";
 import CreateEvent from "@/pages/events/CreateEvent";
 import EditEvent from "@/pages/events/EditEvent";
 import PaymentHistory from "@/pages/payments/Index";
+import ContactMessages from "@/pages/contacts/ContactMessages";
 
 const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
       {
         path: "/events/:id/edit",
         element: <EditEvent />,
+      },
+      {
+        path: "/contacts",
+        element: <ContactMessages />,
       },
       {
         path: "/payments",
