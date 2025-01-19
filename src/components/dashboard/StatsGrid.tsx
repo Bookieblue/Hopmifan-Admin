@@ -10,7 +10,7 @@ export function StatsGrid() {
     return (
       <>
         {Array(4).fill(0).map((_, i) => (
-          <Card key={i} className="p-6">
+          <Card key={i} className="p-4">
             <Skeleton className="h-4 w-24 mb-2" />
             <Skeleton className="h-8 w-32" />
           </Card>
@@ -21,17 +21,22 @@ export function StatsGrid() {
 
   if (stats.error) {
     return (
-      <Card className="p-6 col-span-4">
+      <Card className="p-4 col-span-4">
         <p className="text-red-500">Error loading dashboard data</p>
       </Card>
     );
   }
 
-  const data = stats.data;
+  const data = stats.data || {
+    totalDonations: 0,
+    bookstoreSales: 0,
+    prayerRequests: 0,
+    membershipRequests: 0
+  };
 
   return (
     <>
-      <Card className="p-6 hover:shadow-lg transition-shadow">
+      <Card className="p-4 hover:shadow-lg transition-shadow">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -45,7 +50,7 @@ export function StatsGrid() {
         </div>
       </Card>
 
-      <Card className="p-6 hover:shadow-lg transition-shadow">
+      <Card className="p-4 hover:shadow-lg transition-shadow">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -59,7 +64,7 @@ export function StatsGrid() {
         </div>
       </Card>
 
-      <Card className="p-6 hover:shadow-lg transition-shadow">
+      <Card className="p-4 hover:shadow-lg transition-shadow">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -71,7 +76,7 @@ export function StatsGrid() {
         </div>
       </Card>
 
-      <Card className="p-6 hover:shadow-lg transition-shadow">
+      <Card className="p-4 hover:shadow-lg transition-shadow">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
