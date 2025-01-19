@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleIcon } from "lucide-react";
 import { format } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
 
 export type Activity = {
   type: "Publication" | "Event" | "Contact" | "Donation" | "Members Request" | "Sermon";
@@ -17,6 +18,55 @@ interface RecentActivityProps {
   title?: string;
 }
 
+async function fetchRecentActivities(): Promise<Activity[]> {
+  // This should be replaced with actual API calls to different endpoints
+  const activities: Activity[] = [
+    // Donations
+    {
+      type: "Donation",
+      description: "New donation received",
+      amount: 50000,
+      date: new Date().toISOString(),
+      status: "completed",
+      reference: "DON001"
+    },
+    // Prayer Requests
+    {
+      type: "Contact",
+      description: "New prayer request submitted",
+      date: new Date().toISOString(),
+      status: "pending",
+      reference: "PR001"
+    },
+    // Member Requests
+    {
+      type: "Members Request",
+      description: "New membership application",
+      date: new Date().toISOString(),
+      status: "pending",
+      reference: "MEM001"
+    },
+    // Events
+    {
+      type: "Event",
+      description: "Youth Conference registration",
+      date: new Date().toISOString(),
+      status: "upcoming",
+      reference: "EVT001"
+    },
+    // Sermons
+    {
+      type: "Sermon",
+      description: "New sermon uploaded",
+      date: new Date().toISOString(),
+      status: "completed",
+      reference: "SER001"
+    }
+  ];
+
+  return activities;
+}
+
 const getStatusColor = (status: "completed" | "pending" | "upcoming") => {
   switch (status) {
     case "completed":
@@ -30,7 +80,16 @@ const getStatusColor = (status: "completed" | "pending" | "upcoming") => {
   }
 };
 
-export function RecentActivity({ activities = [], title = "Recent Activity" }: RecentActivityProps) {
+export function RecentActivity({ title = "Recent Activity" }: RecentActivityProps) {
+  const { data: activities = [], isLoading } = useQuery({
+    queryKey: ['recent-activities'],
+    queryFn: fetchRecentActivities,
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Card>
       <CardHeader>
