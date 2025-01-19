@@ -19,24 +19,20 @@ export default function SignIn() {
     setIsLoading(true);
 
     try {
-      if (!email || !password) {
-        throw new Error("Please fill in all fields");
+      // Sample login validation
+      if (email === "admin@church.com" && password === "123456") {
+        toast({
+          title: "Success",
+          description: "Welcome back to Church Admin!",
+        });
+        navigate("/dashboard");
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Invalid credentials. Please try again.",
+        });
       }
-
-      if (!email.includes('@')) {
-        throw new Error("Please enter a valid email address");
-      }
-
-      if (password.length < 6) {
-        throw new Error("Password must be at least 6 characters long");
-      }
-
-      // TODO: Implement actual authentication
-      toast({
-        title: "Success",
-        description: "Welcome back to Cordlo!",
-      });
-      navigate("/");
     } catch (error) {
       toast({
         variant: "destructive",
@@ -61,7 +57,7 @@ export default function SignIn() {
         <Link 
           to="#" 
           className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
-          onClick={() => window.open('mailto:support@cordlo.com')}
+          onClick={() => window.open('mailto:support@church.com')}
         >
           <HelpCircle className="w-4 h-4 mr-2" />
           Support
@@ -86,7 +82,7 @@ export default function SignIn() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder="admin@church.com"
                   required
                   disabled={isLoading}
                   className="h-10"
@@ -101,6 +97,7 @@ export default function SignIn() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    placeholder="123456"
                     required
                     disabled={isLoading}
                     className="h-10"
