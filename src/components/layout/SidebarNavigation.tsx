@@ -11,7 +11,8 @@ import {
   Newspaper,
   Calendar,
   MessageSquare,
-  Users
+  Users,
+  Book
 } from "lucide-react";
 
 const menuItems = [
@@ -29,6 +30,7 @@ const menuItems = [
   { icon: MessageSquare, label: "Contact Messages", path: "/contacts" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
   { icon: Users, label: "New Members", path: "/new-members" },
+  { icon: Book, label: "Sermons", path: "/sermons" },
   { icon: CreditCard, label: "Donations", path: "/donations" },
 ];
 
