@@ -10,7 +10,18 @@ export interface TableColumn<T> {
   className?: string;
 }
 
-interface DataTableProps<T> {
+interface Actions {
+  onDelete?: (id: string) => void;
+  onShare?: (id: string) => void;
+  onDuplicate?: (id: string) => void;
+  onEdit?: (id: string) => void;
+  additionalActions?: {
+    label: string;
+    onClick: (id: string) => void;
+  }[];
+}
+
+export interface DataTableProps<T> {
   data: T[];
   columns: TableColumn<T>[];
   selectedItems: string[];
@@ -18,8 +29,13 @@ interface DataTableProps<T> {
   onSelectAll: (checked: boolean) => void;
   getItemId: (item: T) => string;
   onRowClick?: (id: string) => void;
-  CardComponent?: React.ComponentType<{ item: T }>;
+  CardComponent?: React.ComponentType<{ item: T; actions?: Actions }>;
   basePath?: string;
+  actions?: Actions;
+  bulkAction?: string;
+  setBulkAction?: (value: string) => void;
+  onBulkAction?: () => void;
+  bulkActions?: { value: string; label: string }[];
 }
 
 export function DataTable<T>({
@@ -31,7 +47,12 @@ export function DataTable<T>({
   getItemId,
   onRowClick,
   CardComponent,
-  basePath = "articles"
+  basePath = "articles",
+  actions,
+  bulkAction,
+  setBulkAction,
+  onBulkAction,
+  bulkActions
 }: DataTableProps<T>) {
   const isMobile = useIsMobile();
 
@@ -62,7 +83,7 @@ export function DataTable<T>({
                 onCheckedChange={(checked) => onSelectItem(getItemId(item), checked as boolean)}
               />
               <div className="flex-1">
-                <CardComponent item={item} />
+                <CardComponent item={item} actions={actions} />
               </div>
             </div>
           ))}
