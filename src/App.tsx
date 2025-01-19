@@ -7,6 +7,7 @@ import EditBlog from "@/pages/blog/EditBlog";
 import ViewBlog from "@/pages/blog/ViewBlog";
 import NotFound from "@/pages/NotFound";
 import BookstoreList from "@/pages/bookstore/BookstoreList";
+import PaymentHistory from "@/pages/payments/Index";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: "/bookstore",
         element: <BookstoreList />,
+      },
+      {
+        path: "/payments",
+        element: <PaymentHistory />,
       }
     ],
   },
