@@ -56,8 +56,8 @@ export default function BlogList() {
     },
   ];
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  const handlePageChange = (value: number) => {
+    setCurrentPage(value);
   };
 
   const handleDelete = (blogId: string) => {
@@ -131,6 +131,10 @@ export default function BlogList() {
   const endIndex = startIndex + postsPerPage;
   const currentBlogs = filteredBlogs.slice(startIndex, endIndex);
 
+  const handleRowClick = (id: string) => {
+    navigate(`/blog/${id}/edit`);
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
@@ -183,7 +187,7 @@ export default function BlogList() {
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
-          onRowClick={(id) => navigate(`/blog/${id}/edit`)}
+          onRowClick={handleRowClick}
         />
       </div>
 
@@ -192,7 +196,7 @@ export default function BlogList() {
           <Pagination
             total={totalPages}
             value={currentPage}
-            onChange={handlePageChange}
+            onValueChange={handlePageChange}
           />
         </div>
       )}
