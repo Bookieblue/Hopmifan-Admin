@@ -6,6 +6,7 @@ import CreateBlog from "@/pages/blog/CreateBlog";
 import EditBlog from "@/pages/blog/EditBlog";
 import ViewBlog from "@/pages/blog/ViewBlog";
 import BookstoreList from "@/pages/bookstore/BookstoreList";
+import NotFound from "@/pages/NotFound";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
       { path: "/articles/:id/edit", element: <EditBlog /> },
       { path: "/articles/:id", element: <ViewBlog /> },
       { path: "/bookstore", element: <BookstoreList /> },
+      { path: "*", element: <NotFound /> }
     ],
   },
 ]);
