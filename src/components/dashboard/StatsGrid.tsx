@@ -1,77 +1,32 @@
 import { Card } from "@/components/ui/card";
-import { CircleDot } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { convertToNaira } from "@/utils/currencyConverter";
+import { CircleDot, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
-async function fetchDonations() {
-  // This should be replaced with actual API call
-  const donations = [
-    { amount: 5057, currency: 'NGN' },
-    { amount: 100, currency: 'USD' },
-    { amount: 50, currency: 'EUR' }
-  ];
-
-  let totalAmount = 0;
-  for (const donation of donations) {
-    if (donation.currency === 'NGN') {
-      totalAmount += donation.amount;
-    } else {
-      const convertedAmount = await convertToNaira(donation.amount, donation.currency);
-      totalAmount += convertedAmount;
-    }
-  }
-  return totalAmount;
-}
-
-async function fetchBookstoreSales() {
-  // This should be replaced with actual API call
-  const sales = [
-    { amount: 30500, currency: 'NGN' },
-    { amount: 75, currency: 'USD' }
-  ];
-
-  let totalAmount = 0;
-  for (const sale of sales) {
-    if (sale.currency === 'NGN') {
-      totalAmount += sale.amount;
-    } else {
-      const convertedAmount = await convertToNaira(sale.amount, sale.currency);
-      totalAmount += convertedAmount;
-    }
-  }
-  return totalAmount;
-}
-
-async function fetchPendingPrayerRequests() {
-  // This should be replaced with actual API call
-  return 24;
-}
-
-async function fetchPendingMemberRequests() {
-  // This should be replaced with actual API call
-  return 2;
-}
+// Temporary mock data until connected to backend
+const mockDonations = [
+  { 
+    date: "2024-03-14", 
+    amount: 5057, 
+    donor: "Member 1", 
+    method: "Credit Card", 
+    reference: "DON000001",
+    type: "One-time"
+  },
+  { 
+    date: "2024-03-13", 
+    amount: 6470, 
+    donor: "Member 2", 
+    method: "Bank Transfer", 
+    reference: "DON000002",
+    type: "Recurring"
+  },
+];
 
 export function StatsGrid() {
-  const { data: totalDonations = 0, isLoading: isDonationsLoading } = useQuery({
-    queryKey: ['donations'],
-    queryFn: fetchDonations,
-  });
-
-  const { data: bookstoreSales = 0, isLoading: isSalesLoading } = useQuery({
-    queryKey: ['bookstore-sales'],
-    queryFn: fetchBookstoreSales,
-  });
-
-  const { data: prayerRequests = 0, isLoading: isPrayerLoading } = useQuery({
-    queryKey: ['prayer-requests'],
-    queryFn: fetchPendingPrayerRequests,
-  });
-
-  const { data: membershipRequests = 0, isLoading: isMemberLoading } = useQuery({
-    queryKey: ['membership-requests'],
-    queryFn: fetchPendingMemberRequests,
-  });
+  const totalDonations = mockDonations.reduce((total, donation) => total + donation.amount, 0);
+  const bookstoreSales = 30500; // This should come from bookstore data
+  const prayerRequests = 24; // This should come from prayer requests data
+  const membershipRequests = 2; // This should come from membership requests data
 
   return (
     <>
@@ -83,7 +38,7 @@ export function StatsGrid() {
               <span className="text-lg font-medium">Total Donations</span>
             </div>
             <span className="text-3xl font-bold block">
-              ₦{isDonationsLoading ? '...' : totalDonations.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+              ₦{totalDonations.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
             </span>
           </div>
         </div>
@@ -97,7 +52,7 @@ export function StatsGrid() {
               <span className="text-lg font-medium">Bookstore Sales</span>
             </div>
             <span className="text-3xl font-bold block">
-              ₦{isSalesLoading ? '...' : bookstoreSales.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+              ₦{bookstoreSales.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
             </span>
           </div>
         </div>
@@ -110,9 +65,7 @@ export function StatsGrid() {
               <CircleDot className="text-blue-500 h-4 w-4" />
               <span className="text-lg font-medium">Prayer Requests</span>
             </div>
-            <span className="text-3xl font-bold block">
-              {isPrayerLoading ? '...' : prayerRequests}
-            </span>
+            <span className="text-3xl font-bold block">{prayerRequests}</span>
           </div>
         </div>
       </Card>
@@ -124,9 +77,7 @@ export function StatsGrid() {
               <CircleDot className="text-purple-500 h-4 w-4" />
               <span className="text-lg font-medium">Members Request</span>
             </div>
-            <span className="text-3xl font-bold block">
-              {isMemberLoading ? '...' : membershipRequests}
-            </span>
+            <span className="text-3xl font-bold block">{membershipRequests}</span>
           </div>
         </div>
       </Card>
