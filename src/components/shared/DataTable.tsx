@@ -164,7 +164,7 @@ export function DataTable<T>({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                       {onRowClick && (
-                        <Link to={`edit`}>
+                        <Link to={`/articles/${id}/edit`}>
                           <DropdownMenuItem>Edit</DropdownMenuItem>
                         </Link>
                       )}
