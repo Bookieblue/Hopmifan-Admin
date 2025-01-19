@@ -1,9 +1,30 @@
+import { useNavigate } from "react-router-dom";
+import { BookForm } from "@/components/bookstore/BookForm";
+import { useToast } from "@/hooks/use-toast";
+
+const mockBook = {
+  title: "The Art of Programming",
+  description: "A comprehensive guide to programming fundamentals",
+  price: 29.99,
+  author: "John Doe",
+  authorBio: "Experienced programmer and educator",
+  language: "English",
+  pages: 300,
+  dimensions: "6 x 9 inches",
+  bookType: "Hardcover",
+  status: "published" as const,
+};
+
 export default function EditBook() {
-  return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Edit Book</h1>
-      {/* TODO: Implement book editing */}
-      <p>Book editing functionality coming soon...</p>
-    </div>
-  );
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleSubmit = (data: any) => {
+    toast({
+      description: "Book updated successfully",
+    });
+    navigate("/bookstore");
+  };
+
+  return <BookForm initialData={mockBook} onSubmit={handleSubmit} isEdit />;
 }
