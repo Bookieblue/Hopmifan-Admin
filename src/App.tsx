@@ -33,12 +33,12 @@ const router = createBrowserRouter([
     element: <Navigate to="/auth/signin" replace />,
   },
   {
-    path: "/dashboard",
+    path: "/",
     element: <Layout />,
     errorElement: <NotFound />,
     children: [
       {
-        path: "",
+        path: "home",
         element: <Index />,
       },
       {
