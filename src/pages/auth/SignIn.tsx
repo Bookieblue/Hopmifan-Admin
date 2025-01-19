@@ -19,6 +19,10 @@ export default function SignIn() {
     setIsLoading(true);
 
     try {
+      if (!email || !password) {
+        throw new Error("Please fill in all fields");
+      }
+
       // Sample login validation
       if (email === "admin@church.com" && password === "123456") {
         toast({
@@ -30,7 +34,7 @@ export default function SignIn() {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Invalid credentials. Please try again.",
+          description: "Invalid email or password. Please try again.",
         });
       }
     } catch (error) {

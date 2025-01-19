@@ -4,12 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { HelpCircle } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-  InputOTPSeparator,
-} from "@/components/ui/input-otp";
+import { Input } from "@/components/ui/input";
 import * as React from "react";
 
 export default function OtpVerification() {
@@ -38,6 +33,27 @@ export default function OtpVerification() {
         variant: "destructive",
         title: "Error",
         description: error instanceof Error ? error.message : "An error occurred",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResend = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // TODO: Implement actual resend logic
+      toast({
+        title: "Success",
+        description: "New verification code sent to your email",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to resend verification code",
       });
     } finally {
       setIsLoading(false);
@@ -76,20 +92,15 @@ export default function OtpVerification() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="otp">Verification Code</Label>
-              <InputOTP
-                maxLength={6}
+              <Input
+                id="otp"
+                type="text"
                 value={otp}
-                onChange={setOtp}
-                render={({ slots }) => (
-                  <InputOTPGroup>
-                    {slots.map((slot, idx) => (
-                      <React.Fragment key={idx}>
-                        <InputOTPSlot {...slot} index={idx} />
-                        {idx !== slots.length - 1 && <InputOTPSeparator />}
-                      </React.Fragment>
-                    ))}
-                  </InputOTPGroup>
-                )}
+                onChange={(e) => setOtp(e.target.value)}
+                maxLength={6}
+                placeholder="Enter 6-digit code"
+                className="h-10"
+                disabled={isLoading}
               />
             </div>
 
@@ -99,9 +110,13 @@ export default function OtpVerification() {
 
             <p className="text-center text-sm">
               Didn't receive the code?{" "}
-              <Link to="/auth/forgot-password" className="text-primary hover:underline">
+              <button
+                onClick={handleResend}
+                className="text-primary hover:underline"
+                disabled={isLoading}
+              >
                 Resend
-              </Link>
+              </button>
             </p>
           </form>
         </div>
