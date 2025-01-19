@@ -117,96 +117,9 @@ const BlogList = () => {
   });
 
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
-  const [shareDialogOpen, setShareDialogOpen] = useState(false);
-  const [selectedBlogId, setSelectedBlogId] = useState<string>("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState<string>("");
   const [bulkAction, setBulkAction] = useState("");
-
-  const handleDuplicate = async (blogId: string) => {
-    const blogToDuplicate = blogs.find(blog => blog.id === blogId);
-    if (blogToDuplicate) {
-      const newId = `ART-${String(blogs.length + 1).padStart(3, '0')}`;
-      const duplicatedBlog = {
-        ...blogToDuplicate,
-        id: newId,
-        title: `${blogToDuplicate.title} (Copy)`,
-      };
-      setBlogs([...blogs, duplicatedBlog]);
-      toast({
-        description: "Article duplicated successfully!"
-      });
-    }
-  };
-
-  const handleCopyLink = async (blogId: string) => {
-    try {
-      const url = `${window.location.origin}/articles/${blogId}`;
-      await navigator.clipboard.writeText(url);
-      toast({
-        description: "Link copied to clipboard!"
-      });
-    } catch (err) {
-      toast({
-        description: "Failed to copy link",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const columns = [
-    { header: "Title", accessor: "title" },
-    { header: "Author", accessor: "author" },
-    { 
-      header: "Date & Status", 
-      accessor: (blog: any) => (
-        <div className="space-y-1">
-          <div>{blog.publishDate}</div>
-          <span className={`px-2 py-1 rounded-full text-xs ${
-            blog.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {blog.status}
-          </span>
-        </div>
-      )
-    },
-    {
-      header: "Actions",
-      accessor: (blog: any) => (
-        <div className="flex items-center justify-end gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px]">
-              <DropdownMenuItem onClick={() => navigate(`/articles/${blog.id}/edit`)}>
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate(`/articles/${blog.id}`)}>
-                <Eye className="h-4 w-4 mr-2" />
-                View
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleDuplicate(blog.id)}>
-                <Copy className="h-4 w-4 mr-2" />
-                Duplicate
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleDelete(blog.id)}
-                className="text-red-600"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      ),
-      className: "w-[100px]"
-    }
-  ];
 
   const handleDelete = (blogId: string) => {
     setBlogToDelete(blogId);
@@ -221,39 +134,6 @@ const BlogList = () => {
     setDeleteDialogOpen(false);
     setBlogToDelete("");
     setSelectedBlogs(selectedBlogs.filter(id => id !== blogToDelete));
-  };
-
-  const handleBulkAction = () => {
-    if (bulkAction === 'delete') {
-      setBlogs(blogs.filter(blog => !selectedBlogs.includes(blog.id)));
-      toast({
-        description: `${selectedBlogs.length} articles have been deleted.`
-      });
-      setSelectedBlogs([]);
-    } else if (bulkAction === 'export') {
-      const selectedBlogData = blogs.filter(blog => selectedBlogs.includes(blog.id));
-      console.log('Exporting:', selectedBlogData);
-      toast({
-        description: 'Articles exported successfully.'
-      });
-    } else if (bulkAction === 'publish') {
-      setBlogs(blogs.map(blog => 
-        selectedBlogs.includes(blog.id) ? { ...blog, status: 'published' } : blog
-      ));
-      toast({
-        description: `${selectedBlogs.length} articles have been published.`
-      });
-      setSelectedBlogs([]);
-    } else if (bulkAction === 'draft') {
-      setBlogs(blogs.map(blog => 
-        selectedBlogs.includes(blog.id) ? { ...blog, status: 'draft' } : blog
-      ));
-      toast({
-        description: `${selectedBlogs.length} articles have been moved to draft.`
-      });
-      setSelectedBlogs([]);
-    }
-    setBulkAction("");
   };
 
   const filteredBlogs = blogs.filter(blog => {
@@ -338,7 +218,52 @@ const BlogList = () => {
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
           data={currentBlogs}
-          columns={columns}
+          columns={[
+            { header: "Title", accessor: "title" },
+            { header: "Author", accessor: "author" },
+            { 
+              header: "Date & Status", 
+              accessor: (blog: any) => (
+                <div className="space-y-1">
+                  <div>{blog.publishDate}</div>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    blog.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {blog.status}
+                  </span>
+                </div>
+              )
+            },
+            {
+              header: "Actions",
+              accessor: (blog: any) => (
+                <div className="flex items-center justify-end gap-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-[200px]">
+                      <DropdownMenuItem onClick={() => navigate(`/articles/${blog.id}/edit`)}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate(`/articles/${blog.id}`)}>
+                        <Eye className="h-4 w-4 mr-2" />
+                        View
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(blog.id)} className="text-red-600">
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              ),
+              className: "w-[100px]"
+            }
+          ]}
           selectedItems={selectedBlogs}
           onSelectItem={(id, checked) => {
             if (checked) {
@@ -387,12 +312,6 @@ const BlogList = () => {
           />
         </div>
       )}
-
-      <ShareModal 
-        open={shareDialogOpen} 
-        onOpenChange={setShareDialogOpen}
-        blogId={selectedBlogId}
-      />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
