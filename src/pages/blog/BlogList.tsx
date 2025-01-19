@@ -3,13 +3,25 @@ import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
+import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function BlogList() {
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const postsPerPage = 15;
   
   // Mock data - in a real app this would come from an API
@@ -24,6 +36,8 @@ export default function BlogList() {
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [selectedBlogId, setSelectedBlogId] = useState<string>("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [blogToDelete, setBlogToDelete] = useState<string>("");
   const [bulkAction, setBulkAction] = useState("");
 
   const columns = [
@@ -43,14 +57,31 @@ export default function BlogList() {
   ];
 
   const handleDelete = (blogId: string) => {
-    toast({
-      description: `Blog ${blogId} has been deleted successfully.`
-    });
+    setBlogToDelete(blogId);
+    setDeleteDialogOpen(true);
   };
 
-  const handleShare = (blogId: string) => {
-    setSelectedBlogId(blogId);
-    setShareDialogOpen(true);
+  const confirmDelete = () => {
+    toast({
+      description: `Blog ${blogToDelete} has been deleted successfully.`
+    });
+    setDeleteDialogOpen(false);
+    setBlogToDelete("");
+  };
+
+  const handleShare = async (blogId: string) => {
+    try {
+      const url = `${window.location.origin}/blog/${blogId}`;
+      await navigator.clipboard.writeText(url);
+      toast({
+        description: "Blog post link copied to clipboard!"
+      });
+    } catch (err) {
+      toast({
+        description: "Failed to copy link to clipboard",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleBulkAction = () => {
@@ -77,22 +108,27 @@ export default function BlogList() {
     setBulkAction("");
   };
 
+  // Filter blogs based on search query
+  const filteredBlogs = blogs.filter(blog => 
+    blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    blog.author.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredBlogs.length / postsPerPage);
+  const startIndex = (currentPage - 1) * postsPerPage;
+  const currentBlogs = filteredBlogs.slice(startIndex, startIndex + postsPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   const bulkActions = [
     { value: "delete", label: "Delete Selected" },
     { value: "export", label: "Export as CSV" },
     { value: "publish", label: "Publish Selected" },
     { value: "draft", label: "Move to Draft" },
   ];
-
-  // Calculate pagination
-  const totalPages = Math.ceil(blogs.length / postsPerPage);
-  const startIndex = (currentPage - 1) * postsPerPage;
-  const endIndex = startIndex + postsPerPage;
-  const currentBlogs = blogs.slice(startIndex, endIndex);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
@@ -104,6 +140,19 @@ export default function BlogList() {
             New Blog Post
           </Button>
         </Link>
+      </div>
+
+      <div className="mb-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            type="text"
+            placeholder="Search blog posts..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
       </div>
 
       <div className="bg-white md:rounded-lg md:border">
@@ -153,6 +202,24 @@ export default function BlogList() {
         onOpenChange={setShareDialogOpen}
         blogId={selectedBlogId}
       />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the blog post
+              and remove all of its data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
