@@ -7,6 +7,9 @@ import EditBlog from "@/pages/blog/EditBlog";
 import ViewBlog from "@/pages/blog/ViewBlog";
 import NotFound from "@/pages/NotFound";
 import BookstoreList from "@/pages/bookstore/BookstoreList";
+import CreateBook from "@/pages/bookstore/CreateBook";
+import EditBook from "@/pages/bookstore/EditBook";
+import ViewBook from "@/pages/bookstore/ViewBook";
 import PaymentHistory from "@/pages/payments/Index";
 
 const router = createBrowserRouter([
@@ -38,6 +41,18 @@ const router = createBrowserRouter([
       {
         path: "/bookstore",
         element: <BookstoreList />,
+      },
+      {
+        path: "/bookstore/create",
+        element: <CreateBook />,
+      },
+      {
+        path: "/bookstore/:id/edit",
+        element: <EditBook />,
+      },
+      {
+        path: "/bookstore/:id",
+        element: <ViewBook />,
       },
       {
         path: "/payments",

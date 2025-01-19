@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { BookForm } from "@/components/bookstore/BookForm";
 import { useToast } from "@/hooks/use-toast";
 
@@ -17,6 +17,7 @@ const mockBook = {
 
 export default function EditBook() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const { toast } = useToast();
 
   const handleSubmit = (data: any) => {
@@ -26,5 +27,6 @@ export default function EditBook() {
     navigate("/bookstore");
   };
 
+  // In a real application, you would fetch the book data using the id
   return <BookForm initialData={mockBook} onSubmit={handleSubmit} isEdit />;
 }
