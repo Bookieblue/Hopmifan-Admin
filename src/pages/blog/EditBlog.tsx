@@ -12,20 +12,28 @@ type BlogData = {
 };
 
 // This would typically come from your backend/API
-const mockArticles: Record<string, BlogData> = {
-  "1": {
-    title: "How to Build React Apps",
-    content: "<p>React is a powerful library for building user interfaces...</p>",
-    author: "John Doe",
-    status: "draft",
-    imagePreview: "/path/to/image.jpg"
-  },
-  "2": {
-    title: "TypeScript Best Practices",
-    content: "<p>TypeScript adds static typing to JavaScript...</p>",
-    author: "Jane Smith",
-    status: "published"
+// For now, we'll store it in localStorage to persist the data
+const getStoredArticles = (): Record<string, BlogData> => {
+  const stored = localStorage.getItem('articles');
+  if (stored) {
+    return JSON.parse(stored);
   }
+  // Default articles if none stored
+  return {
+    "1": {
+      title: "How to Build React Apps",
+      content: "<p>React is a powerful library for building user interfaces...</p>",
+      author: "John Doe",
+      status: "draft",
+      imagePreview: "/path/to/image.jpg"
+    },
+    "2": {
+      title: "TypeScript Best Practices",
+      content: "<p>TypeScript adds static typing to JavaScript...</p>",
+      author: "Jane Smith",
+      status: "published"
+    }
+  };
 };
 
 export default function EditBlog() {
@@ -35,10 +43,9 @@ export default function EditBlog() {
   const [initialData, setInitialData] = useState<BlogData | null>(null);
 
   useEffect(() => {
-    // In a real app, this would be an API call
-    // For now, we'll use our mock data
-    if (id && mockArticles[id]) {
-      setInitialData(mockArticles[id]);
+    const articles = getStoredArticles();
+    if (id && articles[id]) {
+      setInitialData(articles[id]);
     } else {
       toast({
         variant: "destructive",
@@ -57,16 +64,24 @@ export default function EditBlog() {
   }) => {
     try {
       // In a real app, this would be an API call
-      console.log("Updating article:", { id, ...data });
+      // For now, we'll update localStorage
+      const articles = getStoredArticles();
+      if (id) {
+        articles[id] = {
+          ...data,
+          imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : articles[id].imagePreview
+        };
+        localStorage.setItem('articles', JSON.stringify(articles));
+      }
       
       toast({
-        description: `Article ${data.status === 'draft' ? 'saved as draft' : 'published'} successfully!`
+        description: "Article updated successfully!"
       });
       navigate("/articles");
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to update article. Please try again."
+        description: "Failed to update article"
       });
     }
   };
