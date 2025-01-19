@@ -16,12 +16,14 @@ export default function EditBlog() {
 
   useEffect(() => {
     // Mock data fetch - in a real app this would be an API call
-    setInitialData({
+    // Here we're simulating fetching the article with its current status
+    const mockArticle = {
       title: "Sample Article",
       content: "<p>This is the content of the article...</p>",
       author: "John Doe",
-      status: "draft",
-    });
+      status: "draft", // This will now be properly passed to BlogForm
+    };
+    setInitialData(mockArticle);
   }, [id]);
 
   const handleSubmit = async (data: {
