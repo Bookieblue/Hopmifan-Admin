@@ -26,11 +26,24 @@ export const PaymentDetails = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="one-time">One-time Payment</SelectItem>
-              <SelectItem value="recurring">Recurring Payment</SelectItem>
+              <SelectItem value="recurring">Monthly Donation</SelectItem>
             </SelectContent>
           </Select>
         </div>
         
+        <div className="space-y-2">
+          <Label className="text-left block">Payment Category</Label>
+          <Select defaultValue="book">
+            <SelectTrigger className="w-full text-left">
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="book">Book Purchase</SelectItem>
+              <SelectItem value="donation">Donation</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <CurrencySelect
           value={selectedCurrency}
           onValueChange={onCurrencyChange}
