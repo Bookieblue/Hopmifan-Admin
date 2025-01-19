@@ -1,4 +1,3 @@
-<lov-code>
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
@@ -280,3 +279,11 @@ export default function BlogList() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
