@@ -6,7 +6,7 @@ import { Activity } from "@/components/dashboard/RecentActivity";
 // Mock data for recent activities
 const recentActivities: Activity[] = [
   {
-    type: "Prayer",
+    type: "Contact",
     description: "New prayer request from John Doe",
     date: "2024-03-20",
     status: "pending",
