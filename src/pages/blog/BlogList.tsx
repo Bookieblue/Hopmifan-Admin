@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, Filter } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
@@ -34,7 +34,6 @@ export default function BlogList() {
   const [dateFilter, setDateFilter] = useState("");
   const postsPerPage = 15;
   
-  // Mock data - in a real app this would come from an API
   const [blogs] = useState(Array.from({ length: 32 }, (_, i) => ({ 
     id: `BLG-${String(i + 1).padStart(3, '0')}`,
     title: `Blog Post ${i + 1}`,
@@ -118,7 +117,6 @@ export default function BlogList() {
     setBulkAction("");
   };
 
-  // Filter blogs based on all criteria
   const filteredBlogs = blogs.filter(blog => {
     const matchesSearch = blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          blog.author.toLowerCase().includes(searchQuery.toLowerCase());
@@ -129,7 +127,6 @@ export default function BlogList() {
     return matchesSearch && matchesAuthor && matchesStatus && matchesDate;
   });
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredBlogs.length / postsPerPage);
   const startIndex = (currentPage - 1) * postsPerPage;
   const currentBlogs = filteredBlogs.slice(startIndex, startIndex + postsPerPage);
@@ -177,11 +174,9 @@ export default function BlogList() {
               <SelectValue placeholder="Filter by Author" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Authors</SelectItem>
+              <SelectItem key="all-authors" value="">All Authors</SelectItem>
               {uniqueAuthors.map((author) => (
-                <SelectItem key={author} value={author}>
-                  {author}
-                </SelectItem>
+                <SelectItem key={author} value={author}>{author}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -191,9 +186,9 @@ export default function BlogList() {
               <SelectValue placeholder="Filter by Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Statuses</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem key="all-statuses" value="">All Statuses</SelectItem>
+              <SelectItem key="published" value="published">Published</SelectItem>
+              <SelectItem key="draft" value="draft">Draft</SelectItem>
             </SelectContent>
           </Select>
 
