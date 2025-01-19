@@ -19,7 +19,6 @@ export default function SignIn() {
     setIsLoading(true);
 
     try {
-      // Validate email and password
       if (!email || !password) {
         throw new Error("Please fill in all fields");
       }
@@ -134,13 +133,6 @@ export default function SignIn() {
             <Button type="submit" className="w-full h-14" disabled={isLoading}>
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
-
-            <p className="text-center text-sm">
-              Don't have an account?{" "}
-              <Link to="/auth/signup" className="text-primary hover:underline">
-                Sign up
-              </Link>
-            </p>
           </form>
         </div>
       </div>
