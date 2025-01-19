@@ -183,7 +183,7 @@ Method: ${payment.method}
             }]
           }}
           bulkActions={[
-            { value: "export", label: "Export as CSV", onClick: handleExportCSV }
+            { value: "export", label: "Export as CSV" }
           ]}
           CardComponent={({ item }) => (
             <div className="space-y-2">

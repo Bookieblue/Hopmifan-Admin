@@ -17,12 +17,6 @@ export function Layout() {
   
   const isPreviewRoute = location.pathname.includes('/preview');
 
-  const handleSidebarCollapse = (collapsed: boolean) => {
-    if (!isMobile) {
-      setIsCollapsed(collapsed);
-    }
-  };
-
   if (isPreviewRoute) {
     return (
       <DocumentProvider>
@@ -57,7 +51,7 @@ export function Layout() {
                       </SheetTrigger>
                       <SheetContent side="left" className="p-0 w-[280px]">
                         <div className="h-full overflow-y-auto">
-                          <Sidebar onCollapse={handleSidebarCollapse} />
+                          <Sidebar isCollapsed={isCollapsed} />
                         </div>
                       </SheetContent>
                     </Sheet>
@@ -80,7 +74,7 @@ export function Layout() {
             </>
           ) : (
             <>
-              <Sidebar onCollapse={handleSidebarCollapse} />
+              <Sidebar isCollapsed={isCollapsed} />
               <main className={`flex-1 p-4 md:p-8 overflow-x-hidden bg-white transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
                 <div className="max-w-7xl mx-auto">
                   <Outlet />
