@@ -9,7 +9,7 @@ type BlogData = {
   author: string;
   status: "draft" | "published";
   imagePreview?: string;
-  publishDate?: string; // Added this field to match the data structure
+  publishDate?: string;
 };
 
 const getStoredArticles = (): Record<string, BlogData> => {
@@ -35,7 +35,7 @@ export default function EditBlog() {
         variant: "destructive",
         description: "Article not found"
       });
-      navigate("/dashboard/articles");
+      navigate("/articles");
     }
   }, [id, navigate, toast]);
 
@@ -52,7 +52,7 @@ export default function EditBlog() {
         articles[id] = {
           ...data,
           imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : articles[id].imagePreview,
-          publishDate: articles[id].publishDate // Now this is valid since we added it to the type
+          publishDate: articles[id].publishDate
         };
         localStorage.setItem('articles', JSON.stringify(articles));
       }
@@ -60,7 +60,7 @@ export default function EditBlog() {
       toast({
         description: "Article updated successfully!"
       });
-      navigate("/dashboard/articles");
+      navigate("/articles");
     } catch (error) {
       toast({
         variant: "destructive",
