@@ -15,6 +15,7 @@ interface Actions {
   onShare?: (id: string) => void;
   onDuplicate?: (id: string) => void;
   onEdit?: (id: string) => void;
+  onStatusChange?: (id: string, status: string) => void;
   additionalActions?: {
     label: string;
     onClick: (id: string) => void;
