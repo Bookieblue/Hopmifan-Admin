@@ -125,7 +125,10 @@ export default function PaymentHistory() {
           }}
           getItemId={(item) => item.id}
           actions={{
-            onDuplicate: handleDownloadReceipt
+            additionalActions: [{
+              label: "Download Receipt",
+              onClick: handleDownloadReceipt
+            }]
           }}
           CardComponent={({ item }) => (
             <div className="space-y-2">
