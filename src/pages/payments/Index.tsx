@@ -9,91 +9,91 @@ import { BulkActions } from "@/components/shared/BulkActions";
 const payments = [
   { 
     date: "14 Mar 2025", 
-    customer: "Client A", 
+    customer: "John Doe", 
     amount: "₦5,057.00", 
     method: "Credit Card", 
     reference: "REF202503001",
-    type: "One-time"
+    type: "Book"
   },
   { 
     date: "28 Feb 2025", 
-    customer: "Client B", 
+    customer: "Jane Smith", 
     amount: "₦8,470.00", 
     method: "Bank Transfer", 
     reference: "REF202502001",
-    type: "Recurring"
+    type: "Donation"
   },
   { 
     date: "15 Dec 2024", 
-    customer: "Client C", 
+    customer: "Alice Johnson", 
     amount: "₦12,340.00", 
     method: "Credit Card", 
     reference: "REF202412001",
-    type: "One-time"
+    type: "Book"
   },
   { 
     date: "30 Sep 2024", 
-    customer: "Client D", 
+    customer: "Bob Wilson", 
     amount: "₦7,355.00", 
     method: "Bank Transfer", 
     reference: "REF202409001",
-    type: "Recurring"
+    type: "Donation"
   },
   { 
     date: "15 Jun 2024", 
-    customer: "Client E", 
+    customer: "Carol Brown", 
     amount: "₦9,104.00", 
     method: "Credit Card", 
     reference: "REF202406001",
-    type: "One-time"
+    type: "Book"
   },
   { 
     date: "28 Mar 2024", 
-    customer: "Client F", 
+    customer: "David Lee", 
     amount: "₦6,250.00", 
     method: "Bank Transfer", 
     reference: "REF202403001",
-    type: "Recurring"
+    type: "Donation"
   },
   { 
     date: "15 Dec 2023", 
-    customer: "Client G", 
+    customer: "Eve Adams", 
     amount: "₦11,780.00", 
     method: "Credit Card", 
     reference: "REF202312001",
-    type: "One-time"
+    type: "Book"
   },
   { 
     date: "30 Sep 2023", 
-    customer: "Client H", 
+    customer: "Frank White", 
     amount: "₦8,920.00", 
     method: "Bank Transfer", 
     reference: "REF202309001",
-    type: "Recurring"
+    type: "Donation"
   },
   { 
     date: "15 Jun 2023", 
-    customer: "Client I", 
+    customer: "Grace Green", 
     amount: "₦7,640.00", 
     method: "Credit Card", 
     reference: "REF202306001",
-    type: "One-time"
+    type: "Book"
   },
   { 
     date: "30 Mar 2023", 
-    customer: "Client J", 
+    customer: "Henry Black", 
     amount: "₦9,890.00", 
     method: "Bank Transfer", 
     reference: "REF202303001",
-    type: "Recurring"
+    type: "Donation"
   },
   { 
     date: "15 Jan 2023", 
-    customer: "Client K", 
+    customer: "Ivy Blue", 
     amount: "₦6,430.00", 
     method: "Credit Card", 
     reference: "REF202301001",
-    type: "One-time"
+    type: "Book"
   }
 ];
 
