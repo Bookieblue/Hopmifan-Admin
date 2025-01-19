@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
@@ -261,7 +262,7 @@ const BlogList = () => {
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-[200px]">
+                    <DropdownMenuContent align="end" className="w-[200px] bg-white">
                       <DropdownMenuItem onClick={() => navigate(`/articles/${blog.id}/edit`)}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
