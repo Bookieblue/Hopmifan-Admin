@@ -173,6 +173,10 @@ export default function PrayerRequestList() {
       />
 
       <div className="bg-white md:rounded-lg md:border">
+        <div className="md:hidden flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
+          <h2 className="font-medium text-sm text-gray-600">Prayer Request</h2>
+          <h2 className="font-medium text-sm text-gray-600">Status</h2>
+        </div>
         <DataTable
           data={filteredRequests}
           columns={columns}
@@ -184,34 +188,37 @@ export default function PrayerRequestList() {
           showCheckboxes={false}
           CardComponent={({ item }) => (
             <div 
-              className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors space-y-3"
+              className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
               onClick={() => handleCardClick(item)}
             >
-              <div className="flex justify-between items-start">
-                <div className="space-y-2">
-                  <div>
-                    <div className="text-sm font-medium text-gray-500">Name</div>
-                    <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-gray-500">Contact</div>
-                    <p className="text-sm">{item.email}</p>
-                    <p className="text-sm">{item.phone}</p>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-gray-500">Location</div>
-                    <p className="text-sm">{item.country}, {item.cityState}</p>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-gray-500">Prayer Request</div>
-                    <p className="text-sm line-clamp-2">{item.prayerRequest}</p>
-                  </div>
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
+                  <p className="text-sm text-gray-500">{item.email}</p>
                 </div>
                 <span className={`px-2 py-1 rounded-full text-xs ${
                   item.status === 'prayed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
                   {item.status === 'prayed' ? 'Prayed' : 'Pending'}
                 </span>
+              </div>
+              <div className="space-y-2">
+                <div>
+                  <p className="text-sm text-gray-500">Phone</p>
+                  <p className="text-sm">{item.phone}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Location</p>
+                  <p className="text-sm">{item.country}, {item.cityState}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Prayer Request</p>
+                  <p className="text-sm text-gray-600 line-clamp-2">{item.prayerRequest}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Date Submitted</p>
+                  <p className="text-sm">{item.dateSubmitted}</p>
+                </div>
               </div>
             </div>
           )}
