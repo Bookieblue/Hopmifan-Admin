@@ -9,7 +9,7 @@ type BlogData = {
   author: string;
   status: "draft" | "published";
   imagePreview?: string;
-  publishDate?: string;
+  publishDate?: string; // Added this field to match the data structure
 };
 
 const getStoredArticles = (): Record<string, BlogData> => {
@@ -52,7 +52,7 @@ export default function EditBlog() {
         articles[id] = {
           ...data,
           imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : articles[id].imagePreview,
-          publishDate: articles[id].publishDate
+          publishDate: articles[id].publishDate // Now this is valid since we added it to the type
         };
         localStorage.setItem('articles', JSON.stringify(articles));
       }
