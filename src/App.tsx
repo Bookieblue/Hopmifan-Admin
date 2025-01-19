@@ -38,87 +38,87 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       {
-        path: "/dashboard",
+        path: "",
         element: <Index />,
       },
       {
-        path: "/new-members",
+        path: "new-members",
         element: <NewMembers />,
       },
       {
-        path: "/articles",
+        path: "articles",
         element: <BlogList />,
       },
       {
-        path: "/articles/create",
+        path: "articles/create",
         element: <CreateBlog />,
       },
       {
-        path: "/articles/:id/edit",
+        path: "articles/:id/edit",
         element: <EditBlog />,
       },
       {
-        path: "/articles/:id",
+        path: "articles/:id",
         element: <ViewBlog />,
       },
       {
-        path: "/bookstore",
+        path: "bookstore",
         element: <BookstoreList />,
       },
       {
-        path: "/bookstore/create",
+        path: "bookstore/create",
         element: <CreateBook />,
       },
       {
-        path: "/bookstore/:id/edit",
+        path: "bookstore/:id/edit",
         element: <EditBook />,
       },
       {
-        path: "/bookstore/:id",
+        path: "bookstore/:id",
         element: <ViewBook />,
       },
       {
-        path: "/events",
+        path: "events",
         element: <EventList />,
       },
       {
-        path: "/events/create",
+        path: "events/create",
         element: <CreateEvent />,
       },
       {
-        path: "/events/:id/edit",
+        path: "events/:id/edit",
         element: <EditEvent />,
       },
       {
-        path: "/contacts",
+        path: "contacts",
         element: <ContactMessages />,
       },
       {
-        path: "/payments",
+        path: "payments",
         element: <PaymentHistory />,
       },
       {
-        path: "/donations",
+        path: "donations",
         element: <DonationHistory />,
       },
       {
-        path: "/sermons",
+        path: "sermons",
         element: <SermonList />,
       },
       {
-        path: "/sermons/create",
+        path: "sermons/create",
         element: <CreateSermon />,
       },
       {
-        path: "/sermons/:id/edit",
+        path: "sermons/:id/edit",
         element: <EditSermon />,
       },
       {
-        path: "/sermons/:id",
+        path: "sermons/:id",
         element: <ViewSermon />,
       },
       {
-        path: "/prayer-requests",
+        path: "prayer-requests",
         element: <PrayerRequestList />,
       }
     ],

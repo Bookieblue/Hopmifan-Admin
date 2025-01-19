@@ -4,7 +4,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { HelpCircle } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 export default function OtpVerification() {
   const [otp, setOtp] = useState("");
@@ -73,8 +77,8 @@ export default function OtpVerification() {
                   maxLength={6}
                   render={({ slots }) => (
                     <InputOTPGroup className="gap-2">
-                      {slots.map((slot, index) => (
-                        <InputOTPSlot key={index} {...slot} />
+                      {slots.map((slot, idx) => (
+                        <InputOTPSlot key={idx} {...slot} index={idx} />
                       ))}
                     </InputOTPGroup>
                   )}
