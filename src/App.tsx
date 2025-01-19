@@ -30,26 +30,26 @@ function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<Index />} />
-        <Route path="/blog" element={<BlogList />} />
-        <Route path="/blog/create" element={<CreateBlog />} />
-        <Route path="/blog/:id" element={<ViewBlog />} />
-        <Route path="/blog/:id/edit" element={<EditBlog />} />
-        <Route path="/blog/:id/preview" element={<PreviewBlog />} />
-        <Route path="/bookstore" element={<BookstoreList />} />
-        <Route path="/bookstore/create" element={<CreateBook />} />
-        <Route path="/bookstore/:id" element={<ViewBook />} />
-        <Route path="/bookstore/:id/edit" element={<EditBook />} />
-        <Route path="/customers" element={<CustomerList />} />
-        <Route path="/customers/create" element={<CreateCustomer />} />
-        <Route path="/customers/:id" element={<CustomerDetail />} />
+        <Route path="/publications/blog" element={<BlogList />} />
+        <Route path="/publications/blog/create" element={<CreateBlog />} />
+        <Route path="/publications/blog/:id" element={<ViewBlog />} />
+        <Route path="/publications/blog/:id/edit" element={<EditBlog />} />
+        <Route path="/publications/blog/:id/preview" element={<PreviewBlog />} />
+        <Route path="/publications/bookstore" element={<BookstoreList />} />
+        <Route path="/publications/bookstore/create" element={<CreateBook />} />
+        <Route path="/publications/bookstore/:id" element={<ViewBook />} />
+        <Route path="/publications/bookstore/:id/edit" element={<EditBook />} />
+        <Route path="/members" element={<CustomerList />} />
+        <Route path="/members/create" element={<CreateCustomer />} />
+        <Route path="/members/:id" element={<CustomerDetail />} />
         <Route path="/events" element={<EventList />} />
         <Route path="/events/create" element={<CreateEvent />} />
         <Route path="/sermons" element={<SermonList />} />
         <Route path="/sermons/create" element={<CreateSermon />} />
-        <Route path="/payments" element={<Payments />} />
-        <Route path="/contacts" element={<ContactList />} />
+        <Route path="/contact" element={<ContactList />} />
         <Route path="/donations" element={<DonationList />} />
-        <Route path="/prayers" element={<PrayerRequestList />} />
+        <Route path="/prayer-requests" element={<PrayerRequestList />} />
+        <Route path="/payments" element={<Payments />} />
       </Route>
       <Route path="/auth/signin" element={<SignIn />} />
       <Route path="/auth/signup" element={<SignUp />} />

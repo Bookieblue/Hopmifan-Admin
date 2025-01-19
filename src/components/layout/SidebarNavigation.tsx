@@ -1,20 +1,18 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
 import {
   LayoutGrid,
   FileText,
-  Receipt,
-  CreditCard,
   Users,
-  ChevronRight,
-  BookOpen,
-  Newspaper,
   Calendar,
+  Speaker,
   Mail,
   DollarSign,
-  Speaker
+  BookOpen,
+  Newspaper,
+  Mail as PrayerIcon,
+  CreditCard
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const menuItems = [
   { icon: LayoutGrid, label: "Overview", path: "/" },
@@ -23,34 +21,21 @@ const menuItems = [
     label: "Publications",
     path: "/publications",
     submenu: [
-      { label: "Blog", path: "/blog" },
-      { label: "Bookstore", path: "/bookstore" }
+      { label: "Blog", path: "/publications/blog", icon: Newspaper },
+      { label: "Bookstore", path: "/publications/bookstore", icon: BookOpen }
     ]
   },
-  { icon: CreditCard, label: "Payments", path: "/payments" },
-  { 
-    icon: Users, 
-    label: "Members", 
-    path: "/customers"
-  },
+  { icon: Users, label: "Members", path: "/members" },
   { icon: Calendar, label: "Events", path: "/events" },
   { icon: Speaker, label: "Sermons", path: "/sermons" },
-  { icon: Mail, label: "Contact", path: "/contacts" },
+  { icon: Mail, label: "Contact", path: "/contact" },
   { icon: DollarSign, label: "Donations", path: "/donations" },
-  { icon: Mail, label: "Prayer Requests", path: "/prayers" },
+  { icon: PrayerIcon, label: "Prayer Requests", path: "/prayer-requests" },
+  { icon: CreditCard, label: "Payments", path: "/payments" }
 ];
 
-interface SidebarNavigationProps {
-  isCollapsed?: boolean;
-}
-
-export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
+export function SidebarNavigation() {
   const location = useLocation();
-  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-
-  const toggleSubmenu = (label: string) => {
-    setOpenSubmenu(openSubmenu === label ? null : label);
-  };
 
   return (
     <nav className="flex-1 space-y-1">
@@ -64,28 +49,19 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
             {hasSubmenu ? (
               <>
                 <button
-                  onClick={() => toggleSubmenu(item.label)}
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                     "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   )}
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-5 h-5 text-gray-500" />
-                    <span>{item.label}</span>
-                  </div>
-                  <ChevronRight
-                    className={cn(
-                      "w-4 h-4 ml-auto transition-transform",
-                      openSubmenu === item.label ? "rotate-90" : ""
-                    )}
-                  />
+                  <Icon className="w-5 h-5 text-gray-500" />
+                  <span>{item.label}</span>
                 </button>
-                {openSubmenu === item.label && item.submenu && (
+                {item.submenu && (
                   <div className="pl-4 space-y-1 mt-1">
                     {item.submenu.map((subItem) => {
                       const isSubActive = location.pathname === subItem.path;
-                      const SubIcon = subItem.label === "Blog" ? Newspaper : BookOpen;
+                      const SubIcon = subItem.icon;
                       return (
                         <Link
                           key={subItem.path}
