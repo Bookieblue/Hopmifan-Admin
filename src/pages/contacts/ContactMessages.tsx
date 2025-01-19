@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ContactFilterModal } from "@/components/contacts/FilterModal";
+import { ContactDetailsModal } from "@/components/contacts/ContactDetailsModal";
 
 const sampleContacts = [
   {
@@ -36,15 +36,14 @@ const sampleContacts = [
 ];
 
 export default function ContactMessages() {
-  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [countryFilter, setCountryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [contacts, setContacts] = useState(sampleContacts);
-  const [bulkAction, setBulkAction] = useState("");
 
   const columns = [
     { 
@@ -89,30 +88,15 @@ export default function ContactMessages() {
     },
   ];
 
-  const handleMarkAsReplied = (contactId: string) => {
-    setContacts(contacts.map(contact => 
-      contact.id === contactId 
-        ? { ...contact, status: 'replied' }
-        : contact
-    ));
-    toast({
-      description: "Contact marked as replied"
-    });
-  };
-
-  const handleBulkAction = () => {
-    if (bulkAction === 'markReplied') {
+  const handleStatusChange = (status: string) => {
+    if (selectedContact) {
       setContacts(contacts.map(contact => 
-        selectedContacts.includes(contact.id)
-          ? { ...contact, status: 'replied' }
+        contact.id === selectedContact.id 
+          ? { ...contact, status }
           : contact
       ));
-      toast({
-        description: `${selectedContacts.length} contacts marked as replied`
-      });
-      setSelectedContacts([]);
+      setDetailsModalOpen(false);
     }
-    setBulkAction("");
   };
 
   const filteredContacts = contacts.filter(contact => {
@@ -129,9 +113,13 @@ export default function ContactMessages() {
 
   const uniqueCountries = Array.from(new Set(contacts.map(contact => contact.country)));
 
-  const bulkActions = [
-    { value: "markReplied", label: "Mark as Replied" },
-  ];
+  const handleRowClick = (id: string) => {
+    const contact = contacts.find(c => c.id === id);
+    if (contact) {
+      setSelectedContact(contact);
+      setDetailsModalOpen(true);
+    }
+  };
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
@@ -174,33 +162,22 @@ export default function ContactMessages() {
         uniqueCountries={uniqueCountries}
       />
 
+      <ContactDetailsModal
+        open={detailsModalOpen}
+        onOpenChange={setDetailsModalOpen}
+        contact={selectedContact}
+        onStatusChange={handleStatusChange}
+      />
+
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
           data={filteredContacts}
           columns={columns}
-          selectedItems={selectedContacts}
-          onSelectItem={(id, checked) => {
-            if (checked) {
-              setSelectedContacts([...selectedContacts, id]);
-            } else {
-              setSelectedContacts(selectedContacts.filter(contactId => contactId !== id));
-            }
-          }}
-          onSelectAll={(checked) => {
-            if (checked) {
-              setSelectedContacts(filteredContacts.map(contact => contact.id));
-            } else {
-              setSelectedContacts([]);
-            }
-          }}
+          selectedItems={[]}
+          onSelectItem={() => {}}
+          onSelectAll={() => {}}
           getItemId={(item) => item.id}
-          actions={{
-            onEdit: handleMarkAsReplied,
-          }}
-          bulkActions={bulkActions}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={handleBulkAction}
+          onRowClick={handleRowClick}
         />
       </div>
     </div>

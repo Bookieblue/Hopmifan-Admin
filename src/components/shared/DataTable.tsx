@@ -1,16 +1,7 @@
 import { Link } from "react-router-dom";
-import { MoreVertical } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { BulkActions } from "./BulkActions";
+import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
 import { TableBody } from "@/components/ui/table";
 
 export interface TableColumn<T> {
@@ -26,26 +17,9 @@ interface DataTableProps<T> {
   onSelectItem: (id: string, checked: boolean) => void;
   onSelectAll: (checked: boolean) => void;
   getItemId: (item: T) => string;
-  actions?: {
-    onDelete?: (id: string) => void;
-    onDuplicate?: (id: string) => void;
-    onShare?: (id: string) => void;
-    onEdit?: (id: string) => void;
-    additionalActions?: Array<{
-      label: string;
-      onClick: (id: string) => void;
-    }>;
-  };
-  bulkActions?: {
-    value: string;
-    label: string;
-  }[];
-  bulkAction?: string;
-  setBulkAction?: (value: string) => void;
-  onBulkAction?: () => void;
   onRowClick?: (id: string) => void;
-  CardComponent?: React.ComponentType<{ item: T; actions?: DataTableProps<T>['actions'] }>;
-  basePath?: string; // New prop for dynamic routing
+  CardComponent?: React.ComponentType<{ item: T }>;
+  basePath?: string;
 }
 
 export function DataTable<T>({
@@ -55,22 +29,15 @@ export function DataTable<T>({
   onSelectItem,
   onSelectAll,
   getItemId,
-  actions,
-  bulkActions,
-  bulkAction = "",
-  setBulkAction = () => {},
-  onBulkAction = () => {},
   onRowClick,
   CardComponent,
-  basePath = "articles" // Default to articles for backward compatibility
+  basePath = "articles"
 }: DataTableProps<T>) {
   const isMobile = useIsMobile();
 
   const handleRowClick = (e: React.MouseEvent, id: string) => {
     if (
-      (e.target as HTMLElement).closest('.checkbox-cell') ||
-      (e.target as HTMLElement).closest('[role="menuitem"]') ||
-      (e.target as HTMLElement).closest('button')
+      (e.target as HTMLElement).closest('.checkbox-cell')
     ) {
       return;
     }
@@ -85,7 +52,7 @@ export function DataTable<T>({
             checked={selectedItems.length === data.length}
             onCheckedChange={onSelectAll}
           />
-          <h2 className="font-semibold text-lg">Topics</h2>
+          <h2 className="font-semibold text-lg">Items</h2>
         </div>
         <div className="px-4">
           {data.map((item) => (
@@ -95,18 +62,11 @@ export function DataTable<T>({
                 onCheckedChange={(checked) => onSelectItem(getItemId(item), checked as boolean)}
               />
               <div className="flex-1">
-                <CardComponent item={item} actions={actions} />
+                <CardComponent item={item} />
               </div>
             </div>
           ))}
         </div>
-        <BulkActions
-          selectedCount={selectedItems.length}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={onBulkAction}
-          actions={bulkActions}
-        />
       </div>
     );
   }
@@ -133,9 +93,6 @@ export function DataTable<T>({
                 {column.header}
               </th>
             ))}
-            <th className="px-4 py-3 text-right text-sm font-medium text-gray-500">
-              Actions
-            </th>
           </tr>
         </thead>
         <TableBody>
@@ -164,88 +121,11 @@ export function DataTable<T>({
                       : String(item[column.accessor])}
                   </td>
                 ))}
-                <td className="px-4 py-3 text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button variant="ghost" size="sm">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                      {actions?.onEdit && (
-                        <DropdownMenuItem onClick={() => actions.onEdit(id)}>
-                          Edit
-                        </DropdownMenuItem>
-                      )}
-                      {onRowClick && (
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.preventDefault();
-                            window.open(`preview`, '_blank');
-                          }}
-                        >
-                          View
-                        </DropdownMenuItem>
-                      )}
-                      {actions?.onDuplicate && (
-                        <DropdownMenuItem 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            actions.onDuplicate?.(id);
-                          }}
-                        >
-                          Duplicate
-                        </DropdownMenuItem>
-                      )}
-                      {actions?.onShare && (
-                        <DropdownMenuItem 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            actions.onShare?.(id);
-                          }}
-                        >
-                          Share
-                        </DropdownMenuItem>
-                      )}
-                      {actions?.additionalActions?.map((action, index) => (
-                        <DropdownMenuItem
-                          key={index}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            action.onClick(id);
-                          }}
-                        >
-                          {action.label}
-                        </DropdownMenuItem>
-                      ))}
-                      {actions?.onDelete && (
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.preventDefault();
-                            actions.onDelete?.(id);
-                          }}
-                          className="text-red-600"
-                        >
-                          Delete
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </td>
               </tr>
             );
           })}
         </TableBody>
       </table>
-      {!isMobile && (
-        <BulkActions
-          selectedCount={selectedItems.length}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={onBulkAction}
-          actions={bulkActions}
-        />
-      )}
     </div>
   );
 }
