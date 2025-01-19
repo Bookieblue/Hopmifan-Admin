@@ -3,7 +3,6 @@ import { useToast } from "@/hooks/use-toast";
 import { PaymentFilters } from "@/components/payments/PaymentFilters";
 import { DataTable, TableColumn } from "@/components/shared/DataTable";
 
-// Sample data - in a real app this would come from an API
 const payments = [
   { 
     id: "1",
@@ -84,7 +83,6 @@ export default function PaymentHistory() {
   };
 
   const handleDownloadReceipt = (id: string) => {
-    // Here you would typically generate and download the receipt
     toast({
       title: "Receipt Downloaded",
       description: "Your receipt has been downloaded successfully",
@@ -125,7 +123,7 @@ export default function PaymentHistory() {
           }}
           getItemId={(item) => item.id}
           actions={{
-            onDuplicate: handleDownloadReceipt
+            onDownload: handleDownloadReceipt
           }}
           CardComponent={({ item }) => (
             <div className="space-y-2">
