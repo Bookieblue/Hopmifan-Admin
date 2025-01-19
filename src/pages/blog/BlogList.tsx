@@ -63,15 +63,17 @@ export default function BlogList() {
   const columns = [
     { header: "Title", accessor: "title" },
     { header: "Author", accessor: "author" },
-    { header: "Date", accessor: "publishDate" },
     { 
-      header: "Status", 
+      header: "Date & Status", 
       accessor: (blog: any) => (
-        <span className={`px-2 py-1 rounded-full text-xs ${
-          blog.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-        }`}>
-          {blog.status}
-        </span>
+        <div className="space-y-1">
+          <div>{blog.publishDate}</div>
+          <span className={`px-2 py-1 rounded-full text-xs ${
+            blog.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            {blog.status}
+          </span>
+        </div>
       )
     },
   ];
@@ -180,7 +182,7 @@ export default function BlogList() {
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold">Our Articles</h1>
-        <Link to="/blog/create">
+        <Link to="/articles/create">
           <Button size="default" className="bg-purple-600 hover:bg-purple-700 px-3 md:px-4">
             <Plus className="h-4 w-4 mr-2" />
             New Article
