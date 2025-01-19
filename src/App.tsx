@@ -10,6 +10,9 @@ import BookstoreList from "@/pages/bookstore/BookstoreList";
 import CreateBook from "@/pages/bookstore/CreateBook";
 import EditBook from "@/pages/bookstore/EditBook";
 import ViewBook from "@/pages/bookstore/ViewBook";
+import EventList from "@/pages/events/EventList";
+import CreateEvent from "@/pages/events/CreateEvent";
+import EditEvent from "@/pages/events/EditEvent";
 import PaymentHistory from "@/pages/payments/Index";
 
 const router = createBrowserRouter([
@@ -53,6 +56,18 @@ const router = createBrowserRouter([
       {
         path: "/bookstore/:id",
         element: <ViewBook />,
+      },
+      {
+        path: "/events",
+        element: <EventList />,
+      },
+      {
+        path: "/events/create",
+        element: <CreateEvent />,
+      },
+      {
+        path: "/events/:id/edit",
+        element: <EditEvent />,
       },
       {
         path: "/payments",
