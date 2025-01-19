@@ -61,7 +61,7 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
                 <button
                   onClick={() => toggleSubmenu(item.label)}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative",
                     isCollapsed ? "justify-center" : "justify-between",
                     "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   )}
@@ -89,15 +89,15 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
                           key={subItem.path}
                           to={subItem.path}
                           className={cn(
-                            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative",
                             isSubActive
-                              ? "bg-purple-50 text-purple-600"
+                              ? "bg-purple-50 text-[#695CAE] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-[#695CAE] before:rounded-r"
                               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                           )}
                         >
                           <SubIcon className={cn(
                             "w-5 h-5",
-                            isSubActive ? "text-purple-600" : "text-gray-500"
+                            isSubActive ? "text-[#695CAE]" : "text-gray-500"
                           )} />
                           {subItem.label}
                         </Link>
@@ -110,17 +110,17 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
               <Link
                 to={item.path}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative",
                   isCollapsed ? "justify-center" : "justify-start",
                   isActive
-                    ? "bg-purple-50 text-purple-600"
+                    ? "bg-purple-50 text-[#695CAE] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-[#695CAE] before:rounded-r"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 )}
               >
                 <Icon
                   className={cn(
                     "w-5 h-5 flex-shrink-0",
-                    isActive ? "text-purple-600" : "text-gray-500"
+                    isActive ? "text-[#695CAE]" : "text-gray-500"
                   )}
                 />
                 {!isCollapsed && <span>{item.label}</span>}
