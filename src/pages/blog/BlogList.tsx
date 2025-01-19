@@ -3,17 +3,11 @@ import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
-import { Plus, Search } from "lucide-react";
+import { Filter, Plus, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FilterModal } from "@/components/blog/FilterModal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,9 +24,10 @@ export default function BlogList() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [authorFilter, setAuthorFilter] = useState("all");  // Changed from empty string
-  const [statusFilter, setStatusFilter] = useState("all");  // Changed from empty string
+  const [authorFilter, setAuthorFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
   const postsPerPage = 15;
   
   const [blogs] = useState(Array.from({ length: 32 }, (_, i) => ({ 
@@ -162,49 +157,39 @@ export default function BlogList() {
       </div>
 
       <div className="space-y-4 mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            type="text"
-            placeholder="Search blog posts..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Select value={authorFilter} onValueChange={setAuthorFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by Author" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Authors</SelectItem>
-              {uniqueAuthors.map((author) => (
-                <SelectItem key={author} value={author}>{author}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Input
-            type="date"
-            value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
-            className="h-10"
-          />
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              type="text"
+              placeholder="Search blog posts..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={() => setFilterModalOpen(true)}
+          >
+            <Filter className="h-4 w-4" />
+            Filters
+          </Button>
         </div>
       </div>
+
+      <FilterModal
+        open={filterModalOpen}
+        onOpenChange={setFilterModalOpen}
+        authorFilter={authorFilter}
+        setAuthorFilter={setAuthorFilter}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        dateFilter={dateFilter}
+        setDateFilter={setDateFilter}
+        uniqueAuthors={uniqueAuthors}
+      />
 
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
