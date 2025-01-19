@@ -22,17 +22,18 @@ export default {
         inter: ['Inter', 'sans-serif'],
       },
       colors: {
+        brand: "#695CAE",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#695CAE",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          DEFAULT: "#695CAE",
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
