@@ -52,6 +52,10 @@ export default function EventList() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
+  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState<string>("");
+  const [bulkAction, setBulkAction] = useState("");
   const eventsPerPage = 15;
   
   const [events, setEvents] = useState(() => {
@@ -68,11 +72,6 @@ export default function EventList() {
       ...event
     }));
   });
-
-  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [eventToDelete, setEventToDelete] = useState<string>("");
-  const [bulkAction, setBulkAction] = useState("");
 
   const columns = [
     { header: "Title", accessor: "title" },
@@ -135,11 +134,22 @@ export default function EventList() {
     setDeleteDialogOpen(false);
     setEventToDelete("");
     setSelectedEvents(selectedEvents.filter(id => id !== eventToDelete));
+
+    // Update localStorage
+    const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
+    delete storedEvents[eventToDelete];
+    localStorage.setItem('events', JSON.stringify(storedEvents));
   };
 
   const handleBulkAction = () => {
     if (bulkAction === 'delete') {
       setEvents(events.filter(event => !selectedEvents.includes(event.id)));
+      
+      // Update localStorage
+      const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
+      selectedEvents.forEach(id => delete storedEvents[id]);
+      localStorage.setItem('events', JSON.stringify(storedEvents));
+      
       toast({
         description: `${selectedEvents.length} events have been deleted.`
       });
@@ -148,6 +158,16 @@ export default function EventList() {
       setEvents(events.map(event => 
         selectedEvents.includes(event.id) ? { ...event, status: 'published' } : event
       ));
+      
+      // Update localStorage
+      const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
+      selectedEvents.forEach(id => {
+        if (storedEvents[id]) {
+          storedEvents[id].status = 'published';
+        }
+      });
+      localStorage.setItem('events', JSON.stringify(storedEvents));
+      
       toast({
         description: `${selectedEvents.length} events have been published.`
       });
@@ -257,6 +277,14 @@ export default function EventList() {
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
           basePath="events"
+        />
+
+        <BulkActions
+          selectedCount={selectedEvents.length}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
+          actions={bulkActions}
         />
       </div>
 
