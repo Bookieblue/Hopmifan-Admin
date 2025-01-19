@@ -24,17 +24,17 @@ const menuItems = [
     label: "Publications",
     path: "/publications",
     submenu: [
-      { label: "Articles", path: "/articles" },
-      { label: "Bookstore", path: "/bookstore" }
+      { label: "Articles", path: "/dashboard/articles" },
+      { label: "Bookstore", path: "/dashboard/bookstore" }
     ]
   },
-  { icon: Calendar, label: "Events", path: "/events" },
-  { icon: MessageSquare, label: "Contact Messages", path: "/contacts" },
-  { icon: BookOpen, label: "Prayer Requests", path: "/prayer-requests" },
-  { icon: CreditCard, label: "Payments", path: "/payments" },
-  { icon: Users, label: "New Members", path: "/new-members" },
-  { icon: Book, label: "Sermons", path: "/sermons" },
-  { icon: CreditCard, label: "Donations", path: "/donations" },
+  { icon: Calendar, label: "Events", path: "/dashboard/events" },
+  { icon: MessageSquare, label: "Contact Messages", path: "/dashboard/contacts" },
+  { icon: BookOpen, label: "Prayer Requests", path: "/dashboard/prayer-requests" },
+  { icon: CreditCard, label: "Payments", path: "/dashboard/payments" },
+  { icon: Users, label: "New Members", path: "/dashboard/new-members" },
+  { icon: Book, label: "Sermons", path: "/dashboard/sermons" },
+  { icon: CreditCard, label: "Donations", path: "/dashboard/donations" },
   { icon: LogOut, label: "Logout", path: "/auth/signin" },
 ];
 
@@ -54,7 +54,6 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
 
   const handleLogout = (path: string) => {
     if (path === "/auth/signin") {
-      // TODO: Implement actual logout logic
       toast({
         title: "Logged out successfully",
         description: "See you soon!",
