@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/donations/FilterModal";
+import { DonationDetailsModal } from "@/components/donations/DonationDetailsModal";
 
-// Sample data
 const donations = [
   {
     id: "1",
@@ -61,12 +61,12 @@ export default function DonationHistory() {
   const [stateFilter, setStateFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const [selectedDonations, setSelectedDonations] = useState<string[]>([]);
-  const [filteredDonations, setFilteredDonations] = useState(donations);
+  const [selectedDonation, setSelectedDonation] = useState<typeof donations[0] | null>(null);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
 
-  const columns: TableColumn<Donation>[] = [
+  const columns: TableColumn<typeof donations[0]>[] = [
     { 
-      header: "Donor Name", 
+      header: "Member", 
       accessor: "donorName" 
     },
     { 
@@ -83,7 +83,7 @@ export default function DonationHistory() {
     },
     { 
       header: "Payment Info", 
-      accessor: (donation: Donation) => (
+      accessor: (donation) => (
         <div className="space-y-1">
           <div>{donation.paymentMethod}</div>
           <div className="text-sm text-gray-500">{donation.date}</div>
@@ -94,26 +94,18 @@ export default function DonationHistory() {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    const filtered = donations.filter((donation) =>
-      Object.values(donation).some((value) =>
-        value.toString().toLowerCase().includes(query.toLowerCase())
-      )
-    );
-    setFilteredDonations(filtered);
   };
 
-  const uniqueTypes = Array.from(new Set(donations.map(d => d.givingType)));
-  const uniqueStates = Array.from(new Set(donations.map(d => d.state)));
-
-  const handleViewDetails = (id: string) => {
-    const donation = donations.find(d => d.id === id);
-    if (donation) {
-      toast({
-        title: "Donation Details",
-        description: `Viewing details for ${donation.donorName}'s donation`
-      });
-    }
+  const handleDonationClick = (donation: typeof donations[0]) => {
+    setSelectedDonation(donation);
+    setDetailsModalOpen(true);
   };
+
+  const filteredDonations = donations.filter((donation) =>
+    Object.values(donation).some((value) =>
+      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
@@ -153,49 +145,41 @@ export default function DonationHistory() {
         setStateFilter={setStateFilter}
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
-        uniqueTypes={uniqueTypes}
-        uniqueStates={uniqueStates}
+        uniqueTypes={Array.from(new Set(donations.map(d => d.givingType)))}
+        uniqueStates={Array.from(new Set(donations.map(d => d.state)))}
       />
 
-      <div className="bg-white rounded-lg border">
+      <DonationDetailsModal
+        open={detailsModalOpen}
+        onOpenChange={setDetailsModalOpen}
+        donation={selectedDonation}
+      />
+
+      <div className="bg-white md:rounded-lg md:border">
+        <div className="md:hidden flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
+          <h2 className="font-medium text-sm text-gray-600">Member</h2>
+          <h2 className="font-medium text-sm text-gray-600">Amount</h2>
+        </div>
         <DataTable
           data={filteredDonations}
           columns={columns}
-          selectedItems={selectedDonations}
-          onSelectItem={(id, checked) => {
-            setSelectedDonations(prev => 
-              checked 
-                ? [...prev, id]
-                : prev.filter(item => item !== id)
-            );
-          }}
-          onSelectAll={(checked) => {
-            setSelectedDonations(checked ? filteredDonations.map(d => d.id) : []);
-          }}
+          selectedItems={[]}
+          onSelectItem={() => {}}
+          onSelectAll={() => {}}
           getItemId={(item) => item.id}
+          onRowClick={(id) => handleDonationClick(donations.find(d => d.id === id)!)}
           showCheckboxes={false}
           CardComponent={({ item }) => (
-            <div className="p-4 border-b last:border-b-0">
-              <div className="flex justify-between items-start mb-2">
+            <div 
+              className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => handleDonationClick(item)}
+            >
+              <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-medium">{item.donorName}</h3>
                   <p className="text-sm text-gray-500">{item.givingType}</p>
                 </div>
                 <span className="font-medium">{item.amount}</span>
-              </div>
-              <div className="text-sm text-gray-500 space-y-1">
-                <div className="flex justify-between">
-                  <span>Payment Method:</span>
-                  <span>{item.paymentMethod}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Date:</span>
-                  <span>{item.date}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>State:</span>
-                  <span>{item.state}</span>
-                </div>
               </div>
             </div>
           )}
