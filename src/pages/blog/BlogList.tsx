@@ -30,9 +30,9 @@ export default function BlogList() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const postsPerPage = 15;
   
-  const [blogs] = useState(Array.from({ length: 32 }, (_, i) => ({ 
+  const [blogs, setBlogs] = useState(Array.from({ length: 32 }, (_, i) => ({ 
     id: `BLG-${String(i + 1).padStart(3, '0')}`,
-    title: `Blog Post ${i + 1}`,
+    title: `Article ${i + 1}`,
     author: i % 2 === 0 ? "Pastor John" : "Sarah Smith",
     publishDate: new Date(2024, 2, 15 - i).toISOString().split('T')[0],
     status: i % 3 === 0 ? "draft" : "published"
@@ -67,11 +67,15 @@ export default function BlogList() {
   };
 
   const confirmDelete = () => {
+    // Remove the blog from the state
+    setBlogs(blogs.filter(blog => blog.id !== blogToDelete));
     toast({
-      description: `Blog ${blogToDelete} has been deleted successfully.`
+      description: `Article has been deleted successfully.`
     });
     setDeleteDialogOpen(false);
     setBlogToDelete("");
+    // Clear selection if the deleted blog was selected
+    setSelectedBlogs(selectedBlogs.filter(id => id !== blogToDelete));
   };
 
   const handleShare = async (blogId: string) => {
@@ -79,7 +83,7 @@ export default function BlogList() {
       const url = `${window.location.origin}/blog/${blogId}`;
       await navigator.clipboard.writeText(url);
       toast({
-        description: "Blog post link copied to clipboard!"
+        description: "Article link copied to clipboard!"
       });
     } catch (err) {
       toast({
@@ -91,22 +95,35 @@ export default function BlogList() {
 
   const handleBulkAction = () => {
     if (bulkAction === 'delete') {
+      // Remove all selected blogs from the state
+      setBlogs(blogs.filter(blog => !selectedBlogs.includes(blog.id)));
       toast({
-        description: `${selectedBlogs.length} blogs have been deleted.`
+        description: `${selectedBlogs.length} articles have been deleted.`
       });
       setSelectedBlogs([]);
     } else if (bulkAction === 'export') {
+      // Simulate export functionality
+      const selectedBlogData = blogs.filter(blog => selectedBlogs.includes(blog.id));
+      console.log('Exporting:', selectedBlogData);
       toast({
-        description: 'Blogs exported successfully.'
+        description: 'Articles exported successfully.'
       });
     } else if (bulkAction === 'publish') {
+      // Update status to published for selected blogs
+      setBlogs(blogs.map(blog => 
+        selectedBlogs.includes(blog.id) ? { ...blog, status: 'published' } : blog
+      ));
       toast({
-        description: `${selectedBlogs.length} blogs have been published.`
+        description: `${selectedBlogs.length} articles have been published.`
       });
       setSelectedBlogs([]);
     } else if (bulkAction === 'draft') {
+      // Update status to draft for selected blogs
+      setBlogs(blogs.map(blog => 
+        selectedBlogs.includes(blog.id) ? { ...blog, status: 'draft' } : blog
+      ));
       toast({
-        description: `${selectedBlogs.length} blogs have been moved to draft.`
+        description: `${selectedBlogs.length} articles have been moved to draft.`
       });
       setSelectedBlogs([]);
     }
@@ -147,11 +164,11 @@ export default function BlogList() {
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Publications - Blog Posts</h1>
+        <h1 className="text-2xl font-bold">Our Articles</h1>
         <Link to="/blog/create">
           <Button size="default" className="bg-purple-600 hover:bg-purple-700 px-3 md:px-4">
             <Plus className="h-4 w-4 mr-2" />
-            New Blog Post
+            New Article
           </Button>
         </Link>
       </div>
@@ -162,7 +179,7 @@ export default function BlogList() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
               type="text"
-              placeholder="Search blog posts..."
+              placeholder="Search articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -244,7 +261,7 @@ export default function BlogList() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the blog post
+              This action cannot be undone. This will permanently delete the article
               and remove all of its data from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>

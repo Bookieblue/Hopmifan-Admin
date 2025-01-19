@@ -17,10 +17,10 @@ const menuItems = [
   { icon: LayoutGrid, label: "Overview", path: "/" },
   {
     icon: FileText,
-    label: "Publications",
+    label: "Articles",
     path: "/publications",
     submenu: [
-      { label: "Blog", path: "/blog" },
+      { label: "Articles", path: "/blog" },
       { label: "Bookstore", path: "/bookstore" }
     ]
   },
