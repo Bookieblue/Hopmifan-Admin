@@ -40,8 +40,9 @@ export function RecentActivity({ activities = [], title = "Recent Activity" }: R
           <TableHeader>
             <TableRow>
               <TableHead className="pl-0 md:pl-4">Details</TableHead>
-              <TableHead className="pr-0 md:pr-4">Type</TableHead>
-              <TableHead className="hidden md:table-cell">Reference ID</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -52,23 +53,24 @@ export function RecentActivity({ activities = [], title = "Recent Activity" }: R
                     <CircleIcon className="h-2 w-2 text-gray-500 flex-shrink-0" />
                     <div className="truncate">
                       <div className="font-medium">{activity.description}</div>
-                      <div className="text-sm text-muted-foreground">{activity.date}</div>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="pr-0 md:pr-4 whitespace-nowrap">
+                <TableCell className="whitespace-nowrap">
                   <div className="font-medium">{activity.type}</div>
                   {activity.amount && (
                     <div className="text-sm text-muted-foreground">
                       ₦{activity.amount.toLocaleString()}
                     </div>
                   )}
-                  <span className={`mt-1 inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
+                </TableCell>
+                <TableCell>
+                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
                     {activity.status}
                   </span>
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-muted-foreground">
-                  {activity.reference}
+                <TableCell className="whitespace-nowrap">
+                  {activity.date}
                 </TableCell>
               </TableRow>
             ))}
