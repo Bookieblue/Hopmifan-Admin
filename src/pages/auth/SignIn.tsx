@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, HelpCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,7 +52,7 @@ export default function SignIn() {
       <header className="w-full p-6 flex justify-between items-center">
         <Link to="/" className="flex items-center">
           <img 
-            src="/lovable-uploads/6a8f39bd-d44e-4077-910a-9365f8d34d90.png" 
+            src="/lovable-uploads/43d04b44-fc73-46eb-8543-89f240871e1d.png" 
             alt="Logo" 
             className="h-8 w-auto"
           />
@@ -88,7 +88,7 @@ export default function SignIn() {
                   placeholder="you@example.com"
                   required
                   disabled={isLoading}
-                  className="h-10" // Reduced height from h-14 to h-10
+                  className="h-10"
                 />
               </div>
 
@@ -102,7 +102,7 @@ export default function SignIn() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={isLoading}
-                    className="h-10" // Reduced height from h-14 to h-10
+                    className="h-10"
                   />
                   <button
                     type="button"
@@ -129,7 +129,7 @@ export default function SignIn() {
               </Link>
             </div>
 
-            <Button type="submit" className="w-full h-10" disabled={isLoading}>
+            <Button type="submit" className="w-full h-9" disabled={isLoading}>
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
