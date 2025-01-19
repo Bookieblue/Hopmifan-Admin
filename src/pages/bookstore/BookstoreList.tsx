@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
-import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search } from "lucide-react";
@@ -53,8 +52,8 @@ export default function BookstoreList() {
     },
   ];
 
-  const handlePageChange = (value: number) => {
-    setCurrentPage(value);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const handleDelete = (bookId: string) => {
@@ -98,7 +97,7 @@ export default function BookstoreList() {
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Bookstore Management</h1>
+        <h1 className="text-2xl font-bold">Book Publications</h1>
         <Link to="/bookstore/create">
           <Button size="default" className="bg-purple-600 hover:bg-purple-700 px-3 md:px-4">
             <Plus className="h-4 w-4 mr-2" />
