@@ -10,11 +10,13 @@ import {
   BookOpen,
   Newspaper,
   Calendar,
-  MessageSquare
+  MessageSquare,
+  Users
 } from "lucide-react";
 
 const menuItems = [
   { icon: LayoutGrid, label: "Overview", path: "/" },
+  { icon: Users, label: "New Members", path: "/new-members" },
   {
     icon: FileText,
     label: "Publications",

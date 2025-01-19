@@ -16,6 +16,7 @@ import EditEvent from "@/pages/events/EditEvent";
 import PaymentHistory from "@/pages/payments/Index";
 import DonationHistory from "@/pages/donations/DonationHistory";
 import ContactMessages from "@/pages/contacts/ContactMessages";
+import NewMembers from "@/pages/members/NewMembers";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Index />,
+      },
+      {
+        path: "/new-members",
+        element: <NewMembers />,
       },
       {
         path: "/articles",
