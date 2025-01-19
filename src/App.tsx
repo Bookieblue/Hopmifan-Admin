@@ -24,6 +24,7 @@ import Payments from "@/pages/payments/Index";
 import Settings from "@/pages/settings/Index";
 import ContactList from "@/pages/contacts/ContactList";
 import DonationList from "@/pages/donations/DonationList";
+import PrayerRequestList from "@/pages/prayers/PrayerRequestList";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/contacts" element={<ContactList />} />
         <Route path="/donations" element={<DonationList />} />
+        <Route path="/prayers" element={<PrayerRequestList />} />
       </Route>
       <Route path="/auth/signin" element={<SignIn />} />
       <Route path="/auth/signup" element={<SignUp />} />

@@ -36,6 +36,7 @@ const menuItems = [
   { icon: Speaker, label: "Sermons", path: "/sermons" },
   { icon: Mail, label: "Contact", path: "/contacts" },
   { icon: DollarSign, label: "Donations", path: "/donations" },
+  { icon: Mail, label: "Prayer Requests", path: "/prayers" },
 ];
 
 const accountMenuItems = [
