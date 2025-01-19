@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Table } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { PaymentTableHeader } from "@/components/payments/PaymentTableHeader";
 import { PaymentFilters } from "@/components/payments/PaymentFilters";
 import { DataTable, TableColumn } from "@/components/shared/DataTable";
 
@@ -13,7 +11,6 @@ const payments = [
     customer: "John Doe", 
     amount: "₦5,057.00", 
     method: "Credit Card", 
-    reference: "REF202503001",
     type: "Book Purchase"
   },
   { 
@@ -22,7 +19,6 @@ const payments = [
     customer: "Jane Smith", 
     amount: "₦8,470.00", 
     method: "Bank Transfer", 
-    reference: "REF202502001",
     type: "Donation"
   },
   { 
@@ -31,7 +27,6 @@ const payments = [
     customer: "Alice Johnson", 
     amount: "₦12,340.00", 
     method: "Credit Card", 
-    reference: "REF202412001",
     type: "Book Purchase"
   },
   { 
@@ -40,7 +35,6 @@ const payments = [
     customer: "Bob Wilson", 
     amount: "₦7,355.00", 
     method: "Bank Transfer", 
-    reference: "REF202409001",
     type: "Donation"
   }
 ];
@@ -53,16 +47,14 @@ export default function PaymentHistory() {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
-  const [bulkAction, setBulkAction] = useState<string>("");
   const [filteredPayments, setFilteredPayments] = useState(payments);
 
   const columns: TableColumn<Payment>[] = [
     { header: "Date", accessor: "date" },
     { header: "Customer", accessor: "customer" },
-    { header: "Amount", accessor: "amount" },
-    { header: "Method", accessor: "method" },
     { header: "Type", accessor: "type" },
-    { header: "Reference", accessor: "reference" }
+    { header: "Amount", accessor: "amount" },
+    { header: "Method", accessor: "method" }
   ];
 
   const handleSearch = (query: string) => {
@@ -91,37 +83,12 @@ export default function PaymentHistory() {
     setFilteredPayments(payments);
   };
 
-  const handleBulkAction = () => {
-    if (!bulkAction || selectedPayments.length === 0) return;
-    
-    switch (bulkAction) {
-      case "export":
-        const selectedData = filteredPayments.filter(p => 
-          selectedPayments.includes(p.id)
-        );
-        
-        const headers = ["Date", "Customer", "Amount", "Method", "Type", "Reference"];
-        const csvData = selectedData.map(payment => 
-          [payment.date, payment.customer, payment.amount, payment.method, payment.type, payment.reference].join(",")
-        );
-        
-        const csv = [headers.join(","), ...csvData].join("\n");
-        const blob = new Blob([csv], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `payment-history-${new Date().toISOString().split("T")[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        toast({
-          title: "Export Successful",
-          description: "Selected payments have been exported as CSV",
-        });
-        break;
-    }
-    setBulkAction("");
+  const handleDownloadReceipt = (id: string) => {
+    // Here you would typically generate and download the receipt
+    toast({
+      title: "Receipt Downloaded",
+      description: "Your receipt has been downloaded successfully",
+    });
   };
 
   return (
@@ -157,12 +124,25 @@ export default function PaymentHistory() {
             setSelectedPayments(checked ? filteredPayments.map(p => p.id) : []);
           }}
           getItemId={(item) => item.id}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={handleBulkAction}
-          bulkActions={[
-            { value: "export", label: "Export as CSV" }
-          ]}
+          actions={{
+            onDuplicate: handleDownloadReceipt
+          }}
+          CardComponent={({ item }) => (
+            <div className="space-y-2">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-medium">{item.customer}</h3>
+                  <p className="text-sm text-gray-500">{item.date}</p>
+                </div>
+                <span className="text-sm font-medium">{item.amount}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <span>{item.type}</span>
+                <span>•</span>
+                <span>{item.method}</span>
+              </div>
+            </div>
+          )}
         />
       </div>
     </div>
