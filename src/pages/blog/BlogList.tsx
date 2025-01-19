@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { Filter, Plus, Search, MoreVertical, Edit, Trash2, Eye, Copy } from "lucide-react";
+import { Filter, Plus, Search, MoreVertical, Edit, Trash2, Eye } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
@@ -134,6 +134,25 @@ const BlogList = () => {
     setDeleteDialogOpen(false);
     setBlogToDelete("");
     setSelectedBlogs(selectedBlogs.filter(id => id !== blogToDelete));
+  };
+
+  const handleBulkAction = () => {
+    if (bulkAction === 'delete') {
+      setBlogs(blogs.filter(blog => !selectedBlogs.includes(blog.id)));
+      toast({
+        description: `${selectedBlogs.length} articles have been deleted.`
+      });
+      setSelectedBlogs([]);
+    } else if (bulkAction === 'publish') {
+      setBlogs(blogs.map(blog => 
+        selectedBlogs.includes(blog.id) ? { ...blog, status: 'published' } : blog
+      ));
+      toast({
+        description: `${selectedBlogs.length} articles have been published.`
+      });
+      setSelectedBlogs([]);
+    }
+    setBulkAction("");
   };
 
   const filteredBlogs = blogs.filter(blog => {
