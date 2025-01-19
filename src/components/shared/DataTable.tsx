@@ -78,6 +78,13 @@ export function DataTable<T>({
   if (isMobile && CardComponent) {
     return (
       <div className="space-y-4">
+        <div className="px-4 py-2 flex items-center gap-3 border-b">
+          <Checkbox
+            checked={selectedItems.length === data.length}
+            onCheckedChange={onSelectAll}
+          />
+          <h2 className="font-semibold text-lg">Topics</h2>
+        </div>
         <div className="px-4">
           {data.map((item) => (
             <div key={getItemId(item)} className="flex items-center gap-2">

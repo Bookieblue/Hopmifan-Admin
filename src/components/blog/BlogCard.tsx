@@ -1,4 +1,4 @@
-import { MoreVertical, Edit, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { MoreVertical, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 interface BlogCardProps {
   item: {
@@ -26,7 +25,6 @@ interface BlogCardProps {
 
 export const BlogCard = ({ item, actions }: BlogCardProps) => {
   const navigate = useNavigate();
-  const [isExpanded, setIsExpanded] = useState(false);
   
   const handleEdit = (id: string) => {
     navigate(`/articles/${id}/edit`);
@@ -51,18 +49,6 @@ export const BlogCard = ({ item, actions }: BlogCardProps) => {
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0"
-              onClick={() => setIsExpanded(!isExpanded)}
-            >
-              {isExpanded ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -87,11 +73,6 @@ export const BlogCard = ({ item, actions }: BlogCardProps) => {
             </DropdownMenu>
           </div>
         </div>
-        {isExpanded && (
-          <div className="text-sm text-muted-foreground">
-            <p className="line-clamp-3">{item.content}</p>
-          </div>
-        )}
       </div>
     </div>
   );
