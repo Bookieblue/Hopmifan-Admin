@@ -1,4 +1,4 @@
-import EstimateList from "./EstimateList";
+import { EstimateList } from "./EstimateList";
 
 export default function Estimates() {
   return <EstimateList />;

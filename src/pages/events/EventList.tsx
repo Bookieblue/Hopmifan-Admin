@@ -1,252 +1,119 @@
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { DataTable } from "@/components/shared/DataTable";
-import { ShareModal } from "@/components/modals/ShareModal";
+import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Calendar } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { Pagination } from "@/components/ui/pagination";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { DatePicker } from "@/components/ui/date-picker";
+import { DataTable } from "@/components/shared/DataTable";
+import { useToast } from "@/hooks/use-toast";
+import type { Event } from "@/types/event";
+import { Badge } from "@/components/ui/badge";
 
 export default function EventList() {
-  const { toast } = useToast();
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [eventToDelete, setEventToDelete] = useState<string | null>(null);
-  const [bulkAction, setBulkAction] = useState("");
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [startDate, setStartDate] = useState<Date>();
-  const [endDate, setEndDate] = useState<Date>();
-  const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
-  const eventsPerPage = 15;
-
-  const [events] = useState(Array.from({ length: 32 }, (_, i) => ({ 
-    id: `EVT-${String(i + 1).padStart(3, '0')}`,
-    title: `Event ${i + 1}`,
-    speaker: i % 2 === 0 ? "Pastor John" : "Sarah Smith",
-    date: new Date(2024, 2, 15 - i).toISOString().split('T')[0],
-    status: i % 3 === 0 ? "active" : "inactive"
-  })));
-
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
-  const [shareDialogOpen, setShareDialogOpen] = useState(false);
-  const [selectedEventId, setSelectedEventId] = useState<string>("");
+
+  // Mock data - replace with actual data fetching
+  const [events] = useState<Event[]>([
+    {
+      id: "EVT-001",
+      title: "Sunday Service",
+      date: "2024-03-24",
+      time: "10:00 AM",
+      description: "Weekly Sunday Service",
+      location: "Main Hall",
+      status: "published"
+    },
+    {
+      id: "EVT-002",
+      title: "Bible Study",
+      date: "2024-03-26",
+      time: "7:00 PM",
+      description: "Weekly Bible Study Session",
+      location: "Room 101",
+      status: "draft"
+    }
+  ]);
 
   const columns = [
     { header: "Title", accessor: "title" },
-    { header: "Speaker", accessor: "speaker" },
     { header: "Date", accessor: "date" },
-    { 
-      header: "Status", 
-      accessor: (event: any) => (
-        <span className={`px-2 py-1 rounded-full text-xs ${
-          event.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-        }`}>
-          {event.status}
-        </span>
-      )
+    { header: "Time", accessor: "time" },
+    { header: "Location", accessor: "location" },
+    {
+      header: "Status",
+      accessor: (event: Event) => (
+        <Badge variant={event.status === "published" ? "success" : "secondary"}>
+          {event.status === "published" ? "Published" : "Draft"}
+        </Badge>
+      ),
     },
   ];
 
-  const handlePageChange = (value: number) => {
-    setCurrentPage(value);
+  const handleDelete = (id: string) => {
+    toast({
+      description: `Event ${id} has been deleted.`
+    });
   };
 
-  const handleDelete = (eventId: string) => {
-    setEventToDelete(eventId);
-    setDeleteDialogOpen(true);
-  };
-
-  const confirmDelete = () => {
-    if (eventToDelete) {
-      toast({
-        description: `Event ${eventToDelete} has been deleted successfully.`
-      });
-      setDeleteDialogOpen(false);
-      setEventToDelete(null);
+  const handleSelectEvent = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedEvents([...selectedEvents, id]);
+    } else {
+      setSelectedEvents(selectedEvents.filter(eventId => eventId !== id));
     }
   };
 
-  const handleShare = (eventId: string) => {
-    const eventUrl = `${window.location.origin}/events/${eventId}`;
-    
-    navigator.clipboard.writeText(eventUrl).then(() => {
-      toast({
-        description: "Event link copied to clipboard!"
-      });
-    }).catch(() => {
-      toast({
-        description: "Failed to copy link",
-        variant: "destructive"
-      });
-    });
-  };
-
-  const handleBulkAction = () => {
-    if (bulkAction === 'delete') {
-      toast({
-        description: `${selectedEvents.length} events have been deleted.`
-      });
-      setSelectedEvents([]);
-    } else if (bulkAction === 'export') {
-      toast({
-        description: 'Events exported successfully.'
-      });
-    } else if (bulkAction === 'publish') {
-      toast({
-        description: `${selectedEvents.length} events have been published.`
-      });
-      setSelectedEvents([]);
-    } else if (bulkAction === 'draft') {
-      toast({
-        description: `${selectedEvents.length} events have been moved to draft.`
-      });
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedEvents(events.map(event => event.id));
+    } else {
       setSelectedEvents([]);
     }
-    setBulkAction("");
-  };
-
-  const bulkActions = [
-    { value: "delete", label: "Delete Selected" },
-    { value: "export", label: "Export as CSV" },
-    { value: "publish", label: "Publish Selected" },
-    { value: "draft", label: "Move to Draft" },
-  ];
-
-  const filteredEvents = events.filter(event => 
-    event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.speaker.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
-  const startIndex = (currentPage - 1) * eventsPerPage;
-  const endIndex = startIndex + eventsPerPage;
-  const currentEvents = filteredEvents.slice(startIndex, endIndex);
-
-  const handleRowClick = (id: string) => {
-    navigate(`/events/${id}/edit`);
-  };
-
-  const handleApplyDateFilter = () => {
-    // Filter logic would go here
-    setIsDateFilterOpen(false);
-    toast({
-      description: "Date filter applied successfully"
-    });
-  };
-
-  const handleResetDateFilter = () => {
-    setStartDate(undefined);
-    setEndDate(undefined);
-    setIsDateFilterOpen(false);
-    toast({
-      description: "Date filter reset"
-    });
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
-      <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Events</h1>
-        <Link to="/events/create">
-          <Button size="default" className="bg-purple-600 hover:bg-purple-700 px-3 md:px-4">
-            <Plus className="h-4 w-4 mr-2" />
-            New Event
-          </Button>
-        </Link>
+    <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Events</h1>
+          <p className="text-sm text-muted-foreground">
+            Manage your church events here
+          </p>
+        </div>
+        <Button onClick={() => navigate("create")}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Event
+        </Button>
       </div>
 
-      <div className="mb-6 flex gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
-          <Input 
-            placeholder="Search events..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Dialog open={isDateFilterOpen} onOpenChange={setIsDateFilterOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Filter by Date
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Filter by Date Range</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 pt-4">
-              <div className="flex flex-col gap-2">
-                <label>Start Date</label>
-                <DatePicker date={startDate} setDate={setStartDate} />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label>End Date</label>
-                <DatePicker date={endDate} setDate={setEndDate} />
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={handleResetDateFilter}>
-                  Reset
-                </Button>
-                <Button onClick={handleApplyDateFilter}>
-                  Apply Filter
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+      <div className="mb-4">
+        <Input
+          placeholder="Search events..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="max-w-sm"
+        />
       </div>
 
-      <DataTable
-        data={currentEvents}
-        columns={columns}
-        selectedItems={selectedEvents}
-        onSelectItem={(id, checked) => {
-          if (checked) {
-            setSelectedEvents([...selectedEvents, id]);
-          } else {
-            setSelectedEvents(selectedEvents.filter(eventId => eventId !== id));
-          }
-        }}
-        onSelectAll={(checked) => {
-          if (checked) {
-            setSelectedEvents(currentEvents.map(event => event.id));
-          } else {
-            setSelectedEvents([]);
-          }
-        }}
-        getItemId={(item) => item.id}
-        actions={{
-          onDelete: handleDelete,
-          onShare: handleShare,
-        }}
-        bulkActions={bulkActions}
-        bulkAction={bulkAction}
-        setBulkAction={setBulkAction}
-        onBulkAction={handleBulkAction}
-        onRowClick={handleRowClick}
-      />
-
-      {totalPages > 1 && (
-        <div className="mt-4">
-          <Pagination
-            total={totalPages}
-            value={currentPage}
-            onChange={handlePageChange}
-          />
-        </div>
-      )}
+      <div className="bg-white rounded-lg border">
+        <DataTable
+          data={events.filter(event =>
+            event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            event.location.toLowerCase().includes(searchQuery.toLowerCase())
+          )}
+          columns={columns}
+          selectedItems={selectedEvents}
+          onSelectItem={handleSelectEvent}
+          onSelectAll={handleSelectAll}
+          getItemId={(item: Event) => item.id}
+          onRowClick={(id) => navigate(id)}
+          actions={{
+            onDelete: handleDelete,
+          }}
+        />
+      </div>
     </div>
   );
 }

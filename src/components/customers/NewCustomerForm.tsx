@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { NewCustomer } from "@/types/customer";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { NewCustomer } from "@/types/customer";
 
 interface NewCustomerFormProps {
   newCustomer: NewCustomer;
@@ -27,7 +26,7 @@ export const NewCustomerForm = ({
         <Label>Name</Label>
         <Input 
           placeholder="Enter customer name"
-          value={newCustomer.name || ""}
+          value={newCustomer.name}
           onChange={(e) => onFieldChange('name', e.target.value)}
         />
       </div>
@@ -36,7 +35,7 @@ export const NewCustomerForm = ({
         <Input 
           type="email" 
           placeholder="Enter customer email"
-          value={newCustomer.email || ""}
+          value={newCustomer.email}
           onChange={(e) => onFieldChange('email', e.target.value)}
         />
       </div>
@@ -53,7 +52,7 @@ export const NewCustomerForm = ({
           <Label>Billing Address</Label>
           <Textarea
             placeholder="Enter complete billing address"
-            value={typeof newCustomer.billingAddress === 'string' ? newCustomer.billingAddress : ''}
+            value={newCustomer.billingAddress || ""}
             onChange={(e) => onFieldChange('billingAddress', e.target.value)}
             className="min-h-[100px]"
           />

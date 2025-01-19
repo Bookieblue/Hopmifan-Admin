@@ -1,102 +1,252 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Table, TableBody } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { DataTable } from "@/components/shared/DataTable";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Pagination } from "@/components/ui/pagination";
+import { PaymentTableHeader } from "@/components/payments/PaymentTableHeader";
+import { PaymentRow } from "@/components/payments/PaymentRow";
+import { PaymentFilters } from "@/components/payments/PaymentFilters";
+import { BulkActions } from "@/components/shared/BulkActions";
 
-export default function Payments() {
+const payments = [
+  { 
+    date: "14 Mar 2025", 
+    customer: "John Doe", 
+    amount: "₦5,057.00", 
+    method: "Credit Card", 
+    reference: "REF202503001",
+    type: "Book"
+  },
+  { 
+    date: "28 Feb 2025", 
+    customer: "Jane Smith", 
+    amount: "₦8,470.00", 
+    method: "Bank Transfer", 
+    reference: "REF202502001",
+    type: "Donation"
+  },
+  { 
+    date: "15 Dec 2024", 
+    customer: "Alice Johnson", 
+    amount: "₦12,340.00", 
+    method: "Credit Card", 
+    reference: "REF202412001",
+    type: "Book"
+  },
+  { 
+    date: "30 Sep 2024", 
+    customer: "Bob Wilson", 
+    amount: "₦7,355.00", 
+    method: "Bank Transfer", 
+    reference: "REF202409001",
+    type: "Donation"
+  },
+  { 
+    date: "15 Jun 2024", 
+    customer: "Carol Brown", 
+    amount: "₦9,104.00", 
+    method: "Credit Card", 
+    reference: "REF202406001",
+    type: "Book"
+  },
+  { 
+    date: "28 Mar 2024", 
+    customer: "David Lee", 
+    amount: "₦6,250.00", 
+    method: "Bank Transfer", 
+    reference: "REF202403001",
+    type: "Donation"
+  },
+  { 
+    date: "15 Dec 2023", 
+    customer: "Eve Adams", 
+    amount: "₦11,780.00", 
+    method: "Credit Card", 
+    reference: "REF202312001",
+    type: "Book"
+  },
+  { 
+    date: "30 Sep 2023", 
+    customer: "Frank White", 
+    amount: "₦8,920.00", 
+    method: "Bank Transfer", 
+    reference: "REF202309001",
+    type: "Donation"
+  },
+  { 
+    date: "15 Jun 2023", 
+    customer: "Grace Green", 
+    amount: "₦7,640.00", 
+    method: "Credit Card", 
+    reference: "REF202306001",
+    type: "Book"
+  },
+  { 
+    date: "30 Mar 2023", 
+    customer: "Henry Black", 
+    amount: "₦9,890.00", 
+    method: "Bank Transfer", 
+    reference: "REF202303001",
+    type: "Donation"
+  },
+  { 
+    date: "15 Jan 2023", 
+    customer: "Ivy Blue", 
+    amount: "₦6,430.00", 
+    method: "Credit Card", 
+    reference: "REF202301001",
+    type: "Book"
+  }
+];
+
+export default function PaymentHistory() {
   const { toast } = useToast();
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [payments, setPayments] = useState<any[]>([]);
-  const postsPerPage = 15;
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
+  const [filteredPayments, setFilteredPayments] = useState(payments);
+  const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState<string>("");
 
-  useEffect(() => {
-    // Fetch payments data
-    const fetchPayments = async () => {
-      // Replace with your API call
-      const mockPayments = [
-        {
-          date: "2024-03-15",
-          customer: "John Doe",
-          amount: "₦1,500.00",
-          method: "Card",
-          reference: "PAY-001",
-          type: "Donation" as const
-        },
-        {
-          date: "2024-03-14",
-          customer: "Jane Smith",
-          amount: "₦2,000.00",
-          method: "Cash",
-          reference: "PAY-002",
-          type: "Book" as const
-        }
-      ];
-      setPayments(mockPayments);
-    };
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    const filtered = payments.filter((payment) =>
+      Object.values(payment).some((value) =>
+        value.toString().toLowerCase().includes(query.toLowerCase())
+      )
+    );
+    setFilteredPayments(filtered);
+  };
 
-    fetchPayments();
-  }, []);
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedPayments(checked ? filteredPayments.map(p => p.reference) : []);
+  };
 
-  const filteredPayments = payments.filter(payment =>
-    payment.customer.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleSelectPayment = (reference: string, checked: boolean) => {
+    setSelectedPayments(prev => 
+      checked 
+        ? [...prev, reference]
+        : prev.filter(ref => ref !== reference)
+    );
+  };
 
-  const totalPages = Math.ceil(filteredPayments.length / postsPerPage);
-  const startIndex = (currentPage - 1) * postsPerPage;
-  const endIndex = startIndex + postsPerPage;
-  const currentPayments = filteredPayments.slice(startIndex, endIndex);
+  const handleBulkDownload = () => {
+    selectedPayments.forEach(reference => {
+      handleDownloadReceipt(reference);
+    });
+    toast({
+      title: "Bulk Download Started",
+      description: `Downloading ${selectedPayments.length} receipts`,
+    });
+  };
+
+  const handleDownloadReceipt = (reference: string) => {
+    toast({
+      title: "Receipt Downloaded",
+      description: `Receipt for reference ${reference} has been downloaded`,
+    });
+  };
+
+  const handleBulkExportCSV = () => {
+    const selectedPaymentData = filteredPayments.filter(p => 
+      selectedPayments.includes(p.reference)
+    );
+    
+    const headers = ["Date", "Customer", "Amount", "Method", "Reference", "Type"];
+    const csvData = selectedPaymentData.map(payment => 
+      [payment.date, payment.customer, payment.amount, payment.method, payment.reference, payment.type].join(",")
+    );
+    
+    const csv = [headers.join(","), ...csvData].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `payment-history-${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Export Successful",
+      description: "Selected payments have been exported as CSV",
+    });
+  };
+
+  const handleApplyFilter = () => {
+    if (!startDate || !endDate) return;
+    
+    const filtered = payments.filter(payment => {
+      const paymentDate = new Date(payment.date);
+      return paymentDate >= startDate && paymentDate <= endDate;
+    });
+    setFilteredPayments(filtered);
+  };
+
+  const handleResetFilter = () => {
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setFilteredPayments(payments);
+  };
+
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedPayments.length === 0) return;
+    
+    switch (bulkAction) {
+      case "download":
+        handleBulkDownload();
+        break;
+      case "export":
+        handleBulkExportCSV();
+        break;
+    }
+    setBulkAction("");
+  };
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold">Payments</h1>
-        <Link to="/payments/create">
-          <Button size="default" className="bg-purple-600 hover:bg-purple-700">
-            <Plus className="h-4 w-4 mr-2" />
-            New Payment
-          </Button>
-        </Link>
+        <h1 className="text-2xl font-semibold">Payment History</h1>
       </div>
 
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
-          <Input
-            className="pl-10"
-            placeholder="Search payments..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <DataTable
-        data={currentPayments}
-        columns={[
-          { header: "Date", accessor: "date" },
-          { header: "Customer", accessor: "customer" },
-          { header: "Amount", accessor: "amount" },
-          { header: "Method", accessor: "method" },
-          { header: "Reference", accessor: "reference" },
-          { header: "Type", accessor: "type" },
-        ]}
-        getItemId={(item) => item.reference}
+      <PaymentFilters
+        searchQuery={searchQuery}
+        setSearchQuery={handleSearch}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        handleResetFilter={handleResetFilter}
+        handleApplyFilter={handleApplyFilter}
       />
 
-      {totalPages > 1 && (
-        <div className="mt-4">
-          <Pagination
-            total={totalPages}
-            value={currentPage}
-            onChange={setCurrentPage}
+      <div className="bg-white rounded-lg border">
+        <Table>
+          <PaymentTableHeader
+            onSelectAll={handleSelectAll}
+            isAllSelected={selectedPayments.length === filteredPayments.length}
           />
-        </div>
-      )}
+          <TableBody>
+            {filteredPayments.map((payment) => (
+              <PaymentRow
+                key={payment.reference}
+                payment={payment}
+                isSelected={selectedPayments.includes(payment.reference)}
+                onSelect={handleSelectPayment}
+                onDownloadReceipt={handleDownloadReceipt}
+              />
+            ))}
+          </TableBody>
+        </Table>
+        <BulkActions
+          selectedCount={selectedPayments.length}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
+          actions={[
+            { value: "download", label: "Download Receipts" },
+            { value: "export", label: "Export as CSV" }
+          ]}
+        />
+      </div>
     </div>
   );
 }

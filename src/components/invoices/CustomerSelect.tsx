@@ -26,24 +26,17 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
   const [newCustomer, setNewCustomer] = useState<NewCustomer>({
     name: "",
     email: "",
-    billingAddress: ""
+    billingAddress: "",
   });
 
   const [customers] = useState<Customer[]>([
     { 
       id: '1', 
-      firstName: "Acme",
-      lastName: "Corp",
       name: "Acme Corp", 
       email: "billing@acme.com",
       phone: "+1 234 567 890",
-      country: "Nigeria",
-      state: "Lagos",
-      city: "Lagos",
       address: "123 Business Ave, Lagos, Nigeria",
-      preferredContact: "email",
-      dateSubmitted: new Date().toISOString(),
-      status: 'active',
+      billingAddress: "123 Business Ave, Lagos, Nigeria",
       totalSpent: "₦12,500.00",
       date: "15 Mar 2024",
       profilePicture: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
@@ -53,18 +46,11 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
     },
     { 
       id: '2', 
-      firstName: "TechStart",
-      lastName: "Solutions",
       name: "TechStart Solutions", 
       email: "finance@techstart.com",
       phone: "+1 987 654 321",
-      country: "Nigeria",
-      state: "Abuja",
-      city: "Abuja",
       address: "456 Innovation Way, Abuja, Nigeria",
-      preferredContact: "email",
-      dateSubmitted: new Date().toISOString(),
-      status: 'active',
+      billingAddress: "456 Innovation Way, Abuja, Nigeria",
       totalSpent: "₦8,750.00",
       date: "14 Mar 2024",
       profilePicture: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
@@ -102,25 +88,15 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
 
     const customer: Customer = {
       id: Date.now().toString(),
-      firstName: newCustomer.name.split(' ')[0],
-      lastName: newCustomer.name.split(' ')[1] || '',
-      name: newCustomer.name,
-      email: newCustomer.email,
+      ...newCustomer,
       phone: "",
-      country: "",
-      state: "",
-      city: "",
       address: "",
-      preferredContact: "email",
-      dateSubmitted: new Date().toISOString(),
-      status: 'active',
       totalSpent: "₦0.00",
       date: new Date().toLocaleDateString('en-US', { 
         day: '2-digit',
         month: 'short',
         year: 'numeric'
       }),
-      billingAddress: newCustomer.billingAddress,
       invoices: [],
       estimates: [],
       receipts: []
@@ -131,7 +107,7 @@ export const CustomerSelect = ({ onCustomerSelect, initialCustomer }: CustomerSe
     setNewCustomer({
       name: "",
       email: "",
-      billingAddress: ""
+      billingAddress: "",
     });
     setIsDialogOpen(false);
     

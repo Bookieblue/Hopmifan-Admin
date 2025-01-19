@@ -18,7 +18,7 @@ export const SearchResults = ({ customers, onSelect }: SearchResultsProps) => {
         >
           <div className="font-medium">{customer.name}</div>
           <div className="text-sm text-muted-foreground">{customer.email}</div>
-          {typeof customer.billingAddress === 'string' && (
+          {customer.billingAddress && (
             <div className="text-sm text-muted-foreground">
               {customer.billingAddress}
             </div>

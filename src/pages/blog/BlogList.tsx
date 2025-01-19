@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Plus, Search, Calendar } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Dialog,
   DialogContent,
@@ -255,7 +256,7 @@ export default function BlogList() {
           <Pagination
             total={totalPages}
             value={currentPage}
-            onChange={handlePageChange}
+            onValueChange={handlePageChange}
           />
         </div>
       )}

@@ -1,21 +1,30 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleIcon } from "lucide-react";
-import { Activity } from "@/types/activity";
+
+export type Activity = {
+  type: "Publication" | "Event" | "Contact" | "Donation" | "Membership" | "Sermon";
+  description: string;
+  amount?: number;
+  date: string;
+  status: "completed" | "pending" | "upcoming";
+  reference: string;
+  member?: string;
+}
 
 interface RecentActivityProps {
   activities: Activity[];
   title?: string;
 }
 
-const getStatusColor = (status: Activity["status"]) => {
+const getStatusColor = (status: "completed" | "pending" | "upcoming") => {
   switch (status) {
     case "completed":
       return "bg-green-100 text-green-800";
     case "pending":
       return "bg-yellow-100 text-yellow-800";
-    case "failed":
-      return "bg-red-100 text-red-800";
+    case "upcoming":
+      return "bg-blue-100 text-blue-800";
     default:
       return "bg-gray-100 text-gray-800";
   }
@@ -52,7 +61,7 @@ export function RecentActivity({ activities, title = "Recent Activity" }: Recent
                   <div className="font-medium">{activity.type}</div>
                   {activity.amount && (
                     <div className="text-sm text-muted-foreground">
-                      ₦{activity.amount}
+                      ₦{activity.amount.toLocaleString()}
                     </div>
                   )}
                   <span className={`mt-1 inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
