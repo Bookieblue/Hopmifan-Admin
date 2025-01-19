@@ -11,9 +11,11 @@ export function SidebarHeader({
     <div className="flex items-center p-4 border-b border-gray-100">
       <Link to="/" className="flex items-center">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold">C</span>
-          </div>
+          <img 
+            src="/lovable-uploads/99fde2de-26a2-4eeb-8e7b-5fbcf5d61301.png" 
+            alt="Church Logo" 
+            className="w-8 h-8 rounded-lg object-cover"
+          />
           <span className="text-xl font-semibold text-gray-900 truncate">
             Church Admin
           </span>
