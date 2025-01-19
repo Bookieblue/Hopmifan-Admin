@@ -23,9 +23,9 @@ export default function BlogList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState<string | null>(null);
+  const [bulkAction, setBulkAction] = useState("");
   const postsPerPage = 15;
   
-  // Mock data - in a real app this would come from an API
   const [blogs] = useState(Array.from({ length: 32 }, (_, i) => ({ 
     id: `BLG-${String(i + 1).padStart(3, '0')}`,
     title: `Blog Post ${i + 1}`,
@@ -53,6 +53,10 @@ export default function BlogList() {
       )
     },
   ];
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const handleDelete = (blogId: string) => {
     setBlogToDelete(blogId);
@@ -123,11 +127,6 @@ export default function BlogList() {
   const startIndex = (currentPage - 1) * postsPerPage;
   const endIndex = startIndex + postsPerPage;
   const currentBlogs = blogs.slice(startIndex, endIndex);
-
-  // Handler for page changes
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
