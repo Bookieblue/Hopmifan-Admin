@@ -4,7 +4,7 @@ import { DataTable } from "@/components/shared/DataTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
 import { Filter, Plus, Search, MoreVertical, Edit, Share, Trash2, Eye, Copy } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/blog/FilterModal";
@@ -195,7 +195,7 @@ const BlogList = () => {
                 Duplicate
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleCopyLink(blog.id)}>
-                <Link className="h-4 w-4 mr-2" />
+                <RouterLink className="h-4 w-4 mr-2" />
                 Copy Link
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleShare(blog.id)}>
@@ -315,13 +315,13 @@ const BlogList = () => {
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold">Our Articles</h1>
-        <Link 
+        <RouterLink 
           to="/dashboard/articles/create" 
           className="inline-flex items-center bg-[#695CAE] hover:bg-[#695CAE]/90 px-3 md:px-4 py-2 text-white rounded-md"
         >
           <Plus className="h-4 w-4 mr-2" />
           New Article
-        </Link>
+        </RouterLink>
       </div>
 
       <div className="space-y-4 mb-6">
