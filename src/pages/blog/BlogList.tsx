@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
-import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
-import { Filter, Plus, Search, MoreVertical, Edit, Share, Trash2, Eye, Copy } from "lucide-react";
+import { Filter, Plus, Search, MoreVertical, Edit, Trash2, Eye, Copy } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
@@ -194,14 +193,6 @@ const BlogList = () => {
                 <Copy className="h-4 w-4 mr-2" />
                 Duplicate
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleCopyLink(blog.id)}>
-                <Link className="h-4 w-4 mr-2" />
-                Copy Link
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleShare(blog.id)}>
-                <Share className="h-4 w-4 mr-2" />
-                Share
-              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleDelete(blog.id)}
                 className="text-red-600"
@@ -230,21 +221,6 @@ const BlogList = () => {
     setDeleteDialogOpen(false);
     setBlogToDelete("");
     setSelectedBlogs(selectedBlogs.filter(id => id !== blogToDelete));
-  };
-
-  const handleShare = async (blogId: string) => {
-    try {
-      const url = `${window.location.origin}/blog/${blogId}`;
-      await navigator.clipboard.writeText(url);
-      toast({
-        description: "Article link copied to clipboard!"
-      });
-    } catch (err) {
-      toast({
-        description: "Failed to copy link to clipboard",
-        variant: "destructive"
-      });
-    }
   };
 
   const handleBulkAction = () => {
@@ -316,8 +292,8 @@ const BlogList = () => {
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold">Our Articles</h1>
         <Link 
-          to="/articles/create" 
-          className="bg-[#695CAE] hover:bg-[#695CAE]/90 text-white px-3 md:px-4 py-2 rounded-md flex items-center gap-2"
+          to="/articles/create"
+          className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand text-white hover:bg-brand/90 h-10 px-4 py-2"
         >
           <Plus className="h-4 w-4" />
           New Article
@@ -381,7 +357,6 @@ const BlogList = () => {
           getItemId={(item) => item.id}
           actions={{
             onDelete: handleDelete,
-            onShare: handleShare,
           }}
           bulkActions={bulkActions}
           bulkAction={bulkAction}
