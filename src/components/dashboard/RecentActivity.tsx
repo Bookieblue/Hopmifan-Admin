@@ -70,7 +70,7 @@ export function RecentActivity({
 
   if (isMobile) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 mx-2.5">
         <h2 className={cn("text-[18px] font-semibold", titleClassName)}>{title}</h2>
         {activities.map((activity, index) => (
           <div 
