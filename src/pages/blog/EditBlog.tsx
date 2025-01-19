@@ -8,6 +8,24 @@ type BlogData = {
   content: string;
   author: string;
   status: "draft" | "published";
+  imagePreview?: string;
+};
+
+// This would typically come from your backend/API
+const mockArticles: Record<string, BlogData> = {
+  "1": {
+    title: "How to Build React Apps",
+    content: "<p>React is a powerful library for building user interfaces...</p>",
+    author: "John Doe",
+    status: "draft",
+    imagePreview: "/path/to/image.jpg"
+  },
+  "2": {
+    title: "TypeScript Best Practices",
+    content: "<p>TypeScript adds static typing to JavaScript...</p>",
+    author: "Jane Smith",
+    status: "published"
+  }
 };
 
 export default function EditBlog() {
@@ -17,15 +35,18 @@ export default function EditBlog() {
   const [initialData, setInitialData] = useState<BlogData | null>(null);
 
   useEffect(() => {
-    // Mock data fetch - in a real app this would be an API call
-    const mockArticle: BlogData = {
-      title: "Sample Article",
-      content: "<p>This is the content of the article...</p>",
-      author: "John Doe",
-      status: "draft"
-    };
-    setInitialData(mockArticle);
-  }, [id]);
+    // In a real app, this would be an API call
+    // For now, we'll use our mock data
+    if (id && mockArticles[id]) {
+      setInitialData(mockArticles[id]);
+    } else {
+      toast({
+        variant: "destructive",
+        description: "Article not found"
+      });
+      navigate("/articles");
+    }
+  }, [id, navigate, toast]);
 
   const handleSubmit = async (data: {
     title: string;
