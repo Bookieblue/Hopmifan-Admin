@@ -25,6 +25,10 @@ interface BlogCardProps {
 export const BlogCard = ({ item, actions }: BlogCardProps) => {
   const navigate = useNavigate();
   
+  const handleEdit = (id: string) => {
+    navigate(`/articles/${id}/edit`);
+  };
+  
   return (
     <div className="py-4 border-b last:border-b-0">
       <div className="flex justify-between items-start gap-4">
@@ -50,7 +54,7 @@ export const BlogCard = ({ item, actions }: BlogCardProps) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => navigate(`/articles/${item.id}/edit`)}>
+              <DropdownMenuItem onClick={() => handleEdit(item.id)}>
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
               </DropdownMenuItem>
