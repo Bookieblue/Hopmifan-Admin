@@ -65,7 +65,6 @@ export function DataTable<T>({
   const isMobile = useIsMobile();
 
   const handleRowClick = (e: React.MouseEvent, id: string) => {
-    // Don't trigger row click when clicking on checkbox or dropdown
     if (
       (e.target as HTMLElement).closest('.checkbox-cell') ||
       (e.target as HTMLElement).closest('[role="menuitem"]') ||
@@ -78,10 +77,27 @@ export function DataTable<T>({
 
   if (isMobile && CardComponent) {
     return (
-      <div className="px-4">
-        {data.map((item) => (
-          <CardComponent key={getItemId(item)} item={item} actions={actions} />
-        ))}
+      <div className="space-y-4">
+        <div className="px-4">
+          {data.map((item) => (
+            <div key={getItemId(item)} className="flex items-center gap-2">
+              <Checkbox
+                checked={selectedItems.includes(getItemId(item))}
+                onCheckedChange={(checked) => onSelectItem(getItemId(item), checked as boolean)}
+              />
+              <div className="flex-1">
+                <CardComponent item={item} actions={actions} />
+              </div>
+            </div>
+          ))}
+        </div>
+        <BulkActions
+          selectedCount={selectedItems.length}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={onBulkAction}
+          actions={bulkActions}
+        />
       </div>
     );
   }
