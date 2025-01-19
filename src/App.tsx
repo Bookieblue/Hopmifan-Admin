@@ -1,45 +1,23 @@
-import { createBrowserRouter } from "react-router-dom";
-import { Layout } from "@/components/layout/Layout";
-import Index from "@/pages/index";
-import BlogList from "@/pages/blog/BlogList";
-import CreateBlog from "@/pages/blog/CreateBlog";
-import EditBlog from "@/pages/blog/EditBlog";
-import ViewBlog from "@/pages/blog/ViewBlog";
-import NotFound from "@/pages/NotFound";
-import BookstoreList from "@/pages/bookstore/BookstoreList";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "@/components/layout/Layout";
+import PaymentHistory from "@/pages/payments/Index";
+import Home from "@/pages/Home"; // Example import for home page
+import About from "@/pages/About"; // Example import for about page
+import NotFound from "@/pages/NotFound"; // Example import for not found page
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    errorElement: <NotFound />,
-    children: [
-      {
-        path: "/",
-        element: <Index />,
-      },
-      {
-        path: "/articles",
-        element: <BlogList />,
-      },
-      {
-        path: "/articles/create",
-        element: <CreateBlog />,
-      },
-      {
-        path: "/articles/:id/edit",
-        element: <EditBlog />,
-      },
-      {
-        path: "/articles/:id",
-        element: <ViewBlog />,
-      },
-      {
-        path: "/bookstore",
-        element: <BookstoreList />,
-      }
-    ],
-  },
-]);
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/payments" element={<PaymentHistory />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
+}
 
-export default router;
+export default App;
