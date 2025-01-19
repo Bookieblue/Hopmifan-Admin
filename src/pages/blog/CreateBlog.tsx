@@ -24,7 +24,12 @@ export default function CreateBlog() {
       // Add new article
       articles[newId] = {
         ...data,
-        imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : undefined
+        imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : undefined,
+        publishDate: new Date().toLocaleDateString('en-US', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        })
       };
       
       // Save to localStorage

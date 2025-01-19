@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { Button } from "@/components/ui/button";
-import { Filter, Plus, Search, MoreVertical, Edit, Share, Trash2 } from "lucide-react";
+import { Filter, Plus, Search, MoreVertical, Edit, Share, Trash2, Eye, Copy } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
@@ -90,7 +90,7 @@ const sampleArticles = {
   }
 };
 
-export default function BlogList() {
+const BlogList = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -124,6 +124,37 @@ export default function BlogList() {
   const [blogToDelete, setBlogToDelete] = useState<string>("");
   const [bulkAction, setBulkAction] = useState("");
 
+  const handleDuplicate = async (blogId: string) => {
+    const blogToDuplicate = blogs.find(blog => blog.id === blogId);
+    if (blogToDuplicate) {
+      const newId = `ART-${String(blogs.length + 1).padStart(3, '0')}`;
+      const duplicatedBlog = {
+        ...blogToDuplicate,
+        id: newId,
+        title: `${blogToDuplicate.title} (Copy)`,
+      };
+      setBlogs([...blogs, duplicatedBlog]);
+      toast({
+        description: "Article duplicated successfully!"
+      });
+    }
+  };
+
+  const handleCopyLink = async (blogId: string) => {
+    try {
+      const url = `${window.location.origin}/articles/${blogId}`;
+      await navigator.clipboard.writeText(url);
+      toast({
+        description: "Link copied to clipboard!"
+      });
+    } catch (err) {
+      toast({
+        description: "Failed to copy link",
+        variant: "destructive"
+      });
+    }
+  };
+
   const columns = [
     { header: "Title", accessor: "title" },
     { header: "Author", accessor: "author" },
@@ -154,6 +185,18 @@ export default function BlogList() {
               <DropdownMenuItem onClick={() => navigate(`/articles/${blog.id}/edit`)}>
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`/articles/${blog.id}`)}>
+                <Eye className="h-4 w-4 mr-2" />
+                View
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDuplicate(blog.id)}>
+                <Copy className="h-4 w-4 mr-2" />
+                Duplicate
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleCopyLink(blog.id)}>
+                <Link className="h-4 w-4 mr-2" />
+                Copy Link
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleShare(blog.id)}>
                 <Share className="h-4 w-4 mr-2" />
@@ -273,7 +316,7 @@ export default function BlogList() {
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold">Our Articles</h1>
         <Link to="/articles/create">
-          <Button size="default" className="bg-purple-600 hover:bg-purple-700 px-3 md:px-4">
+          <Button size="default" className="bg-[#695CAE] hover:bg-[#695CAE]/90 px-3 md:px-4">
             <Plus className="h-4 w-4 mr-2" />
             New Article
           </Button>
@@ -394,4 +437,6 @@ export default function BlogList() {
       </AlertDialog>
     </div>
   );
-}
+};
+
+export default BlogList;

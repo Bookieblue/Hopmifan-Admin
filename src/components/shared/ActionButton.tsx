@@ -16,9 +16,9 @@ export const ActionButton = ({
     <Button
       variant={variant}
       className={cn(
-        "bg-purple-600 hover:bg-purple-700",
-        variant === "outline" && "bg-transparent hover:bg-transparent",
-        variant === "ghost" && "bg-transparent hover:bg-transparent",
+        "bg-[#695CAE] hover:bg-[#695CAE]/90",
+        variant === "outline" && "bg-transparent border-[#695CAE] text-[#695CAE] hover:bg-[#695CAE]/10 hover:text-[#695CAE]",
+        variant === "ghost" && "bg-transparent hover:bg-[#695CAE]/10 hover:text-[#695CAE]",
         className
       )}
       {...props}

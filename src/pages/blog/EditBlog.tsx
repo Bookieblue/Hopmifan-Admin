@@ -50,7 +50,8 @@ export default function EditBlog() {
       if (id) {
         articles[id] = {
           ...data,
-          imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : articles[id].imagePreview
+          imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : articles[id].imagePreview,
+          publishDate: articles[id].publishDate
         };
         localStorage.setItem('articles', JSON.stringify(articles));
       }
