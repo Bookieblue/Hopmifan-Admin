@@ -85,7 +85,7 @@ export default function EventList() {
     const eventToDuplicate = events.find(event => event.id === id);
     if (!eventToDuplicate) return;
 
-    const newId = `EVT-${Math.random().toString(36).substr(2, 9)}`;
+    const newId = `EVT-${String(Object.keys(events).length + 1).padStart(3, '0')}`;
     const duplicatedEvent = {
       ...eventToDuplicate,
       id: newId,
@@ -96,11 +96,10 @@ export default function EventList() {
     const updatedEvents = [...events, duplicatedEvent];
     setEvents(updatedEvents);
 
-    // Update localStorage
     const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
     storedEvents[newId] = {
       ...duplicatedEvent,
-      id: undefined // Remove id from stored object as it's used as the key
+      id: undefined
     };
     localStorage.setItem('events', JSON.stringify(storedEvents));
 
@@ -113,7 +112,6 @@ export default function EventList() {
     const updatedEvents = events.filter(event => event.id !== eventToDelete);
     setEvents(updatedEvents);
     
-    // Update localStorage
     const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
     delete storedEvents[eventToDelete];
     localStorage.setItem('events', JSON.stringify(storedEvents));
@@ -153,7 +151,6 @@ export default function EventList() {
       const updatedEvents = events.filter(event => !selectedEvents.includes(event.id));
       setEvents(updatedEvents);
       
-      // Update localStorage
       const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
       selectedEvents.forEach(id => {
         delete storedEvents[id];
@@ -174,7 +171,6 @@ export default function EventList() {
       });
       setEvents(updatedEvents);
       
-      // Update localStorage
       const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
       selectedEvents.forEach(id => {
         if (storedEvents[id]) {
@@ -267,21 +263,31 @@ export default function EventList() {
             {
               header: "Actions",
               accessor: (event: any) => (
-                <div className="flex items-center justify-end">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(event.id);
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                <div className="flex items-center justify-end" onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-[200px]">
+                      <DropdownMenuItem onClick={() => handleEdit(event.id)}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDuplicate(event.id)}>
+                        <Copy className="h-4 w-4 mr-2" />
+                        Duplicate
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(event.id)} className="text-red-600">
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               ),
-              className: "w-[50px]"
+              className: "w-[100px]"
             }
           ]}
           selectedItems={selectedEvents}
