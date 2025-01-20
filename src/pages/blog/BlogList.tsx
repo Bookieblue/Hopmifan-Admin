@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
-import { Button } from "@/components/ui/button";
 import { Filter, Plus, Search, MoreVertical, Edit, Trash2, CheckSquare, XSquare } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/blog/FilterModal";
 import { BulkActions } from "@/components/shared/BulkActions";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -252,10 +252,10 @@ const BlogList = () => {
   return (
     <div className="page-container">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="page-heading">Our Articles</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Our Articles</h1>
         <Link 
           to="/articles/create"
-          className="primary-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2"
+          className="bg-[#695CAE] hover:bg-[#695CAE]/90 text-white inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2"
         >
           <Plus className="h-4 w-4" />
           New Article
@@ -276,7 +276,7 @@ const BlogList = () => {
           </div>
           <Button
             variant="outline"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 bg-[#695CAE] hover:bg-[#695CAE]/90 text-white"
             onClick={() => setFilterModalOpen(true)}
           >
             <Filter className="h-4 w-4" />
@@ -304,17 +304,17 @@ const BlogList = () => {
             { 
               header: "Title", 
               accessor: "title",
-              className: "table-text"
+              className: "text-[14px]"
             },
             { 
               header: "Author", 
               accessor: "author",
-              className: "table-text"
+              className: "text-[14px]"
             },
             { 
               header: "Date & Status", 
               accessor: (blog: any) => (
-                <div className="space-y-1 table-text">
+                <div className="space-y-1 text-[14px]">
                   <div>{blog.publishDate}</div>
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     blog.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
@@ -323,12 +323,12 @@ const BlogList = () => {
                   </span>
                 </div>
               ),
-              className: "table-text"
+              className: "text-[14px]"
             },
             {
               header: "Actions",
               accessor: (blog: any) => (
-                <div className="flex items-center justify-end gap-2 table-text" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-end gap-2 text-[14px]" onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -363,7 +363,7 @@ const BlogList = () => {
                   </DropdownMenu>
                 </div>
               ),
-              className: "w-[100px] table-text"
+              className: "w-[100px] text-[14px]"
             }
           ]}
           selectedItems={selectedBlogs}
