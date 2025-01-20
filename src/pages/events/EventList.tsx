@@ -27,24 +27,54 @@ import {
 
 const sampleEvents = {
   "EVT-001": {
-    title: "Annual Tech Conference 2024",
+    title: "Sunday Worship Service",
     date: new Date(2024, 5, 15).toLocaleDateString(),
     time: "09:00 AM",
-    location: "Virtual",
+    location: "Main Sanctuary",
     status: "published",
-    description: "Join us for our annual tech conference featuring industry leaders.",
-    meetingLink: "https://meet.google.com/xyz",
-    imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87"
+    description: "Join us for our weekly Sunday worship service featuring praise and worship, prayer, and an inspiring message.",
+    meetingLink: "",
+    imageUrl: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3"
   },
   "EVT-002": {
-    title: "Web Development Workshop",
+    title: "Youth Bible Study",
     date: new Date(2024, 5, 20).toLocaleDateString(),
-    time: "02:00 PM",
-    location: "San Francisco",
-    status: "draft",
-    description: "Hands-on workshop on modern web development practices.",
+    time: "06:00 PM",
+    location: "Youth Center",
+    status: "published",
+    description: "Weekly Bible study session for young adults ages 13-18. Includes worship, discussion, and fellowship.",
     meetingLink: "",
-    imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4"
+    imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745"
+  },
+  "EVT-003": {
+    title: "Prayer Meeting",
+    date: new Date(2024, 5, 22).toLocaleDateString(),
+    time: "07:00 PM",
+    location: "Prayer Room",
+    status: "published",
+    description: "Join us for our midweek prayer meeting where we gather to pray for our church, community, and world.",
+    meetingLink: "https://zoom.us/j/prayer",
+    imageUrl: "https://images.unsplash.com/photo-1514939437600-6d1803c9471f"
+  },
+  "EVT-004": {
+    title: "Children's Ministry",
+    date: new Date(2024, 5, 25).toLocaleDateString(),
+    time: "10:00 AM",
+    location: "Children's Wing",
+    status: "draft",
+    description: "Special program for children ages 4-12 featuring Bible stories, crafts, and fun activities.",
+    meetingLink: "",
+    imageUrl: "https://images.unsplash.com/photo-1511632765486-a01980e01a18"
+  },
+  "EVT-005": {
+    title: "Community Outreach",
+    date: new Date(2024, 5, 28).toLocaleDateString(),
+    time: "09:00 AM",
+    location: "Community Center",
+    status: "published",
+    description: "Monthly community service event where we serve our local community through various outreach programs.",
+    meetingLink: "",
+    imageUrl: "https://images.unsplash.com/photo-1593113598332-cd59c5a3f40e"
   }
 };
 

@@ -29,7 +29,7 @@ export default function SignIn() {
           title: "Success",
           description: "Welcome back to Church Admin!",
         });
-        navigate("/dashboard");
+        navigate("/home");
       } else {
         toast({
           variant: "destructive",
@@ -139,4 +139,4 @@ export default function SignIn() {
       </div>
     </div>
   );
-}
+};
