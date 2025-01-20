@@ -135,17 +135,49 @@ const BlogList = () => {
     setSelectedBlogs(selectedBlogs.filter(id => id !== blogToDelete));
   };
 
+  const handleStatusChange = (id: string, newStatus: string) => {
+    setBlogs(blogs.map(blog => 
+      blog.id === id ? { ...blog, status: newStatus } : blog
+    ));
+    
+    const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
+    if (storedArticles[id]) {
+      storedArticles[id].status = newStatus;
+      localStorage.setItem('articles', JSON.stringify(storedArticles));
+    }
+    
+    toast({
+      description: `Article ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`
+    });
+  };
+
   const handleBulkAction = () => {
     if (bulkAction === 'delete') {
-      setBlogs(blogs.filter(blog => !selectedBlogs.includes(blog.id)));
+      const updatedBlogs = blogs.filter(blog => !selectedBlogs.includes(blog.id));
+      setBlogs(updatedBlogs);
+      
+      const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
+      selectedBlogs.forEach(id => delete storedArticles[id]);
+      localStorage.setItem('articles', JSON.stringify(storedArticles));
+      
       toast({
         description: `${selectedBlogs.length} articles have been deleted.`
       });
       setSelectedBlogs([]);
     } else if (bulkAction === 'publish') {
-      setBlogs(blogs.map(blog => 
+      const updatedBlogs = blogs.map(blog => 
         selectedBlogs.includes(blog.id) ? { ...blog, status: 'published' } : blog
-      ));
+      );
+      setBlogs(updatedBlogs);
+      
+      const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
+      selectedBlogs.forEach(id => {
+        if (storedArticles[id]) {
+          storedArticles[id].status = 'published';
+        }
+      });
+      localStorage.setItem('articles', JSON.stringify(storedArticles));
+      
       toast({
         description: `${selectedBlogs.length} articles have been published.`
       });
@@ -300,6 +332,7 @@ const BlogList = () => {
           getItemId={(item) => item.id}
           actions={{
             onDelete: handleDelete,
+            onStatusChange: handleStatusChange,
           }}
           bulkActions={bulkActions}
           bulkAction={bulkAction}

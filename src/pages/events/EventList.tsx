@@ -79,92 +79,20 @@ export default function EventList() {
     }));
   });
 
-  const columns = [
-    { header: "Title", accessor: "title" },
-    { 
-      header: "Date & Time", 
-      accessor: (event: any) => (
-        <div className="space-y-1">
-          <div>{event.date}</div>
-          <div className="text-sm text-muted-foreground">{event.time}</div>
-        </div>
-      )
-    },
-    { header: "Location", accessor: "location" },
-    { 
-      header: "Status", 
-      accessor: (event: any) => (
-        <span className={`px-2 py-1 rounded-full text-xs ${
-          event.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-        }`}>
-          {event.status}
-        </span>
-      )
-    },
-    {
-      header: "Actions",
-      accessor: (event: any) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[200px]">
-            <DropdownMenuItem onClick={() => navigate(`/events/${event.id}/edit`)}>
-              <Edit className="h-4 w-4 mr-2" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => handleStatusChange(event.id, event.status === 'published' ? 'draft' : 'published')}
-            >
-              {event.status === 'published' ? (
-                <>
-                  <XSquare className="h-4 w-4 mr-2" />
-                  Unpublish
-                </>
-              ) : (
-                <>
-                  <CheckSquare className="h-4 w-4 mr-2" />
-                  Publish
-                </>
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => handleDelete(event.id)}
-              className="text-red-600"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-      className: "w-[50px]"
-    }
-  ];
-
-  const handleEdit = (id: string) => {
-    navigate(`/events/${id}/edit`);
-  };
-
-  const handleDelete = (eventId: string) => {
-    setEventToDelete(eventId);
-    setDeleteDialogOpen(true);
-  };
-
-  const confirmDelete = () => {
-    setEvents(events.filter(event => event.id !== eventToDelete));
-    toast({
-      description: "Event has been deleted successfully."
-    });
-    setDeleteDialogOpen(false);
-    setEventToDelete("");
-    setSelectedEvents(selectedEvents.filter(id => id !== eventToDelete));
-
+  const handleStatusChange = (id: string, newStatus: string) => {
+    setEvents(events.map(event => 
+      event.id === id ? { ...event, status: newStatus } : event
+    ));
+    
     const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
-    delete storedEvents[eventToDelete];
-    localStorage.setItem('events', JSON.stringify(storedEvents));
+    if (storedEvents[id]) {
+      storedEvents[id].status = newStatus;
+      localStorage.setItem('events', JSON.stringify(storedEvents));
+    }
+    
+    toast({
+      description: `Event ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`
+    });
   };
 
   const handleBulkAction = () => {
@@ -271,7 +199,70 @@ export default function EventList() {
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
           data={currentEvents}
-          columns={columns}
+          columns={[
+            { header: "Title", accessor: "title" },
+            { 
+              header: "Date & Time", 
+              accessor: (event: any) => (
+                <div className="space-y-1">
+                  <div>{event.date}</div>
+                  <div className="text-sm text-muted-foreground">{event.time}</div>
+                </div>
+              )
+            },
+            { header: "Location", accessor: "location" },
+            { 
+              header: "Status", 
+              accessor: (event: any) => (
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  event.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {event.status}
+                </span>
+              )
+            },
+            {
+              header: "Actions",
+              accessor: (event: any) => (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[200px]">
+                    <DropdownMenuItem onClick={() => navigate(`/events/${event.id}/edit`)}>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleStatusChange(event.id, event.status === 'published' ? 'draft' : 'published')}
+                    >
+                      {event.status === 'published' ? (
+                        <>
+                          <XSquare className="h-4 w-4 mr-2" />
+                          Unpublish
+                        </>
+                      ) : (
+                        <>
+                          <CheckSquare className="h-4 w-4 mr-2" />
+                          Publish
+                        </>
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleDelete(event.id)}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ),
+              className: "w-[50px]"
+            }
+          ]}
           selectedItems={selectedEvents}
           onSelectItem={(id, checked) => {
             if (checked) {
@@ -299,7 +290,6 @@ export default function EventList() {
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
-          basePath="events"
         />
 
         <BulkActions

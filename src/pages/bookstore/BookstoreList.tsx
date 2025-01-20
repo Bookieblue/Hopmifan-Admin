@@ -90,12 +90,12 @@ export default function BookstoreList() {
     setSelectedBooks(selectedBooks.filter(id => id !== bookToDelete));
   };
 
-  const handleStatusChange = (id: string, status: string) => {
+  const handleStatusChange = (id: string, newStatus: string) => {
     setBooks(books.map(book => 
-      book.id === id ? { ...book, status } : book
+      book.id === id ? { ...book, status: newStatus } : book
     ));
     toast({
-      description: `Book ${status === 'published' ? 'published' : 'unpublished'} successfully`,
+      description: `Book ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`,
     });
   };
 
