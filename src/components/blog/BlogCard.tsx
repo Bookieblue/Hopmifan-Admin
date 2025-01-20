@@ -1,4 +1,4 @@
-import { MoreVertical, Edit, Trash2 } from "lucide-react";
+import { MoreVertical, Edit, Trash2, CheckSquare, XSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,6 +20,7 @@ interface BlogCardProps {
   actions?: {
     onDelete?: (id: string) => void;
     onShare?: (id: string) => void;
+    onStatusChange?: (id: string, status: string) => void;
   };
 }
 
@@ -60,6 +61,23 @@ export const BlogCard = ({ item, actions }: BlogCardProps) => {
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </DropdownMenuItem>
+                {actions?.onStatusChange && (
+                  <DropdownMenuItem
+                    onClick={() => actions.onStatusChange(item.id, item.status === 'published' ? 'draft' : 'published')}
+                  >
+                    {item.status === 'published' ? (
+                      <>
+                        <XSquare className="h-4 w-4 mr-2" />
+                        Unpublish
+                      </>
+                    ) : (
+                      <>
+                        <CheckSquare className="h-4 w-4 mr-2" />
+                        Publish
+                      </>
+                    )}
+                  </DropdownMenuItem>
+                )}
                 {actions?.onDelete && (
                   <DropdownMenuItem
                     onClick={() => actions.onDelete(item.id)}

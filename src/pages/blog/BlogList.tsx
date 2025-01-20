@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { Filter, Plus, Search, MoreVertical, Edit, Trash2, Eye } from "lucide-react";
+import { Filter, Plus, Search, MoreVertical, Edit, Trash2, CheckSquare, XSquare } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
@@ -148,46 +148,20 @@ const BlogList = () => {
     }
   };
 
-  const handleBulkAction = () => {
-    if (bulkAction === 'delete') {
-      const updatedBlogs = blogs.filter(blog => !selectedBlogs.includes(blog.id));
-      setBlogs(updatedBlogs);
-      
-      const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
-      selectedBlogs.forEach(id => {
-        delete storedArticles[id];
-      });
+  const handleStatusChange = (id: string, newStatus: string) => {
+    setBlogs(blogs.map(blog => 
+      blog.id === id ? { ...blog, status: newStatus } : blog
+    ));
+    
+    const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
+    if (storedArticles[id]) {
+      storedArticles[id].status = newStatus;
       localStorage.setItem('articles', JSON.stringify(storedArticles));
-      
-      toast({
-        description: `${selectedBlogs.length} articles deleted successfully.`
-      });
-      
-      setSelectedBlogs([]);
-    } else if (bulkAction === 'publish' || bulkAction === 'draft') {
-      const updatedBlogs = blogs.map(blog => {
-        if (selectedBlogs.includes(blog.id)) {
-          return { ...blog, status: bulkAction === 'publish' ? 'published' : 'draft' };
-        }
-        return blog;
-      });
-      setBlogs(updatedBlogs);
-      
-      const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
-      selectedBlogs.forEach(id => {
-        if (storedArticles[id]) {
-          storedArticles[id].status = bulkAction === 'publish' ? 'published' : 'draft';
-        }
-      });
-      localStorage.setItem('articles', JSON.stringify(storedArticles));
-      
-      toast({
-        description: `${selectedBlogs.length} articles updated successfully.`
-      });
-      
-      setSelectedBlogs([]);
     }
-    setBulkAction('');
+    
+    toast({
+      description: `Article ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`
+    });
   };
 
   const filteredBlogs = blogs.filter(blog => {
@@ -299,6 +273,21 @@ const BlogList = () => {
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleStatusChange(blog.id, blog.status === 'published' ? 'draft' : 'published')}
+                      >
+                        {blog.status === 'published' ? (
+                          <>
+                            <XSquare className="h-4 w-4 mr-2" />
+                            Unpublish
+                          </>
+                        ) : (
+                          <>
+                            <CheckSquare className="h-4 w-4 mr-2" />
+                            Publish
+                          </>
+                        )}
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleDelete(blog.id)} className="text-red-600">
                         <Trash2 className="h-4 w-4 mr-2" />
                         Delete
@@ -328,6 +317,7 @@ const BlogList = () => {
           getItemId={(item) => item.id}
           actions={{
             onDelete: handleDelete,
+            onStatusChange: handleStatusChange,
           }}
           bulkActions={bulkActions}
           bulkAction={bulkAction}
