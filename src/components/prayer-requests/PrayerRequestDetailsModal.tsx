@@ -40,7 +40,7 @@ export function PrayerRequestDetailsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Prayer Request Details</DialogTitle>
         </DialogHeader>
@@ -52,7 +52,7 @@ export function PrayerRequestDetailsModal({
             </div>
             <div>
               <h3 className="font-medium mb-1">Email</h3>
-              <p>{request.email}</p>
+              <p className="break-words">{request.email}</p>
             </div>
             <div>
               <h3 className="font-medium mb-1">Phone</h3>
@@ -73,7 +73,7 @@ export function PrayerRequestDetailsModal({
           </div>
           <div>
             <h3 className="font-medium mb-2">Prayer Request</h3>
-            <p className="text-gray-600 whitespace-pre-wrap">{request.prayerRequest}</p>
+            <p className="text-gray-600 whitespace-pre-wrap break-words">{request.prayerRequest}</p>
           </div>
           <div className="flex justify-between items-center mt-4">
             <div className="flex items-center gap-2">
@@ -84,7 +84,7 @@ export function PrayerRequestDetailsModal({
               </span>
             </div>
             {request.status === 'pending' && (
-              <Button onClick={handleStatusChange} variant="default" className="bg-green-600 hover:bg-green-700">
+              <Button onClick={handleStatusChange} className="bg-green-600 hover:bg-green-700">
                 <Check className="h-4 w-4 mr-2" />
                 Mark as Replied
               </Button>

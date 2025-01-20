@@ -40,7 +40,7 @@ export function MemberDetailsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Member Details</DialogTitle>
         </DialogHeader>
@@ -52,7 +52,7 @@ export function MemberDetailsModal({
             </div>
             <div>
               <h3 className="font-medium mb-1">Email</h3>
-              <p>{member.email}</p>
+              <p className="break-words">{member.email}</p>
             </div>
             <div>
               <h3 className="font-medium mb-1">Phone</h3>
@@ -73,7 +73,7 @@ export function MemberDetailsModal({
           </div>
           <div>
             <h3 className="font-medium mb-2">Prayer Request</h3>
-            <p className="text-gray-600 whitespace-pre-wrap">{member.prayerRequest}</p>
+            <p className="text-gray-600 whitespace-pre-wrap break-words">{member.prayerRequest}</p>
           </div>
           <div className="flex justify-between items-center mt-4">
             <div className="flex items-center gap-2">

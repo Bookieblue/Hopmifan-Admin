@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Check, X } from "lucide-react";
+import { Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ContactDetailsModalProps {
@@ -40,7 +40,7 @@ export function ContactDetailsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Contact Details</DialogTitle>
         </DialogHeader>
@@ -52,7 +52,7 @@ export function ContactDetailsModal({
             </div>
             <div>
               <h3 className="font-medium mb-1">Email</h3>
-              <p>{contact.email}</p>
+              <p className="break-words">{contact.email}</p>
             </div>
             <div>
               <h3 className="font-medium mb-1">Phone</h3>
@@ -73,7 +73,7 @@ export function ContactDetailsModal({
           </div>
           <div>
             <h3 className="font-medium mb-2">Message</h3>
-            <p className="text-gray-600 whitespace-pre-wrap">{contact.message}</p>
+            <p className="text-gray-600 whitespace-pre-wrap break-words">{contact.message}</p>
           </div>
           <div className="flex justify-between items-center mt-4">
             <div className="flex items-center gap-2">
