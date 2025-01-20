@@ -35,7 +35,7 @@ export const BookCard = ({ item, actions }: BookCardProps) => {
     <div className="py-4 border-b last:border-b-0">
       <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0" onClick={() => handleEdit(item.id)}>
+          <div className="flex-1 min-w-0" onClick={() => handleEdit(item.id)} style={{ cursor: 'pointer' }}>
             <h3 className="font-semibold text-left mb-2 line-clamp-2">{item.title}</h3>
             <div className="text-sm text-muted-foreground text-left space-y-1">
               <p className="truncate">{item.author}</p>
