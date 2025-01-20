@@ -68,7 +68,9 @@ export function Layout() {
               </header>
               <main className="flex-1 px-2.5 py-4 md:p-8 mt-16 overflow-x-hidden bg-white">
                 <div className="max-w-7xl mx-auto">
-                  <Outlet />
+                  <div className="px-[10px] md:px-0">
+                    <Outlet />
+                  </div>
                 </div>
               </main>
             </>

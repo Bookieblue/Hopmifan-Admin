@@ -40,3 +40,13 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Add consistent page heading styles */
+.page-heading {
+  @apply text-2xl font-bold mb-6 px-0 md:px-6;
+}
+
+/* Add consistent page container padding */
+.page-container {
+  @apply w-full max-w-[1400px] mx-auto px-[10px] md:px-6;
+}
