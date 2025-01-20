@@ -18,12 +18,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const sampleEvents = {
   "EVT-001": {
@@ -116,8 +110,10 @@ export default function EventList() {
   };
 
   const confirmDelete = () => {
-    setEvents(events.filter(event => event.id !== eventToDelete));
+    const updatedEvents = events.filter(event => event.id !== eventToDelete);
+    setEvents(updatedEvents);
     
+    // Update localStorage
     const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
     delete storedEvents[eventToDelete];
     localStorage.setItem('events', JSON.stringify(storedEvents));
@@ -130,91 +126,6 @@ export default function EventList() {
     setEventToDelete("");
     setSelectedEvents(selectedEvents.filter(id => id !== eventToDelete));
   };
-
-  const handleStatusChange = (id: string, newStatus: string) => {
-    setEvents(events.map(event => 
-      event.id === id ? { ...event, status: newStatus } : event
-    ));
-    
-    const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
-    if (storedEvents[id]) {
-      storedEvents[id].status = newStatus;
-      localStorage.setItem('events', JSON.stringify(storedEvents));
-    }
-    
-    toast({
-      description: `Event ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`
-    });
-  };
-
-  const handleBulkAction = () => {
-    if (bulkAction === 'delete') {
-      const updatedEvents = events.filter(event => !selectedEvents.includes(event.id));
-      setEvents(updatedEvents);
-      
-      const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
-      selectedEvents.forEach(id => {
-        delete storedEvents[id];
-      });
-      localStorage.setItem('events', JSON.stringify(storedEvents));
-      
-      toast({
-        description: `${selectedEvents.length} events deleted successfully.`
-      });
-      
-      setSelectedEvents([]);
-    } else if (bulkAction === 'publish' || bulkAction === 'draft') {
-      const updatedEvents = events.map(event => {
-        if (selectedEvents.includes(event.id)) {
-          return { ...event, status: bulkAction === 'publish' ? 'published' : 'draft' };
-        }
-        return event;
-      });
-      setEvents(updatedEvents);
-      
-      const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
-      selectedEvents.forEach(id => {
-        if (storedEvents[id]) {
-          storedEvents[id].status = bulkAction === 'publish' ? 'published' : 'draft';
-        }
-      });
-      localStorage.setItem('events', JSON.stringify(storedEvents));
-      
-      toast({
-        description: `${selectedEvents.length} events ${bulkAction === 'publish' ? 'published' : 'moved to draft'} successfully.`
-      });
-      
-      setSelectedEvents([]);
-    }
-    setBulkAction("");
-  };
-
-  const renderActions = (id: string) => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-          <MoreVertical className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[200px] bg-white">
-        <DropdownMenuItem onClick={() => handleEdit(id)}>
-          <Edit className="h-4 w-4 mr-2" />
-          Edit
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleDuplicate(id)}>
-          <Copy className="h-4 w-4 mr-2" />
-          Duplicate
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleDelete(id)}
-          className="text-red-600"
-        >
-          <Trash2 className="h-4 w-4 mr-2" />
-          Delete
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
 
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -311,7 +222,21 @@ export default function EventList() {
             },
             {
               header: "Actions",
-              accessor: (event: any) => renderActions(event.id),
+              accessor: (event: any) => (
+                <div className="flex items-center justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(event.id);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ),
               className: "w-[50px]"
             }
           ]}
@@ -334,8 +259,7 @@ export default function EventList() {
           actions={{
             onDelete: handleDelete,
             onEdit: handleEdit,
-            onDuplicate: handleDuplicate,
-            onStatusChange: handleStatusChange
+            onDuplicate: handleDuplicate
           }}
           onRowClick={handleEdit}
           CardComponent={EventCard}
