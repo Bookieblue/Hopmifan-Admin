@@ -190,29 +190,30 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
           <label htmlFor="content" className="block text-sm font-medium mb-2">
             Content <span className="text-red-500">*</span>
           </label>
-          <Editor
-            apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
-            init={{
-              height: 500,
-              menubar: false,
-              plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-              toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-              content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px }',
-              branding: false,
-              promotion: false,
-              setup: (editor) => {
-                editor.on('init', () => {
-                  const notification = document.querySelector('.tox-notifications-container');
-                  if (notification) {
-                    notification.remove();
-                  }
-                });
-              }
-            }}
-            value={content}
-            onEditorChange={(newContent) => setContent(newContent)}
-            className={errors.content ? 'border-red-500' : ''}
-          />
+          <div className={errors.content ? 'border-2 border-red-500 rounded-lg' : ''}>
+            <Editor
+              apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
+              init={{
+                height: 500,
+                menubar: false,
+                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px }',
+                branding: false,
+                promotion: false,
+                setup: (editor) => {
+                  editor.on('init', () => {
+                    const notification = document.querySelector('.tox-notifications-container');
+                    if (notification) {
+                      notification.remove();
+                    }
+                  });
+                }
+              }}
+              value={content}
+              onEditorChange={(newContent) => setContent(newContent)}
+            />
+          </div>
           {errors.content && (
             <p className="text-red-500 text-sm mt-1">Content is required</p>
           )}
