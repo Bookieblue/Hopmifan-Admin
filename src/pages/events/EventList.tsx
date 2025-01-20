@@ -9,6 +9,12 @@ import { useToast } from "@/hooks/use-toast";
 import { EventCard } from "@/components/events/EventCard";
 import { BulkActions } from "@/components/shared/BulkActions";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
