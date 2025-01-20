@@ -127,12 +127,22 @@ const BlogList = () => {
 
   const confirmDelete = () => {
     setBlogs(blogs.filter(blog => blog.id !== blogToDelete));
+    
+    const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
+    delete storedArticles[blogToDelete];
+    localStorage.setItem('articles', JSON.stringify(storedArticles));
+    
     toast({
-      description: `Article has been deleted successfully.`
+      description: "Article deleted successfully."
     });
+    
     setDeleteDialogOpen(false);
     setBlogToDelete("");
     setSelectedBlogs(selectedBlogs.filter(id => id !== blogToDelete));
+  };
+
+  const handleEdit = (id: string) => {
+    navigate(`/articles/${id}/edit`);
   };
 
   const handleStatusChange = (id: string, newStatus: string) => {
@@ -295,7 +305,7 @@ const BlogList = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-[200px] bg-white">
-                      <DropdownMenuItem onClick={() => navigate(`/articles/${blog.id}/edit`)}>
+                      <DropdownMenuItem onClick={() => handleEdit(blog.id)}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
@@ -353,16 +363,6 @@ const BlogList = () => {
           />
         )}
       </div>
-
-      {totalPages > 1 && (
-        <div className="mt-4">
-          <Pagination
-            total={totalPages}
-            value={currentPage}
-            onChange={handlePageChange}
-          />
-        </div>
-      )}
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
