@@ -1,4 +1,4 @@
-import { MoreVertical, Edit, Trash2, CheckSquare, XSquare } from "lucide-react";
+import { MoreVertical, Edit, Trash2, Copy, CheckSquare, XSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,6 +19,7 @@ interface BookCardProps {
   };
   actions?: {
     onDelete?: (id: string) => void;
+    onDuplicate?: (id: string) => void;
     onStatusChange?: (id: string, status: string) => void;
   };
 }
@@ -34,7 +35,7 @@ export const BookCard = ({ item, actions }: BookCardProps) => {
     <div className="py-4 border-b last:border-b-0">
       <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0" onClick={() => handleEdit(item.id)}>
             <h3 className="font-semibold text-left mb-2 line-clamp-2">{item.title}</h3>
             <div className="text-sm text-muted-foreground text-left space-y-1">
               <p className="truncate">{item.author}</p>
@@ -60,6 +61,12 @@ export const BookCard = ({ item, actions }: BookCardProps) => {
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </DropdownMenuItem>
+                {actions?.onDuplicate && (
+                  <DropdownMenuItem onClick={() => actions.onDuplicate(item.id)}>
+                    <Copy className="h-4 w-4 mr-2" />
+                    Duplicate
+                  </DropdownMenuItem>
+                )}
                 {actions?.onStatusChange && (
                   <DropdownMenuItem
                     onClick={() => actions.onStatusChange(item.id, item.status === 'published' ? 'draft' : 'published')}
@@ -93,4 +100,4 @@ export const BookCard = ({ item, actions }: BookCardProps) => {
       </div>
     </div>
   );
-}
+};

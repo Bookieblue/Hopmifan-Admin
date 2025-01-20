@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Plus, Search, Filter } from "lucide-react";
 import { DataTable } from "@/components/shared/DataTable";
 import { FilterModal } from "@/components/bookstore/FilterModal";
 import { BookCard } from "@/components/bookstore/BookCard";
@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Filter } from "lucide-react";
+import { BulkActions } from "@/components/shared/BulkActions";
 
 export default function BookstoreList() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,8 +17,10 @@ export default function BookstoreList() {
   const [locationFilter, setLocationFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
+  const [bulkAction, setBulkAction] = useState("");
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   // Sample data
   const books = [
@@ -50,6 +52,38 @@ export default function BookstoreList() {
     });
   };
 
+  const handleDuplicate = (id: string) => {
+    toast({
+      description: "Book duplicated successfully",
+    });
+  };
+
+  const handleBulkAction = () => {
+    if (!selectedItems.length) return;
+
+    switch (bulkAction) {
+      case "delete":
+        toast({
+          description: `${selectedItems.length} books deleted successfully`,
+        });
+        break;
+      case "publish":
+        toast({
+          description: `${selectedItems.length} books published successfully`,
+        });
+        break;
+      case "unpublish":
+        toast({
+          description: `${selectedItems.length} books unpublished successfully`,
+        });
+        break;
+      default:
+        break;
+    }
+    setSelectedItems([]);
+    setBulkAction("");
+  };
+
   const filteredBooks = books.filter((book) => {
     const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       book.author.toLowerCase().includes(searchQuery.toLowerCase());
@@ -65,6 +99,10 @@ export default function BookstoreList() {
 
   const handleSelectAll = (checked: boolean) => {
     setSelectedItems(checked ? filteredBooks.map(book => book.id) : []);
+  };
+
+  const handleRowClick = (id: string) => {
+    navigate(`/bookstore/${id}/edit`);
   };
 
   return (
@@ -129,28 +167,29 @@ export default function BookstoreList() {
               </div>
             ),
             className: "text-[14px]"
-          },
-          {
-            header: "Actions",
-            accessor: (book: any) => (
-              <div className="flex items-center justify-end gap-2 text-[14px]">
-                <Link to={`/bookstore/${book.id}/edit`}>Edit</Link>
-                <button onClick={() => handleDelete(book.id)}>Delete</button>
-              </div>
-            ),
-            className: "w-[100px] text-[14px]"
           }
         ]}
         selectedItems={selectedItems}
         onSelectItem={handleSelectItem}
         onSelectAll={handleSelectAll}
         getItemId={(item) => item.id}
+        onRowClick={handleRowClick}
         CardComponent={isMobile ? BookCard : undefined}
         actions={{
           onDelete: handleDelete,
           onStatusChange: handleStatusChange,
+          onDuplicate: handleDuplicate,
+          onEdit: (id: string) => navigate(`/bookstore/${id}/edit`),
         }}
         showCheckboxes={true}
+        bulkActions={[
+          { value: "delete", label: "Delete Selected" },
+          { value: "publish", label: "Publish Selected" },
+          { value: "unpublish", label: "Unpublish Selected" }
+        ]}
+        bulkAction={bulkAction}
+        setBulkAction={setBulkAction}
+        onBulkAction={handleBulkAction}
       />
 
       <FilterModal
