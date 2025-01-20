@@ -115,32 +115,41 @@ export default function EventList() {
 
   const handleBulkAction = () => {
     if (bulkAction === 'delete') {
-      setEvents(events.filter(event => !selectedEvents.includes(event.id)));
+      const updatedEvents = events.filter(event => !selectedEvents.includes(event.id));
+      setEvents(updatedEvents);
       
       const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
-      selectedEvents.forEach(id => delete storedEvents[id]);
+      selectedEvents.forEach(id => {
+        delete storedEvents[id];
+      });
       localStorage.setItem('events', JSON.stringify(storedEvents));
       
       toast({
-        description: `${selectedEvents.length} events have been deleted.`
+        description: `${selectedEvents.length} events deleted successfully.`
       });
+      
       setSelectedEvents([]);
-    } else if (bulkAction === 'publish') {
-      setEvents(events.map(event => 
-        selectedEvents.includes(event.id) ? { ...event, status: 'published' } : event
-      ));
+    } else if (bulkAction === 'publish' || bulkAction === 'draft') {
+      const updatedEvents = events.map(event => {
+        if (selectedEvents.includes(event.id)) {
+          return { ...event, status: bulkAction === 'publish' ? 'published' : 'draft' };
+        }
+        return event;
+      });
+      setEvents(updatedEvents);
       
       const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
       selectedEvents.forEach(id => {
         if (storedEvents[id]) {
-          storedEvents[id].status = 'published';
+          storedEvents[id].status = bulkAction === 'publish' ? 'published' : 'draft';
         }
       });
       localStorage.setItem('events', JSON.stringify(storedEvents));
       
       toast({
-        description: `${selectedEvents.length} events have been published.`
+        description: `${selectedEvents.length} events ${bulkAction === 'publish' ? 'published' : 'moved to draft'} successfully.`
       });
+      
       setSelectedEvents([]);
     }
     setBulkAction("");

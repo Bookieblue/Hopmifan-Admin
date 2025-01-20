@@ -101,18 +101,41 @@ export default function BookstoreList() {
 
   const handleBulkAction = () => {
     if (bulkAction === 'delete') {
-      setBooks(books.filter(book => !selectedBooks.includes(book.id)));
-      toast({
-        description: `${selectedBooks.length} books have been deleted.`
+      const updatedBooks = books.filter(book => !selectedBooks.includes(book.id));
+      setBooks(updatedBooks);
+      
+      const storedBooks = JSON.parse(localStorage.getItem('books') || '{}');
+      selectedBooks.forEach(id => {
+        delete storedBooks[id];
       });
+      localStorage.setItem('books', JSON.stringify(storedBooks));
+      
+      toast({
+        description: `${selectedBooks.length} books deleted successfully.`
+      });
+      
       setSelectedBooks([]);
-    } else if (bulkAction === 'publish') {
-      setBooks(books.map(book => 
-        selectedBooks.includes(book.id) ? { ...book, status: 'published' } : book
-      ));
-      toast({
-        description: `${selectedBooks.length} books have been published.`
+    } else if (bulkAction === 'publish' || bulkAction === 'draft') {
+      const updatedBooks = books.map(book => {
+        if (selectedBooks.includes(book.id)) {
+          return { ...book, status: bulkAction === 'publish' ? 'published' : 'draft' };
+        }
+        return book;
       });
+      setBooks(updatedBooks);
+      
+      const storedBooks = JSON.parse(localStorage.getItem('books') || '{}');
+      selectedBooks.forEach(id => {
+        if (storedBooks[id]) {
+          storedBooks[id].status = bulkAction === 'publish' ? 'published' : 'draft';
+        }
+      });
+      localStorage.setItem('books', JSON.stringify(storedBooks));
+      
+      toast({
+        description: `${selectedBooks.length} books ${bulkAction === 'publish' ? 'published' : 'moved to draft'} successfully.`
+      });
+      
       setSelectedBooks([]);
     }
     setBulkAction("");
