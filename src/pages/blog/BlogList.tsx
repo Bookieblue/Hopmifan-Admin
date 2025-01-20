@@ -164,6 +164,64 @@ const BlogList = () => {
     });
   };
 
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedBlogs.length === 0) return;
+
+    switch (bulkAction) {
+      case "delete":
+        const updatedBlogs = blogs.filter(blog => !selectedBlogs.includes(blog.id));
+        setBlogs(updatedBlogs);
+        
+        const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
+        selectedBlogs.forEach(id => delete storedArticles[id]);
+        localStorage.setItem('articles', JSON.stringify(storedArticles));
+        
+        toast({
+          description: "Selected articles deleted successfully."
+        });
+        break;
+      
+      case "publish":
+        setBlogs(blogs.map(blog => 
+          selectedBlogs.includes(blog.id) ? { ...blog, status: 'published' } : blog
+        ));
+        
+        const storedArticlesPublish = JSON.parse(localStorage.getItem('articles') || '{}');
+        selectedBlogs.forEach(id => {
+          if (storedArticlesPublish[id]) {
+            storedArticlesPublish[id].status = 'published';
+          }
+        });
+        localStorage.setItem('articles', JSON.stringify(storedArticlesPublish));
+        
+        toast({
+          description: "Selected articles published successfully."
+        });
+        break;
+      
+      case "draft":
+        setBlogs(blogs.map(blog => 
+          selectedBlogs.includes(blog.id) ? { ...blog, status: 'draft' } : blog
+        ));
+        
+        const storedArticlesDraft = JSON.parse(localStorage.getItem('articles') || '{}');
+        selectedBlogs.forEach(id => {
+          if (storedArticlesDraft[id]) {
+            storedArticlesDraft[id].status = 'draft';
+          }
+        });
+        localStorage.setItem('articles', JSON.stringify(storedArticlesDraft));
+        
+        toast({
+          description: "Selected articles moved to draft successfully."
+        });
+        break;
+    }
+    
+    setSelectedBlogs([]);
+    setBulkAction("");
+  };
+
   const filteredBlogs = blogs.filter(blog => {
     const matchesSearch = blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          blog.author.toLowerCase().includes(searchQuery.toLowerCase());
