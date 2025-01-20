@@ -42,7 +42,7 @@
 
 /* Add consistent page heading styles */
 .page-heading {
-  @apply text-2xl font-bold mb-6;
+  @apply text-2xl font-bold mb-6 text-gray-900;
 }
 
 /* Add consistent page container padding */
@@ -63,4 +63,14 @@
 /* Add consistent mobile spacing */
 .mobile-spacing {
   @apply mt-16 px-4 py-6 sm:px-6 lg:px-8;
+}
+
+/* Add consistent table text size */
+.table-text {
+  @apply text-[14px];
+}
+
+/* Add consistent button styles */
+.primary-button {
+  @apply bg-purple-600 hover:bg-purple-700 text-white;
 }

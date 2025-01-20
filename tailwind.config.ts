@@ -18,6 +18,9 @@ export default {
       },
     },
     extend: {
+      fontSize: {
+        'table': '14px',
+      },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
       },
