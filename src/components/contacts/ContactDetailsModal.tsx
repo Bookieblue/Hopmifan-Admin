@@ -49,32 +49,32 @@ export function ContactDetailsModal({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="font-medium mb-1">Name</h3>
-                <p>{contact.firstName} {contact.lastName}</p>
+                <p className="text-gray-700">{contact.firstName} {contact.lastName}</p>
               </div>
               <div>
                 <h3 className="font-medium mb-1">Email</h3>
-                <p className="break-words">{contact.email}</p>
+                <p className="text-gray-700 break-words">{contact.email}</p>
               </div>
               <div>
                 <h3 className="font-medium mb-1">Phone</h3>
-                <p>{contact.phone}</p>
+                <p className="text-gray-700">{contact.phone}</p>
               </div>
               <div>
                 <h3 className="font-medium mb-1">Location</h3>
-                <p>{contact.country}, {contact.cityState}</p>
+                <p className="text-gray-700">{contact.country}, {contact.cityState}</p>
               </div>
               <div>
                 <h3 className="font-medium mb-1">Preferred Contact</h3>
-                <p className="capitalize">{contact.preferredContact}</p>
+                <p className="text-gray-700 capitalize">{contact.preferredContact}</p>
               </div>
               <div>
                 <h3 className="font-medium mb-1">Date Submitted</h3>
-                <p>{contact.dateSubmitted}</p>
+                <p className="text-gray-700">{contact.dateSubmitted}</p>
               </div>
             </div>
             <div>
               <h3 className="font-medium mb-2">Message</h3>
-              <p className="text-gray-600 whitespace-pre-wrap break-words">{contact.message}</p>
+              <p className="text-gray-700 whitespace-pre-wrap break-words">{contact.message}</p>
             </div>
           </div>
         </div>

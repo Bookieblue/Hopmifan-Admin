@@ -49,32 +49,32 @@ export function MemberDetailsModal({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="font-medium mb-1">Name</h3>
-                <p>{member.firstName} {member.lastName}</p>
+                <p className="text-gray-700">{member.firstName} {member.lastName}</p>
               </div>
               <div>
                 <h3 className="font-medium mb-1">Email</h3>
-                <p className="break-words">{member.email}</p>
+                <p className="text-gray-700 break-words">{member.email}</p>
               </div>
               <div>
                 <h3 className="font-medium mb-1">Phone</h3>
-                <p>{member.phone}</p>
+                <p className="text-gray-700">{member.phone}</p>
               </div>
               <div>
                 <h3 className="font-medium mb-1">Location</h3>
-                <p>{member.country}, {member.cityState}</p>
+                <p className="text-gray-700">{member.country}, {member.cityState}</p>
               </div>
               <div>
                 <h3 className="font-medium mb-1">Preferred Contact</h3>
-                <p className="capitalize">{member.preferredContact}</p>
+                <p className="text-gray-700 capitalize">{member.preferredContact}</p>
               </div>
               <div>
                 <h3 className="font-medium mb-1">Date Submitted</h3>
-                <p>{member.dateSubmitted}</p>
+                <p className="text-gray-700">{member.dateSubmitted}</p>
               </div>
             </div>
             <div>
               <h3 className="font-medium mb-2">Prayer Request</h3>
-              <p className="text-gray-600 whitespace-pre-wrap break-words">{member.prayerRequest}</p>
+              <p className="text-gray-700 whitespace-pre-wrap break-words">{member.prayerRequest}</p>
             </div>
           </div>
         </div>
