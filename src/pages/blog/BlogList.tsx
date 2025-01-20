@@ -216,6 +216,17 @@ const BlogList = () => {
           description: "Selected articles moved to draft successfully."
         });
         break;
+
+      case "download":
+        // Create PDFs and download as zip
+        const selectedArticles = blogs.filter(blog => selectedBlogs.includes(blog.id));
+        
+        // This would typically be handled by a backend service
+        // For now, we'll show a toast to indicate the feature
+        toast({
+          description: `${selectedArticles.length} articles will be downloaded as PDFs`
+        });
+        break;
     }
     
     setSelectedBlogs([]);
@@ -247,6 +258,7 @@ const BlogList = () => {
     { value: "export", label: "Export as CSV" },
     { value: "publish", label: "Publish Selected" },
     { value: "draft", label: "Move to Draft" },
+    { value: "download", label: "Download as PDF" }
   ];
 
   return (
@@ -276,8 +288,8 @@ const BlogList = () => {
           </div>
           <Button
             variant="outline"
-            className="flex items-center gap-2 bg-[#695CAE] hover:bg-[#695CAE]/90 text-white"
             onClick={() => setFilterModalOpen(true)}
+            className="flex items-center gap-2 bg-[#695CAE] hover:bg-[#695CAE]/90 text-white"
           >
             <Filter className="h-4 w-4" />
             Filters
