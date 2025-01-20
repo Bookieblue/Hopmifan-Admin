@@ -1,20 +1,13 @@
 import { useState } from "react";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { Filter, Plus, Search, MoreVertical, Edit, Trash2, CheckSquare, XSquare } from "lucide-react";
+import { Filter, Plus, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/events/FilterModal";
 import { useToast } from "@/hooks/use-toast";
 import { EventCard } from "@/components/events/EventCard";
 import { BulkActions } from "@/components/shared/BulkActions";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -79,22 +72,6 @@ export default function EventList() {
     }));
   });
 
-  const handleStatusChange = (id: string, newStatus: string) => {
-    setEvents(events.map(event => 
-      event.id === id ? { ...event, status: newStatus } : event
-    ));
-    
-    const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
-    if (storedEvents[id]) {
-      storedEvents[id].status = newStatus;
-      localStorage.setItem('events', JSON.stringify(storedEvents));
-    }
-    
-    toast({
-      description: `Event ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`
-    });
-  };
-
   const handleDelete = (id: string) => {
     setEventToDelete(id);
     setDeleteDialogOpen(true);
@@ -117,6 +94,23 @@ export default function EventList() {
     
     setDeleteDialogOpen(false);
     setEventToDelete("");
+    setSelectedEvents(selectedEvents.filter(id => id !== eventToDelete));
+  };
+
+  const handleStatusChange = (id: string, newStatus: string) => {
+    setEvents(events.map(event => 
+      event.id === id ? { ...event, status: newStatus } : event
+    ));
+    
+    const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
+    if (storedEvents[id]) {
+      storedEvents[id].status = newStatus;
+      localStorage.setItem('events', JSON.stringify(storedEvents));
+    }
+    
+    toast({
+      description: `Event ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`
+    });
   };
 
   const handleBulkAction = () => {
@@ -151,6 +145,8 @@ export default function EventList() {
     }
     setBulkAction("");
   };
+
+  // ... keep existing code (filtering logic)
 
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -244,47 +240,6 @@ export default function EventList() {
                   {event.status}
                 </span>
               )
-            },
-            {
-              header: "Actions",
-              accessor: (event: any) => (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[200px]">
-                    <DropdownMenuItem onClick={() => navigate(`/events/${event.id}/edit`)}>
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleStatusChange(event.id, event.status === 'published' ? 'draft' : 'published')}
-                    >
-                      {event.status === 'published' ? (
-                        <>
-                          <XSquare className="h-4 w-4 mr-2" />
-                          Unpublish
-                        </>
-                      ) : (
-                        <>
-                          <CheckSquare className="h-4 w-4 mr-2" />
-                          Publish
-                        </>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleDelete(event.id)}
-                      className="text-red-600"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ),
-              className: "w-[50px]"
             }
           ]}
           selectedItems={selectedEvents}
@@ -305,7 +260,8 @@ export default function EventList() {
           getItemId={(item) => item.id}
           actions={{
             onDelete: handleDelete,
-            onEdit: handleEdit
+            onEdit: handleEdit,
+            onStatusChange: handleStatusChange
           }}
           onRowClick={handleEdit}
           CardComponent={EventCard}
@@ -324,16 +280,6 @@ export default function EventList() {
           actions={bulkActions}
         />
       </div>
-
-      {totalPages > 1 && (
-        <div className="mt-4">
-          <Pagination
-            total={totalPages}
-            value={currentPage}
-            onChange={setCurrentPage}
-          />
-        </div>
-      )}
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
