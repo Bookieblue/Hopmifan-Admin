@@ -5,6 +5,7 @@ import { PaymentTableHeader } from "@/components/payments/PaymentTableHeader";
 import { PaymentRow } from "@/components/payments/PaymentRow";
 import { PaymentFilters } from "@/components/payments/PaymentFilters";
 import { BulkActions } from "@/components/shared/BulkActions";
+import { FilterModal } from "@/components/donations/FilterModal";
 
 const donations = [
   { 
@@ -41,6 +42,7 @@ export default function DonationHistory() {
   const [filteredDonations, setFilteredDonations] = useState(donations);
   const [selectedDonations, setSelectedDonations] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState<string>("");
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -105,12 +107,14 @@ export default function DonationHistory() {
       return donationDate >= startDate && donationDate <= endDate;
     });
     setFilteredDonations(filtered);
+    setIsFilterModalOpen(false);
   };
 
   const handleResetFilter = () => {
     setStartDate(undefined);
     setEndDate(undefined);
     setFilteredDonations(donations);
+    setIsFilterModalOpen(false);
   };
 
   const handleBulkAction = () => {
@@ -144,6 +148,7 @@ export default function DonationHistory() {
         setEndDate={setEndDate}
         handleResetFilter={handleResetFilter}
         handleApplyFilter={handleApplyFilter}
+        onOpenFilterModal={() => setIsFilterModalOpen(true)}
       />
 
       <div className="bg-white rounded-lg border">
@@ -175,6 +180,17 @@ export default function DonationHistory() {
           ]}
         />
       </div>
+
+      <FilterModal 
+        open={isFilterModalOpen}
+        onOpenChange={setIsFilterModalOpen}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        onApply={handleApplyFilter}
+        onReset={handleResetFilter}
+      />
     </div>
   );
 }
