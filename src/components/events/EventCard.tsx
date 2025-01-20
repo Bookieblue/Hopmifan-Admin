@@ -1,4 +1,4 @@
-import { MoreVertical, Edit, Trash2, Copy } from "lucide-react";
+import { MoreVertical, Edit, Trash2, Copy, CheckSquare, XSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,6 +20,7 @@ interface EventCardProps {
     onDelete?: (id: string) => void;
     onDuplicate?: (id: string) => void;
     onEdit?: (id: string) => void;
+    onStatusChange?: (id: string, status: string) => void;
   };
 }
 
@@ -60,6 +61,23 @@ export const EventCard = ({ item, actions }: EventCardProps) => {
                   <DropdownMenuItem onClick={() => actions.onDuplicate(item.id)}>
                     <Copy className="h-4 w-4 mr-2" />
                     Duplicate
+                  </DropdownMenuItem>
+                )}
+                {actions?.onStatusChange && (
+                  <DropdownMenuItem
+                    onClick={() => actions.onStatusChange(item.id, item.status === 'published' ? 'draft' : 'published')}
+                  >
+                    {item.status === 'published' ? (
+                      <>
+                        <XSquare className="h-4 w-4 mr-2" />
+                        Unpublish
+                      </>
+                    ) : (
+                      <>
+                        <CheckSquare className="h-4 w-4 mr-2" />
+                        Publish
+                      </>
+                    )}
                   </DropdownMenuItem>
                 )}
                 {actions?.onDelete && (

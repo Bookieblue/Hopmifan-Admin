@@ -161,6 +161,23 @@ export default function EventList() {
     setSelectedEvents(selectedEvents.filter(id => id !== eventToDelete));
   };
 
+  const handleStatusChange = (id: string, newStatus: string) => {
+    const updatedEvents = events.map(event =>
+      event.id === id ? { ...event, status: newStatus } : event
+    );
+    setEvents(updatedEvents);
+    
+    const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
+    if (storedEvents[id]) {
+      storedEvents[id].status = newStatus;
+      localStorage.setItem('events', JSON.stringify(storedEvents));
+    }
+    
+    toast({
+      description: `Event ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`
+    });
+  };
+
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          event.location.toLowerCase().includes(searchQuery.toLowerCase());
@@ -319,6 +336,21 @@ export default function EventList() {
                         <Trash2 className="h-4 w-4 mr-2" />
                         Delete
                       </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleStatusChange(event.id, event.status === 'published' ? 'draft' : 'published')}
+                      >
+                        {event.status === 'published' ? (
+                          <>
+                            <XSquare className="h-4 w-4 mr-2" />
+                            Unpublish
+                          </>
+                        ) : (
+                          <>
+                            <CheckSquare className="h-4 w-4 mr-2" />
+                            Publish
+                          </>
+                        )}
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -345,7 +377,8 @@ export default function EventList() {
           actions={{
             onDelete: handleDelete,
             onEdit: handleEdit,
-            onDuplicate: handleDuplicate
+            onDuplicate: handleDuplicate,
+            onStatusChange: handleStatusChange
           }}
           onRowClick={handleEdit}
           CardComponent={EventCard}
