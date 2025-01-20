@@ -148,6 +148,48 @@ const BlogList = () => {
     }
   };
 
+  const handleBulkAction = () => {
+    if (bulkAction === 'delete') {
+      const updatedBlogs = blogs.filter(blog => !selectedBlogs.includes(blog.id));
+      setBlogs(updatedBlogs);
+      
+      const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
+      selectedBlogs.forEach(id => {
+        delete storedArticles[id];
+      });
+      localStorage.setItem('articles', JSON.stringify(storedArticles));
+      
+      toast({
+        description: `${selectedBlogs.length} articles deleted successfully.`
+      });
+      
+      setSelectedBlogs([]);
+    } else if (bulkAction === 'publish' || bulkAction === 'draft') {
+      const updatedBlogs = blogs.map(blog => {
+        if (selectedBlogs.includes(blog.id)) {
+          return { ...blog, status: bulkAction === 'publish' ? 'published' : 'draft' };
+        }
+        return blog;
+      });
+      setBlogs(updatedBlogs);
+      
+      const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
+      selectedBlogs.forEach(id => {
+        if (storedArticles[id]) {
+          storedArticles[id].status = bulkAction === 'publish' ? 'published' : 'draft';
+        }
+      });
+      localStorage.setItem('articles', JSON.stringify(storedArticles));
+      
+      toast({
+        description: `${selectedBlogs.length} articles updated successfully.`
+      });
+      
+      setSelectedBlogs([]);
+    }
+    setBulkAction('');
+  };
+
   const filteredBlogs = blogs.filter(blog => {
     const matchesSearch = blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          blog.author.toLowerCase().includes(searchQuery.toLowerCase());
@@ -176,9 +218,9 @@ const BlogList = () => {
   ];
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+    <div className="page-container">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Our Articles</h1>
+        <h1 className="page-heading">Our Articles</h1>
         <Link 
           to="/articles/create"
           className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand text-white hover:bg-brand/90 h-10 px-4 py-2"
