@@ -40,13 +40,13 @@ export function ContactDetailsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] h-[80vh] flex flex-col">
+      <DialogContent className="max-w-[600px] max-h-[90vh] flex flex-col overflow-hidden">
         <DialogHeader>
           <DialogTitle>Contact Details</DialogTitle>
         </DialogHeader>
-        <div className="flex-1 overflow-y-auto px-1">
+        <div className="flex-1 overflow-y-auto px-4">
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="font-medium mb-1">Name</h3>
                 <p>{contact.firstName} {contact.lastName}</p>
@@ -78,7 +78,7 @@ export function ContactDetailsModal({
             </div>
           </div>
         </div>
-        <div className="flex justify-between items-center mt-4 pt-4 border-t">
+        <div className="flex justify-between items-center mt-4 pt-4 border-t bg-white">
           <div className="flex items-center gap-2">
             <span className={`px-2 py-1 rounded-full text-xs ${
               contact.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
