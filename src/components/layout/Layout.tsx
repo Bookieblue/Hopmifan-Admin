@@ -57,9 +57,11 @@ export function Layout() {
                     </Sheet>
                     <Link to="/" className="flex items-center">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-                          <span className="text-white font-semibold">C</span>
-                        </div>
+                        <img 
+                          src="/lovable-uploads/82db2e62-ebf8-45af-b2ee-7b510efb2868.png"
+                          alt="Church Logo"
+                          className="w-8 h-8 rounded-lg object-cover"
+                        />
                         <span className="text-xl font-semibold text-gray-900">Church Admin</span>
                       </div>
                     </Link>
