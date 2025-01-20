@@ -42,6 +42,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
   const [meetingLink, setMeetingLink] = useState(initialData?.meetingLink ?? "");
   const [featureImage, setFeatureImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(initialData?.imageUrl ?? "");
+  const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -55,8 +56,21 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
     }
   };
 
+  const validateForm = () => {
+    const newErrors: { [key: string]: boolean } = {};
+    
+    if (!title.trim()) newErrors.title = true;
+    if (!date) newErrors.date = true;
+    if (!time) newErrors.time = true;
+    if (!location.trim()) newErrors.location = true;
+    if (!description.trim()) newErrors.description = true;
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = (isDraft: boolean) => {
-    if (!title || !date || !time || !location || !description) {
+    if (!isDraft && !validateForm()) {
       toast({
         description: "Please fill in all required fields",
         variant: "destructive"
@@ -76,6 +90,12 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
     });
   };
 
+  const inputClassName = (fieldName: string) => `${
+    errors[fieldName] 
+      ? 'border-red-500 focus-visible:ring-red-500' 
+      : 'border-input focus-visible:ring-ring'
+  }`;
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="flex items-center gap-4 mb-6">
@@ -91,44 +111,68 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
 
       <div className="space-y-6">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium mb-2">Title</label>
+          <label htmlFor="title" className="block text-sm font-medium mb-2">
+            Title <span className="text-red-500">*</span>
+          </label>
           <Input
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter event title"
+            className={inputClassName('title')}
           />
+          {errors.title && (
+            <p className="text-red-500 text-sm mt-1">Title is required</p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="date" className="block text-sm font-medium mb-2">Date</label>
+            <label htmlFor="date" className="block text-sm font-medium mb-2">
+              Date <span className="text-red-500">*</span>
+            </label>
             <Input
               id="date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              className={inputClassName('date')}
             />
+            {errors.date && (
+              <p className="text-red-500 text-sm mt-1">Date is required</p>
+            )}
           </div>
           <div>
-            <label htmlFor="time" className="block text-sm font-medium mb-2">Time</label>
+            <label htmlFor="time" className="block text-sm font-medium mb-2">
+              Time <span className="text-red-500">*</span>
+            </label>
             <Input
               id="time"
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
+              className={inputClassName('time')}
             />
+            {errors.time && (
+              <p className="text-red-500 text-sm mt-1">Time is required</p>
+            )}
           </div>
         </div>
 
         <div>
-          <label htmlFor="location" className="block text-sm font-medium mb-2">Location</label>
+          <label htmlFor="location" className="block text-sm font-medium mb-2">
+            Location <span className="text-red-500">*</span>
+          </label>
           <Input
             id="location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="Enter event location"
+            className={inputClassName('location')}
           />
+          {errors.location && (
+            <p className="text-red-500 text-sm mt-1">Location is required</p>
+          )}
         </div>
 
         <div>
@@ -176,14 +220,20 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium mb-2">Description</label>
+          <label htmlFor="description" className="block text-sm font-medium mb-2">
+            Description <span className="text-red-500">*</span>
+          </label>
           <Textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter event description"
             rows={6}
+            className={inputClassName('description')}
           />
+          {errors.description && (
+            <p className="text-red-500 text-sm mt-1">Description is required</p>
+          )}
         </div>
 
         <div className="flex justify-end gap-4">
