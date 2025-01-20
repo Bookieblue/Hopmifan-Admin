@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { Filter, Plus, Search, MoreVertical, Edit, Trash2, Copy } from "lucide-react";
+import { Filter, Plus, Search, MoreVertical, Edit, Trash2, Copy, XSquare, CheckSquare } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/events/FilterModal";
