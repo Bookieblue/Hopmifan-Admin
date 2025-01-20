@@ -88,7 +88,31 @@ export default function EventList() {
   };
 
   const handleDuplicate = (id: string) => {
-    // Logic for duplicating the event
+    const eventToDuplicate = events.find(event => event.id === id);
+    if (!eventToDuplicate) return;
+
+    const newId = `EVT-${Math.random().toString(36).substr(2, 9)}`;
+    const duplicatedEvent = {
+      ...eventToDuplicate,
+      id: newId,
+      title: `${eventToDuplicate.title} (Copy)`,
+      status: 'draft'
+    };
+
+    const updatedEvents = [...events, duplicatedEvent];
+    setEvents(updatedEvents);
+
+    // Update localStorage
+    const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
+    storedEvents[newId] = {
+      ...duplicatedEvent,
+      id: undefined // Remove id from stored object as it's used as the key
+    };
+    localStorage.setItem('events', JSON.stringify(storedEvents));
+
+    toast({
+      description: "Event duplicated successfully."
+    });
   };
 
   const confirmDelete = () => {
