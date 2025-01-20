@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PaymentFilters } from "@/components/payments/PaymentFilters";
 import { DataTable, TableColumn } from "@/components/shared/DataTable";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { FilterModal } from "@/components/donations/FilterModal";
 
 // Sample data - in a real app this would come from an API
 const payments = [
@@ -50,6 +51,10 @@ export default function PaymentHistory() {
   const [endDate, setEndDate] = useState<Date>();
   const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
   const [filteredPayments, setFilteredPayments] = useState(payments);
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [methodFilter, setMethodFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("");
 
   const columns: TableColumn<Payment>[] = [
     { header: "Date", accessor: "date" },
@@ -70,23 +75,32 @@ export default function PaymentHistory() {
   };
 
   const handleApplyFilter = () => {
-    if (!startDate || !endDate) return;
-    
-    const filtered = payments.filter(payment => {
-      const paymentDate = new Date(payment.date);
-      return paymentDate >= startDate && paymentDate <= endDate;
-    });
+    let filtered = [...payments];
+
+    if (typeFilter !== "all") {
+      filtered = filtered.filter(payment => payment.type === typeFilter);
+    }
+
+    if (methodFilter !== "all") {
+      filtered = filtered.filter(payment => payment.method === methodFilter);
+    }
+
+    if (dateFilter) {
+      filtered = filtered.filter(payment => payment.date === dateFilter);
+    }
+
     setFilteredPayments(filtered);
+    setFilterModalOpen(false);
   };
 
   const handleResetFilter = () => {
-    setStartDate(undefined);
-    setEndDate(undefined);
+    setTypeFilter("all");
+    setMethodFilter("all");
+    setDateFilter("");
     setFilteredPayments(payments);
   };
 
   const handleDownloadReceipt = (id: string) => {
-    // Generate receipt content
     const payment = payments.find(p => p.id === id);
     if (!payment) return;
 
@@ -100,7 +114,6 @@ Type: ${payment.type}
 Method: ${payment.method}
     `;
 
-    // Create blob and download
     const blob = new Blob([receiptContent], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -117,38 +130,10 @@ Method: ${payment.method}
     });
   };
 
-  const handleExportCSV = () => {
-    const selectedData = selectedPayments.length > 0 
-      ? filteredPayments.filter(p => selectedPayments.includes(p.id))
-      : filteredPayments;
-
-    const csvContent = [
-      ["Date", "Customer", "Type", "Amount", "Method"].join(","),
-      ...selectedData.map(payment => 
-        [payment.date, payment.customer, payment.type, payment.amount, payment.method].join(",")
-      )
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'payments.csv';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-
-    toast({
-      title: "CSV Exported",
-      description: "Your payment data has been exported successfully",
-    });
-  };
-
   return (
-    <div className="p-6 max-w-[1400px] mx-auto">
+    <div className="page-container">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold">Payment History</h1>
+        <h1 className="page-heading">Payment History</h1>
       </div>
 
       <PaymentFilters
@@ -160,6 +145,20 @@ Method: ${payment.method}
         setEndDate={setEndDate}
         handleResetFilter={handleResetFilter}
         handleApplyFilter={handleApplyFilter}
+        onOpenFilterModal={() => setFilterModalOpen(true)}
+      />
+
+      <FilterModal
+        open={filterModalOpen}
+        onOpenChange={setFilterModalOpen}
+        typeFilter={typeFilter}
+        setTypeFilter={setTypeFilter}
+        stateFilter={methodFilter}
+        setStateFilter={setMethodFilter}
+        dateFilter={dateFilter}
+        setDateFilter={setDateFilter}
+        uniqueTypes={Array.from(new Set(payments.map(p => p.type)))}
+        uniqueStates={Array.from(new Set(payments.map(p => p.method)))}
       />
 
       {isMobile && (

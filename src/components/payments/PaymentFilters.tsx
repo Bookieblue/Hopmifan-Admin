@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
-import { Search } from "lucide-react";
+import { Filter, Search } from "lucide-react";
 
 interface PaymentFiltersProps {
   searchQuery: string;
@@ -12,21 +12,17 @@ interface PaymentFiltersProps {
   setEndDate: (date: Date | undefined) => void;
   handleResetFilter: () => void;
   handleApplyFilter: () => void;
+  onOpenFilterModal: () => void;
 }
 
 export function PaymentFilters({
   searchQuery,
   setSearchQuery,
-  startDate,
-  setStartDate,
-  endDate,
-  setEndDate,
-  handleResetFilter,
-  handleApplyFilter,
+  onOpenFilterModal
 }: PaymentFiltersProps) {
   return (
     <div className="space-y-4 mb-6">
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex items-center gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
@@ -37,24 +33,14 @@ export function PaymentFilters({
             className="pl-10"
           />
         </div>
-        <div className="flex gap-4">
-          <DatePicker
-            date={startDate}
-            setDate={setStartDate}
-            placeholder="Start date"
-          />
-          <DatePicker
-            date={endDate}
-            setDate={setEndDate}
-            placeholder="End date"
-          />
-          <Button onClick={handleApplyFilter} variant="outline">
-            Apply Filter
-          </Button>
-          <Button onClick={handleResetFilter} variant="ghost">
-            Reset
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          className="flex items-center gap-2"
+          onClick={onOpenFilterModal}
+        >
+          <Filter className="h-4 w-4" />
+          Filters
+        </Button>
       </div>
     </div>
   );
