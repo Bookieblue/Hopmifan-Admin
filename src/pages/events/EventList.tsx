@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { Filter, Plus, Search } from "lucide-react";
+import { Filter, Plus, Search, MoreVertical, Edit, Trash2, Copy } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/events/FilterModal";
@@ -18,6 +18,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const sampleEvents = {
   "EVT-001": {
@@ -79,6 +85,10 @@ export default function EventList() {
 
   const handleEdit = (id: string) => {
     navigate(`/events/${id}/edit`);
+  };
+
+  const handleDuplicate = (id: string) => {
+    // Logic for duplicating the event
   };
 
   const confirmDelete = () => {
@@ -155,7 +165,32 @@ export default function EventList() {
     setBulkAction("");
   };
 
-  // ... keep existing code (filtering logic)
+  const renderActions = (id: string) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+          <MoreVertical className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-[200px] bg-white">
+        <DropdownMenuItem onClick={() => handleEdit(id)}>
+          <Edit className="h-4 w-4 mr-2" />
+          Edit
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleDuplicate(id)}>
+          <Copy className="h-4 w-4 mr-2" />
+          Duplicate
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => handleDelete(id)}
+          className="text-red-600"
+        >
+          <Trash2 className="h-4 w-4 mr-2" />
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -179,9 +214,9 @@ export default function EventList() {
   ];
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+    <div className="page-container">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Events</h1>
+        <h1 className="page-heading">Events</h1>
         <Link to="/events/create">
           <Button size="default" className="bg-purple-600 hover:bg-purple-700 px-3 md:px-4">
             <Plus className="h-4 w-4 mr-2" />
@@ -249,6 +284,11 @@ export default function EventList() {
                   {event.status}
                 </span>
               )
+            },
+            {
+              header: "Actions",
+              accessor: (event: any) => renderActions(event.id),
+              className: "w-[50px]"
             }
           ]}
           selectedItems={selectedEvents}
@@ -270,6 +310,7 @@ export default function EventList() {
           actions={{
             onDelete: handleDelete,
             onEdit: handleEdit,
+            onDuplicate: handleDuplicate,
             onStatusChange: handleStatusChange
           }}
           onRowClick={handleEdit}
