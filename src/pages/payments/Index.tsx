@@ -133,7 +133,7 @@ Method: ${payment.method}
   return (
     <div className="page-container">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="page-heading">Payment History</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Payment History</h1>
       </div>
 
       <PaymentFilters
