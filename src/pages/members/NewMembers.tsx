@@ -1,119 +1,49 @@
 import { useState } from "react";
 import { DataTable } from "@/components/shared/DataTable";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Filter, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { MemberDetailsModal } from "@/components/members/MemberDetailsModal";
-import { useIsMobile } from "@/hooks/use-mobile";
-
-const sampleMembers = [
-  {
-    id: "1",
-    firstName: "John",
-    lastName: "Doe",
-    phone: "+234 801 234 5678",
-    email: "john.doe@gmail.com",
-    country: "Nigeria",
-    cityState: "Lagos, LA",
-    preferredContact: "whatsapp",
-    prayerRequest: "Please pray for my family's health and well-being.",
-    dateSubmitted: new Date(2024, 2, 15).toLocaleDateString(),
-    status: "pending"
-  },
-  {
-    id: "2",
-    firstName: "Jane",
-    lastName: "Smith",
-    phone: "+234 802 345 6789",
-    email: "jane.smith@yahoo.com",
-    country: "Nigeria",
-    cityState: "Abuja, FC",
-    preferredContact: "phone",
-    prayerRequest: "I need prayers for my upcoming job interview.",
-    dateSubmitted: new Date(2024, 2, 14).toLocaleDateString(),
-    status: "replied"
-  }
-];
+import { FilterModal } from "@/components/members/FilterModal";
 
 export default function NewMembers() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMember, setSelectedMember] = useState(null);
-  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [members, setMembers] = useState(sampleMembers);
-  const isMobile = useIsMobile();
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [locationFilter, setLocationFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("");
 
-  const columns = [
-    { 
-      header: "Name", 
-      accessor: (member: any) => (
-        <div>
-          <div className="font-medium">{`${member.firstName} ${member.lastName}`}</div>
-          <div className="text-sm text-gray-500">{member.email}</div>
-        </div>
-      )
+  // Sample data
+  const members = [
+    {
+      id: "1",
+      name: "John Doe",
+      email: "john@example.com",
+      phone: "+1234567890",
+      location: "New York",
+      status: "pending",
+      joinDate: "2024-01-15",
     },
-    { 
-      header: "Contact Info", 
-      accessor: (member: any) => (
-        <div>
-          <div>{member.phone}</div>
-          <div className="text-sm text-gray-500 capitalize">{member.preferredContact} preferred</div>
-        </div>
-      )
-    },
-    { 
-      header: "Location", 
-      accessor: (member: any) => (
-        <div>
-          <div>{member.country}</div>
-          <div className="text-sm text-gray-500">{member.cityState}</div>
-        </div>
-      )
-    },
-    { 
-      header: "Status & Date", 
-      accessor: (member: any) => (
-        <div>
-          <span className={`px-2 py-1 rounded-full text-xs ${
-            member.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {member.status === 'replied' ? 'Replied' : 'Pending'}
-          </span>
-          <div className="text-sm text-gray-500 mt-1">{member.dateSubmitted}</div>
-        </div>
-      )
-    },
+    // Add more sample data as needed
   ];
 
-  const handleStatusChange = (status: string) => {
-    if (selectedMember) {
-      setMembers(members.map(member => 
-        member.id === selectedMember.id 
-          ? { ...member, status }
-          : member
-      ));
-      setDetailsModalOpen(false);
-    }
-  };
+  const filteredMembers = members.filter((member) => {
+    const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.phone.includes(searchQuery);
 
-  const filteredMembers = members.filter(member => {
-    const searchString = searchQuery.toLowerCase();
-    return (
-      `${member.firstName} ${member.lastName}`.toLowerCase().includes(searchString) ||
-      member.email.toLowerCase().includes(searchString) ||
-      member.phone.toLowerCase().includes(searchString)
-    );
+    const matchesLocation = locationFilter === "all" || member.location === locationFilter;
+    const matchesStatus = statusFilter === "all" || member.status === statusFilter;
+    const matchesDate = !dateFilter || member.joinDate === dateFilter;
+
+    return matchesSearch && matchesLocation && matchesStatus && matchesDate;
   });
 
-  const handleRowClick = (member: any) => {
-    setSelectedMember(member);
-    setDetailsModalOpen(true);
-  };
+  const uniqueLocations = Array.from(new Set(members.map((member) => member.location)));
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+    <div className="page-container">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">New Members</h1>
+        <h1 className="text-2xl font-bold text-gray-900">New Members</h1>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -131,6 +61,7 @@ export default function NewMembers() {
           <Button
             variant="outline"
             className="flex items-center gap-2"
+            onClick={() => setShowFilterModal(true)}
           >
             <Filter className="h-4 w-4" />
             Filters
@@ -138,49 +69,64 @@ export default function NewMembers() {
         </div>
       </div>
 
-      <MemberDetailsModal
-        open={detailsModalOpen}
-        onOpenChange={setDetailsModalOpen}
-        member={selectedMember}
-        onStatusChange={handleStatusChange}
+      <DataTable
+        data={filteredMembers}
+        columns={[
+          { 
+            header: "Name", 
+            accessor: "name",
+            className: "text-[14px]"
+          },
+          { 
+            header: "Email", 
+            accessor: "email",
+            className: "text-[14px]"
+          },
+          { 
+            header: "Phone", 
+            accessor: "phone",
+            className: "text-[14px]"
+          },
+          { 
+            header: "Location", 
+            accessor: "location",
+            className: "text-[14px]"
+          },
+          {
+            header: "Status",
+            accessor: (member) => (
+              <span className={`px-2 py-1 rounded-full text-xs ${
+                member.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+              }`}>
+                {member.status}
+              </span>
+            ),
+            className: "text-[14px]"
+          },
+          {
+            header: "Join Date",
+            accessor: "joinDate",
+            className: "text-[14px]"
+          }
+        ]}
+        selectedItems={[]}
+        onSelectItem={() => {}}
+        onSelectAll={() => {}}
+        getItemId={(item) => item.id}
+        showCheckboxes={false}
       />
 
-      <div className="bg-white md:rounded-lg md:border">
-        {isMobile && (
-          <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
-            <h2 className="font-medium text-sm text-gray-600">Member</h2>
-            <h2 className="font-medium text-sm text-gray-600">Status</h2>
-          </div>
-        )}
-        <DataTable
-          data={filteredMembers}
-          columns={columns}
-          selectedItems={[]}
-          onSelectItem={() => {}}
-          onSelectAll={() => {}}
-          getItemId={(item) => item.id}
-          onRowClick={handleRowClick}
-          showCheckboxes={false}
-          CardComponent={({ item }) => (
-            <div 
-              className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => handleRowClick(item)}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
-                  <p className="text-sm text-gray-500">{item.email}</p>
-                </div>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {item.status === 'replied' ? 'Replied' : 'Pending'}
-                </span>
-              </div>
-            </div>
-          )}
-        />
-      </div>
+      <FilterModal
+        open={showFilterModal}
+        onOpenChange={setShowFilterModal}
+        locationFilter={locationFilter}
+        setLocationFilter={setLocationFilter}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        dateFilter={dateFilter}
+        setDateFilter={setDateFilter}
+        uniqueLocations={uniqueLocations}
+      />
     </div>
   );
 }
