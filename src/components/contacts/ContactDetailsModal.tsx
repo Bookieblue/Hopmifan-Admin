@@ -78,7 +78,7 @@ export function ContactDetailsModal({
             </div>
           </div>
         </div>
-        <div className="flex justify-between items-center mt-4 pt-4 border-t">
+        <div className="flex justify-between items-center mt-4 pt-4 border-t sticky bottom-0 bg-white">
           <div className="flex items-center gap-2">
             <span className={`px-2 py-1 rounded-full text-xs ${
               contact.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
