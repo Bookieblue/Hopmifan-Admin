@@ -141,59 +141,11 @@ const BlogList = () => {
     setSelectedBlogs(selectedBlogs.filter(id => id !== blogToDelete));
   };
 
-  const handleEdit = (id: string) => {
-    navigate(`/articles/${id}/edit`);
-  };
-
-  const handleStatusChange = (id: string, newStatus: string) => {
-    setBlogs(blogs.map(blog => 
-      blog.id === id ? { ...blog, status: newStatus } : blog
-    ));
-    
-    const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
-    if (storedArticles[id]) {
-      storedArticles[id].status = newStatus;
-      localStorage.setItem('articles', JSON.stringify(storedArticles));
+  const handleRowClick = (id: string) => {
+    // Only navigate to edit if not clicking delete button
+    if (!deleteDialogOpen) {
+      navigate(`/articles/${id}/edit`);
     }
-    
-    toast({
-      description: `Article ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`
-    });
-  };
-
-  const handleBulkAction = () => {
-    if (bulkAction === 'delete') {
-      const updatedBlogs = blogs.filter(blog => !selectedBlogs.includes(blog.id));
-      setBlogs(updatedBlogs);
-      
-      const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
-      selectedBlogs.forEach(id => delete storedArticles[id]);
-      localStorage.setItem('articles', JSON.stringify(storedArticles));
-      
-      toast({
-        description: `${selectedBlogs.length} articles have been deleted.`
-      });
-      setSelectedBlogs([]);
-    } else if (bulkAction === 'publish') {
-      const updatedBlogs = blogs.map(blog => 
-        selectedBlogs.includes(blog.id) ? { ...blog, status: 'published' } : blog
-      );
-      setBlogs(updatedBlogs);
-      
-      const storedArticles = JSON.parse(localStorage.getItem('articles') || '{}');
-      selectedBlogs.forEach(id => {
-        if (storedArticles[id]) {
-          storedArticles[id].status = 'published';
-        }
-      });
-      localStorage.setItem('articles', JSON.stringify(storedArticles));
-      
-      toast({
-        description: `${selectedBlogs.length} articles have been published.`
-      });
-      setSelectedBlogs([]);
-    }
-    setBulkAction("");
   };
 
   const filteredBlogs = blogs.filter(blog => {
@@ -222,10 +174,6 @@ const BlogList = () => {
     { value: "publish", label: "Publish Selected" },
     { value: "draft", label: "Move to Draft" },
   ];
-
-  const handleRowClick = (id: string) => {
-    navigate(`/articles/${id}/edit`);
-  };
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
@@ -297,7 +245,7 @@ const BlogList = () => {
             {
               header: "Actions",
               accessor: (blog: any) => (
-                <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -305,13 +253,9 @@ const BlogList = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-[200px] bg-white">
-                      <DropdownMenuItem onClick={() => handleEdit(blog.id)}>
+                      <DropdownMenuItem onClick={() => navigate(`/articles/${blog.id}/edit`)}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate(`/articles/${blog.id}`)}>
-                        <Eye className="h-4 w-4 mr-2" />
-                        View
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleDelete(blog.id)} className="text-red-600">
                         <Trash2 className="h-4 w-4 mr-2" />
@@ -342,7 +286,6 @@ const BlogList = () => {
           getItemId={(item) => item.id}
           actions={{
             onDelete: handleDelete,
-            onStatusChange: handleStatusChange,
           }}
           bulkActions={bulkActions}
           bulkAction={bulkAction}
