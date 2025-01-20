@@ -23,7 +23,7 @@ export function Layout() {
         <TooltipProvider>
           <div className="flex min-h-screen bg-gray-50 font-inter">
             <main className="flex-1 overflow-x-hidden bg-white">
-              <div className="max-w-7xl mx-auto px-2.5">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <Outlet />
               </div>
             </main>
@@ -41,7 +41,7 @@ export function Layout() {
           {isMobile ? (
             <>
               <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 z-50">
-                <div className="flex items-center justify-between px-2.5 h-full">
+                <div className="flex items-center justify-between px-4 h-full">
                   <div className="flex items-center gap-4">
                     <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                       <SheetTrigger asChild>
@@ -68,9 +68,9 @@ export function Layout() {
                   </div>
                 </div>
               </header>
-              <main className="flex-1 px-2.5 py-4 md:p-8 mt-16 overflow-x-hidden bg-white">
+              <main className="flex-1 mt-16 overflow-x-hidden bg-white">
                 <div className="max-w-7xl mx-auto">
-                  <div className="px-[10px] md:px-0">
+                  <div className="px-4 py-6 sm:px-6 lg:px-8">
                     <Outlet />
                   </div>
                 </div>
@@ -79,9 +79,11 @@ export function Layout() {
           ) : (
             <>
               <Sidebar isCollapsed={isCollapsed} />
-              <main className={`flex-1 p-4 md:p-8 overflow-x-hidden bg-white transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
+              <main className={`flex-1 overflow-x-hidden bg-white transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
                 <div className="max-w-7xl mx-auto">
-                  <Outlet />
+                  <div className="px-6 py-8">
+                    <Outlet />
+                  </div>
                 </div>
               </main>
             </>
