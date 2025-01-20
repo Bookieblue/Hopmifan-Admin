@@ -55,6 +55,7 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
   const [authorImage, setAuthorImage] = useState<File | null>(null);
   const [bookImagePreview, setBookImagePreview] = useState<string>(initialData?.bookImage ?? "");
   const [authorImagePreview, setAuthorImagePreview] = useState<string>(initialData?.authorImage ?? "");
+  const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'book' | 'author') => {
     const file = e.target.files?.[0];
@@ -77,8 +78,20 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
     }
   };
 
+  const validateForm = () => {
+    const newErrors: { [key: string]: boolean } = {};
+    
+    if (!title.trim()) newErrors.title = true;
+    if (!description.trim()) newErrors.description = true;
+    if (!author.trim()) newErrors.author = true;
+    if (price <= 0) newErrors.price = true;
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = (isDraft: boolean) => {
-    if (!title || !description || !author || price <= 0) {
+    if (!isDraft && !validateForm()) {
       toast({
         description: "Please fill in all required fields",
         variant: "destructive"
@@ -102,6 +115,12 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
     });
   };
 
+  const inputClassName = (fieldName: string) => `${
+    errors[fieldName] 
+      ? 'border-red-500 focus-visible:ring-red-500' 
+      : 'border-input focus-visible:ring-ring'
+  }`;
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="flex items-center gap-4 mb-6">
@@ -117,29 +136,42 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
 
       <div className="space-y-6">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium mb-2">Title</label>
+          <label htmlFor="title" className="block text-sm font-medium mb-2">
+            Title <span className="text-red-500">*</span>
+          </label>
           <Input
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter book title"
+            className={inputClassName('title')}
           />
+          {errors.title && (
+            <p className="text-red-500 text-sm mt-1">Title is required</p>
+          )}
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium mb-2">Description</label>
+          <label htmlFor="description" className="block text-sm font-medium mb-2">
+            Description <span className="text-red-500">*</span>
+          </label>
           <Textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter book description"
-            className="min-h-[100px]"
+            className={`min-h-[100px] ${inputClassName('description')}`}
           />
+          {errors.description && (
+            <p className="text-red-500 text-sm mt-1">Description is required</p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="price" className="block text-sm font-medium mb-2">Price</label>
+            <label htmlFor="price" className="block text-sm font-medium mb-2">
+              Price <span className="text-red-500">*</span>
+            </label>
             <Input
               id="price"
               type="number"
@@ -148,7 +180,11 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
               placeholder="Enter price"
               min="0"
               step="0.01"
+              className={inputClassName('price')}
             />
+            {errors.price && (
+              <p className="text-red-500 text-sm mt-1">Price must be greater than 0</p>
+            )}
           </div>
 
           <div>
@@ -197,13 +233,19 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
         </div>
 
         <div>
-          <label htmlFor="author" className="block text-sm font-medium mb-2">Author Name</label>
+          <label htmlFor="author" className="block text-sm font-medium mb-2">
+            Author Name <span className="text-red-500">*</span>
+          </label>
           <Input
             id="author"
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
             placeholder="Enter author name"
+            className={inputClassName('author')}
           />
+          {errors.author && (
+            <p className="text-red-500 text-sm mt-1">Author name is required</p>
+          )}
         </div>
 
         <div>
