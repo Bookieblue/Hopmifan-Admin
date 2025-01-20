@@ -5,6 +5,13 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface BlogFormProps {
   initialData?: {
@@ -13,6 +20,7 @@ interface BlogFormProps {
     author: string;
     status: "draft" | "published";
     imagePreview?: string;
+    language?: string;
   };
   onSubmit: (data: {
     title: string;
@@ -20,6 +28,7 @@ interface BlogFormProps {
     author: string;
     status: "draft" | "published";
     featureImage: File | null;
+    language: string;
   }) => void;
   isEdit?: boolean;
 }
@@ -33,6 +42,7 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
   const [author, setAuthor] = useState(initialData?.author ?? "");
   const [featureImage, setFeatureImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(initialData?.imagePreview ?? "");
+  const [language, setLanguage] = useState(initialData?.language ?? "English");
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -60,7 +70,8 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
       content,
       author,
       status: isDraft ? "draft" : "published",
-      featureImage
+      featureImage,
+      language
     });
   };
 
@@ -96,6 +107,19 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
             onChange={(e) => setAuthor(e.target.value)}
             placeholder="Enter author name"
           />
+        </div>
+
+        <div>
+          <label htmlFor="language" className="block text-sm font-medium mb-2">Language</label>
+          <Select value={language} onValueChange={setLanguage}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select language" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="English">English</SelectItem>
+              <SelectItem value="Yoruba">Yoruba</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div>

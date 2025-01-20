@@ -12,6 +12,7 @@ export default function CreateBlog() {
     author: string;
     status: "draft" | "published";
     featureImage: File | null;
+    language: string;
   }) => {
     try {
       // Get existing articles

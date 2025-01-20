@@ -10,6 +10,7 @@ type BlogData = {
   status: "draft" | "published";
   imagePreview?: string;
   publishDate?: string;
+  language?: string;
 };
 
 const getStoredArticles = (): Record<string, BlogData> => {
@@ -45,6 +46,7 @@ export default function EditBlog() {
     author: string;
     status: "draft" | "published";
     featureImage: File | null;
+    language: string;
   }) => {
     try {
       const articles = getStoredArticles();
@@ -52,7 +54,8 @@ export default function EditBlog() {
         articles[id] = {
           ...data,
           imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : articles[id].imagePreview,
-          publishDate: articles[id].publishDate
+          publishDate: articles[id].publishDate,
+          language: data.language
         };
         localStorage.setItem('articles', JSON.stringify(articles));
       }
