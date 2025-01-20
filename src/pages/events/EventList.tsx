@@ -95,6 +95,30 @@ export default function EventList() {
     });
   };
 
+  const handleDelete = (id: string) => {
+    setEventToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleEdit = (id: string) => {
+    navigate(`/events/${id}/edit`);
+  };
+
+  const confirmDelete = () => {
+    setEvents(events.filter(event => event.id !== eventToDelete));
+    
+    const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
+    delete storedEvents[eventToDelete];
+    localStorage.setItem('events', JSON.stringify(storedEvents));
+    
+    toast({
+      description: "Event deleted successfully."
+    });
+    
+    setDeleteDialogOpen(false);
+    setEventToDelete("");
+  };
+
   const handleBulkAction = () => {
     if (bulkAction === 'delete') {
       setEvents(events.filter(event => !selectedEvents.includes(event.id)));
