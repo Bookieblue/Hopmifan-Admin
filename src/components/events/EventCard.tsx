@@ -57,12 +57,6 @@ export const EventCard = ({ item, actions }: EventCardProps) => {
                     Edit
                   </DropdownMenuItem>
                 )}
-                {actions?.onDuplicate && (
-                  <DropdownMenuItem onClick={() => actions.onDuplicate(item.id)}>
-                    <Copy className="h-4 w-4 mr-2" />
-                    Duplicate
-                  </DropdownMenuItem>
-                )}
                 {actions?.onStatusChange && (
                   <DropdownMenuItem
                     onClick={() => actions.onStatusChange(item.id, item.status === 'published' ? 'draft' : 'published')}
@@ -78,6 +72,12 @@ export const EventCard = ({ item, actions }: EventCardProps) => {
                         Publish
                       </>
                     )}
+                  </DropdownMenuItem>
+                )}
+                {actions?.onDuplicate && (
+                  <DropdownMenuItem onClick={() => actions.onDuplicate(item.id)}>
+                    <Copy className="h-4 w-4 mr-2" />
+                    Duplicate
                   </DropdownMenuItem>
                 )}
                 {actions?.onDelete && (
