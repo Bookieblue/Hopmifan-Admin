@@ -148,6 +148,50 @@ export default function EventList() {
     { value: "publish", label: "Publish Selected" },
   ];
 
+  const handleBulkAction = () => {
+    if (bulkAction === 'delete') {
+      const updatedEvents = events.filter(event => !selectedEvents.includes(event.id));
+      setEvents(updatedEvents);
+      
+      // Update localStorage
+      const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
+      selectedEvents.forEach(id => {
+        delete storedEvents[id];
+      });
+      localStorage.setItem('events', JSON.stringify(storedEvents));
+      
+      toast({
+        description: `${selectedEvents.length} events deleted successfully.`
+      });
+      
+      setSelectedEvents([]);
+    } else if (bulkAction === 'publish') {
+      const updatedEvents = events.map(event => {
+        if (selectedEvents.includes(event.id)) {
+          return { ...event, status: 'published' };
+        }
+        return event;
+      });
+      setEvents(updatedEvents);
+      
+      // Update localStorage
+      const storedEvents = JSON.parse(localStorage.getItem('events') || '{}');
+      selectedEvents.forEach(id => {
+        if (storedEvents[id]) {
+          storedEvents[id].status = 'published';
+        }
+      });
+      localStorage.setItem('events', JSON.stringify(storedEvents));
+      
+      toast({
+        description: `${selectedEvents.length} events published successfully.`
+      });
+      
+      setSelectedEvents([]);
+    }
+    setBulkAction("");
+  };
+
   return (
     <div className="page-container">
       <div className="flex items-center justify-between gap-2 mb-6">
