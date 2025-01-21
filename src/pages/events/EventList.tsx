@@ -190,12 +190,12 @@ export default function EventList() {
             { 
               header: "Title", 
               accessor: "title",
-              className: "text-[14px]"
+              className: "text-[14px] cursor-pointer"
             },
             { 
               header: "Location", 
               accessor: "location",
-              className: "text-[14px]"
+              className: "text-[14px] cursor-pointer"
             },
             { 
               header: "Date & Status", 
@@ -209,7 +209,7 @@ export default function EventList() {
                   </span>
                 </div>
               ),
-              className: "text-[14px]"
+              className: "text-[14px] cursor-pointer"
             },
             {
               header: "Actions",
