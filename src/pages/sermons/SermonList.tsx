@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, MoreVertical, Edit, Trash2, CheckSquare, XSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Filter } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +13,7 @@ import {
 import { DataTable } from "@/components/shared/DataTable";
 import { useToast } from "@/hooks/use-toast";
 import { FilterModal } from "@/components/sermons/FilterModal";
-import { Input } from "@/components/ui/input";
-import { Filter } from "lucide-react";
+import { BulkActions } from "@/components/shared/BulkActions";
 
 export default function SermonList() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,6 +21,7 @@ export default function SermonList() {
   const [selectedSermons, setSelectedSermons] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
+  const [bulkAction, setBulkAction] = useState("");
   const { toast } = useToast();
 
   // Sample data
@@ -40,14 +42,6 @@ export default function SermonList() {
     },
   ];
 
-  const filteredSermons = sermons.filter((sermon) => {
-    const matchesSearch = sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sermon.preacher.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || sermon.status === statusFilter;
-    const matchesDate = !dateFilter || sermon.date.includes(dateFilter);
-    return matchesSearch && matchesStatus && matchesDate;
-  });
-
   const handleDelete = (id: string) => {
     toast({
       description: "Sermon deleted successfully",
@@ -58,16 +52,6 @@ export default function SermonList() {
     toast({
       description: `Sermon ${status === 'published' ? 'published' : 'unpublished'} successfully`,
     });
-  };
-
-  const handleSelectItem = (id: string, checked: boolean) => {
-    setSelectedSermons(prev =>
-      checked ? [...prev, id] : prev.filter(item => item !== id)
-    );
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    setSelectedSermons(checked ? filteredSermons.map(sermon => sermon.id) : []);
   };
 
   const handleBulkAction = () => {
@@ -92,6 +76,24 @@ export default function SermonList() {
     }
     setSelectedSermons([]);
     setBulkAction("");
+  };
+
+  const filteredSermons = sermons.filter((sermon) => {
+    const matchesSearch = sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sermon.preacher.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "all" || sermon.status === statusFilter;
+    const matchesDate = !dateFilter || sermon.date.includes(dateFilter);
+    return matchesSearch && matchesStatus && matchesDate;
+  });
+
+  const handleSelectItem = (id: string, checked: boolean) => {
+    setSelectedSermons(prev =>
+      checked ? [...prev, id] : prev.filter(item => item !== id)
+    );
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedSermons(checked ? filteredSermons.map(sermon => sermon.id) : []);
   };
 
   return (
