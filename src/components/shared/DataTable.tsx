@@ -101,7 +101,7 @@ export function DataTable<T>({
 
   return (
     <div>
-      <table className="w-full">
+      <table className="w-full text-[14px]">
         <thead>
           <tr className="border-b">
             {showCheckboxes && (
