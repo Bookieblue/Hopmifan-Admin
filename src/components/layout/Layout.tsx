@@ -5,7 +5,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DocumentProvider } from "@/contexts/DocumentContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -16,6 +16,13 @@ export function Layout() {
   const location = useLocation();
   
   const isPreviewRoute = location.pathname.includes('/preview');
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    if (isMobile) {
+      setIsMobileMenuOpen(false);
+    }
+  }, [location.pathname, isMobile]);
 
   if (isPreviewRoute) {
     return (
@@ -49,7 +56,7 @@ export function Layout() {
                           <Menu className="h-6 w-6 text-gray-600" />
                         </button>
                       </SheetTrigger>
-                      <SheetContent side="left" className="p-0 w-[280px]">
+                      <SheetContent side="left" className="p-0 w-[240px] sm:w-[240px]">
                         <div className="h-full overflow-y-auto">
                           <Sidebar isCollapsed={isCollapsed} />
                         </div>
