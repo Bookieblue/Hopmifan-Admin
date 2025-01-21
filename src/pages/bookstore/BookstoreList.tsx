@@ -9,6 +9,16 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BulkActions } from "@/components/shared/BulkActions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function BookstoreList() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,6 +28,8 @@ export default function BookstoreList() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const [bulkAction, setBulkAction] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState<string>("");
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -41,18 +53,29 @@ export default function BookstoreList() {
   ];
 
   const handleDelete = (id: string) => {
+    setBookToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    // Here you would typically delete the book from your backend
     toast({
       description: "Book deleted successfully",
     });
+    setDeleteDialogOpen(false);
+    setBookToDelete("");
+    setSelectedItems(selectedItems.filter(itemId => itemId !== bookToDelete));
   };
 
   const handleStatusChange = (id: string, status: string) => {
+    // Here you would typically update the book status in your backend
     toast({
       description: `Book ${status === 'published' ? 'published' : 'unpublished'} successfully`,
     });
   };
 
   const handleDuplicate = (id: string) => {
+    // Here you would typically duplicate the book in your backend
     toast({
       description: "Book duplicated successfully",
     });
@@ -104,6 +127,12 @@ export default function BookstoreList() {
   const handleRowClick = (id: string) => {
     navigate(`/bookstore/${id}/edit`);
   };
+
+  const bulkActions = [
+    { value: "delete", label: "Delete Selected" },
+    { value: "publish", label: "Publish Selected" },
+    { value: "unpublish", label: "Unpublish Selected" }
+  ];
 
   return (
     <div className="page-container">
@@ -182,11 +211,7 @@ export default function BookstoreList() {
           onEdit: (id: string) => navigate(`/bookstore/${id}/edit`),
         }}
         showCheckboxes={true}
-        bulkActions={[
-          { value: "delete", label: "Delete Selected" },
-          { value: "publish", label: "Publish Selected" },
-          { value: "unpublish", label: "Unpublish Selected" }
-        ]}
+        bulkActions={bulkActions}
         bulkAction={bulkAction}
         setBulkAction={setBulkAction}
         onBulkAction={handleBulkAction}
@@ -200,6 +225,24 @@ export default function BookstoreList() {
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
       />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the book
+              and remove all of its data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
