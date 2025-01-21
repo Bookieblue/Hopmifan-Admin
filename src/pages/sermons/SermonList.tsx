@@ -17,7 +17,7 @@ import { Filter } from "lucide-react";
 export default function SermonList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedSermons, setSelectedSermons] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const { toast } = useToast();
@@ -61,13 +61,37 @@ export default function SermonList() {
   };
 
   const handleSelectItem = (id: string, checked: boolean) => {
-    setSelectedItems(prev =>
+    setSelectedSermons(prev =>
       checked ? [...prev, id] : prev.filter(item => item !== id)
     );
   };
 
   const handleSelectAll = (checked: boolean) => {
-    setSelectedItems(checked ? filteredSermons.map(sermon => sermon.id) : []);
+    setSelectedSermons(checked ? filteredSermons.map(sermon => sermon.id) : []);
+  };
+
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedSermons.length === 0) return;
+
+    switch (bulkAction) {
+      case "publish":
+        toast({
+          description: `${selectedSermons.length} sermons published`,
+        });
+        break;
+      case "unpublish":
+        toast({
+          description: `${selectedSermons.length} sermons unpublished`,
+        });
+        break;
+      case "delete":
+        toast({
+          description: `${selectedSermons.length} sermons deleted`,
+        });
+        break;
+    }
+    setSelectedSermons([]);
+    setBulkAction("");
   };
 
   return (
@@ -104,85 +128,109 @@ export default function SermonList() {
         </Button>
       </div>
 
-      <DataTable
-        data={filteredSermons}
-        columns={[
-          { 
-            header: "Title", 
-            accessor: "title",
-            className: "text-[14px]"
-          },
-          { 
-            header: "Preacher", 
-            accessor: "preacher",
-            className: "text-[14px]"
-          },
-          { 
-            header: "Date & Status", 
-            accessor: (sermon) => (
-              <div className="space-y-1 text-[14px]">
-                <div>{sermon.date}</div>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  sermon.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {sermon.status}
-                </span>
-              </div>
-            ),
-            className: "text-[14px]"
-          },
-          {
-            header: "Actions",
-            accessor: (sermon) => (
-              <div className="flex items-center justify-end gap-2 text-[14px]">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[200px]">
-                    <DropdownMenuItem>
-                      <Link to={`/sermons/${sermon.id}/edit`} className="flex items-center w-full">
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleStatusChange(sermon.id, sermon.status === 'published' ? 'draft' : 'published')}
-                    >
-                      {sermon.status === 'published' ? (
-                        <>
-                          <XSquare className="h-4 w-4 mr-2" />
-                          Unpublish
-                        </>
-                      ) : (
-                        <>
-                          <CheckSquare className="h-4 w-4 mr-2" />
-                          Publish
-                        </>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleDelete(sermon.id)}
-                      className="text-red-600"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            ),
-            className: "w-[100px] text-[14px]"
-          }
-        ]}
-        selectedItems={selectedItems}
-        onSelectItem={handleSelectItem}
-        onSelectAll={handleSelectAll}
-        getItemId={(sermon) => sermon.id}
-        showCheckboxes={true}
-      />
+      <div className="bg-white md:rounded-lg md:border">
+        <DataTable
+          data={filteredSermons}
+          columns={[
+            { 
+              header: "Title", 
+              accessor: "title",
+              className: "text-[14px]"
+            },
+            { 
+              header: "Preacher", 
+              accessor: "preacher",
+              className: "text-[14px]"
+            },
+            { 
+              header: "Date & Status", 
+              accessor: (sermon) => (
+                <div className="space-y-1 text-[14px]">
+                  <div>{sermon.date}</div>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    sermon.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {sermon.status}
+                  </span>
+                </div>
+              ),
+              className: "text-[14px]"
+            },
+            {
+              header: "Actions",
+              accessor: (sermon) => (
+                <div className="flex items-center justify-end gap-2 text-[14px]">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-[200px]">
+                      <DropdownMenuItem>
+                        <Link to={`/sermons/${sermon.id}/edit`} className="flex items-center w-full">
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleStatusChange(sermon.id, sermon.status === 'published' ? 'draft' : 'published')}
+                      >
+                        {sermon.status === 'published' ? (
+                          <>
+                            <XSquare className="h-4 w-4 mr-2" />
+                            Unpublish
+                          </>
+                        ) : (
+                          <>
+                            <CheckSquare className="h-4 w-4 mr-2" />
+                            Publish
+                          </>
+                        )}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleDelete(sermon.id)}
+                        className="text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              ),
+              className: "w-[100px] text-[14px]"
+            }
+          ]}
+          selectedItems={selectedSermons}
+          onSelectItem={handleSelectItem}
+          onSelectAll={handleSelectAll}
+          getItemId={(sermon) => sermon.id}
+          showCheckboxes={true}
+          bulkActions={[
+            { value: "publish", label: "Publish Selected" },
+            { value: "unpublish", label: "Unpublish Selected" },
+            { value: "delete", label: "Delete Selected" }
+          ]}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
+        />
+
+        {selectedSermons.length > 0 && (
+          <BulkActions
+            selectedCount={selectedSermons.length}
+            bulkAction={bulkAction}
+            setBulkAction={setBulkAction}
+            onBulkAction={handleBulkAction}
+            actions={[
+              { value: "publish", label: "Publish Selected" },
+              { value: "unpublish", label: "Unpublish Selected" },
+              { value: "delete", label: "Delete Selected" }
+            ]}
+          />
+        )}
+      </div>
 
       <FilterModal
         open={filterModalOpen}

@@ -5,6 +5,8 @@ import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { PrayerRequestDetailsModal } from "@/components/prayer-requests/PrayerRequestDetailsModal";
 import { PrayerRequestFilterModal } from "@/components/prayer-requests/FilterModal";
+import { BulkActions } from "@/components/shared/BulkActions";
+import { useToast } from "@/hooks/use-toast";
 
 const samplePrayerRequests = [
   {
@@ -44,6 +46,9 @@ export default function PrayerRequestList() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [requests, setRequests] = useState(samplePrayerRequests);
+  const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState("");
+  const { toast } = useToast();
 
   const columns = [
     { 
@@ -124,6 +129,30 @@ export default function PrayerRequestList() {
     setDetailsModalOpen(true);
   };
 
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedRequests.length === 0) return;
+
+    switch (bulkAction) {
+      case "markPrayed":
+        toast({
+          description: `${selectedRequests.length} requests marked as prayed`,
+        });
+        break;
+      case "markPending":
+        toast({
+          description: `${selectedRequests.length} requests marked as pending`,
+        });
+        break;
+      case "delete":
+        toast({
+          description: `${selectedRequests.length} requests deleted`,
+        });
+        break;
+    }
+    setSelectedRequests([]);
+    setBulkAction("");
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
@@ -180,12 +209,18 @@ export default function PrayerRequestList() {
         <DataTable
           data={filteredRequests}
           columns={columns}
-          selectedItems={[]}
-          onSelectItem={() => {}}
-          onSelectAll={() => {}}
+          selectedItems={selectedRequests}
+          onSelectItem={(id, checked) => {
+            setSelectedRequests(prev =>
+              checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
+            );
+          }}
+          onSelectAll={(checked) => {
+            setSelectedRequests(checked ? filteredRequests.map(r => r.id) : []);
+          }}
           getItemId={(item) => item.id}
           onRowClick={handleCardClick}
-          showCheckboxes={false}
+          showCheckboxes={true}
           CardComponent={({ item }) => (
             <div 
               className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
@@ -223,6 +258,20 @@ export default function PrayerRequestList() {
             </div>
           )}
         />
+
+        {selectedRequests.length > 0 && (
+          <BulkActions
+            selectedCount={selectedRequests.length}
+            bulkAction={bulkAction}
+            setBulkAction={setBulkAction}
+            onBulkAction={handleBulkAction}
+            actions={[
+              { value: "markPrayed", label: "Mark as Prayed" },
+              { value: "markPending", label: "Mark as Pending" },
+              { value: "delete", label: "Delete Selected" }
+            ]}
+          />
+        )}
       </div>
     </div>
   );

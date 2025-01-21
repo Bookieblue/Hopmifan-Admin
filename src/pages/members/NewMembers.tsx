@@ -4,13 +4,18 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Filter, Search } from "lucide-react";
 import { FilterModal } from "@/components/members/FilterModal";
+import { useToast } from "@/hooks/use-toast";
+import { BulkActions } from "@/components/shared/BulkActions";
 
 export default function NewMembers() {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [locationFilter, setLocationFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState("");
 
   // Sample data
   const members = [
@@ -39,6 +44,30 @@ export default function NewMembers() {
   });
 
   const uniqueLocations = Array.from(new Set(members.map((member) => member.location)));
+
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedMembers.length === 0) return;
+
+    switch (bulkAction) {
+      case "approve":
+        toast({
+          description: `${selectedMembers.length} members approved`,
+        });
+        break;
+      case "reject":
+        toast({
+          description: `${selectedMembers.length} members rejected`,
+        });
+        break;
+      case "delete":
+        toast({
+          description: `${selectedMembers.length} members deleted`,
+        });
+        break;
+    }
+    setSelectedMembers([]);
+    setBulkAction("");
+  };
 
   return (
     <div className="page-container">
@@ -69,52 +98,82 @@ export default function NewMembers() {
         </div>
       </div>
 
-      <DataTable
-        data={filteredMembers}
-        columns={[
-          { 
-            header: "Name", 
-            accessor: "name",
-            className: "text-[14px]"
-          },
-          { 
-            header: "Email", 
-            accessor: "email",
-            className: "text-[14px]"
-          },
-          { 
-            header: "Phone", 
-            accessor: "phone",
-            className: "text-[14px]"
-          },
-          { 
-            header: "Location", 
-            accessor: "location",
-            className: "text-[14px]"
-          },
-          {
-            header: "Status",
-            accessor: (member) => (
-              <span className={`px-2 py-1 rounded-full text-xs ${
-                member.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-              }`}>
-                {member.status}
-              </span>
-            ),
-            className: "text-[14px]"
-          },
-          {
-            header: "Join Date",
-            accessor: "joinDate",
-            className: "text-[14px]"
-          }
-        ]}
-        selectedItems={[]}
-        onSelectItem={() => {}}
-        onSelectAll={() => {}}
-        getItemId={(item) => item.id}
-        showCheckboxes={false}
-      />
+      <div className="bg-white rounded-lg border">
+        <DataTable
+          data={filteredMembers}
+          columns={[
+            { 
+              header: "Name", 
+              accessor: "name",
+              className: "text-[14px]"
+            },
+            { 
+              header: "Email", 
+              accessor: "email",
+              className: "text-[14px]"
+            },
+            { 
+              header: "Phone", 
+              accessor: "phone",
+              className: "text-[14px]"
+            },
+            { 
+              header: "Location", 
+              accessor: "location",
+              className: "text-[14px]"
+            },
+            {
+              header: "Status",
+              accessor: (member) => (
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  member.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {member.status}
+                </span>
+              ),
+              className: "text-[14px]"
+            },
+            {
+              header: "Join Date",
+              accessor: "joinDate",
+              className: "text-[14px]"
+            }
+          ]}
+          selectedItems={selectedMembers}
+          onSelectItem={(id, checked) => {
+            setSelectedMembers(prev =>
+              checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
+            );
+          }}
+          onSelectAll={(checked) => {
+            setSelectedMembers(checked ? filteredMembers.map(m => m.id) : []);
+          }}
+          getItemId={(item) => item.id}
+          showCheckboxes={true}
+          bulkActions={[
+            { value: "approve", label: "Approve Selected" },
+            { value: "reject", label: "Reject Selected" },
+            { value: "delete", label: "Delete Selected" }
+          ]}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
+        />
+
+        {selectedMembers.length > 0 && (
+          <BulkActions
+            selectedCount={selectedMembers.length}
+            bulkAction={bulkAction}
+            setBulkAction={setBulkAction}
+            onBulkAction={handleBulkAction}
+            actions={[
+              { value: "approve", label: "Approve Selected" },
+              { value: "reject", label: "Reject Selected" },
+              { value: "delete", label: "Delete Selected" }
+            ]}
+          />
+        )}
+      </div>
 
       <FilterModal
         open={showFilterModal}

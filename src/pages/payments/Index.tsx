@@ -55,6 +55,7 @@ export default function PaymentHistory() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [methodFilter, setMethodFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
+  const [bulkAction, setBulkAction] = useState("");
 
   const columns: TableColumn<Payment>[] = [
     { header: "Date", accessor: "date" },
@@ -130,10 +131,29 @@ Method: ${payment.method}
     });
   };
 
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedPayments.length === 0) return;
+
+    switch (bulkAction) {
+      case "export":
+        toast({
+          description: `${selectedPayments.length} payments exported`,
+        });
+        break;
+      case "download":
+        toast({
+          description: `${selectedPayments.length} receipts downloaded`,
+        });
+        break;
+    }
+    setSelectedPayments([]);
+    setBulkAction("");
+  };
+
   return (
-    <div className="page-container">
+    <div className="p-6 max-w-[1400px] mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Payment History</h1>
+        <h1 className="text-2xl font-semibold">Payment History</h1>
       </div>
 
       <PaymentFilters
@@ -191,8 +211,12 @@ Method: ${payment.method}
             }]
           }}
           bulkActions={[
-            { value: "export", label: "Export as CSV" }
+            { value: "export", label: "Export as CSV" },
+            { value: "download", label: "Download Receipts" }
           ]}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
           CardComponent={({ item }) => (
             <div className="py-4 px-4 border-b last:border-b-0">
               <div className="flex justify-between items-start">

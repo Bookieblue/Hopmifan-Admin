@@ -5,6 +5,8 @@ import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ContactFilterModal } from "@/components/contacts/FilterModal";
 import { ContactDetailsModal } from "@/components/contacts/ContactDetailsModal";
+import { BulkActions } from "@/components/shared/BulkActions";
+import { useToast } from "@/hooks/use-toast";
 
 const sampleContacts = [
   {
@@ -36,6 +38,7 @@ const sampleContacts = [
 ];
 
 export default function ContactMessages() {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [countryFilter, setCountryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -44,6 +47,8 @@ export default function ContactMessages() {
   const [selectedContact, setSelectedContact] = useState(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [contacts, setContacts] = useState(sampleContacts);
+  const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState("");
 
   const columns = [
     { 
@@ -124,6 +129,30 @@ export default function ContactMessages() {
     setDetailsModalOpen(true);
   };
 
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedContacts.length === 0) return;
+
+    switch (bulkAction) {
+      case "markReplied":
+        toast({
+          description: `${selectedContacts.length} messages marked as replied`,
+        });
+        break;
+      case "markPending":
+        toast({
+          description: `${selectedContacts.length} messages marked as pending`,
+        });
+        break;
+      case "delete":
+        toast({
+          description: `${selectedContacts.length} messages deleted`,
+        });
+        break;
+    }
+    setSelectedContacts([]);
+    setBulkAction("");
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
@@ -180,12 +209,18 @@ export default function ContactMessages() {
         <DataTable
           data={filteredContacts}
           columns={columns}
-          selectedItems={[]}
-          onSelectItem={() => {}}
-          onSelectAll={() => {}}
+          selectedItems={selectedContacts}
+          onSelectItem={(id, checked) => {
+            setSelectedContacts(prev =>
+              checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
+            );
+          }}
+          onSelectAll={(checked) => {
+            setSelectedContacts(checked ? filteredContacts.map(c => c.id) : []);
+          }}
           getItemId={(item) => item.id}
           onRowClick={handleCardClick}
-          showCheckboxes={false}
+          showCheckboxes={true}
           CardComponent={({ item }) => (
             <div 
               className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
@@ -204,7 +239,29 @@ export default function ContactMessages() {
               </div>
             </div>
           )}
+          bulkActions={[
+            { value: "markReplied", label: "Mark as Replied" },
+            { value: "markPending", label: "Mark as Pending" },
+            { value: "delete", label: "Delete Selected" }
+          ]}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
         />
+
+        {selectedContacts.length > 0 && (
+          <BulkActions
+            selectedCount={selectedContacts.length}
+            bulkAction={bulkAction}
+            setBulkAction={setBulkAction}
+            onBulkAction={handleBulkAction}
+            actions={[
+              { value: "markReplied", label: "Mark as Replied" },
+              { value: "markPending", label: "Mark as Pending" },
+              { value: "delete", label: "Delete Selected" }
+            ]}
+          />
+        )}
       </div>
     </div>
   );
