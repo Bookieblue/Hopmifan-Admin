@@ -83,7 +83,6 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
     
     if (!title.trim()) newErrors.title = true;
     if (!description.trim()) newErrors.description = true;
-    if (!author.trim()) newErrors.author = true;
     if (price <= 0) newErrors.price = true;
     
     setErrors(newErrors);
@@ -234,7 +233,7 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
 
         <div>
           <label htmlFor="author" className="block text-sm font-medium mb-2">
-            Author Name <span className="text-red-500">*</span>
+            Author Name
           </label>
           <Input
             id="author"
