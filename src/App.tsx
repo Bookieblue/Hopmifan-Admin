@@ -13,6 +13,7 @@ import ViewBook from "@/pages/bookstore/ViewBook";
 import EventList from "@/pages/events/EventList";
 import CreateEvent from "@/pages/events/CreateEvent";
 import EditEvent from "@/pages/events/EditEvent";
+import RegisteredEvents from "@/pages/events/RegisteredEvents";
 import PaymentHistory from "@/pages/payments/Index";
 import DonationHistory from "@/pages/donations/DonationHistory";
 import ContactMessages from "@/pages/contacts/ContactMessages";
@@ -88,6 +89,10 @@ const router = createBrowserRouter([
       {
         path: "events/:id/edit",
         element: <EditEvent />,
+      },
+      {
+        path: "events/registered",
+        element: <RegisteredEvents />,
       },
       {
         path: "contacts",

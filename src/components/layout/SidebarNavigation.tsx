@@ -13,9 +13,10 @@ import {
   MessageSquare,
   Users,
   Book,
-  LogOut
+  LogOut,
+  UserPlus
 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const menuItems = [
   { icon: LayoutGrid, label: "Overview", path: "/home" },
@@ -29,7 +30,15 @@ const menuItems = [
     ]
   },
   { icon: CreditCard, label: "Donations", path: "/donations" },
-  { icon: Calendar, label: "Events", path: "/events" },
+  {
+    icon: Calendar,
+    label: "Events",
+    path: "/events",
+    submenu: [
+      { label: "Event List", path: "/events" },
+      { label: "Registrations", path: "/events/registered" }
+    ]
+  },
   { icon: MessageSquare, label: "Contact Messages", path: "/contacts" },
   { icon: BookOpen, label: "Prayer Requests", path: "/prayer-requests" },
   { icon: CreditCard, label: "Payments", path: "/payments" },
