@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plus, Search, Filter } from "lucide-react";
+import { Plus, Search, Filter, MoreVertical, Edit, Trash2, CheckSquare, XSquare, Copy } from "lucide-react";
 import { DataTable } from "@/components/shared/DataTable";
 import { FilterModal } from "@/components/bookstore/FilterModal";
 import { BookCard } from "@/components/bookstore/BookCard";
@@ -9,6 +9,12 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BulkActions } from "@/components/shared/BulkActions";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +30,6 @@ export default function BookstoreList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const [locationFilter, setLocationFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const [bulkAction, setBulkAction] = useState("");
@@ -79,32 +84,6 @@ export default function BookstoreList() {
     toast({
       description: "Book duplicated successfully",
     });
-  };
-
-  const handleBulkAction = () => {
-    if (!selectedItems.length) return;
-
-    switch (bulkAction) {
-      case "delete":
-        toast({
-          description: `${selectedItems.length} books deleted successfully`,
-        });
-        break;
-      case "publish":
-        toast({
-          description: `${selectedItems.length} books published successfully`,
-        });
-        break;
-      case "unpublish":
-        toast({
-          description: `${selectedItems.length} books unpublished successfully`,
-        });
-        break;
-      default:
-        break;
-    }
-    setSelectedItems([]);
-    setBulkAction("");
   };
 
   const filteredBooks = books.filter((book) => {
@@ -196,6 +175,53 @@ export default function BookstoreList() {
               </div>
             ),
             className: "text-[14px]"
+          },
+          {
+            header: "Actions",
+            accessor: (book: any) => (
+              <div className="flex items-center justify-end gap-2 text-[14px]">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[200px] bg-white">
+                    <DropdownMenuItem onClick={() => navigate(`/bookstore/${book.id}/edit`)}>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDuplicate(book.id)}>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Duplicate
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleStatusChange(book.id, book.status === 'published' ? 'draft' : 'published')}
+                    >
+                      {book.status === 'published' ? (
+                        <>
+                          <XSquare className="h-4 w-4 mr-2" />
+                          Unpublish
+                        </>
+                      ) : (
+                        <>
+                          <CheckSquare className="h-4 w-4 mr-2" />
+                          Publish
+                        </>
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleDelete(book.id)}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ),
+            className: "w-[100px] text-[14px]"
           }
         ]}
         selectedItems={selectedItems}
@@ -208,7 +234,6 @@ export default function BookstoreList() {
           onDelete: handleDelete,
           onStatusChange: handleStatusChange,
           onDuplicate: handleDuplicate,
-          onEdit: (id: string) => navigate(`/bookstore/${id}/edit`),
         }}
         showCheckboxes={true}
         bulkActions={bulkActions}
