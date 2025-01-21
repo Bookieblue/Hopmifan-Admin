@@ -3,7 +3,7 @@ import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { PrayerRequestDetailsModal } from "@/components/prayer-requests/PrayerRequestDetailsModal";
+import { DetailsModal } from "@/components/shared/DetailsModal";
 import { PrayerRequestFilterModal } from "@/components/prayer-requests/FilterModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
@@ -194,11 +194,17 @@ export default function PrayerRequestList() {
         uniqueCountries={Array.from(new Set(requests.map(request => request.country)))}
       />
 
-      <PrayerRequestDetailsModal
+      <DetailsModal
         open={detailsModalOpen}
         onOpenChange={setDetailsModalOpen}
-        request={selectedRequest}
+        title="Prayer Request Details"
+        data={selectedRequest}
         onStatusChange={handleStatusChange}
+        statusLabels={{
+          pending: 'Pending',
+          completed: 'Prayed',
+          buttonText: 'Mark as Prayed'
+        }}
       />
 
       <div className="bg-white md:rounded-lg md:border">

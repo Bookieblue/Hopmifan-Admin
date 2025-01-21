@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { EventFilterModal } from "@/components/registered-events/FilterModal";
-import { EventDetailsModal } from "@/components/registered-events/EventDetailsModal";
+import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
 
@@ -194,11 +194,17 @@ export default function RegisteredEvents() {
         uniqueCountries={Array.from(new Set(registrations.map(registration => registration.country)))}
       />
 
-      <EventDetailsModal
+      <DetailsModal
         open={detailsModalOpen}
         onOpenChange={setDetailsModalOpen}
-        registration={selectedRegistration}
+        title="Registration Details"
+        data={selectedRegistration}
         onStatusChange={handleStatusChange}
+        statusLabels={{
+          pending: 'Pending',
+          completed: 'Confirmed',
+          buttonText: 'Confirm Registration'
+        }}
       />
 
       <div className="bg-white md:rounded-lg md:border">

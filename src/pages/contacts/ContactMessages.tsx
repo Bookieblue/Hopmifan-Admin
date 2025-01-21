@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ContactFilterModal } from "@/components/contacts/FilterModal";
-import { ContactDetailsModal } from "@/components/contacts/ContactDetailsModal";
+import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
 
@@ -194,11 +194,17 @@ export default function ContactMessages() {
         uniqueCountries={Array.from(new Set(contacts.map(contact => contact.country)))}
       />
 
-      <ContactDetailsModal
+      <DetailsModal
         open={detailsModalOpen}
         onOpenChange={setDetailsModalOpen}
-        contact={selectedContact}
+        title="Contact Details"
+        data={selectedContact}
         onStatusChange={handleStatusChange}
+        statusLabels={{
+          pending: 'Pending',
+          completed: 'Replied',
+          buttonText: 'Mark as Replied'
+        }}
       />
 
       <div className="bg-white md:rounded-lg md:border">
