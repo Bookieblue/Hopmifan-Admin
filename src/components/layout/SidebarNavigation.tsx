@@ -14,7 +14,8 @@ import {
   Users,
   Book,
   LogOut,
-  UserPlus
+  UserPlus,
+  MessageCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -39,8 +40,15 @@ const menuItems = [
       { label: "Registrations", path: "/events/registered" }
     ]
   },
-  { icon: MessageSquare, label: "Contact Messages", path: "/contacts" },
-  { icon: BookOpen, label: "Prayer Requests", path: "/prayer-requests" },
+  {
+    icon: MessageSquare,
+    label: "Messages",
+    path: "/messages",
+    submenu: [
+      { label: "Contact Messages", path: "/contacts" },
+      { label: "Prayer Requests", path: "/prayer-requests" }
+    ]
+  },
   { icon: CreditCard, label: "Payments", path: "/payments" },
   { icon: Users, label: "New Members", path: "/new-members" },
   { icon: Book, label: "Sermons", path: "/sermons" },
