@@ -40,13 +40,13 @@ export function ContactDetailsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[600px] max-h-[90vh] flex flex-col overflow-hidden">
+      <DialogContent className="max-w-[600px] max-h-[90vh] flex flex-col overflow-hidden sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Contact Details</DialogTitle>
         </DialogHeader>
         <div className="flex-1 overflow-y-auto px-4">
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <h3 className="font-medium mb-1">Name</h3>
                 <p className="text-gray-700">{contact.firstName} {contact.lastName}</p>
