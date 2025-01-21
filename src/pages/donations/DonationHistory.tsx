@@ -107,10 +107,9 @@ export default function DonationHistory() {
   const handleBulkAction = () => {
     if (!selectedItems.length) return;
 
-    const selectedDonations = donations.filter(d => selectedItems.includes(d.id));
-
     switch (bulkAction) {
       case "exportCSV": {
+        const selectedDonations = donations.filter(d => selectedItems.includes(d.id));
         const headers = ["Donor Name", "Amount", "Date", "Giving Type", "State", "Payment Method"];
         const csvData = selectedDonations.map(donation => 
           [donation.donorName, donation.amount, donation.date, donation.givingType, donation.state, donation.paymentMethod].join(",")
@@ -132,7 +131,6 @@ export default function DonationHistory() {
         break;
       }
       case "exportPDF": {
-        // For now, we'll just show a toast. In a real app, you'd want to use a PDF generation library
         toast({
           description: `${selectedItems.length} donations exported as PDF`,
         });
@@ -148,6 +146,11 @@ export default function DonationHistory() {
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
+
+  const bulkActions = [
+    { value: "exportCSV", label: "Export as CSV" },
+    { value: "exportPDF", label: "Export as PDF" }
+  ];
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
@@ -198,10 +201,6 @@ export default function DonationHistory() {
       />
 
       <div className="bg-white md:rounded-lg md:border">
-        <div className="md:hidden flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
-          <h2 className="font-medium text-sm text-gray-600">Member</h2>
-          <h2 className="font-medium text-sm text-gray-600">Amount</h2>
-        </div>
         <DataTable
           data={filteredDonations}
           columns={columns}
@@ -217,10 +216,7 @@ export default function DonationHistory() {
           getItemId={(item) => item.id}
           onRowClick={(id) => handleDonationClick(donations.find(d => d.id === id)!)}
           showCheckboxes={true}
-          bulkActions={[
-            { value: "exportCSV", label: "Export as CSV" },
-            { value: "exportPDF", label: "Export as PDF" }
-          ]}
+          bulkActions={bulkActions}
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
@@ -239,6 +235,16 @@ export default function DonationHistory() {
             </div>
           )}
         />
+
+        {selectedItems.length > 0 && (
+          <BulkActions
+            selectedCount={selectedItems.length}
+            bulkAction={bulkAction}
+            setBulkAction={setBulkAction}
+            onBulkAction={handleBulkAction}
+            actions={bulkActions}
+          />
+        )}
       </div>
     </div>
   );
