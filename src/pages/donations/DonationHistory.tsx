@@ -6,6 +6,7 @@ import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/donations/FilterModal";
 import { DonationDetailsModal } from "@/components/donations/DonationDetailsModal";
+import { BulkActions } from "@/components/shared/BulkActions";
 
 const donations = [
   {
@@ -63,6 +64,8 @@ export default function DonationHistory() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [selectedDonation, setSelectedDonation] = useState<typeof donations[0] | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState("");
 
   const columns: TableColumn<typeof donations[0]>[] = [
     { 
@@ -99,6 +102,45 @@ export default function DonationHistory() {
   const handleDonationClick = (donation: typeof donations[0]) => {
     setSelectedDonation(donation);
     setDetailsModalOpen(true);
+  };
+
+  const handleBulkAction = () => {
+    if (!selectedItems.length) return;
+
+    const selectedDonations = donations.filter(d => selectedItems.includes(d.id));
+
+    switch (bulkAction) {
+      case "exportCSV": {
+        const headers = ["Donor Name", "Amount", "Date", "Giving Type", "State", "Payment Method"];
+        const csvData = selectedDonations.map(donation => 
+          [donation.donorName, donation.amount, donation.date, donation.givingType, donation.state, donation.paymentMethod].join(",")
+        );
+        
+        const csv = [headers.join(","), ...csvData].join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `donations-${new Date().toISOString().split("T")[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        toast({
+          description: `${selectedItems.length} donations exported as CSV`,
+        });
+        break;
+      }
+      case "exportPDF": {
+        // For now, we'll just show a toast. In a real app, you'd want to use a PDF generation library
+        toast({
+          description: `${selectedItems.length} donations exported as PDF`,
+        });
+        break;
+      }
+    }
+    setSelectedItems([]);
+    setBulkAction("");
   };
 
   const filteredDonations = donations.filter((donation) =>
@@ -163,12 +205,25 @@ export default function DonationHistory() {
         <DataTable
           data={filteredDonations}
           columns={columns}
-          selectedItems={[]}
-          onSelectItem={() => {}}
-          onSelectAll={() => {}}
+          selectedItems={selectedItems}
+          onSelectItem={(id, checked) => {
+            setSelectedItems(prev => 
+              checked ? [...prev, id] : prev.filter(item => item !== id)
+            );
+          }}
+          onSelectAll={(checked) => {
+            setSelectedItems(checked ? filteredDonations.map(d => d.id) : []);
+          }}
           getItemId={(item) => item.id}
           onRowClick={(id) => handleDonationClick(donations.find(d => d.id === id)!)}
-          showCheckboxes={false}
+          showCheckboxes={true}
+          bulkActions={[
+            { value: "exportCSV", label: "Export as CSV" },
+            { value: "exportPDF", label: "Export as PDF" }
+          ]}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
           CardComponent={({ item }) => (
             <div 
               className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
