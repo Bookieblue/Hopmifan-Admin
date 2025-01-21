@@ -175,98 +175,119 @@ export default function BookstoreList() {
         </div>
       </div>
 
-      <DataTable
-        data={filteredBooks}
-        columns={[
-          { 
-            header: "Title", 
-            accessor: "title",
-            className: "text-[14px]"
-          },
-          { 
-            header: "Author", 
-            accessor: "author",
-            className: "text-[14px]"
-          },
-          { 
-            header: "Price & Status", 
-            accessor: (book: any) => (
-              <div className="space-y-1 text-[14px]">
-                <div>${book.price}</div>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  book.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {book.status}
-                </span>
-              </div>
-            ),
-            className: "text-[14px]"
-          },
-          {
-            header: "Actions",
-            accessor: (book: any) => (
-              <div className="flex items-center justify-end gap-2 text-[14px]">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[200px] bg-white">
-                    <DropdownMenuItem onClick={() => navigate(`/bookstore/${book.id}/edit`)}>
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleDuplicate(book.id)}>
-                      <Copy className="h-4 w-4 mr-2" />
-                      Duplicate
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleStatusChange(book.id, book.status === 'published' ? 'draft' : 'published')}
+      <div className="bg-white md:rounded-lg md:border">
+        <DataTable
+          data={filteredBooks}
+          columns={[
+            { 
+              header: "Title", 
+              accessor: "title",
+              className: "text-[14px]"
+            },
+            { 
+              header: "Author", 
+              accessor: "author",
+              className: "text-[14px]"
+            },
+            { 
+              header: "Price & Status", 
+              accessor: (book: any) => (
+                <div className="space-y-1 text-[14px]">
+                  <div>${book.price}</div>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    book.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {book.status}
+                  </span>
+                </div>
+              ),
+              className: "text-[14px]"
+            },
+            {
+              header: "Actions",
+              accessor: (book: any) => (
+                <div className="flex items-center justify-end gap-2 text-[14px]">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0 dropdown-trigger"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent 
+                      align="end" 
+                      className="w-[200px] bg-white dropdown-content"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      {book.status === 'published' ? (
-                        <>
-                          <XSquare className="h-4 w-4 mr-2" />
-                          Unpublish
-                        </>
-                      ) : (
-                        <>
-                          <CheckSquare className="h-4 w-4 mr-2" />
-                          Publish
-                        </>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleDelete(book.id)}
-                      className="text-red-600"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            ),
-            className: "w-[100px] text-[14px]"
-          }
-        ]}
-        selectedItems={selectedItems}
-        onSelectItem={handleSelectItem}
-        onSelectAll={handleSelectAll}
-        getItemId={(item) => item.id}
-        onRowClick={handleRowClick}
-        CardComponent={isMobile ? BookCard : undefined}
-        actions={{
-          onDelete: handleDelete,
-          onStatusChange: handleStatusChange,
-          onDuplicate: handleDuplicate,
-        }}
-        showCheckboxes={true}
-        bulkActions={bulkActions}
-        bulkAction={bulkAction}
-        setBulkAction={setBulkAction}
-        onBulkAction={handleBulkAction}
-      />
+                      <DropdownMenuItem onClick={() => navigate(`/bookstore/${book.id}/edit`)}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDuplicate(book.id)}>
+                        <Copy className="h-4 w-4 mr-2" />
+                        Duplicate
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleStatusChange(book.id, book.status === 'published' ? 'draft' : 'published')}
+                      >
+                        {book.status === 'published' ? (
+                          <>
+                            <XSquare className="h-4 w-4 mr-2" />
+                            Unpublish
+                          </>
+                        ) : (
+                          <>
+                            <CheckSquare className="h-4 w-4 mr-2" />
+                            Publish
+                          </>
+                        )}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleDelete(book.id)}
+                        className="text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              ),
+              className: "w-[100px] text-[14px]"
+            }
+          ]}
+          selectedItems={selectedItems}
+          onSelectItem={handleSelectItem}
+          onSelectAll={handleSelectAll}
+          getItemId={(item) => item.id}
+          onRowClick={handleRowClick}
+          CardComponent={isMobile ? BookCard : undefined}
+          actions={{
+            onDelete: handleDelete,
+            onStatusChange: handleStatusChange,
+            onDuplicate: handleDuplicate,
+          }}
+          showCheckboxes={true}
+          bulkActions={bulkActions}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
+        />
+
+        {selectedItems.length > 0 && (
+          <BulkActions
+            selectedCount={selectedItems.length}
+            bulkAction={bulkAction}
+            setBulkAction={setBulkAction}
+            onBulkAction={handleBulkAction}
+            actions={bulkActions}
+          />
+        )}
+      </div>
 
       <FilterModal
         open={filterModalOpen}

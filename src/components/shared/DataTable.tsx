@@ -60,8 +60,11 @@ export function DataTable<T>({
   const isMobile = useIsMobile();
 
   const handleRowClick = (e: React.MouseEvent, id: string) => {
+    // Don't trigger row click if clicking checkbox or dropdown
     if (
-      (e.target as HTMLElement).closest('.checkbox-cell')
+      (e.target as HTMLElement).closest('.checkbox-cell') ||
+      (e.target as HTMLElement).closest('.dropdown-trigger') ||
+      (e.target as HTMLElement).closest('.dropdown-content')
     ) {
       return;
     }
