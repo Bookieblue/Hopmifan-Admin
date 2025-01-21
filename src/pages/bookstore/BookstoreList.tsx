@@ -1,4 +1,3 @@
-<lov-code>
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Plus, Search, Filter, MoreVertical, Edit, Trash2, CheckSquare, XSquare, Copy } from "lucide-react";
@@ -27,6 +26,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+// ... keep existing code (state declarations and helper functions)
+
 export default function BookstoreList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -40,7 +41,6 @@ export default function BookstoreList() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  // Sample data
   const books = [
     {
       id: "1",
@@ -299,4 +299,23 @@ export default function BookstoreList() {
         setDateFilter={setDateFilter}
       />
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialog
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the book
+              and remove all of its data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
