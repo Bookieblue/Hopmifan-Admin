@@ -86,6 +86,32 @@ export default function BookstoreList() {
     });
   };
 
+  const handleBulkAction = () => {
+    if (!selectedItems.length) return;
+
+    switch (bulkAction) {
+      case "delete":
+        toast({
+          description: `${selectedItems.length} books deleted successfully`,
+        });
+        break;
+      case "publish":
+        toast({
+          description: `${selectedItems.length} books published successfully`,
+        });
+        break;
+      case "unpublish":
+        toast({
+          description: `${selectedItems.length} books unpublished successfully`,
+        });
+        break;
+      default:
+        break;
+    }
+    setSelectedItems([]);
+    setBulkAction("");
+  };
+
   const filteredBooks = books.filter((book) => {
     const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       book.author.toLowerCase().includes(searchQuery.toLowerCase());
