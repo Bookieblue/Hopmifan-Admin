@@ -26,8 +26,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-// ... keep existing code (state declarations and helper functions)
-
 export default function BookstoreList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -58,13 +56,14 @@ export default function BookstoreList() {
     },
   ];
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string, e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
     setBookToDelete(id);
     setDeleteDialogOpen(true);
   };
 
   const confirmDelete = () => {
-    // Here you would typically delete the book from your backend
     toast({
       description: "Book deleted successfully",
     });
@@ -73,15 +72,17 @@ export default function BookstoreList() {
     setSelectedItems(selectedItems.filter(itemId => itemId !== bookToDelete));
   };
 
-  const handleStatusChange = (id: string, status: string) => {
-    // Here you would typically update the book status in your backend
+  const handleStatusChange = (id: string, status: string, e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
     toast({
       description: `Book ${status === 'published' ? 'published' : 'unpublished'} successfully`,
     });
   };
 
-  const handleDuplicate = (id: string) => {
-    // Here you would typically duplicate the book in your backend
+  const handleDuplicate = (id: string, e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
     toast({
       description: "Book duplicated successfully",
     });
@@ -207,14 +208,13 @@ export default function BookstoreList() {
             {
               header: "Actions",
               accessor: (book: any) => (
-                <div className="flex items-center justify-end gap-2 text-[14px]">
+                <div className="flex items-center justify-end gap-2 text-[14px]" onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button 
                         variant="ghost" 
                         size="sm" 
                         className="h-8 w-8 p-0 dropdown-trigger"
-                        onClick={(e) => e.stopPropagation()}
                       >
                         <MoreVertical className="h-4 w-4" />
                       </Button>
@@ -222,18 +222,20 @@ export default function BookstoreList() {
                     <DropdownMenuContent 
                       align="end" 
                       className="w-[200px] bg-white dropdown-content"
-                      onClick={(e) => e.stopPropagation()}
                     >
-                      <DropdownMenuItem onClick={() => navigate(`/bookstore/${book.id}/edit`)}>
+                      <DropdownMenuItem onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/bookstore/${book.id}/edit`);
+                      }}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDuplicate(book.id)}>
+                      <DropdownMenuItem onClick={(e) => handleDuplicate(book.id, e)}>
                         <Copy className="h-4 w-4 mr-2" />
                         Duplicate
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => handleStatusChange(book.id, book.status === 'published' ? 'draft' : 'published')}
+                        onClick={(e) => handleStatusChange(book.id, book.status === 'published' ? 'draft' : 'published', e)}
                       >
                         {book.status === 'published' ? (
                           <>
@@ -248,7 +250,7 @@ export default function BookstoreList() {
                         )}
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => handleDelete(book.id)}
+                        onClick={(e) => handleDelete(book.id, e)}
                         className="text-red-600"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
