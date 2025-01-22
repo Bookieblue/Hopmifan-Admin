@@ -3,8 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 const initializeSampleData = () => {
   if (!localStorage.getItem('donations')) {
     localStorage.setItem('donations', JSON.stringify([
-      { amount: 50000, donor: "John Doe", date: new Date().toISOString(), status: "completed" },
-      { amount: 25000, donor: "Jane Smith", date: new Date().toISOString(), status: "completed" }
+      { amount: 50000, donor: "John Doe", date: new Date().toISOString(), status: "completed" }
     ]));
   }
 
@@ -38,8 +37,7 @@ const initializeSampleData = () => {
 
   if (!localStorage.getItem('contactMessages')) {
     localStorage.setItem('contactMessages', JSON.stringify([
-      { firstName: "James", lastName: "Wilson", message: "Inquiry about service times", status: "pending", dateSubmitted: new Date().toISOString() },
-      { firstName: "Emma", lastName: "Davis", message: "Question about youth program", status: "pending", dateSubmitted: new Date().toISOString() }
+      { firstName: "James", lastName: "Wilson", message: "Inquiry about service times", status: "pending", dateSubmitted: new Date().toISOString() }
     ]));
   }
 };
@@ -71,25 +69,16 @@ const fetchRecentActivities = async () => {
   const contactMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
 
   const activities = [
-    ...donations.map((d: any) => ({
-      type: "Donation" as const,
-      description: `Donation received from ${d.donor}`,
-      amount: d.amount,
-      date: d.date,
-      status: "completed" as const,
-      reference: crypto.randomUUID()
-    })),
-    ...books.filter((b: any) => b.sales > 0).map((b: any) => ({
-      type: "Book Sale" as const,
-      description: `New book sale "${b.title}"`,
-      amount: b.price * b.sales,
-      date: new Date().toISOString(),
-      status: "completed" as const,
+    ...memberRequests.map((mr: any) => ({
+      type: "Members Request" as const,
+      description: `New membership request from ${mr.firstName} ${mr.lastName}`,
+      date: mr.dateSubmitted,
+      status: mr.status as "completed" | "pending" | "upcoming" | "confirmed",
       reference: crypto.randomUUID()
     })),
     ...prayerRequests.map((pr: any) => ({
       type: "Prayer Request" as const,
-      description: `Prayer request from ${pr.firstName} ${pr.lastName}`,
+      description: `Prayer request from ${pr.firstName} ${pr.lastName}: ${pr.request}`,
       date: pr.dateSubmitted,
       status: pr.status as "completed" | "pending" | "upcoming",
       reference: crypto.randomUUID()
@@ -101,18 +90,19 @@ const fetchRecentActivities = async () => {
       status: er.status as "completed" | "pending" | "upcoming" | "confirmed",
       reference: crypto.randomUUID()
     })),
-    ...memberRequests.map((mr: any) => ({
-      type: "Members Request" as const,
-      description: `Membership request from ${mr.firstName} ${mr.lastName}`,
-      date: mr.dateSubmitted,
-      status: mr.status as "completed" | "pending" | "upcoming" | "confirmed",
-      reference: crypto.randomUUID()
-    })),
     ...contactMessages.map((cm: any) => ({
       type: "Contact" as const,
       description: `Contact message from ${cm.firstName} ${cm.lastName}`,
       date: cm.dateSubmitted,
       status: cm.status as "completed" | "pending" | "upcoming" | "confirmed",
+      reference: crypto.randomUUID()
+    })),
+    ...books.filter((b: any) => b.sales > 0).map((b: any) => ({
+      type: "Book Sale" as const,
+      description: `New book sale "${b.title}"`,
+      amount: b.price * b.sales,
+      date: new Date().toISOString(),
+      status: "completed" as const,
       reference: crypto.randomUUID()
     }))
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());

@@ -12,7 +12,7 @@ export function SidebarHeader({
   const profileLetter = adminEmail.charAt(0).toUpperCase();
 
   return (
-    <div className="space-y-4 border-b border-gray-100">
+    <div className="space-y-2 border-b border-gray-100">
       <div className="flex items-center p-4">
         <Link to="/" className="flex items-center">
           <div className="flex items-center gap-2">
@@ -28,7 +28,7 @@ export function SidebarHeader({
         </Link>
       </div>
       
-      <div className="px-4 pb-4 flex items-center gap-3">
+      <div className="px-4 pb-2 flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white">
           {profileLetter}
         </div>
