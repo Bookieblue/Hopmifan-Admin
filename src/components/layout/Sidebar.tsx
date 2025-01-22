@@ -15,14 +15,14 @@ export function Sidebar({ isCollapsed = false }: SidebarProps) {
     <div 
       className={cn(
         "h-screen bg-[#F9FAFB] border-r border-gray-100 fixed left-0 top-0 flex flex-col font-inter",
-        isCollapsed ? "w-20" : "w-64"
+        isCollapsed ? "w-16" : "w-56"
       )}
     >
       <SidebarHeader 
         isMobile={isMobile}
       />
 
-      <div className="mt-8">
+      <div className="mt-4">
         <SidebarNavigation isCollapsed={isCollapsed} />
       </div>
     </div>
