@@ -88,6 +88,9 @@ export default function BookstoreList() {
   const [bulkAction, setBulkAction] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bookToDelete, setBookToDelete] = useState<string>("");
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   // Initialize books from localStorage with sample data if empty
   const [books, setBooks] = useState<Book[]>(() => {
@@ -246,7 +249,7 @@ export default function BookstoreList() {
 
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
-          data={books}
+          data={filteredBooks}
           columns={[
             { 
               header: "Title", 
@@ -349,20 +352,8 @@ export default function BookstoreList() {
             }
           ]}
           selectedItems={selectedItems}
-          onSelectItem={(id, checked) => {
-            if (checked) {
-              setSelectedItems([...selectedItems, id]);
-            } else {
-              setSelectedItems(selectedItems.filter(itemId => itemId !== id));
-            }
-          }}
-          onSelectAll={(checked) => {
-            if (checked) {
-              setSelectedItems(books.map(book => book.id));
-            } else {
-              setSelectedItems([]);
-            }
-          }}
+          onSelectItem={handleSelectItem}
+          onSelectAll={handleSelectAll}
           getItemId={(item) => item.id}
           onRowClick={handleRowClick}
           CardComponent={isMobile ? BookCard : undefined}
@@ -417,3 +408,4 @@ export default function BookstoreList() {
       </AlertDialog>
     </div>
   );
+}
