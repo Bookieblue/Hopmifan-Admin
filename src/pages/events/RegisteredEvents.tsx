@@ -7,6 +7,16 @@ import { EventFilterModal } from "@/components/registered-events/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const sampleRegistrations = [
   {
@@ -313,3 +323,4 @@ export default function RegisteredEvents() {
     </div>
   );
 }
+
