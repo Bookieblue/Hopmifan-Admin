@@ -46,6 +46,11 @@ export default function BookstoreList() {
       author: "Rick Warren",
       price: 19.99,
       status: "published",
+      publishDate: new Date(2024, 2, 15).toLocaleDateString('en-US', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }),
     },
     {
       id: "2",
@@ -53,6 +58,11 @@ export default function BookstoreList() {
       author: "C.S. Lewis",
       price: 15.99,
       status: "draft",
+      publishDate: new Date(2024, 2, 14).toLocaleDateString('en-US', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }),
     },
   ];
 
@@ -195,7 +205,8 @@ export default function BookstoreList() {
               header: "Price & Status", 
               accessor: (book: any) => (
                 <div className="space-y-1 text-[14px]">
-                  <div>${book.price}</div>
+                  <div>${book.price.toFixed(2)}</div>
+                  <div>{book.publishDate}</div>
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     book.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                   }`}>
