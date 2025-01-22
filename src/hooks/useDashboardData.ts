@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 const initializeSampleData = () => {
   if (!localStorage.getItem('donations')) {
     localStorage.setItem('donations', JSON.stringify([
+      { amount: 50000, donor: "John Doe", date: new Date().toISOString(), status: "completed" },
       { amount: 25000, donor: "Jane Smith", date: new Date().toISOString(), status: "completed" }
     ]));
   }
@@ -17,14 +18,12 @@ const initializeSampleData = () => {
   if (!localStorage.getItem('prayerRequests')) {
     localStorage.setItem('prayerRequests', JSON.stringify([
       { firstName: "Alice", lastName: "Johnson", request: "Health and healing", status: "pending", dateSubmitted: new Date().toISOString() },
-      { firstName: "Bob", lastName: "Wilson", request: "Family unity", status: "pending", dateSubmitted: new Date().toISOString() },
-      { firstName: "James", lastName: "Wilson", request: "Prayer for guidance", status: "pending", dateSubmitted: new Date().toISOString() }
+      { firstName: "Bob", lastName: "Wilson", request: "Family unity", status: "pending", dateSubmitted: new Date().toISOString() }
     ]));
   }
 
   if (!localStorage.getItem('memberRequests')) {
     localStorage.setItem('memberRequests', JSON.stringify([
-      { firstName: "John", lastName: "Doe", status: "pending", dateSubmitted: new Date().toISOString() },
       { firstName: "Carol", lastName: "Brown", status: "pending", dateSubmitted: new Date().toISOString() },
       { firstName: "David", lastName: "Miller", status: "pending", dateSubmitted: new Date().toISOString() }
     ]));
@@ -39,6 +38,7 @@ const initializeSampleData = () => {
 
   if (!localStorage.getItem('contactMessages')) {
     localStorage.setItem('contactMessages', JSON.stringify([
+      { firstName: "James", lastName: "Wilson", message: "Inquiry about service times", status: "pending", dateSubmitted: new Date().toISOString() },
       { firstName: "Emma", lastName: "Davis", message: "Question about youth program", status: "pending", dateSubmitted: new Date().toISOString() }
     ]));
   }
@@ -72,11 +72,11 @@ const fetchRecentActivities = async () => {
 
   const activities = [
     ...donations.map((d: any) => ({
-      type: "Members Request" as const,
-      description: `New membership request from ${d.donor}`,
+      type: "Donation" as const,
+      description: `Donation received from ${d.donor}`,
       amount: d.amount,
       date: d.date,
-      status: "pending" as const,
+      status: "completed" as const,
       reference: crypto.randomUUID()
     })),
     ...books.filter((b: any) => b.sales > 0).map((b: any) => ({
@@ -109,8 +109,8 @@ const fetchRecentActivities = async () => {
       reference: crypto.randomUUID()
     })),
     ...contactMessages.map((cm: any) => ({
-      type: "Prayer Request" as const,
-      description: `Prayer request from ${cm.firstName} ${cm.lastName}`,
+      type: "Contact" as const,
+      description: `Contact message from ${cm.firstName} ${cm.lastName}`,
       date: cm.dateSubmitted,
       status: cm.status as "completed" | "pending" | "upcoming" | "confirmed",
       reference: crypto.randomUUID()
