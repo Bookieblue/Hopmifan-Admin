@@ -52,7 +52,7 @@ const menuItems = [
   { icon: Users, label: "New Members", path: "/new-members" },
   { icon: Book, label: "Sermons", path: "/sermons" },
   { icon: LogOut, label: "Logout", path: "/auth/signin" },
-};
+];
 
 interface SidebarNavigationProps {
   isCollapsed: boolean;
@@ -244,3 +244,4 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
     </nav>
   );
 }
+
