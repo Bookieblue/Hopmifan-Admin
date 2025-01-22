@@ -79,7 +79,7 @@ export function RecentActivity({
 
   if (isMobile) {
     return (
-      <div className="space-y-4 mx-2.5">
+      <div className="space-y-2 mx-2">
         <h2 className={cn("text-[18px] font-semibold", titleClassName)}>{title}</h2>
         {activities.map((activity, index) => (
           <div 
@@ -115,10 +115,10 @@ export function RecentActivity({
 
   return (
     <Card className={className}>
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-1 pt-4 px-4">
         <CardTitle className={cn("text-[18px]", titleClassName)}>{title}</CardTitle>
       </CardHeader>
-      <CardContent className="p-2">
+      <CardContent className="p-0">
         <Table>
           <TableHeader>
             <TableRow>
