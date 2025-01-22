@@ -43,9 +43,13 @@ const fetchDashboardStats = async () => {
 
   return {
     totalDonations: donations.reduce((sum: number, d: any) => sum + (d.amount || 0), 0),
+    totalDonationsCount: donations.length,
     bookstoreSales: books.reduce((sum: number, b: any) => sum + ((b.price || 0) * (b.sales || 0)), 0),
+    totalBooks: books.length,
     prayerRequests: prayerRequests.filter((pr: any) => pr.status === 'pending').length,
+    totalPrayerRequests: prayerRequests.length,
     membershipRequests: memberRequests.filter((mr: any) => mr.status === 'pending').length,
+    totalMemberRequests: memberRequests.length,
   };
 };
 
