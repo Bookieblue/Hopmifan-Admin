@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Activity } from "@/components/dashboard/RecentActivity";
 
 interface DashboardStats {
   totalMembers: number;
@@ -9,7 +10,7 @@ interface DashboardStats {
   prayerRequests: number;
   contactMessages: number;
   newPayments: number;
-  bookstoreSales: number;  // Added this field
+  bookstoreSales: number;
 }
 
 interface DashboardData {
@@ -18,24 +19,8 @@ interface DashboardData {
     loading: boolean;
     error?: Error | null;
   };
-  activities: Array<{
-    type: "Prayer Request" | "Event Registration" | "Contact" | "Donation" | "Book Sale" | "Member Request";
-    description: string;
-    date: string;
-    status: "completed" | "pending" | "upcoming" | "confirmed";
-    reference: string;
-    amount?: number;
-  }>;
+  activities: Activity[];
 }
-
-export const useDashboardData = () => {
-  const [stats, setStats] = useState<DashboardData["stats"]>({
-    data: null,
-    loading: true,
-    error: null
-  });
-
-  const [activities, setActivities] = useState<DashboardData["activities"]>([]);
 
   if (!localStorage.getItem('eventRegistrations')) {
     localStorage.setItem('eventRegistrations', JSON.stringify([
@@ -79,6 +64,15 @@ export const useDashboardData = () => {
     ]));
   }
 
+export const useDashboardData = () => {
+  const [stats, setStats] = useState<DashboardData["stats"]>({
+    data: null,
+    loading: true,
+    error: null
+  });
+
+  const [activities, setActivities] = useState<Activity[]>([]);
+
   useEffect(() => {
     // Simulate API call
     const fetchData = () => {
@@ -118,7 +112,7 @@ export const useDashboardData = () => {
         });
 
         // Create activities array
-        const newActivities = [
+        const newActivities: Activity[] = [
           ...prayerRequests.slice(0, 1).map((pr: any) => ({
             type: "Prayer Request" as const,
             description: `Prayer request from ${pr.firstName} ${pr.lastName}: ${pr.request}`,
@@ -153,11 +147,11 @@ export const useDashboardData = () => {
             description: `New book sale "${b.title}"`,
             amount: b.price * b.sales,
             date: b.date,
-            status: "completed" as "completed" | "pending" | "upcoming" | "confirmed",
+            status: "completed" as const,
             reference: crypto.randomUUID()
           })),
           ...membershipRequests.slice(0, 1).map((mr: any) => ({
-            type: "Member Request" as const,
+            type: "Members Request" as const,
             description: `New member request from ${mr.firstName} ${mr.lastName}`,
             date: mr.dateSubmitted,
             status: mr.status as "completed" | "pending" | "upcoming" | "confirmed",

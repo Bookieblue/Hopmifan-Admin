@@ -7,7 +7,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 
 export type Activity = {
-  type: "Publication" | "Event" | "Contact" | "Donation" | "Book Sale" | "Prayer Request" | "Event Registration" | "Members Request" | "Sermon";
+  type: "Prayer Request" | "Event Registration" | "Contact" | "Donation" | "Book Sale" | "Members Request" | "Publication" | "Event" | "Sermon";
   description: string;
   amount?: number;
   date: string;
