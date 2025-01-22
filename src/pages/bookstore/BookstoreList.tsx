@@ -66,9 +66,7 @@ export default function BookstoreList() {
     },
   ];
 
-  const handleDelete = (id: string, e?: React.MouseEvent) => {
-    e?.preventDefault();
-    e?.stopPropagation();
+  const handleDelete = (id: string) => {
     setBookToDelete(id);
     setDeleteDialogOpen(true);
   };
@@ -82,45 +80,43 @@ export default function BookstoreList() {
     setSelectedItems(selectedItems.filter(itemId => itemId !== bookToDelete));
   };
 
-  const handleStatusChange = (id: string, status: string, e?: React.MouseEvent) => {
-    e?.preventDefault();
-    e?.stopPropagation();
+  const handleStatusChange = (id: string, newStatus: string) => {
     toast({
-      description: `Book ${status === 'published' ? 'published' : 'unpublished'} successfully`,
+      description: `Book ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
     });
   };
 
-  const handleDuplicate = (id: string, e?: React.MouseEvent) => {
-    e?.preventDefault();
-    e?.stopPropagation();
+  const handleDuplicate = (id: string) => {
     toast({
       description: "Book duplicated successfully",
     });
   };
 
   const handleBulkAction = () => {
-    if (!selectedItems.length) return;
+    if (!selectedItems.length || !bulkAction) return;
 
     switch (bulkAction) {
       case "delete":
         toast({
           description: `${selectedItems.length} books deleted successfully`,
         });
+        setSelectedItems([]);
         break;
       case "publish":
         toast({
           description: `${selectedItems.length} books published successfully`,
         });
+        setSelectedItems([]);
         break;
       case "unpublish":
         toast({
           description: `${selectedItems.length} books unpublished successfully`,
         });
+        setSelectedItems([]);
         break;
       default:
         break;
     }
-    setSelectedItems([]);
     setBulkAction("");
   };
 
