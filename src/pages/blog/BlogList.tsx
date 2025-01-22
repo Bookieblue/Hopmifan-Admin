@@ -289,7 +289,7 @@ const BlogList = () => {
           <Button
             variant="outline"
             onClick={() => setFilterModalOpen(true)}
-            className="flex items-center gap-2 bg-[#695CAE] hover:bg-[#695CAE]/90 text-white"
+            className="flex items-center gap-2"
           >
             <Filter className="h-4 w-4" />
             Filters
