@@ -43,7 +43,7 @@ export default function BookstoreList() {
     {
       id: "1",
       title: "The Purpose Driven Life",
-      author: "Rick Warren",
+      author: "Segun Adewunmi",
       price: 19.99,
       status: "published",
       publishDate: new Date(2024, 2, 15).toLocaleDateString('en-US', {
@@ -55,7 +55,7 @@ export default function BookstoreList() {
     {
       id: "2",
       title: "Mere Christianity",
-      author: "C.S. Lewis",
+      author: "Segun Adewunmi",
       price: 15.99,
       status: "draft",
       publishDate: new Date(2024, 2, 14).toLocaleDateString('en-US', {
@@ -202,10 +202,16 @@ export default function BookstoreList() {
               className: "text-[14px]"
             },
             { 
-              header: "Price & Status", 
+              header: "Price", 
+              accessor: (book: any) => (
+                <div className="text-[14px]">${book.price.toFixed(2)}</div>
+              ),
+              className: "text-[14px]"
+            },
+            { 
+              header: "Status & Date", 
               accessor: (book: any) => (
                 <div className="space-y-1 text-[14px]">
-                  <div>${book.price.toFixed(2)}</div>
                   <div>{book.publishDate}</div>
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     book.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
@@ -241,12 +247,18 @@ export default function BookstoreList() {
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => handleDuplicate(book.id, e)}>
+                      <DropdownMenuItem onClick={(e) => {
+                        e.stopPropagation();
+                        handleDuplicate(book.id);
+                      }}>
                         <Copy className="h-4 w-4 mr-2" />
                         Duplicate
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={(e) => handleStatusChange(book.id, book.status === 'published' ? 'draft' : 'published', e)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleStatusChange(book.id, book.status === 'published' ? 'draft' : 'published');
+                        }}
                       >
                         {book.status === 'published' ? (
                           <>
@@ -261,7 +273,10 @@ export default function BookstoreList() {
                         )}
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={(e) => handleDelete(book.id, e)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(book.id);
+                        }}
                         className="text-red-600"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
