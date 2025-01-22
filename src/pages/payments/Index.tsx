@@ -14,7 +14,7 @@ const payments = [
     amount: "₦5,000.00", 
     method: "Credit Card", 
     reference: "PAY202503001",
-    type: "Payment" // Added type property
+    type: "Payment"
   },
   { 
     date: "28 Feb 2025", 
@@ -22,7 +22,7 @@ const payments = [
     amount: "₦10,000.00", 
     method: "Bank Transfer", 
     reference: "PAY202502001",
-    type: "Payment" // Added type property
+    type: "Payment"
   },
   { 
     date: "15 Dec 2024", 
@@ -30,11 +30,9 @@ const payments = [
     amount: "₦2,500.00", 
     method: "Credit Card", 
     reference: "PAY202412001",
-    type: "Payment" // Added type property
+    type: "Payment"
   }
 ];
-
-// ... keep existing code (state declarations and handlers)
 
 export default function PaymentHistory() {
   const { toast } = useToast();
@@ -45,12 +43,6 @@ export default function PaymentHistory() {
   const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState<string>("");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-
-  const handleDownloadReceipt = (id: string) => {
-    toast({
-      description: `Receipt for payment ${id} downloaded`,
-    });
-  };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -74,6 +66,40 @@ export default function PaymentHistory() {
     );
   };
 
+  const handleDownloadReceipt = (reference: string) => {
+    // Simulate receipt download
+    toast({
+      title: "Receipt Downloaded",
+      description: `Receipt for payment ${reference} has been downloaded`,
+    });
+  };
+
+  const handleBulkExportCSV = () => {
+    const selectedPaymentData = filteredPayments.filter(p => 
+      selectedPayments.includes(p.reference)
+    );
+    
+    const headers = ["Date", "Customer", "Amount", "Method", "Reference", "Type"];
+    const csvData = selectedPaymentData.map(payment => 
+      [payment.date, payment.customer, payment.amount, payment.method, payment.reference, payment.type].join(",")
+    );
+    
+    const csv = [headers.join(","), ...csvData].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `payment-history-${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Export Successful",
+      description: "Selected payments have been exported as CSV",
+    });
+  };
+
   const handleBulkAction = () => {
     if (!bulkAction || selectedPayments.length === 0) return;
     
@@ -84,9 +110,18 @@ export default function PaymentHistory() {
         });
         break;
       case "export":
-        // Export logic here
+        handleBulkExportCSV();
         break;
+      default:
+        toast({
+          title: "Action not supported",
+          description: "The selected bulk action is not supported",
+          variant: "destructive"
+        });
     }
+    
+    // Reset selection after bulk action
+    setSelectedPayments([]);
     setBulkAction("");
   };
 
@@ -116,7 +151,7 @@ export default function PaymentHistory() {
 
       <PaymentFilters
         searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
+        setSearchQuery={handleSearch}
         startDate={startDate}
         setStartDate={setStartDate}
         endDate={endDate}
@@ -159,12 +194,13 @@ export default function PaymentHistory() {
       <FilterModal 
         open={isFilterModalOpen}
         onOpenChange={setIsFilterModalOpen}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-        onApply={handleApplyFilter}
-        onReset={handleResetFilter}
+        locationFilter=""
+        setLocationFilter={() => {}}
+        statusFilter=""
+        setStatusFilter={() => {}}
+        dateFilter=""
+        setDateFilter={() => {}}
+        uniqueLocations={[]}
       />
     </div>
   );
