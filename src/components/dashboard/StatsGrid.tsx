@@ -29,18 +29,14 @@ export function StatsGrid() {
 
   const data = stats.data || {
     totalDonations: 0,
-    totalDonationsCount: 0,
     bookstoreSales: 0,
-    totalBooks: 0,
     prayerRequests: 0,
-    totalPrayerRequests: 0,
-    membershipRequests: 0,
-    totalMemberRequests: 0
+    membershipRequests: 0
   };
 
   return (
     <>
-      <Card className="p-4">
+      <Card className="p-4 hover:shadow-lg transition-shadow">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -50,14 +46,11 @@ export function StatsGrid() {
             <span className="text-3xl font-bold block">
               ₦{data.totalDonations.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
             </span>
-            <span className="text-sm text-gray-500 block">
-              Total donations: {data.totalDonationsCount}
-            </span>
           </div>
         </div>
       </Card>
 
-      <Card className="p-4">
+      <Card className="p-4 hover:shadow-lg transition-shadow">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -67,14 +60,11 @@ export function StatsGrid() {
             <span className="text-3xl font-bold block">
               ₦{data.bookstoreSales.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
             </span>
-            <span className="text-sm text-gray-500 block">
-              Total books: {data.totalBooks}
-            </span>
           </div>
         </div>
       </Card>
 
-      <Card className="p-4">
+      <Card className="p-4 hover:shadow-lg transition-shadow">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -85,14 +75,11 @@ export function StatsGrid() {
               <span className="text-3xl font-bold">{data.prayerRequests}</span>
               <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Pending</span>
             </div>
-            <span className="text-sm text-gray-500 block">
-              Total requests: {data.totalPrayerRequests}
-            </span>
           </div>
         </div>
       </Card>
 
-      <Card className="p-4">
+      <Card className="p-4 hover:shadow-lg transition-shadow">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -103,9 +90,6 @@ export function StatsGrid() {
               <span className="text-3xl font-bold">{data.membershipRequests}</span>
               <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Pending</span>
             </div>
-            <span className="text-sm text-gray-500 block">
-              Total requests: {data.totalMemberRequests}
-            </span>
           </div>
         </div>
       </Card>
