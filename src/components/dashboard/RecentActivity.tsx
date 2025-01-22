@@ -7,11 +7,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 
 export type Activity = {
-  type: "Publication" | "Event" | "Contact" | "Donation" | "Members Request" | "Sermon";
+  type: "Publication" | "Event" | "Contact" | "Donation" | "Book Sale" | "Prayer Request" | "Event Registration" | "Members Request" | "Sermon";
   description: string;
   amount?: number;
   date: string;
-  status: "completed" | "pending" | "upcoming";
+  status: "completed" | "pending" | "upcoming" | "confirmed";
   reference: string;
 }
 

@@ -65,7 +65,7 @@ const fetchRecentActivities = async () => {
   const activities = [
     ...donations.map((d: any) => ({
       type: "Donation" as const,
-      description: `₦${d.amount.toLocaleString()}: Donation received from ${d.donor}`,
+      description: `Donation received from ${d.donor}`,
       amount: d.amount,
       date: d.date,
       status: "completed" as const,
@@ -73,7 +73,7 @@ const fetchRecentActivities = async () => {
     })),
     ...books.filter((b: any) => b.sales > 0).map((b: any) => ({
       type: "Book Sale" as const,
-      description: `₦${(b.price * b.sales).toLocaleString()}: ${b.sales} copies of "${b.title}" sold`,
+      description: `New book sale: ${b.sales} copies of "${b.title}"`,
       amount: b.price * b.sales,
       date: new Date().toISOString(),
       status: "completed" as const,
