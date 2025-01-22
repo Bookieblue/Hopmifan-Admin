@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -43,6 +43,7 @@ export function ContactDetailsModal({
       <DialogContent className="max-w-[600px] max-h-[90vh] flex flex-col overflow-hidden sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Contact Details</DialogTitle>
+          <DialogDescription>View and manage contact message details</DialogDescription>
         </DialogHeader>
         <div className="flex-1 overflow-y-auto px-4">
           <div className="grid gap-4 py-4">
