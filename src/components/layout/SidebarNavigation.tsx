@@ -103,6 +103,12 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
         return stats.data.membershipRequests;
       case "Payments":
         return paymentsViewed ? 0 : stats.data.newPayments;
+      case "Events":
+        return stats.data.newEvents + stats.data.eventRegistrations;
+      case "Event List":
+        return stats.data.newEvents;
+      case "Registrations":
+        return stats.data.eventRegistrations;
       default:
         return 0;
     }
