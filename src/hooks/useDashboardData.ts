@@ -22,9 +22,11 @@ interface DashboardData {
   activities: Activity[];
 }
 
-// Helper function to ensure valid date
-const getValidDate = () => {
-  return new Date().toISOString();
+// Helper function to create a valid date string
+const getValidDate = (daysAgo: number = 0): string => {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  return date.toISOString();
 };
 
 // Initialize localStorage with sample data if empty
@@ -39,7 +41,7 @@ const initializeLocalStorage = () => {
         phone: "+1234567890",
         country: "United States",
         cityState: "California",
-        dateSubmitted: getValidDate(),
+        dateSubmitted: getValidDate(2),
         status: "confirmed" 
       }
     ]));
@@ -55,7 +57,7 @@ const initializeLocalStorage = () => {
         country: "United States",
         cityState: "New York",
         prayerRequest: "Healing for my mother",
-        dateSubmitted: getValidDate(),
+        dateSubmitted: getValidDate(1),
         status: "pending" 
       }
     ]));
@@ -71,7 +73,7 @@ const initializeLocalStorage = () => {
         country: "United States",
         cityState: "Texas",
         message: "Interested in joining the choir",
-        dateSubmitted: getValidDate(),
+        dateSubmitted: getValidDate(3),
         status: "pending" 
       }
     ]));
@@ -86,7 +88,7 @@ const initializeLocalStorage = () => {
         phone: "+1234567890",
         country: "United States",
         cityState: "Florida",
-        amount: 100,
+        amount: 100000,
         dateSubmitted: getValidDate(),
         status: "completed" 
       }
@@ -103,7 +105,7 @@ const initializeLocalStorage = () => {
         country: "United States",
         cityState: "Arizona",
         message: "Interested in becoming a member",
-        dateSubmitted: getValidDate(),
+        dateSubmitted: getValidDate(4),
         status: "pending" 
       }
     ]));
@@ -134,21 +136,17 @@ export const useDashboardData = () => {
 
         // Calculate totals and stats
         const totalDonationsAmount = donations.reduce((acc: number, donation: any) => acc + (donation.amount || 0), 0);
-        const bookstoreSalesAmount = 25000; // Sample data
-
-        // Calculate unviewed/pending counts
-        const pendingPrayerRequests = prayerRequests.filter((pr: any) => pr.status === "pending").length;
-        const pendingMembershipRequests = membershipRequests.filter((mr: any) => mr.status === "pending").length;
+        const bookstoreSalesAmount = 250000; // Sample data
 
         // Set stats data
         setStats({
           data: {
             totalMembers: 150,
             totalDonations: totalDonationsAmount,
-            totalEvents: eventRegistrations.length,
+            totalEvents: 12,
             totalBooks: 25,
-            membershipRequests: pendingMembershipRequests,
-            prayerRequests: pendingPrayerRequests,
+            membershipRequests: membershipRequests.filter((mr: any) => mr.status === "pending").length,
+            prayerRequests: prayerRequests.filter((pr: any) => pr.status === "pending").length,
             contactMessages: contactMessages.length,
             newPayments: donations.length,
             bookstoreSales: bookstoreSalesAmount
@@ -157,59 +155,29 @@ export const useDashboardData = () => {
           error: null
         });
 
-        // Create activities array
+        // Create activities array with proper date handling
         const newActivities: Activity[] = [
           ...eventRegistrations.map((er: any) => ({
             type: "Event Registration",
             description: `${er.firstName} ${er.lastName} registered for ${er.eventName}`,
-            date: new Date(er.dateSubmitted).toISOString(),
+            date: er.dateSubmitted || getValidDate(),
             status: er.status as "completed" | "pending" | "upcoming" | "confirmed",
-            reference: crypto.randomUUID(),
-            details: {
-              firstName: er.firstName,
-              lastName: er.lastName,
-              email: er.email,
-              phone: er.phone,
-              country: er.country,
-              cityState: er.cityState,
-              eventName: er.eventName,
-              dateSubmitted: er.dateSubmitted
-            }
+            reference: crypto.randomUUID()
           })),
           ...prayerRequests.map((pr: any) => ({
             type: "Prayer Request",
             description: `Prayer request from ${pr.firstName} ${pr.lastName}`,
-            date: new Date(pr.dateSubmitted).toISOString(),
+            date: pr.dateSubmitted || getValidDate(),
             status: pr.status as "completed" | "pending" | "upcoming" | "confirmed",
-            reference: crypto.randomUUID(),
-            details: {
-              firstName: pr.firstName,
-              lastName: pr.lastName,
-              email: pr.email,
-              phone: pr.phone,
-              country: pr.country,
-              cityState: pr.cityState,
-              message: pr.prayerRequest,
-              dateSubmitted: pr.dateSubmitted
-            }
+            reference: crypto.randomUUID()
           })),
           ...donations.map((d: any) => ({
             type: "Donation",
             description: `New donation from ${d.firstName} ${d.lastName}`,
             amount: d.amount,
-            date: new Date(d.dateSubmitted).toISOString(),
+            date: d.dateSubmitted || getValidDate(),
             status: d.status as "completed" | "pending" | "upcoming" | "confirmed",
-            reference: crypto.randomUUID(),
-            details: {
-              firstName: d.firstName,
-              lastName: d.lastName,
-              email: d.email,
-              phone: d.phone,
-              country: d.country,
-              cityState: d.cityState,
-              amount: d.amount,
-              dateSubmitted: d.dateSubmitted
-            }
+            reference: crypto.randomUUID()
           }))
         ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
