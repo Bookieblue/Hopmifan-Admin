@@ -24,8 +24,9 @@ export default function EditEvent() {
     const stored = localStorage.getItem('events');
     if (stored && id) {
       const events = JSON.parse(stored);
-      if (events[id]) {
-        setInitialData(events[id]);
+      const event = events.find((e: any) => e.id === id);
+      if (event) {
+        setInitialData(event);
       } else {
         toast({
           variant: "destructive",
@@ -50,11 +51,17 @@ export default function EditEvent() {
       const stored = localStorage.getItem('events');
       if (stored && id) {
         const events = JSON.parse(stored);
-        events[id] = {
-          ...data,
-          imageUrl: data.featureImage ? URL.createObjectURL(data.featureImage) : events[id].imageUrl
-        };
-        localStorage.setItem('events', JSON.stringify(events));
+        const updatedEvents = events.map((event: any) => {
+          if (event.id === id) {
+            return {
+              ...event,
+              ...data,
+              imageUrl: data.featureImage ? URL.createObjectURL(data.featureImage) : event.imageUrl
+            };
+          }
+          return event;
+        });
+        localStorage.setItem('events', JSON.stringify(updatedEvents));
       }
       
       toast({

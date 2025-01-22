@@ -18,15 +18,15 @@ export default function CreateEvent() {
   }) => {
     try {
       const stored = localStorage.getItem('events');
-      const events = stored ? JSON.parse(stored) : {};
+      const events = stored ? JSON.parse(stored) : [];
       
-      const newId = `EVT-${String(Object.keys(events).length + 1).padStart(3, '0')}`;
-      
-      events[newId] = {
+      const newEvent = {
+        id: `EVT-${Date.now()}`,
         ...data,
         imageUrl: data.featureImage ? URL.createObjectURL(data.featureImage) : undefined
       };
       
+      events.push(newEvent);
       localStorage.setItem('events', JSON.stringify(events));
       
       toast({

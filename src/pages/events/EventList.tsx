@@ -10,12 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BulkActions } from "@/components/shared/BulkActions";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -40,34 +34,22 @@ export default function EventList() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  // Sample data
-  const events = [
-    {
-      id: "1",
-      title: "Sunday Service",
-      location: "Main Hall",
-      date: "24 Mar 2024",
-      time: "10:00 AM",
-      status: "published",
-    },
-    {
-      id: "2",
-      title: "Youth Conference",
-      location: "Conference Room",
-      date: "25 Mar 2024",
-      time: "2:00 PM",
-      status: "draft",
-    },
-  ];
+  // Initialize events from localStorage or use empty array
+  const [events, setEvents] = useState(() => {
+    const stored = localStorage.getItem('events');
+    return stored ? JSON.parse(stored) : [];
+  });
 
-  const handleDelete = (id: string, e?: React.MouseEvent) => {
-    e?.preventDefault();
-    e?.stopPropagation();
+  const handleDelete = (id: string) => {
     setEventToDelete(id);
     setDeleteDialogOpen(true);
   };
 
   const confirmDelete = () => {
+    const updatedEvents = events.filter(event => event.id !== eventToDelete);
+    setEvents(updatedEvents);
+    localStorage.setItem('events', JSON.stringify(updatedEvents));
+    
     toast({
       description: "Event deleted successfully",
     });
@@ -76,44 +58,71 @@ export default function EventList() {
     setSelectedItems(selectedItems.filter(itemId => itemId !== eventToDelete));
   };
 
-  const handleStatusChange = (id: string, status: string, e?: React.MouseEvent) => {
-    e?.preventDefault();
-    e?.stopPropagation();
+  const handleStatusChange = (id: string, newStatus: string) => {
+    const updatedEvents = events.map(event => {
+      if (event.id === id) {
+        return { ...event, status: newStatus };
+      }
+      return event;
+    });
+    setEvents(updatedEvents);
+    localStorage.setItem('events', JSON.stringify(updatedEvents));
+    
     toast({
-      description: `Event ${status === 'published' ? 'published' : 'unpublished'} successfully`,
+      description: `Event ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
     });
   };
 
-  const handleDuplicate = (id: string, e?: React.MouseEvent) => {
-    e?.preventDefault();
-    e?.stopPropagation();
-    toast({
-      description: "Event duplicated successfully",
-    });
+  const handleDuplicate = (id: string) => {
+    const eventToDuplicate = events.find(event => event.id === id);
+    if (eventToDuplicate) {
+      const newEvent = {
+        ...eventToDuplicate,
+        id: `EVT-${Date.now()}`,
+        title: `${eventToDuplicate.title} (Copy)`,
+      };
+      const updatedEvents = [...events, newEvent];
+      setEvents(updatedEvents);
+      localStorage.setItem('events', JSON.stringify(updatedEvents));
+      
+      toast({
+        description: "Event duplicated successfully",
+      });
+    }
   };
 
   const handleBulkAction = () => {
-    if (!selectedItems.length) return;
+    if (!selectedItems.length || !bulkAction) return;
 
-    switch (bulkAction) {
-      case "delete":
-        toast({
-          description: `${selectedItems.length} events deleted successfully`,
-        });
-        break;
-      case "publish":
-        toast({
-          description: `${selectedItems.length} events published successfully`,
-        });
-        break;
-      case "unpublish":
-        toast({
-          description: `${selectedItems.length} events unpublished successfully`,
-        });
-        break;
-      default:
-        break;
-    }
+    const updatedEvents = events.map(event => {
+      if (selectedItems.includes(event.id)) {
+        switch (bulkAction) {
+          case "delete":
+            return null;
+          case "publish":
+            return { ...event, status: "published" };
+          case "unpublish":
+            return { ...event, status: "draft" };
+          default:
+            return event;
+        }
+      }
+      return event;
+    }).filter(Boolean);
+
+    setEvents(updatedEvents);
+    localStorage.setItem('events', JSON.stringify(updatedEvents));
+
+    const actionMessages = {
+      delete: "deleted",
+      publish: "published",
+      unpublish: "unpublished"
+    };
+
+    toast({
+      description: `${selectedItems.length} events ${actionMessages[bulkAction]} successfully`,
+    });
+
     setSelectedItems([]);
     setBulkAction("");
   };
@@ -198,18 +207,25 @@ export default function EventList() {
               className: "text-[14px] cursor-pointer"
             },
             { 
-              header: "Date & Status", 
+              header: "Date & Time", 
               accessor: (event: any) => (
                 <div className="space-y-1 text-[14px]">
-                  <div>{event.date} {event.time}</div>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    event.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {event.status}
-                  </span>
+                  <div>{event.date}</div>
+                  <div>{event.time}</div>
                 </div>
               ),
               className: "text-[14px] cursor-pointer"
+            },
+            {
+              header: "Status",
+              accessor: (event: any) => (
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  event.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {event.status}
+                </span>
+              ),
+              className: "text-[14px]"
             },
             {
               header: "Actions",
