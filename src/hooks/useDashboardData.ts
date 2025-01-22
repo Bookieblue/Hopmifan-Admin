@@ -28,8 +28,7 @@ const initializeSampleData = () => {
 
   if (!localStorage.getItem('eventRegistrations')) {
     localStorage.setItem('eventRegistrations', JSON.stringify([
-      { eventName: "Sunday Service", attendee: "Mark Johnson", date: new Date().toISOString(), status: "confirmed" },
-      { eventName: "Youth Conference", attendee: "Sarah Williams", date: new Date().toISOString(), status: "pending" }
+      { eventName: "Sunday Service", attendee: "Mark Johnson", date: new Date().toISOString(), status: "confirmed" }
     ]));
   }
 
@@ -78,24 +77,32 @@ const fetchRecentActivities = async () => {
       type: "Prayer Request" as const,
       description: `Prayer request from ${pr.firstName} ${pr.lastName}: ${pr.request}`,
       date: pr.dateSubmitted,
-      status: pr.status as "completed" | "pending" | "upcoming",
+      status: pr.status as "completed" | "pending" | "upcoming" | "confirmed",
       reference: crypto.randomUUID()
     })),
-    ...eventRegistrations.map((er: any) => ({
+    ...eventRegistrations.slice(0, 1).map((er: any) => ({
       type: "Event Registration" as const,
       description: `${er.attendee} registered for ${er.eventName}`,
       date: er.date,
       status: er.status as "completed" | "pending" | "upcoming" | "confirmed",
       reference: crypto.randomUUID()
     })),
-    ...contactMessages.map((cm: any) => ({
+    ...contactMessages.slice(0, 1).map((cm: any) => ({
       type: "Contact" as const,
       description: `Contact message from ${cm.firstName} ${cm.lastName}`,
       date: cm.dateSubmitted,
       status: cm.status as "completed" | "pending" | "upcoming" | "confirmed",
       reference: crypto.randomUUID()
     })),
-    ...books.filter((b: any) => b.sales > 0).map((b: any) => ({
+    ...donations.slice(0, 1).map((d: any) => ({
+      type: "Donation" as const,
+      description: `New donation from ${d.donor}`,
+      amount: d.amount,
+      date: d.date,
+      status: d.status as "completed" | "pending" | "upcoming" | "confirmed",
+      reference: crypto.randomUUID()
+    })),
+    ...books.filter((b: any) => b.sales > 0).slice(0, 1).map((b: any) => ({
       type: "Book Sale" as const,
       description: `New book sale "${b.title}"`,
       amount: b.price * b.sales,
