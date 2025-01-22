@@ -18,6 +18,7 @@ import {
   MessageCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useDashboardData } from "@/hooks/useDashboardData";
 
 const menuItems = [
   { icon: LayoutGrid, label: "Overview", path: "/home" },
@@ -64,6 +65,7 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
   const navigate = useNavigate();
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const { toast } = useToast();
+  const { stats } = useDashboardData();
 
   const toggleSubmenu = (label: string) => {
     setOpenSubmenu(openSubmenu === label ? null : label);
@@ -81,12 +83,27 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
   };
 
   return (
-    <nav className="flex-1 space-y-2">
-      <div className="space-y-2">
+    <nav className="flex-1 space-y-1">
+      <div className="space-y-1">
         {menuItems.slice(0, -1).map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
           const hasSubmenu = 'submenu' in item;
+
+          // Get notification count based on menu item
+          const getNotificationCount = (label: string) => {
+            if (!stats.data) return 0;
+            switch (label) {
+              case "Messages":
+                return stats.data.prayerRequests;
+              case "New Members":
+                return stats.data.membershipRequests;
+              default:
+                return 0;
+            }
+          };
+
+          const notificationCount = getNotificationCount(item.label);
 
           return (
             <div key={item.path}>
@@ -103,6 +120,11 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
                     <div className={cn("flex items-center gap-3", isCollapsed && "justify-center w-full")}>
                       <Icon className="w-5 h-5 text-gray-500" />
                       {!isCollapsed && <span>{item.label}</span>}
+                      {!isCollapsed && notificationCount > 0 && (
+                        <span className="px-2 py-0.5 text-xs font-semibold bg-red-100 text-red-600 rounded-full">
+                          {notificationCount}
+                        </span>
+                      )}
                     </div>
                     {!isCollapsed && (
                       <ChevronRight
@@ -158,7 +180,16 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
                       isActive ? "text-[#695CAE]" : "text-gray-500"
                     )}
                   />
-                  {!isCollapsed && <span>{item.label}</span>}
+                  {!isCollapsed && (
+                    <>
+                      <span>{item.label}</span>
+                      {notificationCount > 0 && (
+                        <span className="px-2 py-0.5 text-xs font-semibold bg-red-100 text-red-600 rounded-full ml-auto">
+                          {notificationCount}
+                        </span>
+                      )}
+                    </>
+                  )}
                 </Link>
               )}
             </div>
@@ -166,8 +197,8 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
         })}
       </div>
 
-      {/* Logout item */}
-      <div className="mt-8">
+      {/* Logout item with increased spacing */}
+      <div className="mt-12">
         {menuItems.slice(-1).map((item) => {
           const Icon = item.icon;
           return (
