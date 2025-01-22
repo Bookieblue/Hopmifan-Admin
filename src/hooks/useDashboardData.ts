@@ -172,7 +172,7 @@ export const useDashboardData = () => {
           })),
           ...donations.map((d: any) => ({
             type: "Donation",
-            description: `New donation from ${d.firstName} ${d.lastName}`,
+            description: `${d.firstName} ${d.lastName} made a donation`,
             amount: d.amount,
             date: d.dateSubmitted || getValidDate(),
             status: d.status as "completed" | "pending" | "upcoming" | "confirmed",
