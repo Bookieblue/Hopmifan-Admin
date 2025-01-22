@@ -16,7 +16,6 @@ export default function NewMembers() {
   const [dateFilter, setDateFilter] = useState("");
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
-
   const [members, setMembers] = useState([
     {
       id: "1",

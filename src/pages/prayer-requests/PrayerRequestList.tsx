@@ -16,8 +16,6 @@ export default function PrayerRequestList() {
   const [dateFilter, setDateFilter] = useState("");
   const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
-
-  // Add requests state
   const [requests, setRequests] = useState([
     {
       id: "1",
@@ -190,4 +188,5 @@ export default function PrayerRequestList() {
         uniqueLocations={[]}
       />
     </div>
-};
+  );
+}
