@@ -48,22 +48,50 @@ export default function NewMembers() {
   const handleBulkAction = () => {
     if (!bulkAction || selectedMembers.length === 0) return;
 
+    const updatedMembers = [...members];
+    
     switch (bulkAction) {
       case "approve":
+        selectedMembers.forEach(id => {
+          const memberIndex = updatedMembers.findIndex(m => m.id === id);
+          if (memberIndex !== -1) {
+            updatedMembers[memberIndex] = {
+              ...updatedMembers[memberIndex],
+              status: "approved"
+            };
+          }
+        });
         toast({
           description: `${selectedMembers.length} members approved`,
         });
         break;
       case "reject":
+        selectedMembers.forEach(id => {
+          const memberIndex = updatedMembers.findIndex(m => m.id === id);
+          if (memberIndex !== -1) {
+            updatedMembers[memberIndex] = {
+              ...updatedMembers[memberIndex],
+              status: "rejected"
+            };
+          }
+        });
         toast({
           description: `${selectedMembers.length} members rejected`,
         });
         break;
       case "delete":
+        const newMembers = updatedMembers.filter(
+          member => !selectedMembers.includes(member.id)
+        );
+        setMembers(newMembers);
         toast({
           description: `${selectedMembers.length} members deleted`,
         });
         break;
+    }
+    
+    if (bulkAction !== "delete") {
+      setMembers(updatedMembers);
     }
     setSelectedMembers([]);
     setBulkAction("");
