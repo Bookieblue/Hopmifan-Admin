@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import {
   LayoutGrid,
@@ -14,8 +14,6 @@ import {
   Users,
   Book,
   LogOut,
-  UserPlus,
-  MessageCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useDashboardData } from "@/hooks/useDashboardData";
@@ -66,6 +64,15 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const { toast } = useToast();
   const { stats } = useDashboardData();
+  const [paymentsViewed, setPaymentsViewed] = useState(false);
+
+  useEffect(() => {
+    // Mark payments as viewed when visiting the payments page
+    if (location.pathname === '/payments') {
+      setPaymentsViewed(true);
+      localStorage.setItem('payments_viewed', 'true');
+    }
+  }, [location.pathname]);
 
   const toggleSubmenu = (label: string) => {
     setOpenSubmenu(openSubmenu === label ? null : label);
@@ -82,6 +89,21 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
     }
   };
 
+  // Get notification count based on menu item
+  const getNotificationCount = (label: string) => {
+    if (!stats.data) return 0;
+    switch (label) {
+      case "Messages":
+        return openSubmenu === "Messages" ? 0 : (stats.data.prayerRequests + stats.data.contactMessages);
+      case "New Members":
+        return stats.data.membershipRequests;
+      case "Payments":
+        return paymentsViewed ? 0 : stats.data.newPayments;
+      default:
+        return 0;
+    }
+  };
+
   return (
     <nav className="flex-1 space-y-1">
       <div className="space-y-1">
@@ -89,20 +111,6 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
           const hasSubmenu = 'submenu' in item;
-
-          // Get notification count based on menu item
-          const getNotificationCount = (label: string) => {
-            if (!stats.data) return 0;
-            switch (label) {
-              case "Messages":
-                return stats.data.prayerRequests;
-              case "New Members":
-                return stats.data.membershipRequests;
-              default:
-                return 0;
-            }
-          };
-
           const notificationCount = getNotificationCount(item.label);
 
           return (
@@ -198,7 +206,7 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
       </div>
 
       {/* Logout item with increased spacing */}
-      <div className="mt-12">
+      <div className="mt-8">
         {menuItems.slice(-1).map((item) => {
           const Icon = item.icon;
           return (

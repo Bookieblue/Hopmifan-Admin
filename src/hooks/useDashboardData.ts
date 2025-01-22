@@ -1,132 +1,156 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 
-const initializeSampleData = () => {
-  if (!localStorage.getItem('donations')) {
-    localStorage.setItem('donations', JSON.stringify([
-      { amount: 50000, donor: "John Doe", date: new Date().toISOString(), status: "completed" }
-    ]));
-  }
+interface DashboardStats {
+  totalMembers: number;
+  totalDonations: number;
+  totalEvents: number;
+  totalBooks: number;
+  membershipRequests: number;
+  prayerRequests: number;
+  contactMessages: number;
+  newPayments: number;
+}
 
-  if (!localStorage.getItem('books')) {
-    localStorage.setItem('books', JSON.stringify([
-      { title: "The Purpose Driven Life", price: 15000, sales: 5, status: "published" },
-      { title: "Daily Devotional", price: 10000, sales: 3, status: "published" }
-    ]));
-  }
+export const useDashboardData = () => {
+  const [stats, setStats] = useState<{ data: DashboardStats | null; loading: boolean }>({
+    data: null,
+    loading: true,
+  });
 
-  if (!localStorage.getItem('prayerRequests')) {
-    localStorage.setItem('prayerRequests', JSON.stringify([
-      { firstName: "Alice", lastName: "Johnson", request: "Health and healing", status: "pending", dateSubmitted: new Date().toISOString() }
-    ]));
-  }
-
-  if (!localStorage.getItem('memberRequests')) {
-    localStorage.setItem('memberRequests', JSON.stringify([
-      { firstName: "Carol", lastName: "Brown", status: "pending", dateSubmitted: new Date().toISOString() }
-    ]));
-  }
-
+  // Initialize local storage with sample data if empty
   if (!localStorage.getItem('eventRegistrations')) {
     localStorage.setItem('eventRegistrations', JSON.stringify([
       { eventName: "Sunday Service", attendee: "Mark Johnson", date: new Date().toISOString(), status: "confirmed" }
     ]));
   }
 
-  if (!localStorage.getItem('contactMessages')) {
-    localStorage.setItem('contactMessages', JSON.stringify([
-      { firstName: "James", lastName: "Wilson", message: "Inquiry about service times", status: "pending", dateSubmitted: new Date().toISOString() }
+  if (!localStorage.getItem('prayerRequests')) {
+    localStorage.setItem('prayerRequests', JSON.stringify([
+      { firstName: "John", lastName: "Doe", request: "Healing for my mother", dateSubmitted: new Date().toISOString(), status: "pending" }
     ]));
   }
-};
 
-const fetchDashboardStats = async () => {
-  initializeSampleData();
+  if (!localStorage.getItem('contactMessages')) {
+    localStorage.setItem('contactMessages', JSON.stringify([
+      { firstName: "Jane", lastName: "Smith", message: "Interested in joining the choir", dateSubmitted: new Date().toISOString(), status: "pending" }
+    ]));
+  }
 
-  const donations = JSON.parse(localStorage.getItem('donations') || '[]');
-  const books = JSON.parse(localStorage.getItem('books') || '[]');
-  const prayerRequests = JSON.parse(localStorage.getItem('prayerRequests') || '[]');
-  const memberRequests = JSON.parse(localStorage.getItem('memberRequests') || '[]');
+  if (!localStorage.getItem('books')) {
+    localStorage.setItem('books', JSON.stringify([
+      { title: "Walking with God", price: 20, sales: 5, date: new Date().toISOString() }
+    ]));
+  }
 
-  return {
-    totalDonations: donations.reduce((sum: number, d: any) => sum + (d.amount || 0), 0),
-    bookstoreSales: books.reduce((sum: number, b: any) => sum + ((b.price || 0) * (b.sales || 0)), 0),
-    prayerRequests: prayerRequests.filter((pr: any) => pr.status === 'pending').length,
-    membershipRequests: memberRequests.filter((mr: any) => mr.status === 'pending').length,
+  if (!localStorage.getItem('donations')) {
+    localStorage.setItem('donations', JSON.stringify([
+      { donor: "Michael Brown", amount: 100, date: new Date().toISOString(), status: "completed" }
+    ]));
+  }
+
+  if (!localStorage.getItem('membershipRequests')) {
+    localStorage.setItem('membershipRequests', JSON.stringify([
+      { firstName: "Sarah", lastName: "Johnson", dateSubmitted: new Date().toISOString(), status: "pending" }
+    ]));
+  }
+
+  if (!localStorage.getItem('payments')) {
+    localStorage.setItem('payments', JSON.stringify([
+      { id: "1", amount: 500, date: new Date().toISOString(), status: "pending", viewed: false }
+    ]));
+  }
+
+  // Get viewed status from localStorage
+  const getViewedStatus = (key: string) => {
+    const viewed = localStorage.getItem(`${key}_viewed`);
+    return viewed ? JSON.parse(viewed) : false;
   };
-};
 
-const fetchRecentActivities = async () => {
-  initializeSampleData();
+  useEffect(() => {
+    // Simulate API call
+    const fetchData = () => {
+      const eventRegistrations = JSON.parse(localStorage.getItem('eventRegistrations') || '[]');
+      const prayerRequests = JSON.parse(localStorage.getItem('prayerRequests') || '[]');
+      const contactMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+      const books = JSON.parse(localStorage.getItem('books') || '[]');
+      const donations = JSON.parse(localStorage.getItem('donations') || '[]');
+      const membershipRequests = JSON.parse(localStorage.getItem('membershipRequests') || '[]');
+      const payments = JSON.parse(localStorage.getItem('payments') || '[]');
 
-  const donations = JSON.parse(localStorage.getItem('donations') || '[]');
-  const books = JSON.parse(localStorage.getItem('books') || '[]');
-  const prayerRequests = JSON.parse(localStorage.getItem('prayerRequests') || '[]');
-  const memberRequests = JSON.parse(localStorage.getItem('memberRequests') || '[]');
-  const eventRegistrations = JSON.parse(localStorage.getItem('eventRegistrations') || '[]');
-  const contactMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+      // Calculate unviewed/pending counts
+      const pendingPrayerRequests = prayerRequests.filter((pr: any) => pr.status === "pending").length;
+      const pendingContactMessages = contactMessages.filter((cm: any) => cm.status === "pending").length;
+      const pendingMembershipRequests = membershipRequests.filter((mr: any) => mr.status === "pending").length;
+      const unviewedPayments = payments.filter((p: any) => !p.viewed).length;
+      const pendingEventRegistrations = eventRegistrations.filter((er: any) => er.status === "pending").length;
 
-  const activities = [
-    ...memberRequests.slice(0, 1).map((mr: any) => ({
-      type: "Members Request" as const,
-      description: `New membership request from ${mr.firstName} ${mr.lastName}`,
-      date: mr.dateSubmitted,
-      status: mr.status as "completed" | "pending" | "upcoming" | "confirmed",
-      reference: crypto.randomUUID()
-    })),
-    ...prayerRequests.slice(0, 1).map((pr: any) => ({
-      type: "Prayer Request" as const,
-      description: `Prayer request from ${pr.firstName} ${pr.lastName}: ${pr.request}`,
-      date: pr.dateSubmitted,
-      status: pr.status as "completed" | "pending" | "upcoming" | "confirmed",
-      reference: crypto.randomUUID()
-    })),
-    ...eventRegistrations.slice(0, 1).map((er: any) => ({
-      type: "Event Registration" as const,
-      description: `${er.attendee} registered for ${er.eventName}`,
-      date: er.date,
-      status: er.status as "completed" | "pending" | "upcoming" | "confirmed",
-      reference: crypto.randomUUID()
-    })),
-    ...contactMessages.slice(0, 1).map((cm: any) => ({
-      type: "Contact" as const,
-      description: `Contact message from ${cm.firstName} ${cm.lastName}`,
-      date: cm.dateSubmitted,
-      status: cm.status as "completed" | "pending" | "upcoming" | "confirmed",
-      reference: crypto.randomUUID()
-    })),
-    ...donations.slice(0, 1).map((d: any) => ({
-      type: "Donation" as const,
-      description: `New donation from ${d.donor}`,
-      amount: d.amount,
-      date: d.date,
-      status: d.status as "completed" | "pending" | "upcoming" | "confirmed",
-      reference: crypto.randomUUID()
-    })),
-    ...books.filter((b: any) => b.sales > 0).slice(0, 1).map((b: any) => ({
-      type: "Book Sale" as const,
-      description: `New book sale "${b.title}"`,
-      amount: b.price * b.sales,
-      date: new Date().toISOString(),
-      status: "completed" as const,
-      reference: crypto.randomUUID()
-    }))
-  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      setStats({
+        data: {
+          totalMembers: 150,
+          totalDonations: donations.length,
+          totalEvents: eventRegistrations.length,
+          totalBooks: books.length,
+          membershipRequests: pendingMembershipRequests,
+          prayerRequests: pendingPrayerRequests,
+          contactMessages: pendingContactMessages,
+          newPayments: unviewedPayments
+        },
+        loading: false,
+      });
 
-  return activities.slice(0, 8);
-};
+      // Create activities array
+      const activities = [
+        ...prayerRequests.slice(0, 1).map((pr: any) => ({
+          type: "Prayer Request" as const,
+          description: `Prayer request from ${pr.firstName} ${pr.lastName}: ${pr.request}`,
+          date: pr.dateSubmitted,
+          status: pr.status as "completed" | "pending" | "upcoming" | "confirmed",
+          reference: crypto.randomUUID()
+        })),
+        ...eventRegistrations.slice(0, 1).map((er: any) => ({
+          type: "Event Registration" as const,
+          description: `${er.attendee} registered for ${er.eventName}`,
+          date: er.date,
+          status: er.status as "completed" | "pending" | "upcoming" | "confirmed",
+          reference: crypto.randomUUID()
+        })),
+        ...contactMessages.slice(0, 1).map((cm: any) => ({
+          type: "Contact" as const,
+          description: `Contact message from ${cm.firstName} ${cm.lastName}`,
+          date: cm.dateSubmitted,
+          status: cm.status as "completed" | "pending" | "upcoming" | "confirmed",
+          reference: crypto.randomUUID()
+        })),
+        ...donations.slice(0, 1).map((d: any) => ({
+          type: "Donation" as const,
+          description: `New donation from ${d.donor}`,
+          amount: d.amount,
+          date: d.date,
+          status: d.status as "completed" | "pending" | "upcoming" | "confirmed",
+          reference: crypto.randomUUID()
+        })),
+        ...books.filter((b: any) => b.sales > 0).slice(0, 1).map((b: any) => ({
+          type: "Book Sale" as const,
+          description: `New book sale "${b.title}"`,
+          amount: b.price * b.sales,
+          date: b.date,
+          status: "completed" as "completed" | "pending" | "upcoming" | "confirmed",
+          reference: crypto.randomUUID()
+        })),
+        ...membershipRequests.slice(0, 1).map((mr: any) => ({
+          type: "Member Request" as const,
+          description: `New member request from ${mr.firstName} ${mr.lastName}`,
+          date: mr.dateSubmitted,
+          status: mr.status as "completed" | "pending" | "upcoming" | "confirmed",
+          reference: crypto.randomUUID()
+        }))
+      ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-export const useDashboardData = () => {
-  const stats = useQuery({
-    queryKey: ['dashboardStats'],
-    queryFn: fetchDashboardStats,
-    refetchInterval: 5000,
-  });
+      return activities;
+    };
 
-  const activities = useQuery({
-    queryKey: ['recentActivities'],
-    queryFn: fetchRecentActivities,
-    refetchInterval: 5000,
-  });
+    fetchData();
+  }, []);
 
-  return { stats, activities };
-};
+  return { stats };
+}
