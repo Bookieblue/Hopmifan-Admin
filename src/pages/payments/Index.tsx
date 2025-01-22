@@ -194,13 +194,12 @@ export default function PaymentHistory() {
       <FilterModal 
         open={isFilterModalOpen}
         onOpenChange={setIsFilterModalOpen}
-        locationFilter=""
-        setLocationFilter={() => {}}
-        statusFilter=""
-        setStatusFilter={() => {}}
-        dateFilter=""
-        setDateFilter={() => {}}
-        uniqueLocations={[]}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        onApply={handleApplyFilter}
+        onReset={handleResetFilter}
       />
     </div>
   );
