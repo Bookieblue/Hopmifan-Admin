@@ -7,6 +7,7 @@ import { ContactFilterModal } from "@/components/contacts/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
+import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
 
 const sampleContacts = [
   {
@@ -91,16 +92,21 @@ export default function ContactMessages() {
         </div>
       )
     },
+    {
+      header: "Actions",
+      accessor: (contact: any) => (
+        <div className="flex items-center justify-end gap-2 text-[14px]" onClick={(e) => e.stopPropagation()}>
+          <ViewDetailsButton onClick={() => handleViewDetails(contact.id)} />
+        </div>
+      )
+    },
   ];
 
-  const handleStatusChange = (status: string) => {
-    if (selectedContact) {
-      setContacts(contacts.map(contact => 
-        contact.id === selectedContact.id 
-          ? { ...contact, status }
-          : contact
-      ));
-      setDetailsModalOpen(false);
+  const handleViewDetails = (id: string) => {
+    const contact = contacts.find(c => c.id === id);
+    if (contact) {
+      setSelectedContact(contact);
+      setDetailsModalOpen(true);
     }
   };
 
@@ -122,63 +128,6 @@ export default function ContactMessages() {
       setSelectedContact(contact);
       setDetailsModalOpen(true);
     }
-  };
-
-  const handleCardClick = (contact: any) => {
-    setSelectedContact(contact);
-    setDetailsModalOpen(true);
-  };
-
-  const handleBulkAction = () => {
-    if (!bulkAction || selectedContacts.length === 0) return;
-
-    const updatedContacts = [...contacts];
-    
-    switch (bulkAction) {
-      case "markReplied":
-        selectedContacts.forEach(id => {
-          const contactIndex = updatedContacts.findIndex(c => c.id === id);
-          if (contactIndex !== -1) {
-            updatedContacts[contactIndex] = {
-              ...updatedContacts[contactIndex],
-              status: "replied"
-            };
-          }
-        });
-        toast({
-          description: `${selectedContacts.length} messages marked as replied`,
-        });
-        break;
-      case "markPending":
-        selectedContacts.forEach(id => {
-          const contactIndex = updatedContacts.findIndex(c => c.id === id);
-          if (contactIndex !== -1) {
-            updatedContacts[contactIndex] = {
-              ...updatedContacts[contactIndex],
-              status: "pending"
-            };
-          }
-        });
-        toast({
-          description: `${selectedContacts.length} messages marked as pending`,
-        });
-        break;
-      case "delete":
-        const newContacts = updatedContacts.filter(
-          contact => !selectedContacts.includes(contact.id)
-        );
-        setContacts(newContacts);
-        toast({
-          description: `${selectedContacts.length} messages deleted`,
-        });
-        break;
-    }
-    
-    if (bulkAction !== "delete") {
-      setContacts(updatedContacts);
-    }
-    setSelectedContacts([]);
-    setBulkAction("");
   };
 
   return (
@@ -236,10 +185,6 @@ export default function ContactMessages() {
       />
 
       <div className="bg-white md:rounded-lg md:border">
-        <div className="md:hidden flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
-          <h2 className="font-medium text-sm text-gray-600">Member</h2>
-          <h2 className="font-medium text-sm text-gray-600">Status</h2>
-        </div>
         <DataTable
           data={filteredContacts}
           columns={columns}
@@ -253,26 +198,8 @@ export default function ContactMessages() {
             setSelectedContacts(checked ? filteredContacts.map(c => c.id) : []);
           }}
           getItemId={(item) => item.id}
-          onRowClick={handleCardClick}
+          onRowClick={handleRowClick}
           showCheckboxes={true}
-          CardComponent={({ item }) => (
-            <div 
-              className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => handleCardClick(item)}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
-                  <p className="text-sm text-gray-500">{item.email}</p>
-                </div>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {item.status === 'replied' ? 'Replied' : 'Pending'}
-                </span>
-              </div>
-            </div>
-          )}
           bulkActions={[
             { value: "markReplied", label: "Mark as Replied" },
             { value: "markPending", label: "Mark as Pending" },

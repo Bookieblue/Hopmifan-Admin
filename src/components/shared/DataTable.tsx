@@ -3,6 +3,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableBody } from "@/components/ui/table";
+import { ViewDetailsButton } from "./ViewDetailsButton";
 
 export interface TableColumn<T> {
   header: string;
@@ -16,6 +17,7 @@ interface Actions {
   onDuplicate?: (id: string) => void;
   onEdit?: (id: string) => void;
   onStatusChange?: (id: string, status: string) => void;
+  onViewDetails?: (id: string) => void;
   additionalActions?: {
     label: string;
     onClick: (id: string) => void;
@@ -60,11 +62,11 @@ export function DataTable<T>({
   const isMobile = useIsMobile();
 
   const handleRowClick = (e: React.MouseEvent, id: string) => {
-    // Don't trigger row click if clicking checkbox or dropdown
     if (
       (e.target as HTMLElement).closest('.checkbox-cell') ||
       (e.target as HTMLElement).closest('.dropdown-trigger') ||
-      (e.target as HTMLElement).closest('.dropdown-content')
+      (e.target as HTMLElement).closest('.dropdown-content') ||
+      (e.target as HTMLElement).closest('button')
     ) {
       return;
     }
@@ -95,6 +97,9 @@ export function DataTable<T>({
               <div className="flex-1">
                 <CardComponent item={item} actions={actions} />
               </div>
+              {actions?.onViewDetails && (
+                <ViewDetailsButton onClick={() => actions.onViewDetails!(getItemId(item))} />
+              )}
             </div>
           ))}
         </div>
@@ -126,6 +131,7 @@ export function DataTable<T>({
                 {column.header}
               </th>
             ))}
+            {actions?.onViewDetails && <th className="px-4 py-3 text-right">Actions</th>}
           </tr>
         </thead>
         <TableBody>
@@ -156,6 +162,11 @@ export function DataTable<T>({
                       : String(item[column.accessor])}
                   </td>
                 ))}
+                {actions?.onViewDetails && (
+                  <td className="px-4 py-3 text-right">
+                    <ViewDetailsButton onClick={() => actions.onViewDetails(id)} />
+                  </td>
+                )}
               </tr>
             );
           })}
