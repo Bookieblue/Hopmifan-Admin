@@ -73,7 +73,7 @@ const fetchRecentActivities = async () => {
     })),
     ...books.filter((b: any) => b.sales > 0).map((b: any) => ({
       type: "Book Sale" as const,
-      description: `New book sale: ${b.sales} copies of "${b.title}"`,
+      description: `New book sale "${b.title}"`,
       amount: b.price * b.sales,
       date: new Date().toISOString(),
       status: "completed" as const,
@@ -81,7 +81,7 @@ const fetchRecentActivities = async () => {
     })),
     ...prayerRequests.map((pr: any) => ({
       type: "Prayer Request" as const,
-      description: `Prayer request from ${pr.firstName} ${pr.lastName}: ${pr.request}`,
+      description: `Prayer request from ${pr.firstName} ${pr.lastName}`,
       date: pr.dateSubmitted,
       status: pr.status as "completed" | "pending" | "upcoming",
       reference: crypto.randomUUID()
@@ -90,7 +90,14 @@ const fetchRecentActivities = async () => {
       type: "Event Registration" as const,
       description: `${er.attendee} registered for ${er.eventName}`,
       date: er.date,
-      status: er.status as "completed" | "pending" | "upcoming",
+      status: er.status as "completed" | "pending" | "upcoming" | "confirmed",
+      reference: crypto.randomUUID()
+    })),
+    ...memberRequests.map((mr: any) => ({
+      type: "Members Request" as const,
+      description: `Membership request from ${mr.firstName} ${mr.lastName}`,
+      date: mr.dateSubmitted,
+      status: mr.status as "completed" | "pending" | "upcoming" | "confirmed",
       reference: crypto.randomUUID()
     }))
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
