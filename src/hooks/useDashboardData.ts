@@ -133,13 +133,14 @@ export const useDashboardData = () => {
         const membershipRequests = JSON.parse(localStorage.getItem('membershipRequests') || '[]');
 
         // Calculate totals and stats
-        const totalDonationsAmount = donations.reduce((acc: number, donation: any) => acc + donation.amount, 0);
+        const totalDonationsAmount = donations.reduce((acc: number, donation: any) => acc + (donation.amount || 0), 0);
+        const bookstoreSalesAmount = 25000; // Sample data
 
         // Calculate unviewed/pending counts
         const pendingPrayerRequests = prayerRequests.filter((pr: any) => pr.status === "pending").length;
-        const pendingContactMessages = contactMessages.filter((cm: any) => cm.status === "pending").length;
         const pendingMembershipRequests = membershipRequests.filter((mr: any) => mr.status === "pending").length;
 
+        // Set stats data
         setStats({
           data: {
             totalMembers: 150,
@@ -148,90 +149,67 @@ export const useDashboardData = () => {
             totalBooks: 25,
             membershipRequests: pendingMembershipRequests,
             prayerRequests: pendingPrayerRequests,
-            contactMessages: pendingContactMessages,
+            contactMessages: contactMessages.length,
             newPayments: donations.length,
-            bookstoreSales: 1500
+            bookstoreSales: bookstoreSalesAmount
           },
           loading: false,
           error: null
         });
 
-        // Create activities array with proper formatting
+        // Create activities array
         const newActivities: Activity[] = [
-          ...prayerRequests.map((pr: any) => ({
-            type: "Prayer Request" as const,
-            description: `Prayer request from ${pr.firstName} ${pr.lastName}`,
-            date: new Date(pr.dateSubmitted).toISOString(),
-            status: pr.status as "completed" | "pending" | "upcoming" | "confirmed",
-            reference: crypto.randomUUID(),
-            firstName: pr.firstName,
-            lastName: pr.lastName,
-            email: pr.email,
-            phone: pr.phone,
-            country: pr.country,
-            cityState: pr.cityState,
-            message: pr.prayerRequest,
-            dateSubmitted: pr.dateSubmitted
-          })),
           ...eventRegistrations.map((er: any) => ({
-            type: "Event Registration" as const,
+            type: "Event Registration",
             description: `${er.firstName} ${er.lastName} registered for ${er.eventName}`,
             date: new Date(er.dateSubmitted).toISOString(),
             status: er.status as "completed" | "pending" | "upcoming" | "confirmed",
             reference: crypto.randomUUID(),
-            firstName: er.firstName,
-            lastName: er.lastName,
-            email: er.email,
-            phone: er.phone,
-            country: er.country,
-            cityState: er.cityState,
-            eventName: er.eventName,
-            dateSubmitted: er.dateSubmitted
+            details: {
+              firstName: er.firstName,
+              lastName: er.lastName,
+              email: er.email,
+              phone: er.phone,
+              country: er.country,
+              cityState: er.cityState,
+              eventName: er.eventName,
+              dateSubmitted: er.dateSubmitted
+            }
           })),
-          ...contactMessages.map((cm: any) => ({
-            type: "Contact" as const,
-            description: `New message from ${cm.firstName} ${cm.lastName}`,
-            date: new Date(cm.dateSubmitted).toISOString(),
-            status: cm.status as "completed" | "pending" | "upcoming" | "confirmed",
+          ...prayerRequests.map((pr: any) => ({
+            type: "Prayer Request",
+            description: `Prayer request from ${pr.firstName} ${pr.lastName}`,
+            date: new Date(pr.dateSubmitted).toISOString(),
+            status: pr.status as "completed" | "pending" | "upcoming" | "confirmed",
             reference: crypto.randomUUID(),
-            firstName: cm.firstName,
-            lastName: cm.lastName,
-            email: cm.email,
-            phone: cm.phone,
-            country: cm.country,
-            cityState: cm.cityState,
-            message: cm.message,
-            dateSubmitted: cm.dateSubmitted
+            details: {
+              firstName: pr.firstName,
+              lastName: pr.lastName,
+              email: pr.email,
+              phone: pr.phone,
+              country: pr.country,
+              cityState: pr.cityState,
+              message: pr.prayerRequest,
+              dateSubmitted: pr.dateSubmitted
+            }
           })),
           ...donations.map((d: any) => ({
-            type: "Donation" as const,
+            type: "Donation",
             description: `New donation from ${d.firstName} ${d.lastName}`,
             amount: d.amount,
             date: new Date(d.dateSubmitted).toISOString(),
             status: d.status as "completed" | "pending" | "upcoming" | "confirmed",
             reference: crypto.randomUUID(),
-            firstName: d.firstName,
-            lastName: d.lastName,
-            email: d.email,
-            phone: d.phone,
-            country: d.country,
-            cityState: d.cityState,
-            dateSubmitted: d.dateSubmitted
-          })),
-          ...membershipRequests.map((mr: any) => ({
-            type: "Members Request" as const,
-            description: `Membership request from ${mr.firstName} ${mr.lastName}`,
-            date: new Date(mr.dateSubmitted).toISOString(),
-            status: mr.status as "completed" | "pending" | "upcoming" | "confirmed",
-            reference: crypto.randomUUID(),
-            firstName: mr.firstName,
-            lastName: mr.lastName,
-            email: mr.email,
-            phone: mr.phone,
-            country: mr.country,
-            cityState: mr.cityState,
-            message: mr.message,
-            dateSubmitted: mr.dateSubmitted
+            details: {
+              firstName: d.firstName,
+              lastName: d.lastName,
+              email: d.email,
+              phone: d.phone,
+              country: d.country,
+              cityState: d.cityState,
+              amount: d.amount,
+              dateSubmitted: d.dateSubmitted
+            }
           }))
         ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -240,8 +218,8 @@ export const useDashboardData = () => {
         console.error('Error fetching dashboard data:', error);
         setStats(prev => ({
           ...prev,
-          error: error as Error,
-          loading: false
+          loading: false,
+          error: error as Error
         }));
       }
     };
