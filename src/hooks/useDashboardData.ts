@@ -16,15 +16,13 @@ const initializeSampleData = () => {
 
   if (!localStorage.getItem('prayerRequests')) {
     localStorage.setItem('prayerRequests', JSON.stringify([
-      { firstName: "Alice", lastName: "Johnson", request: "Health and healing", status: "pending", dateSubmitted: new Date().toISOString() },
-      { firstName: "Bob", lastName: "Wilson", request: "Family unity", status: "pending", dateSubmitted: new Date().toISOString() }
+      { firstName: "Alice", lastName: "Johnson", request: "Health and healing", status: "pending", dateSubmitted: new Date().toISOString() }
     ]));
   }
 
   if (!localStorage.getItem('memberRequests')) {
     localStorage.setItem('memberRequests', JSON.stringify([
-      { firstName: "Carol", lastName: "Brown", status: "pending", dateSubmitted: new Date().toISOString() },
-      { firstName: "David", lastName: "Miller", status: "pending", dateSubmitted: new Date().toISOString() }
+      { firstName: "Carol", lastName: "Brown", status: "pending", dateSubmitted: new Date().toISOString() }
     ]));
   }
 
@@ -69,14 +67,14 @@ const fetchRecentActivities = async () => {
   const contactMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
 
   const activities = [
-    ...memberRequests.map((mr: any) => ({
+    ...memberRequests.slice(0, 1).map((mr: any) => ({
       type: "Members Request" as const,
       description: `New membership request from ${mr.firstName} ${mr.lastName}`,
       date: mr.dateSubmitted,
       status: mr.status as "completed" | "pending" | "upcoming" | "confirmed",
       reference: crypto.randomUUID()
     })),
-    ...prayerRequests.map((pr: any) => ({
+    ...prayerRequests.slice(0, 1).map((pr: any) => ({
       type: "Prayer Request" as const,
       description: `Prayer request from ${pr.firstName} ${pr.lastName}: ${pr.request}`,
       date: pr.dateSubmitted,
