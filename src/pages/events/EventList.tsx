@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Plus, Search, Filter, MoreVertical, Edit, Trash2, CheckSquare, XSquare, Copy } from "lucide-react";
 import { DataTable } from "@/components/shared/DataTable";
@@ -32,8 +32,42 @@ interface Event {
   date: string;
   time: string;
   location: string;
+  description: string;
+  meetingLink?: string;
   status: string;
+  imageUrl?: string;
 }
+
+const sampleEvents: Event[] = [
+  {
+    id: "EVT-1",
+    title: "Sunday Worship Service",
+    date: "2024-01-28",
+    time: "10:00",
+    location: "Main Sanctuary",
+    description: "Weekly Sunday worship service with praise and worship.",
+    status: "published"
+  },
+  {
+    id: "EVT-2",
+    title: "Youth Bible Study",
+    date: "2024-01-30",
+    time: "18:30",
+    location: "Youth Room",
+    description: "Weekly Bible study session for young adults.",
+    meetingLink: "https://zoom.us/j/123456789",
+    status: "published"
+  },
+  {
+    id: "EVT-3",
+    title: "Prayer Meeting",
+    date: "2024-02-01",
+    time: "19:00",
+    location: "Prayer Room",
+    description: "Join us for our weekly prayer meeting.",
+    status: "draft"
+  }
+];
 
 export default function EventList() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,16 +83,19 @@ export default function EventList() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  // Initialize events from localStorage with proper type checking
+  // Initialize events from localStorage with sample data if empty
   const [events, setEvents] = useState<Event[]>(() => {
     try {
       const stored = localStorage.getItem('events');
-      const parsedEvents = stored ? JSON.parse(stored) : [];
-      // Ensure the parsed data is an array
-      return Array.isArray(parsedEvents) ? parsedEvents : [];
+      if (!stored) {
+        localStorage.setItem('events', JSON.stringify(sampleEvents));
+        return sampleEvents;
+      }
+      const parsedEvents = JSON.parse(stored);
+      return Array.isArray(parsedEvents) ? parsedEvents : sampleEvents;
     } catch (error) {
       console.error('Error parsing events from localStorage:', error);
-      return [];
+      return sampleEvents;
     }
   });
 
