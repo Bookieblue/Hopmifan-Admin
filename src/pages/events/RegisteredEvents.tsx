@@ -7,6 +7,16 @@ import { EventFilterModal } from "@/components/registered-events/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const sampleRegistrations = [
   {
@@ -49,59 +59,86 @@ export default function RegisteredEvents() {
   const [registrations, setRegistrations] = useState(sampleRegistrations);
   const [selectedRegistrations, setSelectedRegistrations] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const columns = [
-    { 
-      header: "Name", 
-      accessor: (registration: any) => (
-        <div>
-          <div className="font-medium">{`${registration.firstName} ${registration.lastName}`}</div>
-          <div className="text-sm text-gray-500">{registration.email}</div>
-        </div>
-      )
-    },
-    { 
-      header: "Contact Info", 
-      accessor: (registration: any) => (
-        <div>
-          <div>{registration.phone}</div>
-          <div className="text-sm text-gray-500">{registration.eventName}</div>
-        </div>
-      )
-    },
-    { 
-      header: "Location", 
-      accessor: (registration: any) => (
-        <div>
-          <div>{registration.country}</div>
-          <div className="text-sm text-gray-500">{registration.cityState}</div>
-        </div>
-      )
-    },
-    { 
-      header: "Status & Date", 
-      accessor: (registration: any) => (
-        <div>
-          <span className={`px-2 py-1 rounded-full text-xs ${
-            registration.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {registration.status === 'confirmed' ? 'Confirmed' : 'Pending'}
-          </span>
-          <div className="text-sm text-gray-500 mt-1">{registration.dateSubmitted}</div>
-        </div>
-      )
-    },
-  ];
-
-  const handleStatusChange = (status: string) => {
-    if (selectedRegistration) {
-      setRegistrations(registrations.map(registration => 
-        registration.id === selectedRegistration.id 
-          ? { ...registration, status }
-          : registration
-      ));
-      setDetailsModalOpen(false);
+  // Handle bulk selection
+  const handleSelectItem = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedRegistrations([...selectedRegistrations, id]);
+    } else {
+      setSelectedRegistrations(selectedRegistrations.filter(itemId => itemId !== id));
     }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedRegistrations(filteredRegistrations.map(reg => reg.id));
+    } else {
+      setSelectedRegistrations([]);
+    }
+  };
+
+  // Handle bulk actions
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedRegistrations.length === 0) return;
+
+    const updatedRegistrations = [...registrations];
+
+    switch (bulkAction) {
+      case "markConfirmed":
+        selectedRegistrations.forEach(id => {
+          const index = updatedRegistrations.findIndex(reg => reg.id === id);
+          if (index !== -1) {
+            updatedRegistrations[index] = {
+              ...updatedRegistrations[index],
+              status: "confirmed"
+            };
+          }
+        });
+        toast({
+          description: `${selectedRegistrations.length} registrations marked as confirmed`,
+        });
+        break;
+
+      case "markPending":
+        selectedRegistrations.forEach(id => {
+          const index = updatedRegistrations.findIndex(reg => reg.id === id);
+          if (index !== -1) {
+            updatedRegistrations[index] = {
+              ...updatedRegistrations[index],
+              status: "pending"
+            };
+          }
+        });
+        toast({
+          description: `${selectedRegistrations.length} registrations marked as pending`,
+        });
+        break;
+
+      case "delete":
+        setDeleteDialogOpen(true);
+        return;
+    }
+
+    setRegistrations(updatedRegistrations);
+    localStorage.setItem("eventRegistrations", JSON.stringify(updatedRegistrations));
+    setSelectedRegistrations([]);
+    setBulkAction("");
+  };
+
+  // Handle bulk delete confirmation
+  const handleConfirmBulkDelete = () => {
+    const updatedRegistrations = registrations.filter(
+      reg => !selectedRegistrations.includes(reg.id)
+    );
+    setRegistrations(updatedRegistrations);
+    localStorage.setItem("eventRegistrations", JSON.stringify(updatedRegistrations));
+    setSelectedRegistrations([]);
+    setBulkAction("");
+    setDeleteDialogOpen(false);
+    toast({
+      description: `${selectedRegistrations.length} registrations deleted`,
+    });
   };
 
   const filteredRegistrations = registrations.filter(registration => {
@@ -129,28 +166,15 @@ export default function RegisteredEvents() {
     setDetailsModalOpen(true);
   };
 
-  const handleBulkAction = () => {
-    if (!bulkAction || selectedRegistrations.length === 0) return;
-
-    switch (bulkAction) {
-      case "markConfirmed":
-        toast({
-          description: `${selectedRegistrations.length} registrations marked as confirmed`,
-        });
-        break;
-      case "markPending":
-        toast({
-          description: `${selectedRegistrations.length} registrations marked as pending`,
-        });
-        break;
-      case "delete":
-        toast({
-          description: `${selectedRegistrations.length} registrations deleted`,
-        });
-        break;
+  const handleStatusChange = (status: string) => {
+    if (selectedRegistration) {
+      setRegistrations(registrations.map(registration => 
+        registration.id === selectedRegistration.id 
+          ? { ...registration, status }
+          : registration
+      ));
+      setDetailsModalOpen(false);
     }
-    setSelectedRegistrations([]);
-    setBulkAction("");
   };
 
   return (
@@ -208,43 +232,56 @@ export default function RegisteredEvents() {
       />
 
       <div className="bg-white md:rounded-lg md:border">
-        <div className="md:hidden flex justify-between items-center px-4 py-2 bg-gray-50 border-b">
-          <h2 className="font-medium text-sm text-gray-600">Registration</h2>
-          <h2 className="font-medium text-sm text-gray-600">Status</h2>
-        </div>
         <DataTable
           data={filteredRegistrations}
-          columns={columns}
+          columns={[
+            { 
+              header: "Name", 
+              accessor: (registration: any) => (
+                <div>
+                  <div className="font-medium">{`${registration.firstName} ${registration.lastName}`}</div>
+                  <div className="text-sm text-gray-500">{registration.email}</div>
+                </div>
+              )
+            },
+            { 
+              header: "Contact Info", 
+              accessor: (registration: any) => (
+                <div>
+                  <div>{registration.phone}</div>
+                  <div className="text-sm text-gray-500">{registration.eventName}</div>
+                </div>
+              )
+            },
+            { 
+              header: "Location", 
+              accessor: (registration: any) => (
+                <div>
+                  <div>{registration.country}</div>
+                  <div className="text-sm text-gray-500">{registration.cityState}</div>
+                </div>
+              )
+            },
+            { 
+              header: "Status & Date", 
+              accessor: (registration: any) => (
+                <div>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    registration.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {registration.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+                  </span>
+                  <div className="text-sm text-gray-500 mt-1">{registration.dateSubmitted}</div>
+                </div>
+              )
+            },
+          ]}
           selectedItems={selectedRegistrations}
-          onSelectItem={(id, checked) => {
-            setSelectedRegistrations(prev =>
-              checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
-            );
-          }}
-          onSelectAll={(checked) => {
-            setSelectedRegistrations(checked ? filteredRegistrations.map(r => r.id) : []);
-          }}
+          onSelectItem={handleSelectItem}
+          onSelectAll={handleSelectAll}
           getItemId={(item) => item.id}
           onRowClick={handleCardClick}
           showCheckboxes={true}
-          CardComponent={({ item }) => (
-            <div 
-              className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => handleCardClick(item)}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
-                  <p className="text-sm text-gray-500">{item.email}</p>
-                </div>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  item.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {item.status === 'confirmed' ? 'Confirmed' : 'Pending'}
-                </span>
-              </div>
-            </div>
-          )}
           bulkActions={[
             { value: "markConfirmed", label: "Mark as Confirmed" },
             { value: "markPending", label: "Mark as Pending" },
@@ -269,6 +306,23 @@ export default function RegisteredEvents() {
           />
         )}
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the selected registrations.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmBulkDelete}>
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
