@@ -26,6 +26,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  status: string;
+}
+
 export default function EventList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -40,10 +49,17 @@ export default function EventList() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  // Initialize events from localStorage or use empty array
-  const [events, setEvents] = useState(() => {
-    const stored = localStorage.getItem('events');
-    return stored ? JSON.parse(stored) : [];
+  // Initialize events from localStorage with proper type checking
+  const [events, setEvents] = useState<Event[]>(() => {
+    try {
+      const stored = localStorage.getItem('events');
+      const parsedEvents = stored ? JSON.parse(stored) : [];
+      // Ensure the parsed data is an array
+      return Array.isArray(parsedEvents) ? parsedEvents : [];
+    } catch (error) {
+      console.error('Error parsing events from localStorage:', error);
+      return [];
+    }
   });
 
   const handleDelete = (id: string) => {
@@ -114,7 +130,7 @@ export default function EventList() {
         }
       }
       return event;
-    }).filter(Boolean);
+    }).filter(Boolean) as Event[];
 
     setEvents(updatedEvents);
     localStorage.setItem('events', JSON.stringify(updatedEvents));
@@ -126,7 +142,7 @@ export default function EventList() {
     };
 
     toast({
-      description: `${selectedItems.length} events ${actionMessages[bulkAction]} successfully`,
+      description: `${selectedItems.length} events ${actionMessages[bulkAction as keyof typeof actionMessages]} successfully`,
     });
 
     setSelectedItems([]);
