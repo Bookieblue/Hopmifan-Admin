@@ -7,7 +7,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 
 export type Activity = {
-  type: "Prayer Request" | "Event Registration" | "Contact" | "Donation" | "Book Sale" | "Members Request" | "Publication" | "Event" | "Sermon";
+  type: "Prayer Request" | "Event Registration" | "Contact" | "Donation" | "Book Sale" | "Membership" | "Publication" | "Event" | "Sermon";
   description: string;
   amount?: number;
   date: string;
@@ -40,19 +40,25 @@ const getStatusColor = (status: "completed" | "pending" | "upcoming" | "confirme
 const getActivityPath = (activity: Activity) => {
   switch (activity.type) {
     case "Publication":
-      return "/blog";
+      return "/articles";
     case "Event":
       return "/events";
     case "Contact":
       return "/contacts";
     case "Donation":
       return "/donations";
-    case "Members Request":
-      return "/members";
+    case "Membership":
+      return "/new-members";
     case "Sermon":
       return "/sermons";
+    case "Prayer Request":
+      return "/prayer-requests";
+    case "Event Registration":
+      return "/events/registered";
+    case "Book Sale":
+      return "/bookstore";
     default:
-      return "/";
+      return "/404";
   }
 };
 

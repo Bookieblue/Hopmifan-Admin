@@ -1,4 +1,4 @@
-export type ActivityType = "Prayer Request" | "Event Registration" | "Contact" | "Donation" | "Book Sale" | "Members Request" | "Publication" | "Event" | "Sermon";
+export type ActivityType = "Prayer Request" | "Event Registration" | "Contact" | "Donation" | "Book Sale" | "Membership" | "Publication" | "Event" | "Sermon";
 
 export interface Activity {
   type: ActivityType;

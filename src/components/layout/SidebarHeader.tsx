@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { UserCircle } from "lucide-react";
 
 interface SidebarHeaderProps {
   isMobile: boolean;
@@ -9,7 +8,6 @@ export function SidebarHeader({
   isMobile 
 }: SidebarHeaderProps) {
   const adminEmail = "admin@churchadmin.com";
-  const profileLetter = adminEmail.charAt(0).toUpperCase();
 
   return (
     <div className="space-y-2 border-b border-gray-100">
@@ -28,10 +26,7 @@ export function SidebarHeader({
         </Link>
       </div>
       
-      <div className="px-4 pb-2 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white">
-          {profileLetter}
-        </div>
+      <div className="px-4 pb-2">
         <span className="text-sm text-gray-600 truncate">
           {adminEmail}
         </span>

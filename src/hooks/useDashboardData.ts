@@ -41,15 +41,15 @@ export function useDashboardData() {
   const activities: Activity[] = [
     {
       type: "Donation",
-      description: "New donation received from John Doe",
-      amount: 1000,
+      description: "New donation received",
+      amount: 5000,
       date: "2024-01-20T10:30:00Z",
       status: "completed",
       reference: "DON-001",
       member: "John Doe"
     },
     {
-      type: "Members Request",
+      type: "Membership",
       description: "Sarah Smith requested membership",
       date: "2024-01-20T09:15:00Z",
       status: "pending",

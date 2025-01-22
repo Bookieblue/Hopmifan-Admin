@@ -22,7 +22,7 @@ export default function Index() {
         <RecentActivity 
           activities={activities}
           title="Recent Activities"
-          className="p-4"
+          className="pt-0"
           titleClassName="text-lg"
         />
       </div>
