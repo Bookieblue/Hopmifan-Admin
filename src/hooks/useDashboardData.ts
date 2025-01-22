@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Activity } from "@/types/activity";
 
 interface DashboardStats {
   contactMessages: number;
@@ -11,14 +12,7 @@ interface DashboardStats {
   totalMembers: number;
   totalEvents: number;
   totalArticles: number;
-}
-
-interface Activity {
-  id: string;
-  type: string;
-  message: string;
-  timestamp: string;
-  status?: string;
+  bookstoreSales: number;  // Added this property
 }
 
 export function useDashboardData() {
@@ -36,38 +30,50 @@ export function useDashboardData() {
         totalDonations: 25000,
         totalMembers: 150,
         totalEvents: 12,
-        totalArticles: 45
+        totalArticles: 45,
+        bookstoreSales: 15000
       };
       
       return mockStats;
     },
   });
 
-  const activities = [
+  const activities: Activity[] = [
     {
-      id: '1',
-      type: 'payment',
-      message: 'New donation received from John Doe',
-      timestamp: '2024-01-20T10:30:00Z',
-      status: 'success'
+      type: "Donation",
+      description: "New donation received from John Doe",
+      amount: 1000,
+      date: "2024-01-20T10:30:00Z",
+      status: "completed",
+      reference: "DON-001",
+      member: "John Doe"
     },
     {
-      id: '2',
-      type: 'member',
-      message: 'Sarah Smith requested membership',
-      timestamp: '2024-01-20T09:15:00Z'
+      type: "Membership",
+      description: "Sarah Smith requested membership",
+      amount: 0,
+      date: "2024-01-20T09:15:00Z",
+      status: "pending",
+      reference: "MEM-001",
+      member: "Sarah Smith"
     },
     {
-      id: '3',
-      type: 'event',
-      message: 'Youth Group Meeting scheduled',
-      timestamp: '2024-01-20T08:45:00Z'
+      type: "Event",
+      description: "Youth Group Meeting scheduled",
+      amount: 0,
+      date: "2024-01-20T08:45:00Z",
+      status: "completed",
+      reference: "EVT-001",
+      member: "Admin"
     },
     {
-      id: '4',
-      type: 'article',
-      message: 'New blog post published: "Sunday Service Highlights"',
-      timestamp: '2024-01-20T07:30:00Z'
+      type: "Publication",
+      description: "New blog post published: Sunday Service Highlights",
+      amount: 0,
+      date: "2024-01-20T07:30:00Z",
+      status: "completed",
+      reference: "PUB-001",
+      member: "Admin"
     }
   ];
 
