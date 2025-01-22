@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function StatsGrid() {
   const { stats } = useDashboardData();
 
-  if (stats.isLoading) {
+  if (stats.loading) {
     return (
       <>
         {Array(4).fill(0).map((_, i) => (

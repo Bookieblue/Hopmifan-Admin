@@ -20,7 +20,7 @@ export default function Index() {
 
       <div className="grid grid-cols-1">
         <RecentActivity 
-          activities={activities.data?.slice(0, 8) || []}
+          activities={activities || []}
           title="Recent Activities"
           className="p-4"
           titleClassName="text-lg"
