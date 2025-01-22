@@ -22,47 +22,52 @@ interface DashboardData {
   activities: Activity[];
 }
 
-  if (!localStorage.getItem('eventRegistrations')) {
-    localStorage.setItem('eventRegistrations', JSON.stringify([
-      { eventName: "Sunday Service", attendee: "Mark Johnson", date: new Date().toISOString(), status: "confirmed" }
-    ]));
-  }
+// Helper function to ensure valid date
+const getValidDate = () => {
+  return new Date().toISOString();
+};
 
-  if (!localStorage.getItem('prayerRequests')) {
-    localStorage.setItem('prayerRequests', JSON.stringify([
-      { firstName: "John", lastName: "Doe", request: "Healing for my mother", dateSubmitted: new Date().toISOString(), status: "pending" }
-    ]));
-  }
+if (!localStorage.getItem('eventRegistrations')) {
+  localStorage.setItem('eventRegistrations', JSON.stringify([
+    { eventName: "Sunday Service", attendee: "Mark Johnson", date: getValidDate(), status: "confirmed" }
+  ]));
+}
 
-  if (!localStorage.getItem('contactMessages')) {
-    localStorage.setItem('contactMessages', JSON.stringify([
-      { firstName: "Jane", lastName: "Smith", message: "Interested in joining the choir", dateSubmitted: new Date().toISOString(), status: "pending" }
-    ]));
-  }
+if (!localStorage.getItem('prayerRequests')) {
+  localStorage.setItem('prayerRequests', JSON.stringify([
+    { firstName: "John", lastName: "Doe", request: "Healing for my mother", dateSubmitted: getValidDate(), status: "pending" }
+  ]));
+}
 
-  if (!localStorage.getItem('books')) {
-    localStorage.setItem('books', JSON.stringify([
-      { title: "Walking with God", price: 20, sales: 5, date: new Date().toISOString() }
-    ]));
-  }
+if (!localStorage.getItem('contactMessages')) {
+  localStorage.setItem('contactMessages', JSON.stringify([
+    { firstName: "Jane", lastName: "Smith", message: "Interested in joining the choir", dateSubmitted: getValidDate(), status: "pending" }
+  ]));
+}
 
-  if (!localStorage.getItem('donations')) {
-    localStorage.setItem('donations', JSON.stringify([
-      { donor: "Michael Brown", amount: 100, date: new Date().toISOString(), status: "completed" }
-    ]));
-  }
+if (!localStorage.getItem('books')) {
+  localStorage.setItem('books', JSON.stringify([
+    { title: "Walking with God", price: 20, sales: 5, date: getValidDate() }
+  ]));
+}
 
-  if (!localStorage.getItem('membershipRequests')) {
-    localStorage.setItem('membershipRequests', JSON.stringify([
-      { firstName: "Sarah", lastName: "Johnson", dateSubmitted: new Date().toISOString(), status: "pending" }
-    ]));
-  }
+if (!localStorage.getItem('donations')) {
+  localStorage.setItem('donations', JSON.stringify([
+    { donor: "Michael Brown", amount: 100, date: getValidDate(), status: "completed" }
+  ]));
+}
 
-  if (!localStorage.getItem('payments')) {
-    localStorage.setItem('payments', JSON.stringify([
-      { id: "1", amount: 500, date: new Date().toISOString(), status: "pending", viewed: false }
-    ]));
-  }
+if (!localStorage.getItem('membershipRequests')) {
+  localStorage.setItem('membershipRequests', JSON.stringify([
+    { firstName: "Sarah", lastName: "Johnson", dateSubmitted: getValidDate(), status: "pending" }
+  ]));
+}
+
+if (!localStorage.getItem('payments')) {
+  localStorage.setItem('payments', JSON.stringify([
+    { id: "1", amount: 500, date: getValidDate(), status: "pending", viewed: false }
+  ]));
+}
 
 export const useDashboardData = () => {
   const [stats, setStats] = useState<DashboardData["stats"]>({
@@ -111,26 +116,26 @@ export const useDashboardData = () => {
           error: null
         });
 
-        // Create activities array
+        // Create activities array with validated dates
         const newActivities: Activity[] = [
           ...prayerRequests.slice(0, 1).map((pr: any) => ({
             type: "Prayer Request" as const,
             description: `Prayer request from ${pr.firstName} ${pr.lastName}: ${pr.request}`,
-            date: pr.dateSubmitted,
+            date: new Date(pr.dateSubmitted).toISOString(),
             status: pr.status as "completed" | "pending" | "upcoming" | "confirmed",
             reference: crypto.randomUUID()
           })),
           ...eventRegistrations.slice(0, 1).map((er: any) => ({
             type: "Event Registration" as const,
             description: `${er.attendee} registered for ${er.eventName}`,
-            date: er.date,
+            date: new Date(er.date).toISOString(),
             status: er.status as "completed" | "pending" | "upcoming" | "confirmed",
             reference: crypto.randomUUID()
           })),
           ...contactMessages.slice(0, 1).map((cm: any) => ({
             type: "Contact" as const,
             description: `Contact message from ${cm.firstName} ${cm.lastName}`,
-            date: cm.dateSubmitted,
+            date: new Date(cm.dateSubmitted).toISOString(),
             status: cm.status as "completed" | "pending" | "upcoming" | "confirmed",
             reference: crypto.randomUUID()
           })),
@@ -138,7 +143,7 @@ export const useDashboardData = () => {
             type: "Donation" as const,
             description: `New donation from ${d.donor}`,
             amount: d.amount,
-            date: d.date,
+            date: new Date(d.date).toISOString(),
             status: d.status as "completed" | "pending" | "upcoming" | "confirmed",
             reference: crypto.randomUUID()
           })),
@@ -146,14 +151,14 @@ export const useDashboardData = () => {
             type: "Book Sale" as const,
             description: `New book sale "${b.title}"`,
             amount: b.price * b.sales,
-            date: b.date,
+            date: new Date(b.date).toISOString(),
             status: "completed" as const,
             reference: crypto.randomUUID()
           })),
           ...membershipRequests.slice(0, 1).map((mr: any) => ({
             type: "Members Request" as const,
             description: `New member request from ${mr.firstName} ${mr.lastName}`,
-            date: mr.dateSubmitted,
+            date: new Date(mr.dateSubmitted).toISOString(),
             status: mr.status as "completed" | "pending" | "upcoming" | "confirmed",
             reference: crypto.randomUUID()
           }))
