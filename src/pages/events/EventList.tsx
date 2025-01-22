@@ -251,19 +251,18 @@ export default function EventList() {
                       align="end" 
                       className="w-[200px] bg-white dropdown-content"
                     >
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
+                      <DropdownMenuItem onClick={() => {
                         navigate(`/events/${event.id}/edit`);
                       }}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => handleDuplicate(event.id, e)}>
+                      <DropdownMenuItem onClick={() => handleDuplicate(event.id)}>
                         <Copy className="h-4 w-4 mr-2" />
                         Duplicate
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={(e) => handleStatusChange(event.id, event.status === 'published' ? 'draft' : 'published', e)}
+                        onClick={() => handleStatusChange(event.id, event.status === 'published' ? 'draft' : 'published')}
                       >
                         {event.status === 'published' ? (
                           <>
@@ -278,7 +277,7 @@ export default function EventList() {
                         )}
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={(e) => handleDelete(event.id, e)}
+                        onClick={() => handleDelete(event.id)}
                         className="text-red-600"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
