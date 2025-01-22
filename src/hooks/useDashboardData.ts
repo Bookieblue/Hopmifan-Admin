@@ -12,7 +12,7 @@ interface DashboardStats {
   totalMembers: number;
   totalEvents: number;
   totalArticles: number;
-  bookstoreSales: number;  // Added this property
+  bookstoreSales: number;
 }
 
 export function useDashboardData() {
@@ -49,9 +49,8 @@ export function useDashboardData() {
       member: "John Doe"
     },
     {
-      type: "Membership",
+      type: "Members Request",
       description: "Sarah Smith requested membership",
-      amount: 0,
       date: "2024-01-20T09:15:00Z",
       status: "pending",
       reference: "MEM-001",
@@ -60,16 +59,14 @@ export function useDashboardData() {
     {
       type: "Event",
       description: "Youth Group Meeting scheduled",
-      amount: 0,
       date: "2024-01-20T08:45:00Z",
-      status: "completed",
+      status: "upcoming",
       reference: "EVT-001",
       member: "Admin"
     },
     {
       type: "Publication",
       description: "New blog post published: Sunday Service Highlights",
-      amount: 0,
       date: "2024-01-20T07:30:00Z",
       status: "completed",
       reference: "PUB-001",

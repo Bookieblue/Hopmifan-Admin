@@ -1,11 +1,11 @@
-export type ActivityType = "Publication" | "Event" | "Contact" | "Donation" | "Membership" | "Sermon";
+export type ActivityType = "Prayer Request" | "Event Registration" | "Contact" | "Donation" | "Book Sale" | "Members Request" | "Publication" | "Event" | "Sermon";
 
 export interface Activity {
   type: ActivityType;
   description: string;
-  amount: number;
+  amount?: number;
   date: string;
-  status: "completed" | "pending";
+  status: "completed" | "pending" | "upcoming" | "confirmed";
   reference: string;
-  member: string;
+  member?: string;
 }
