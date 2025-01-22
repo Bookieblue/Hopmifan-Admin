@@ -72,6 +72,7 @@ export default function BookstoreList() {
   };
 
   const confirmDelete = () => {
+    // Here you would typically make an API call to delete the book
     toast({
       description: "Book deleted successfully",
     });
@@ -81,42 +82,63 @@ export default function BookstoreList() {
   };
 
   const handleStatusChange = (id: string, newStatus: string) => {
-    toast({
-      description: `Book ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
-    });
+    const book = books.find(b => b.id === id);
+    if (book) {
+      book.status = newStatus;
+      toast({
+        description: `Book ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
+      });
+    }
   };
 
   const handleDuplicate = (id: string) => {
-    toast({
-      description: "Book duplicated successfully",
-    });
+    const bookToDuplicate = books.find(b => b.id === id);
+    if (bookToDuplicate) {
+      const newBook = { ...bookToDuplicate, id: `${Date.now()}` };
+      books.push(newBook);
+      toast({
+        description: "Book duplicated successfully",
+      });
+    }
   };
 
   const handleBulkAction = () => {
     if (!selectedItems.length || !bulkAction) return;
 
+    const selectedBooks = books.filter(book => selectedItems.includes(book.id));
+
     switch (bulkAction) {
       case "delete":
+        selectedBooks.forEach(book => {
+          const index = books.findIndex(b => b.id === book.id);
+          if (index !== -1) {
+            books.splice(index, 1);
+          }
+        });
         toast({
           description: `${selectedItems.length} books deleted successfully`,
         });
-        setSelectedItems([]);
         break;
       case "publish":
+        selectedBooks.forEach(book => {
+          book.status = 'published';
+        });
         toast({
           description: `${selectedItems.length} books published successfully`,
         });
-        setSelectedItems([]);
         break;
       case "unpublish":
+        selectedBooks.forEach(book => {
+          book.status = 'draft';
+        });
         toast({
           description: `${selectedItems.length} books unpublished successfully`,
         });
-        setSelectedItems([]);
         break;
       default:
         break;
     }
+    setSelectedItems([]);
     setBulkAction("");
   };
 
@@ -185,7 +207,7 @@ export default function BookstoreList() {
 
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
-          data={filteredBooks}
+          data={books}
           columns={[
             { 
               header: "Title", 
@@ -197,25 +219,27 @@ export default function BookstoreList() {
               accessor: "author",
               className: "text-[14px]"
             },
-            { 
-              header: "Price", 
+            {
+              header: "Price",
               accessor: (book: any) => (
                 <div className="text-[14px]">${book.price.toFixed(2)}</div>
               ),
               className: "text-[14px]"
             },
             { 
-              header: "Status & Date", 
+              header: "Status", 
               accessor: (book: any) => (
-                <div className="space-y-1 text-[14px]">
-                  <div>{book.publishDate}</div>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    book.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {book.status}
-                  </span>
-                </div>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  book.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {book.status}
+                </span>
               ),
+              className: "text-[14px]"
+            },
+            {
+              header: "Date",
+              accessor: "publishDate",
               className: "text-[14px]"
             },
             {
@@ -286,8 +310,20 @@ export default function BookstoreList() {
             }
           ]}
           selectedItems={selectedItems}
-          onSelectItem={handleSelectItem}
-          onSelectAll={handleSelectAll}
+          onSelectItem={(id, checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, id]);
+            } else {
+              setSelectedItems(selectedItems.filter(itemId => itemId !== id));
+            }
+          }}
+          onSelectAll={(checked) => {
+            if (checked) {
+              setSelectedItems(books.map(book => book.id));
+            } else {
+              setSelectedItems([]);
+            }
+          }}
           getItemId={(item) => item.id}
           onRowClick={handleRowClick}
           CardComponent={isMobile ? BookCard : undefined}
