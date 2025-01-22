@@ -5,6 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface BookFormProps {
   initialData?: {
@@ -38,6 +40,10 @@ interface BookFormProps {
   isEdit?: boolean;
 }
 
+const DEFAULT_AUTHOR = "Segun Adewunmi";
+const DEFAULT_AUTHOR_BIO = "Whether you're looking for in-depth Bible studies or encouragement for life's challenges, you'll find the perfect resource here. Strengthen your prayer life with our dedicated prayer books and guides. These publications provide practical steps for effective prayer, intercession, and seeking God's will.";
+const DEFAULT_AUTHOR_IMAGE = "/lovable-uploads/a7e3d08f-9128-4e8b-a73b-9624c392a130.png";
+
 export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -45,8 +51,8 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
   const [title, setTitle] = useState(initialData?.title ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [price, setPrice] = useState(initialData?.price ?? 0);
-  const [author, setAuthor] = useState(initialData?.author ?? "");
-  const [authorBio, setAuthorBio] = useState(initialData?.authorBio ?? "");
+  const [author, setAuthor] = useState(initialData?.author ?? DEFAULT_AUTHOR);
+  const [authorBio, setAuthorBio] = useState(initialData?.authorBio ?? DEFAULT_AUTHOR_BIO);
   const [language, setLanguage] = useState(initialData?.language ?? "");
   const [pages, setPages] = useState(initialData?.pages ?? 0);
   const [dimensions, setDimensions] = useState(initialData?.dimensions ?? "");
@@ -54,8 +60,9 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
   const [bookImage, setBookImage] = useState<File | null>(null);
   const [authorImage, setAuthorImage] = useState<File | null>(null);
   const [bookImagePreview, setBookImagePreview] = useState<string>(initialData?.bookImage ?? "");
-  const [authorImagePreview, setAuthorImagePreview] = useState<string>(initialData?.authorImage ?? "");
+  const [authorImagePreview, setAuthorImagePreview] = useState<string>(initialData?.authorImage ?? DEFAULT_AUTHOR_IMAGE);
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
+  const [customAuthorProfile, setCustomAuthorProfile] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'book' | 'author') => {
     const file = e.target.files?.[0];
@@ -98,19 +105,24 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
       return;
     }
 
+    // Reset to default values if custom profile is not enabled
+    const finalAuthor = customAuthorProfile ? author : DEFAULT_AUTHOR;
+    const finalAuthorBio = customAuthorProfile ? authorBio : DEFAULT_AUTHOR_BIO;
+    const finalAuthorImage = customAuthorProfile ? authorImage : null;
+
     onSubmit({
       title,
       description,
       price,
-      author,
-      authorBio,
+      author: finalAuthor,
+      authorBio: finalAuthorBio,
       language,
       pages,
       dimensions,
       bookType,
       status: isDraft ? "draft" : "published",
       bookImage,
-      authorImage
+      authorImage: finalAuthorImage
     });
   };
 
@@ -231,97 +243,96 @@ export function BookForm({ initialData, onSubmit, isEdit = false }: BookFormProp
           </div>
         </div>
 
-        <div>
-          <label htmlFor="author" className="block text-sm font-medium mb-2">
-            Author Name
-          </label>
-          <Input
-            id="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            placeholder="Enter author name"
-            className={inputClassName('author')}
-          />
-          {errors.author && (
-            <p className="text-red-500 text-sm mt-1">Author name is required</p>
+        <div className="border-t pt-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Author's Profile</h2>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="custom-author"
+                checked={customAuthorProfile}
+                onCheckedChange={setCustomAuthorProfile}
+              />
+              <Label htmlFor="custom-author">Custom Author Profile</Label>
+            </div>
+          </div>
+
+          {customAuthorProfile ? (
+            <>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="author" className="block text-sm font-medium mb-2">
+                    Author Name
+                  </label>
+                  <Input
+                    id="author"
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                    placeholder="Enter author name"
+                    className={inputClassName('author')}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="authorBio" className="block text-sm font-medium mb-2">
+                    Author Bio
+                  </label>
+                  <Textarea
+                    id="authorBio"
+                    value={authorBio}
+                    onChange={(e) => setAuthorBio(e.target.value)}
+                    placeholder="Enter author biography"
+                    className="min-h-[100px]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Author Image</label>
+                  <div className="mt-1">
+                    <label
+                      htmlFor="authorImage"
+                      className="cursor-pointer flex items-center justify-center w-full h-48 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none hover:border-gray-400 focus:outline-none"
+                    >
+                      {authorImagePreview ? (
+                        <img
+                          src={authorImagePreview}
+                          alt="Author preview"
+                          className="h-full object-cover rounded-md"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center">
+                          <Upload className="w-12 h-12 text-gray-400" />
+                          <span className="mt-2 text-sm text-gray-500">
+                            Click to upload author photo
+                          </span>
+                        </div>
+                      )}
+                      <input
+                        type="file"
+                        id="authorImage"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImageChange(e, 'author')}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="flex items-start space-x-4">
+                <img
+                  src={DEFAULT_AUTHOR_IMAGE}
+                  alt="Default author"
+                  className="w-24 h-24 rounded-full object-cover"
+                />
+                <div>
+                  <h3 className="font-medium text-gray-900">{DEFAULT_AUTHOR}</h3>
+                  <p className="mt-1 text-sm text-gray-500">{DEFAULT_AUTHOR_BIO}</p>
+                </div>
+              </div>
+            </div>
           )}
-        </div>
-
-        <div>
-          <label htmlFor="authorBio" className="block text-sm font-medium mb-2">Author Bio</label>
-          <Textarea
-            id="authorBio"
-            value={authorBio}
-            onChange={(e) => setAuthorBio(e.target.value)}
-            placeholder="Enter author biography"
-            className="min-h-[100px]"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium mb-2">Book Cover Image</label>
-            <div className="mt-1">
-              <label
-                htmlFor="bookImage"
-                className="cursor-pointer flex items-center justify-center w-full h-48 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none hover:border-gray-400 focus:outline-none"
-              >
-                {bookImagePreview ? (
-                  <img
-                    src={bookImagePreview}
-                    alt="Book cover preview"
-                    className="h-full object-cover rounded-md"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <Upload className="w-12 h-12 text-gray-400" />
-                    <span className="mt-2 text-sm text-gray-500">
-                      Click to upload book cover
-                    </span>
-                  </div>
-                )}
-                <input
-                  type="file"
-                  id="bookImage"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleImageChange(e, 'book')}
-                />
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Author Image</label>
-            <div className="mt-1">
-              <label
-                htmlFor="authorImage"
-                className="cursor-pointer flex items-center justify-center w-full h-48 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none hover:border-gray-400 focus:outline-none"
-              >
-                {authorImagePreview ? (
-                  <img
-                    src={authorImagePreview}
-                    alt="Author preview"
-                    className="h-full object-cover rounded-md"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <Upload className="w-12 h-12 text-gray-400" />
-                    <span className="mt-2 text-sm text-gray-500">
-                      Click to upload author photo
-                    </span>
-                  </div>
-                )}
-                <input
-                  type="file"
-                  id="authorImage"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleImageChange(e, 'author')}
-                />
-              </label>
-            </div>
-          </div>
         </div>
 
         <div className="flex justify-end gap-4">
