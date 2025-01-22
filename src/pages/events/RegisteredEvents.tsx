@@ -7,16 +7,6 @@ import { EventFilterModal } from "@/components/registered-events/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 const sampleRegistrations = [
   {
@@ -61,7 +51,6 @@ export default function RegisteredEvents() {
   const [bulkAction, setBulkAction] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  // Handle bulk selection
   const handleSelectItem = (id: string, checked: boolean) => {
     if (checked) {
       setSelectedRegistrations([...selectedRegistrations, id]);
@@ -78,7 +67,6 @@ export default function RegisteredEvents() {
     }
   };
 
-  // Handle bulk actions
   const handleBulkAction = () => {
     if (!bulkAction || selectedRegistrations.length === 0) return;
 
@@ -126,7 +114,6 @@ export default function RegisteredEvents() {
     setBulkAction("");
   };
 
-  // Handle bulk delete confirmation
   const handleConfirmBulkDelete = () => {
     const updatedRegistrations = registrations.filter(
       reg => !selectedRegistrations.includes(reg.id)
@@ -280,7 +267,7 @@ export default function RegisteredEvents() {
           onSelectItem={handleSelectItem}
           onSelectAll={handleSelectAll}
           getItemId={(item) => item.id}
-          onRowClick={handleCardClick}
+          onRowClick={handleRowClick}
           showCheckboxes={true}
           bulkActions={[
             { value: "markConfirmed", label: "Mark as Confirmed" },

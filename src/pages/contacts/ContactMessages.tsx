@@ -130,6 +130,69 @@ export default function ContactMessages() {
     }
   };
 
+  const handleStatusChange = (status: string) => {
+    if (selectedContact) {
+      setContacts(contacts.map(contact => 
+        contact.id === selectedContact.id 
+          ? { ...contact, status }
+          : contact
+      ));
+      setDetailsModalOpen(false);
+    }
+  };
+
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedContacts.length === 0) return;
+
+    const updatedContacts = [...contacts];
+    
+    switch (bulkAction) {
+      case "markReplied":
+        selectedContacts.forEach(id => {
+          const contactIndex = updatedContacts.findIndex(c => c.id === id);
+          if (contactIndex !== -1) {
+            updatedContacts[contactIndex] = {
+              ...updatedContacts[contactIndex],
+              status: "replied"
+            };
+          }
+        });
+        toast({
+          description: `${selectedContacts.length} contacts marked as replied`,
+        });
+        break;
+      case "markPending":
+        selectedContacts.forEach(id => {
+          const contactIndex = updatedContacts.findIndex(c => c.id === id);
+          if (contactIndex !== -1) {
+            updatedContacts[contactIndex] = {
+              ...updatedContacts[contactIndex],
+              status: "pending"
+            };
+          }
+        });
+        toast({
+          description: `${selectedContacts.length} contacts marked as pending`,
+        });
+        break;
+      case "delete":
+        const newContacts = updatedContacts.filter(
+          contact => !selectedContacts.includes(contact.id)
+        );
+        setContacts(newContacts);
+        toast({
+          description: `${selectedContacts.length} contacts deleted`,
+        });
+        break;
+    }
+    
+    if (bulkAction !== "delete") {
+      setContacts(updatedContacts);
+    }
+    setSelectedContacts([]);
+    setBulkAction("");
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
