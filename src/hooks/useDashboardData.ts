@@ -17,8 +17,8 @@ const initializeSampleData = () => {
 
   if (!localStorage.getItem('prayerRequests')) {
     localStorage.setItem('prayerRequests', JSON.stringify([
-      { firstName: "Alice", lastName: "Johnson", request: "Prayer request", status: "pending", dateSubmitted: new Date().toISOString() },
-      { firstName: "Bob", lastName: "Wilson", request: "Prayer request", status: "pending", dateSubmitted: new Date().toISOString() }
+      { firstName: "Alice", lastName: "Johnson", request: "Health and healing", status: "pending", dateSubmitted: new Date().toISOString() },
+      { firstName: "Bob", lastName: "Wilson", request: "Family unity", status: "pending", dateSubmitted: new Date().toISOString() }
     ]));
   }
 
@@ -73,7 +73,7 @@ const fetchRecentActivities = async () => {
     })),
     ...books.filter((b: any) => b.sales > 0).map((b: any) => ({
       type: "Book Sale" as const,
-      description: "New book sale",
+      description: `New book sale: ${b.sales} copies of "${b.title}"`,
       amount: b.price * b.sales,
       date: new Date().toISOString(),
       status: "completed" as const,
@@ -81,23 +81,16 @@ const fetchRecentActivities = async () => {
     })),
     ...prayerRequests.map((pr: any) => ({
       type: "Prayer Request" as const,
-      description: `Prayer request from ${pr.firstName} ${pr.lastName}`,
+      description: `Prayer request from ${pr.firstName} ${pr.lastName}: ${pr.request}`,
       date: pr.dateSubmitted,
       status: pr.status as "completed" | "pending" | "upcoming",
       reference: crypto.randomUUID()
     })),
-    ...memberRequests.map((mr: any) => ({
-      type: "Members Request" as const,
-      description: `Membership request from ${mr.firstName} ${mr.lastName}`,
-      date: mr.dateSubmitted,
-      status: mr.status as "completed" | "pending" | "upcoming",
-      reference: crypto.randomUUID()
-    })),
     ...eventRegistrations.map((er: any) => ({
       type: "Event Registration" as const,
-      description: `${er.eventName}`,
+      description: `${er.attendee} registered for ${er.eventName}`,
       date: er.date,
-      status: er.status as "completed" | "pending" | "upcoming" | "confirmed",
+      status: er.status as "completed" | "pending" | "upcoming",
       reference: crypto.randomUUID()
     }))
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
