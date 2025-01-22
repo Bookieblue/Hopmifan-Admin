@@ -132,22 +132,50 @@ export default function ContactMessages() {
   const handleBulkAction = () => {
     if (!bulkAction || selectedContacts.length === 0) return;
 
+    const updatedContacts = [...contacts];
+    
     switch (bulkAction) {
       case "markReplied":
+        selectedContacts.forEach(id => {
+          const contactIndex = updatedContacts.findIndex(c => c.id === id);
+          if (contactIndex !== -1) {
+            updatedContacts[contactIndex] = {
+              ...updatedContacts[contactIndex],
+              status: "replied"
+            };
+          }
+        });
         toast({
           description: `${selectedContacts.length} messages marked as replied`,
         });
         break;
       case "markPending":
+        selectedContacts.forEach(id => {
+          const contactIndex = updatedContacts.findIndex(c => c.id === id);
+          if (contactIndex !== -1) {
+            updatedContacts[contactIndex] = {
+              ...updatedContacts[contactIndex],
+              status: "pending"
+            };
+          }
+        });
         toast({
           description: `${selectedContacts.length} messages marked as pending`,
         });
         break;
       case "delete":
+        const newContacts = updatedContacts.filter(
+          contact => !selectedContacts.includes(contact.id)
+        );
+        setContacts(newContacts);
         toast({
           description: `${selectedContacts.length} messages deleted`,
         });
         break;
+    }
+    
+    if (bulkAction !== "delete") {
+      setContacts(updatedContacts);
     }
     setSelectedContacts([]);
     setBulkAction("");

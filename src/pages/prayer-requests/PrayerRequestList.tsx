@@ -132,22 +132,50 @@ export default function PrayerRequestList() {
   const handleBulkAction = () => {
     if (!bulkAction || selectedRequests.length === 0) return;
 
+    const updatedRequests = [...requests];
+    
     switch (bulkAction) {
       case "markPrayed":
+        selectedRequests.forEach(id => {
+          const requestIndex = updatedRequests.findIndex(r => r.id === id);
+          if (requestIndex !== -1) {
+            updatedRequests[requestIndex] = {
+              ...updatedRequests[requestIndex],
+              status: "prayed"
+            };
+          }
+        });
         toast({
           description: `${selectedRequests.length} requests marked as prayed`,
         });
         break;
       case "markPending":
+        selectedRequests.forEach(id => {
+          const requestIndex = updatedRequests.findIndex(r => r.id === id);
+          if (requestIndex !== -1) {
+            updatedRequests[requestIndex] = {
+              ...updatedRequests[requestIndex],
+              status: "pending"
+            };
+          }
+        });
         toast({
           description: `${selectedRequests.length} requests marked as pending`,
         });
         break;
       case "delete":
+        const newRequests = updatedRequests.filter(
+          request => !selectedRequests.includes(request.id)
+        );
+        setRequests(newRequests);
         toast({
           description: `${selectedRequests.length} requests deleted`,
         });
         break;
+    }
+    
+    if (bulkAction !== "delete") {
+      setRequests(updatedRequests);
     }
     setSelectedRequests([]);
     setBulkAction("");

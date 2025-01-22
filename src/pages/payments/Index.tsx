@@ -136,11 +136,35 @@ Method: ${payment.method}
 
     switch (bulkAction) {
       case "export":
+        // Create CSV content
+        const selectedPaymentData = filteredPayments.filter(p => 
+          selectedPayments.includes(p.id)
+        );
+        
+        const headers = ["Date", "Customer", "Type", "Amount", "Method"];
+        const csvData = selectedPaymentData.map(payment => 
+          [payment.date, payment.customer, payment.type, payment.amount, payment.method].join(",")
+        );
+        
+        const csv = [headers.join(","), ...csvData].join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `payments-${new Date().toISOString().split("T")[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
         toast({
           description: `${selectedPayments.length} payments exported`,
         });
         break;
       case "download":
+        selectedPayments.forEach(id => {
+          handleDownloadReceipt(id);
+        });
         toast({
           description: `${selectedPayments.length} receipts downloaded`,
         });
