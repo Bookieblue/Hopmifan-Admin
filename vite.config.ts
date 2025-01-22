@@ -5,8 +5,9 @@ import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "::",
+    host: true,
     port: 8080,
+    strictPort: true,
   },
   plugins: [
     react(),
@@ -18,7 +19,6 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // Added support for page-based routing similar to Next.js
   build: {
     rollupOptions: {
       input: {
