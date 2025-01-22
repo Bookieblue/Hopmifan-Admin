@@ -13,23 +13,28 @@ const payments = [
     customer: "John Doe", 
     amount: "₦5,000.00", 
     method: "Credit Card", 
-    reference: "PAY202503001"
+    reference: "PAY202503001",
+    type: "Payment" // Added type property
   },
   { 
     date: "28 Feb 2025", 
     customer: "Jane Smith", 
     amount: "₦10,000.00", 
     method: "Bank Transfer", 
-    reference: "PAY202502001"
+    reference: "PAY202502001",
+    type: "Payment" // Added type property
   },
   { 
     date: "15 Dec 2024", 
     customer: "Alice Johnson", 
     amount: "₦2,500.00", 
     method: "Credit Card", 
-    reference: "PAY202412001"
+    reference: "PAY202412001",
+    type: "Payment" // Added type property
   }
 ];
+
+// ... keep existing code (state declarations and handlers)
 
 export default function PaymentHistory() {
   const { toast } = useToast();
@@ -111,7 +116,7 @@ export default function PaymentHistory() {
 
       <PaymentFilters
         searchQuery={searchQuery}
-        setSearchQuery={handleSearch}
+        setSearchQuery={setSearchQuery}
         startDate={startDate}
         setStartDate={setStartDate}
         endDate={endDate}
