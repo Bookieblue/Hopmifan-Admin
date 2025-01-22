@@ -52,7 +52,7 @@ const menuItems = [
   { icon: Users, label: "New Members", path: "/new-members" },
   { icon: Book, label: "Sermons", path: "/sermons" },
   { icon: LogOut, label: "Logout", path: "/auth/signin" },
-];
+};
 
 interface SidebarNavigationProps {
   isCollapsed: boolean;
@@ -104,9 +104,7 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
       case "Payments":
         return paymentsViewed ? 0 : stats.data.newPayments;
       case "Events":
-        return stats.data.newEvents + stats.data.eventRegistrations;
-      case "Event List":
-        return stats.data.newEvents;
+        return openSubmenu === "Events" ? 0 : stats.data.eventRegistrations;
       case "Registrations":
         return stats.data.eventRegistrations;
       default:
@@ -157,7 +155,7 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
                     <div className="pl-4 space-y-0.5 mt-0.5">
                       {item.submenu.map((subItem) => {
                         const isSubActive = location.pathname === subItem.path;
-                        const subNotificationCount = getNotificationCount(subItem.label);
+                        const subNotificationCount = subItem.label !== "Event List" ? getNotificationCount(subItem.label) : 0;
                         return (
                           <Link
                             key={subItem.path}
@@ -222,7 +220,7 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
         })}
       </div>
 
-      {/* Logout item with reduced spacing */}
+      {/* Logout item */}
       <div className="mt-4">
         {menuItems.slice(-1).map((item) => {
           const Icon = item.icon;
