@@ -54,6 +54,13 @@ const getActivityPath = (activity: Activity) => {
   }
 };
 
+const formatActivityType = (activity: Activity) => {
+  if (activity.amount) {
+    return `${activity.type}: ₦${activity.amount.toLocaleString()}`;
+  }
+  return activity.type;
+};
+
 export function RecentActivity({ 
   activities = [], 
   title = "Recent Activity",
@@ -75,7 +82,7 @@ export function RecentActivity({
         {activities.map((activity, index) => (
           <div 
             key={index} 
-            className="py-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
+            className="py-4 border-b last:border-b-0 cursor-pointer"
             onClick={() => handleActivityClick(activity)}
           >
             <div className="flex flex-col gap-4">
@@ -86,18 +93,13 @@ export function RecentActivity({
                     <h3 className="font-semibold text-left mb-2 line-clamp-2">{activity.description}</h3>
                   </div>
                   <div className="text-sm text-muted-foreground text-left space-y-1">
-                    <p className="truncate">{activity.type}</p>
+                    <p className="truncate">{formatActivityType(activity)}</p>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span>{format(new Date(activity.date), 'dd/MM/yyyy')}</span>
                       <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(activity.status)}`}>
                         {activity.status}
                       </span>
                     </div>
-                    {activity.amount && (
-                      <p className="text-sm font-medium">
-                        ₦{activity.amount.toLocaleString()}
-                      </p>
-                    )}
                   </div>
                 </div>
                 <ChevronRight className="h-5 w-5 text-gray-400" />
@@ -128,24 +130,19 @@ export function RecentActivity({
             {activities.map((activity, index) => (
               <TableRow 
                 key={index}
-                className="cursor-pointer hover:bg-gray-50 transition-colors"
+                className="cursor-pointer"
                 onClick={() => handleActivityClick(activity)}
               >
-                <TableCell className="pl-0 md:pl-4 max-w-[200px]">
+                <TableCell className="pl-0 md:pl-4">
                   <div className="flex items-center gap-2">
                     <CircleIcon className="h-2 w-2 text-gray-500 flex-shrink-0" />
-                    <div className="truncate">
+                    <div>
                       <div className="font-medium">{activity.description}</div>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell className="whitespace-nowrap">
-                  <div className="font-medium">{activity.type}</div>
-                  {activity.amount && (
-                    <div className="text-sm text-muted-foreground">
-                      ₦{activity.amount.toLocaleString()}
-                    </div>
-                  )}
+                  <div className="font-medium">{formatActivityType(activity)}</div>
                 </TableCell>
                 <TableCell>
                   <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
