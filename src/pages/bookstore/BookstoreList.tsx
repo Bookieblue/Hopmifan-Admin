@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Plus, Search, Filter, MoreVertical, Edit, Trash2, CheckSquare, XSquare, Copy } from "lucide-react";
 import { DataTable } from "@/components/shared/DataTable";
@@ -26,6 +26,59 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+interface Book {
+  id: string;
+  title: string;
+  author: string;
+  price: number;
+  description: string;
+  status: "published" | "draft";
+  publishDate: string;
+  coverImage?: string;
+}
+
+const sampleBooks: Book[] = [
+  {
+    id: "BOOK-1",
+    title: "The Purpose Driven Life",
+    author: "Segun Adewunmi",
+    price: 19.99,
+    description: "A comprehensive guide to finding your purpose in life through faith.",
+    status: "published",
+    publishDate: new Date(2024, 0, 15).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    })
+  },
+  {
+    id: "BOOK-2",
+    title: "Prayer Warriors",
+    author: "Segun Adewunmi",
+    price: 15.99,
+    description: "A guide to effective prayer and spiritual warfare.",
+    status: "draft",
+    publishDate: new Date(2024, 0, 20).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    })
+  },
+  {
+    id: "BOOK-3",
+    title: "Faith Over Fear",
+    author: "Segun Adewunmi",
+    price: 24.99,
+    description: "Overcoming life's challenges through unwavering faith.",
+    status: "published",
+    publishDate: new Date(2024, 1, 1).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    })
+  }
+];
+
 export default function BookstoreList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -35,36 +88,27 @@ export default function BookstoreList() {
   const [bulkAction, setBulkAction] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bookToDelete, setBookToDelete] = useState<string>("");
-  const { toast } = useToast();
-  const isMobile = useIsMobile();
-  const navigate = useNavigate();
 
-  const books = [
-    {
-      id: "1",
-      title: "The Purpose Driven Life",
-      author: "Segun Adewunmi",
-      price: 19.99,
-      status: "published",
-      publishDate: new Date(2024, 2, 15).toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      }),
-    },
-    {
-      id: "2",
-      title: "Mere Christianity",
-      author: "Segun Adewunmi",
-      price: 15.99,
-      status: "draft",
-      publishDate: new Date(2024, 2, 14).toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      }),
-    },
-  ];
+  // Initialize books from localStorage with sample data if empty
+  const [books, setBooks] = useState<Book[]>(() => {
+    try {
+      const stored = localStorage.getItem('books');
+      if (!stored) {
+        localStorage.setItem('books', JSON.stringify(sampleBooks));
+        return sampleBooks;
+      }
+      const parsedBooks = JSON.parse(stored);
+      return Array.isArray(parsedBooks) ? parsedBooks : sampleBooks;
+    } catch (error) {
+      console.error('Error parsing books from localStorage:', error);
+      return sampleBooks;
+    }
+  });
+
+  // Update localStorage whenever books change
+  useEffect(() => {
+    localStorage.setItem('books', JSON.stringify(books));
+  }, [books]);
 
   const handleDelete = (id: string) => {
     setBookToDelete(id);
@@ -72,30 +116,36 @@ export default function BookstoreList() {
   };
 
   const confirmDelete = () => {
-    // Here you would typically make an API call to delete the book
-    toast({
-      description: "Book deleted successfully",
-    });
+    const updatedBooks = books.filter(book => book.id !== bookToDelete);
+    setBooks(updatedBooks);
     setDeleteDialogOpen(false);
     setBookToDelete("");
     setSelectedItems(selectedItems.filter(itemId => itemId !== bookToDelete));
+    toast({
+      description: "Book deleted successfully",
+    });
   };
 
-  const handleStatusChange = (id: string, newStatus: string) => {
-    const book = books.find(b => b.id === id);
-    if (book) {
-      book.status = newStatus;
-      toast({
-        description: `Book ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
-      });
-    }
+  const handleStatusChange = (id: string, newStatus: "published" | "draft") => {
+    const updatedBooks = books.map(book => 
+      book.id === id ? { ...book, status: newStatus } : book
+    );
+    setBooks(updatedBooks);
+    toast({
+      description: `Book ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
+    });
   };
 
   const handleDuplicate = (id: string) => {
-    const bookToDuplicate = books.find(b => b.id === id);
+    const bookToDuplicate = books.find(book => book.id === id);
     if (bookToDuplicate) {
-      const newBook = { ...bookToDuplicate, id: `${Date.now()}` };
-      books.push(newBook);
+      const newBook = {
+        ...bookToDuplicate,
+        id: `BOOK-${Date.now()}`,
+        title: `${bookToDuplicate.title} (Copy)`,
+        status: 'draft' as const
+      };
+      setBooks([...books, newBook]);
       toast({
         description: "Book duplicated successfully",
       });
@@ -105,39 +155,28 @@ export default function BookstoreList() {
   const handleBulkAction = () => {
     if (!selectedItems.length || !bulkAction) return;
 
-    const selectedBooks = books.filter(book => selectedItems.includes(book.id));
+    const updatedBooks = [...books];
+    selectedItems.forEach(id => {
+      const bookIndex = updatedBooks.findIndex(book => book.id === id);
+      if (bookIndex === -1) return;
 
-    switch (bulkAction) {
-      case "delete":
-        selectedBooks.forEach(book => {
-          const index = books.findIndex(b => b.id === book.id);
-          if (index !== -1) {
-            books.splice(index, 1);
-          }
-        });
-        toast({
-          description: `${selectedItems.length} books deleted successfully`,
-        });
-        break;
-      case "publish":
-        selectedBooks.forEach(book => {
-          book.status = 'published';
-        });
-        toast({
-          description: `${selectedItems.length} books published successfully`,
-        });
-        break;
-      case "unpublish":
-        selectedBooks.forEach(book => {
-          book.status = 'draft';
-        });
-        toast({
-          description: `${selectedItems.length} books unpublished successfully`,
-        });
-        break;
-      default:
-        break;
-    }
+      switch (bulkAction) {
+        case "delete":
+          updatedBooks.splice(bookIndex, 1);
+          break;
+        case "publish":
+          updatedBooks[bookIndex].status = "published";
+          break;
+        case "unpublish":
+          updatedBooks[bookIndex].status = "draft";
+          break;
+      }
+    });
+
+    setBooks(updatedBooks);
+    toast({
+      description: `${selectedItems.length} books ${bulkAction}ed successfully`,
+    });
     setSelectedItems([]);
     setBulkAction("");
   };
@@ -378,4 +417,3 @@ export default function BookstoreList() {
       </AlertDialog>
     </div>
   );
-}
