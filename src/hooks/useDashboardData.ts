@@ -43,6 +43,17 @@ const initializeLocalStorage = () => {
         cityState: "California",
         dateSubmitted: getValidDate(2),
         status: "confirmed" 
+      },
+      { 
+        eventName: "Youth Conference", 
+        firstName: "Sarah",
+        lastName: "Williams",
+        email: "sarah@example.com",
+        phone: "+1234567890",
+        country: "United States",
+        cityState: "New York",
+        dateSubmitted: getValidDate(2),
+        status: "pending" 
       }
     ]));
   }
@@ -50,30 +61,25 @@ const initializeLocalStorage = () => {
   if (!localStorage.getItem('prayerRequests')) {
     localStorage.setItem('prayerRequests', JSON.stringify([
       { 
-        firstName: "John",
-        lastName: "Doe",
-        email: "john@example.com",
+        firstName: "Alice",
+        lastName: "Johnson",
+        email: "alice@example.com",
         phone: "+1234567890",
         country: "United States",
         cityState: "New York",
         prayerRequest: "Healing for my mother",
-        dateSubmitted: getValidDate(1),
+        dateSubmitted: getValidDate(4),
         status: "pending" 
-      }
-    ]));
-  }
-
-  if (!localStorage.getItem('contactMessages')) {
-    localStorage.setItem('contactMessages', JSON.stringify([
+      },
       { 
-        firstName: "Jane",
-        lastName: "Smith",
-        email: "jane@example.com",
+        firstName: "Bob",
+        lastName: "Wilson",
+        email: "bob@example.com",
         phone: "+1234567890",
         country: "United States",
         cityState: "Texas",
-        message: "Interested in joining the choir",
-        dateSubmitted: getValidDate(3),
+        prayerRequest: "Family guidance",
+        dateSubmitted: getValidDate(4),
         status: "pending" 
       }
     ]));
@@ -88,25 +94,20 @@ const initializeLocalStorage = () => {
         phone: "+1234567890",
         country: "United States",
         cityState: "Florida",
-        amount: 100000,
-        dateSubmitted: getValidDate(),
+        amount: 50000,
+        dateSubmitted: getValidDate(1),
         status: "completed" 
-      }
-    ]));
-  }
-
-  if (!localStorage.getItem('membershipRequests')) {
-    localStorage.setItem('membershipRequests', JSON.stringify([
+      },
       { 
-        firstName: "Sarah",
-        lastName: "Johnson",
-        email: "sarah@example.com",
+        firstName: "Jennifer",
+        lastName: "Davis",
+        email: "jennifer@example.com",
         phone: "+1234567890",
         country: "United States",
-        cityState: "Arizona",
-        message: "Interested in becoming a member",
-        dateSubmitted: getValidDate(4),
-        status: "pending" 
+        cityState: "Texas",
+        amount: 25000,
+        dateSubmitted: getValidDate(1),
+        status: "completed" 
       }
     ]));
   }
@@ -130,9 +131,7 @@ export const useDashboardData = () => {
         // Fetch data from localStorage
         const eventRegistrations = JSON.parse(localStorage.getItem('eventRegistrations') || '[]');
         const prayerRequests = JSON.parse(localStorage.getItem('prayerRequests') || '[]');
-        const contactMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
         const donations = JSON.parse(localStorage.getItem('donations') || '[]');
-        const membershipRequests = JSON.parse(localStorage.getItem('membershipRequests') || '[]');
 
         // Calculate totals and stats
         const totalDonationsAmount = donations.reduce((acc: number, donation: any) => acc + (donation.amount || 0), 0);
@@ -145,9 +144,9 @@ export const useDashboardData = () => {
             totalDonations: totalDonationsAmount,
             totalEvents: 12,
             totalBooks: 25,
-            membershipRequests: membershipRequests.filter((mr: any) => mr.status === "pending").length,
+            membershipRequests: 1,
             prayerRequests: prayerRequests.filter((pr: any) => pr.status === "pending").length,
-            contactMessages: contactMessages.length,
+            contactMessages: 4,
             newPayments: donations.length,
             bookstoreSales: bookstoreSalesAmount
           },
