@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Plus, MoreVertical, Edit, Trash2, CheckSquare, XSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,66 +14,157 @@ import { DataTable } from "@/components/shared/DataTable";
 import { useToast } from "@/hooks/use-toast";
 import { FilterModal } from "@/components/sermons/FilterModal";
 import { BulkActions } from "@/components/shared/BulkActions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+interface Sermon {
+  id: string;
+  title: string;
+  preacher: string;
+  date: string;
+  status: "published" | "draft";
+  youtubeLink?: string;
+  content?: string;
+}
+
+const sampleSermons: Sermon[] = [
+  {
+    id: "SER-001",
+    title: "Understanding God's Love",
+    preacher: "Pastor John Doe",
+    date: "Mar 15, 2024",
+    status: "published",
+    youtubeLink: "https://youtube.com/watch?v=123",
+    content: "A powerful message about God's love..."
+  },
+  {
+    id: "SER-002",
+    title: "Walking in Faith",
+    preacher: "Pastor Jane Smith",
+    date: "Mar 14, 2024",
+    status: "draft",
+    content: "Learning to trust God in all circumstances..."
+  },
+];
 
 export default function SermonList() {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [selectedSermons, setSelectedSermons] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const [bulkAction, setBulkAction] = useState("");
-  const { toast } = useToast();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [sermonToDelete, setSermonToDelete] = useState<string>("");
 
-  // Sample data
-  const sermons = [
-    {
-      id: "1",
-      title: "Understanding God's Love",
-      preacher: "Pastor John Doe",
-      date: "Mar 15, 2024",
-      status: "published",
-    },
-    {
-      id: "2",
-      title: "Walking in Faith",
-      preacher: "Pastor Jane Smith",
-      date: "Mar 14, 2024",
-      status: "draft",
-    },
-  ];
+  // Initialize sermons from localStorage with sample data if empty
+  const [sermons, setSermons] = useState<Sermon[]>(() => {
+    try {
+      const stored = localStorage.getItem('sermons');
+      if (!stored) {
+        localStorage.setItem('sermons', JSON.stringify(sampleSermons));
+        return sampleSermons;
+      }
+      const parsedSermons = JSON.parse(stored);
+      return Array.isArray(parsedSermons) ? parsedSermons : sampleSermons;
+    } catch (error) {
+      console.error('Error parsing sermons from localStorage:', error);
+      return sampleSermons;
+    }
+  });
 
   const handleDelete = (id: string) => {
+    setSermonToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    const updatedSermons = sermons.filter(sermon => sermon.id !== sermonToDelete);
+    setSermons(updatedSermons);
+    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
+    
     toast({
       description: "Sermon deleted successfully",
     });
+    setDeleteDialogOpen(false);
+    setSermonToDelete("");
+    setSelectedSermons(selectedSermons.filter(itemId => itemId !== sermonToDelete));
   };
 
-  const handleStatusChange = (id: string, status: string) => {
+  const handleStatusChange = (id: string, newStatus: "published" | "draft") => {
+    const updatedSermons = sermons.map(sermon => {
+      if (sermon.id === id) {
+        return { ...sermon, status: newStatus };
+      }
+      return sermon;
+    });
+    setSermons(updatedSermons);
+    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
+    
     toast({
-      description: `Sermon ${status === 'published' ? 'published' : 'unpublished'} successfully`,
+      description: `Sermon ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
     });
   };
 
   const handleBulkAction = () => {
     if (!bulkAction || selectedSermons.length === 0) return;
 
+    const updatedSermons = [...sermons];
+    
     switch (bulkAction) {
       case "publish":
+        selectedSermons.forEach(id => {
+          const sermonIndex = updatedSermons.findIndex(s => s.id === id);
+          if (sermonIndex !== -1) {
+            updatedSermons[sermonIndex] = {
+              ...updatedSermons[sermonIndex],
+              status: "published"
+            };
+          }
+        });
         toast({
-          description: `${selectedSermons.length} sermons published`,
+          description: `${selectedSermons.length} sermons published successfully`,
         });
         break;
       case "unpublish":
+        selectedSermons.forEach(id => {
+          const sermonIndex = updatedSermons.findIndex(s => s.id === id);
+          if (sermonIndex !== -1) {
+            updatedSermons[sermonIndex] = {
+              ...updatedSermons[sermonIndex],
+              status: "draft"
+            };
+          }
+        });
         toast({
-          description: `${selectedSermons.length} sermons unpublished`,
+          description: `${selectedSermons.length} sermons unpublished successfully`,
         });
         break;
       case "delete":
+        const remainingSermons = updatedSermons.filter(
+          sermon => !selectedSermons.includes(sermon.id)
+        );
+        setSermons(remainingSermons);
+        localStorage.setItem('sermons', JSON.stringify(remainingSermons));
         toast({
-          description: `${selectedSermons.length} sermons deleted`,
+          description: `${selectedSermons.length} sermons deleted successfully`,
         });
-        break;
+        setSelectedSermons([]);
+        setBulkAction("");
+        return;
     }
+    
+    setSermons(updatedSermons);
+    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
     setSelectedSermons([]);
     setBulkAction("");
   };
@@ -85,16 +176,6 @@ export default function SermonList() {
     const matchesDate = !dateFilter || sermon.date.includes(dateFilter);
     return matchesSearch && matchesStatus && matchesDate;
   });
-
-  const handleSelectItem = (id: string, checked: boolean) => {
-    setSelectedSermons(prev =>
-      checked ? [...prev, id] : prev.filter(item => item !== id)
-    );
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    setSelectedSermons(checked ? filteredSermons.map(sermon => sermon.id) : []);
-  };
 
   return (
     <div className="page-container">
@@ -130,7 +211,7 @@ export default function SermonList() {
         </Button>
       </div>
 
-      <div className="bg-white md:rounded-lg md:border">
+      <div className="bg-white rounded-lg border">
         <DataTable
           data={filteredSermons}
           columns={[
@@ -205,9 +286,15 @@ export default function SermonList() {
             }
           ]}
           selectedItems={selectedSermons}
-          onSelectItem={handleSelectItem}
-          onSelectAll={handleSelectAll}
-          getItemId={(sermon) => sermon.id}
+          onSelectItem={(id, checked) => {
+            setSelectedSermons(prev =>
+              checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
+            );
+          }}
+          onSelectAll={(checked) => {
+            setSelectedSermons(checked ? filteredSermons.map(s => s.id) : []);
+          }}
+          getItemId={(item) => item.id}
           showCheckboxes={true}
           bulkActions={[
             { value: "publish", label: "Publish Selected" },
@@ -242,6 +329,24 @@ export default function SermonList() {
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
       />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the sermon
+              and remove all of its data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
