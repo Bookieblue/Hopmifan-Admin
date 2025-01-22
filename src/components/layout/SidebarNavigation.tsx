@@ -81,88 +81,112 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
   };
 
   return (
-    <nav className="flex-1 space-y-1">
-      {menuItems.map((item) => {
-        const Icon = item.icon;
-        const isActive = location.pathname === item.path;
-        const hasSubmenu = 'submenu' in item;
+    <nav className="flex-1 space-y-2">
+      <div className="space-y-2">
+        {menuItems.slice(0, -1).map((item) => {
+          const Icon = item.icon;
+          const isActive = location.pathname === item.path;
+          const hasSubmenu = 'submenu' in item;
 
-        return (
-          <div key={item.path}>
-            {hasSubmenu ? (
-              <>
-                <button
-                  onClick={() => toggleSubmenu(item.label)}
+          return (
+            <div key={item.path}>
+              {hasSubmenu ? (
+                <>
+                  <button
+                    onClick={() => toggleSubmenu(item.label)}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors relative",
+                      isCollapsed ? "justify-center" : "justify-between",
+                      "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    )}
+                  >
+                    <div className={cn("flex items-center gap-3", isCollapsed && "justify-center w-full")}>
+                      <Icon className="w-5 h-5 text-gray-500" />
+                      {!isCollapsed && <span>{item.label}</span>}
+                    </div>
+                    {!isCollapsed && (
+                      <ChevronRight
+                        className={cn(
+                          "w-4 h-4 transition-transform",
+                          openSubmenu === item.label ? "rotate-90" : ""
+                        )}
+                      />
+                    )}
+                  </button>
+                  {!isCollapsed && openSubmenu === item.label && item.submenu && (
+                    <div className="pl-4 space-y-1 mt-1">
+                      {item.submenu.map((subItem) => {
+                        const isSubActive = location.pathname === subItem.path;
+                        const SubIcon = subItem.label === "Articles" ? Newspaper : BookOpen;
+                        return (
+                          <Link
+                            key={subItem.path}
+                            to={subItem.path}
+                            className={cn(
+                              "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors relative",
+                              isSubActive
+                                ? "bg-purple-50 text-[#695CAE] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-[#695CAE] before:rounded-r"
+                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                            )}
+                          >
+                            <SubIcon className={cn(
+                              "w-5 h-5",
+                              isSubActive ? "text-[#695CAE]" : "text-gray-500"
+                            )} />
+                            {subItem.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Link
+                  to={item.path}
+                  onClick={() => handleLogout(item.path)}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative",
-                    isCollapsed ? "justify-center" : "justify-between",
-                    "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors relative",
+                    isCollapsed ? "justify-center" : "justify-start",
+                    isActive
+                      ? "bg-purple-50 text-[#695CAE] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-[#695CAE] before:rounded-r"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   )}
                 >
-                  <div className={cn("flex items-center gap-3", isCollapsed && "justify-center w-full")}>
-                    <Icon className="w-5 h-5 text-gray-500" />
-                    {!isCollapsed && <span>{item.label}</span>}
-                  </div>
-                  {!isCollapsed && (
-                    <ChevronRight
-                      className={cn(
-                        "w-4 h-4 transition-transform",
-                        openSubmenu === item.label ? "rotate-90" : ""
-                      )}
-                    />
-                  )}
-                </button>
-                {!isCollapsed && openSubmenu === item.label && item.submenu && (
-                  <div className="pl-4 space-y-1 mt-1">
-                    {item.submenu.map((subItem) => {
-                      const isSubActive = location.pathname === subItem.path;
-                      const SubIcon = subItem.label === "Articles" ? Newspaper : BookOpen;
-                      return (
-                        <Link
-                          key={subItem.path}
-                          to={subItem.path}
-                          className={cn(
-                            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative",
-                            isSubActive
-                              ? "bg-purple-50 text-[#695CAE] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-[#695CAE] before:rounded-r"
-                              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                          )}
-                        >
-                          <SubIcon className={cn(
-                            "w-5 h-5",
-                            isSubActive ? "text-[#695CAE]" : "text-gray-500"
-                          )} />
-                          {subItem.label}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </>
-            ) : (
-              <Link
-                to={item.path}
-                onClick={() => handleLogout(item.path)}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative",
-                  isCollapsed ? "justify-center" : "justify-start",
-                  isActive
-                    ? "bg-purple-50 text-[#695CAE] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-[#695CAE] before:rounded-r"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                )}
-              >
-                <Icon
-                  className={cn(
-                    "w-5 h-5 flex-shrink-0",
-                    isActive ? "text-[#695CAE]" : "text-gray-500"
-                  )}
-                />
-                {!isCollapsed && <span>{item.label}</span>}
-              </Link>
-            )}
-          </div>
-        );
-      })}
+                  <Icon
+                    className={cn(
+                      "w-5 h-5 flex-shrink-0",
+                      isActive ? "text-[#695CAE]" : "text-gray-500"
+                    )}
+                  />
+                  {!isCollapsed && <span>{item.label}</span>}
+                </Link>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Logout item */}
+      <div className="mt-8">
+        {menuItems.slice(-1).map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={() => handleLogout(item.path)}
+              className={cn(
+                "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                isCollapsed ? "justify-center" : "justify-start",
+                "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              )}
+            >
+              <Icon className="w-5 h-5 text-gray-500" />
+              {!isCollapsed && <span>{item.label}</span>}
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 }

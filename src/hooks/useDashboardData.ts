@@ -35,6 +35,13 @@ const initializeSampleData = () => {
       { eventName: "Youth Conference", attendee: "Sarah Williams", date: new Date().toISOString(), status: "pending" }
     ]));
   }
+
+  if (!localStorage.getItem('contactMessages')) {
+    localStorage.setItem('contactMessages', JSON.stringify([
+      { firstName: "James", lastName: "Wilson", message: "Inquiry about service times", status: "pending", dateSubmitted: new Date().toISOString() },
+      { firstName: "Emma", lastName: "Davis", message: "Question about youth program", status: "pending", dateSubmitted: new Date().toISOString() }
+    ]));
+  }
 };
 
 const fetchDashboardStats = async () => {
@@ -61,6 +68,7 @@ const fetchRecentActivities = async () => {
   const prayerRequests = JSON.parse(localStorage.getItem('prayerRequests') || '[]');
   const memberRequests = JSON.parse(localStorage.getItem('memberRequests') || '[]');
   const eventRegistrations = JSON.parse(localStorage.getItem('eventRegistrations') || '[]');
+  const contactMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
 
   const activities = [
     ...donations.map((d: any) => ({
@@ -98,6 +106,13 @@ const fetchRecentActivities = async () => {
       description: `Membership request from ${mr.firstName} ${mr.lastName}`,
       date: mr.dateSubmitted,
       status: mr.status as "completed" | "pending" | "upcoming" | "confirmed",
+      reference: crypto.randomUUID()
+    })),
+    ...contactMessages.map((cm: any) => ({
+      type: "Contact" as const,
+      description: `Contact message from ${cm.firstName} ${cm.lastName}`,
+      date: cm.dateSubmitted,
+      status: cm.status as "completed" | "pending" | "upcoming" | "confirmed",
       reference: crypto.randomUUID()
     }))
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
