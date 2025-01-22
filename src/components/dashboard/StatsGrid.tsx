@@ -36,7 +36,7 @@ export function StatsGrid() {
 
   return (
     <>
-      <Card className="p-4 hover:shadow-lg transition-shadow">
+      <Card className="p-4">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -50,7 +50,7 @@ export function StatsGrid() {
         </div>
       </Card>
 
-      <Card className="p-4 hover:shadow-lg transition-shadow">
+      <Card className="p-4">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -64,7 +64,7 @@ export function StatsGrid() {
         </div>
       </Card>
 
-      <Card className="p-4 hover:shadow-lg transition-shadow">
+      <Card className="p-4">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -79,7 +79,7 @@ export function StatsGrid() {
         </div>
       </Card>
 
-      <Card className="p-4 hover:shadow-lg transition-shadow">
+      <Card className="p-4">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
