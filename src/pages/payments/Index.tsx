@@ -22,8 +22,14 @@ export default function Payments() {
       amount: 100,
       method: "Credit Card",
     },
-    // Add more sample data as needed
   ];
+
+  const handleDownloadReceipt = (id: string) => {
+    // Implement receipt download logic here
+    toast({
+      description: `Receipt for payment ${id} downloaded`,
+    });
+  };
 
   const filteredPayments = payments.filter((payment) => {
     return (
@@ -162,4 +168,4 @@ export default function Payments() {
       </div>
     </div>
   );
-}
+};

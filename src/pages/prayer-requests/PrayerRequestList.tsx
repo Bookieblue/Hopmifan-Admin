@@ -17,16 +17,15 @@ export default function PrayerRequestList() {
   const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
 
-  // Sample data
-  const requests = [
+  // Add requests state
+  const [requests, setRequests] = useState([
     {
       id: "1",
       description: "Pray for healing",
       status: "pending",
       date: "2024-01-15",
     },
-    // Add more sample data as needed
-  ];
+  ]);
 
   const filteredRequests = requests.filter((request) => {
     const matchesSearch = request.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -191,5 +190,4 @@ export default function PrayerRequestList() {
         uniqueLocations={[]}
       />
     </div>
-  );
-}
+};

@@ -17,8 +17,7 @@ export default function NewMembers() {
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
 
-  // Sample data
-  const members = [
+  const [members, setMembers] = useState([
     {
       id: "1",
       name: "John Doe",
@@ -28,8 +27,7 @@ export default function NewMembers() {
       status: "pending",
       joinDate: "2024-01-15",
     },
-    // Add more sample data as needed
-  ];
+  ]);
 
   const filteredMembers = members.filter((member) => {
     const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
