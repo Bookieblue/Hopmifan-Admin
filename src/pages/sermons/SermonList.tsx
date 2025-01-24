@@ -107,7 +107,8 @@ const SermonList = () => {
         return Object.entries(sermonsData).map(([id, sermon]: [string, any]) => ({
           id,
           ...sermon,
-          author: sermon.preacher // Map preacher to author for compatibility
+          // Handle both preacher and author fields
+          author: sermon.preacher || sermon.author
         }));
       } catch (error) {
         console.error("Error parsing stored sermons:", error);
@@ -119,7 +120,8 @@ const SermonList = () => {
     return Object.entries(sampleSermons).map(([id, sermon]) => ({
       id,
       ...sermon,
-      author: sermon.preacher // Map preacher to author for compatibility
+      // Handle both preacher and author fields
+      author: sermon.preacher || sermon.author
     }));
   });
 
