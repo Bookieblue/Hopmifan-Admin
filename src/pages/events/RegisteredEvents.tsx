@@ -196,6 +196,31 @@ export default function RegisteredEvents() {
         </div>
       </div>
 
+      <EventFilterModal
+        open={filterModalOpen}
+        onOpenChange={setFilterModalOpen}
+        countryFilter={countryFilter}
+        setCountryFilter={setCountryFilter}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        dateFilter={dateFilter}
+        setDateFilter={setDateFilter}
+        uniqueCountries={Array.from(new Set(registrations.map(registration => registration.country)))}
+      />
+
+      <DetailsModal
+        open={detailsModalOpen}
+        onOpenChange={setDetailsModalOpen}
+        title="Registration Details"
+        data={selectedRegistration}
+        onStatusChange={handleStatusChange}
+        statusLabels={{
+          pending: 'Pending',
+          completed: 'Confirmed',
+          buttonText: 'Confirm Registration'
+        }}
+      />
+
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
           data={filteredRegistrations}
@@ -262,26 +287,13 @@ export default function RegisteredEvents() {
           onSelectAll={handleSelectAll}
           getItemId={(item) => item.id}
           showCheckboxes={true}
-          CardComponent={({ item }) => (
-            <div className="p-4 border-b last:border-b-0">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
-                  <p className="text-sm text-gray-500">{item.email}</p>
-                </div>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  item.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {item.status === 'confirmed' ? 'Confirmed' : 'Pending'}
-                </span>
-              </div>
-              <div className="text-sm mb-2">
-                <p>{item.phone}</p>
-                <p className="text-gray-500">{item.eventName}</p>
-              </div>
-              <p className="text-sm text-gray-500">{item.dateSubmitted}</p>
-            </div>
-          )}
+          bulkActions={[
+            { value: "markConfirmed", label: "Mark as Confirmed" },
+            { value: "markPending", label: "Mark as Pending" }
+          ]}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
         />
 
         {selectedRegistrations.length > 0 && (
@@ -297,31 +309,6 @@ export default function RegisteredEvents() {
           />
         )}
       </div>
-
-      <EventFilterModal
-        open={filterModalOpen}
-        onOpenChange={setFilterModalOpen}
-        countryFilter={countryFilter}
-        setCountryFilter={setCountryFilter}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        uniqueCountries={Array.from(new Set(registrations.map(registration => registration.country)))}
-      />
-
-      <DetailsModal
-        open={detailsModalOpen}
-        onOpenChange={setDetailsModalOpen}
-        title="Registration Details"
-        data={selectedRegistration}
-        onStatusChange={handleStatusChange}
-        statusLabels={{
-          pending: 'Pending',
-          completed: 'Confirmed',
-          buttonText: 'Confirm Registration'
-        }}
-      />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>

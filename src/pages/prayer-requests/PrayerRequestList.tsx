@@ -8,8 +8,6 @@ import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
 
-// ... keep existing code (imports and type definitions)
-
 export default function PrayerRequestList() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
@@ -148,9 +146,9 @@ export default function PrayerRequestList() {
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+    <div className="page-container">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Prayer Requests</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Prayer Requests</h1>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -176,7 +174,7 @@ export default function PrayerRequestList() {
         </div>
       </div>
 
-      <div className="bg-white md:rounded-lg md:border">
+      <div className="bg-white rounded-lg border">
         <DataTable
           data={requests}
           columns={columns}
@@ -208,10 +206,7 @@ export default function PrayerRequestList() {
                   {item.status === 'completed' ? 'Prayed' : 'Pending'}
                 </span>
               </div>
-              <div className="text-sm mb-2">
-                <p>{item.phone}</p>
-                <p className="text-gray-500">{item.country}</p>
-              </div>
+              <p className="text-sm mb-2">{item.description}</p>
               <p className="text-sm text-gray-500">{item.date}</p>
             </div>
           )}
@@ -251,8 +246,8 @@ export default function PrayerRequestList() {
         onStatusChange={handleStatusChange}
         statusLabels={{
           pending: 'Pending',
-          completed: 'Prayed',
-          buttonText: 'Mark as Prayed'
+          completed: 'Replied',
+          buttonText: 'Mark as Replied'
         }}
       />
     </div>
