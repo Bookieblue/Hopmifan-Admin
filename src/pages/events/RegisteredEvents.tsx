@@ -61,20 +61,40 @@ export default function RegisteredEvents() {
   const [bulkAction, setBulkAction] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const handleSelectItem = (id: string, checked: boolean) => {
-    if (checked) {
-      setSelectedRegistrations([...selectedRegistrations, id]);
-    } else {
-      setSelectedRegistrations(selectedRegistrations.filter(itemId => itemId !== id));
+  const filteredRegistrations = registrations.filter(registration => {
+    const matchesSearch = 
+      `${registration.firstName} ${registration.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      registration.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      registration.phone.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCountry = countryFilter === 'all' || registration.country === countryFilter;
+    const matchesStatus = statusFilter === 'all' || registration.status === statusFilter;
+    const matchesDate = !dateFilter || registration.dateSubmitted === dateFilter;
+    
+    return matchesSearch && matchesCountry && matchesStatus && matchesDate;
+  });
+
+  const handleViewDetails = (id: string) => {
+    const registration = registrations.find(r => r.id === id);
+    if (registration) {
+      setSelectedRegistration(registration);
+      setDetailsModalOpen(true);
     }
   };
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedRegistrations(filteredRegistrations.map(reg => reg.id));
-    } else {
-      setSelectedRegistrations([]);
-    }
+  const handleStatusChange = (status: string) => {
+    const updatedRegistrations = registrations.map(registration => {
+      if (registration.id === selectedRegistration?.id) {
+        return {
+          ...registration,
+          status: status === 'confirmed' ? 'confirmed' : 'pending'
+        };
+      }
+      return registration;
+    });
+    setRegistrations(updatedRegistrations);
+    toast({
+      description: `Registration status updated to ${status}`,
+    });
   };
 
   const handleBulkAction = () => {
@@ -119,58 +139,10 @@ export default function RegisteredEvents() {
     setBulkAction("");
   };
 
-  const filteredRegistrations = registrations.filter(registration => {
-    const matchesSearch = 
-      `${registration.firstName} ${registration.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      registration.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      registration.phone.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCountry = countryFilter === 'all' || registration.country === countryFilter;
-    const matchesStatus = statusFilter === 'all' || registration.status === statusFilter;
-    const matchesDate = !dateFilter || registration.dateSubmitted === dateFilter;
-    
-    return matchesSearch && matchesCountry && matchesStatus && matchesDate;
-  });
-
-  const handleRowClick = (id: string) => {
-    const registration = registrations.find(r => r.id === id);
-    if (registration) {
-      setSelectedRegistration(registration);
-      setDetailsModalOpen(true);
-    }
-  };
-
-  const handleStatusChange = (status: string) => {
-    const updatedRegistrations = registrations.map(registration => {
-      if (registration.id === selectedRegistration?.id) {
-        return {
-          ...registration,
-          status: status === 'confirmed' ? 'confirmed' : 'pending'
-        };
-      }
-      return registration;
-    });
-    setRegistrations(updatedRegistrations);
-    toast({
-      description: `Registration status updated to ${status}`,
-    });
-  };
-
-  const handleConfirmBulkDelete = () => {
-    const updatedRegistrations = registrations.filter(
-      registration => !selectedRegistrations.includes(registration.id)
-    );
-    setRegistrations(updatedRegistrations);
-    setSelectedRegistrations([]);
-    setDeleteDialogOpen(false);
-    toast({
-      description: `${selectedRegistrations.length} registrations have been deleted`,
-    });
-  };
-
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Event Registrations</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Event Registrations</h1>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -195,31 +167,6 @@ export default function RegisteredEvents() {
           </Button>
         </div>
       </div>
-
-      <EventFilterModal
-        open={filterModalOpen}
-        onOpenChange={setFilterModalOpen}
-        countryFilter={countryFilter}
-        setCountryFilter={setCountryFilter}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        uniqueCountries={Array.from(new Set(registrations.map(registration => registration.country)))}
-      />
-
-      <DetailsModal
-        open={detailsModalOpen}
-        onOpenChange={setDetailsModalOpen}
-        title="Registration Details"
-        data={selectedRegistration}
-        onStatusChange={handleStatusChange}
-        statusLabels={{
-          pending: 'Pending',
-          completed: 'Confirmed',
-          buttonText: 'Confirm Registration'
-        }}
-      />
 
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
@@ -269,31 +216,24 @@ export default function RegisteredEvents() {
               header: "Actions",
               accessor: (registration: any) => (
                 <div className="flex items-center justify-end gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRowClick(registration.id);
-                    }}
-                    className="text-[#9b87f5] text-sm hover:underline"
-                  >
+                  <Button onClick={() => handleViewDetails(registration.id)} className="text-[#9b87f5] text-sm hover:underline">
                     See details
-                  </button>
+                  </Button>
                 </div>
               )
             }
           ]}
           selectedItems={selectedRegistrations}
-          onSelectItem={handleSelectItem}
-          onSelectAll={handleSelectAll}
+          onSelectItem={(id, checked) => {
+            setSelectedRegistrations(prev =>
+              checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
+            );
+          }}
+          onSelectAll={(checked) => {
+            setSelectedRegistrations(checked ? filteredRegistrations.map(r => r.id) : []);
+          }}
           getItemId={(item) => item.id}
           showCheckboxes={true}
-          bulkActions={[
-            { value: "markConfirmed", label: "Mark as Confirmed" },
-            { value: "markPending", label: "Mark as Pending" }
-          ]}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={handleBulkAction}
         />
 
         {selectedRegistrations.length > 0 && (
@@ -309,6 +249,31 @@ export default function RegisteredEvents() {
           />
         )}
       </div>
+
+      <EventFilterModal
+        open={filterModalOpen}
+        onOpenChange={setFilterModalOpen}
+        countryFilter={countryFilter}
+        setCountryFilter={setCountryFilter}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        dateFilter={dateFilter}
+        setDateFilter={setDateFilter}
+        uniqueCountries={Array.from(new Set(registrations.map(registration => registration.country)))}
+      />
+
+      <DetailsModal
+        open={detailsModalOpen}
+        onOpenChange={setDetailsModalOpen}
+        title="Registration Details"
+        data={selectedRegistration}
+        onStatusChange={handleStatusChange}
+        statusLabels={{
+          pending: 'Pending',
+          completed: 'Confirmed',
+          buttonText: 'Confirm Registration'
+        }}
+      />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
