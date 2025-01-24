@@ -24,19 +24,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-interface Sermon {
-  id: string;
-  title: string;
-  preacher: string;
-  date: string;
-  status: "published" | "draft";
-  youtubeLink?: string;
-  content?: string;
-  thumbnailUrl?: string;
-}
-
-// Initial sample data
-const sampleSermons: Record<string, Sermon> = {
+// Sample sermons data
+const sampleSermons = {
   "SER-001": {
     id: "SER-001",
     title: "The Power of Faith",
@@ -49,7 +38,7 @@ const sampleSermons: Record<string, Sermon> = {
     status: "published",
     youtubeLink: "https://youtube.com/watch?v=sample1",
     content: "In this powerful sermon, we explore the transformative power of faith in our daily lives. Through biblical examples and contemporary applications, we learn how faith can move mountains and change hearts.",
-    thumbnailUrl: ""
+    thumbnailUrl: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3"
   },
   "SER-002": {
     id: "SER-002",
@@ -63,7 +52,7 @@ const sampleSermons: Record<string, Sermon> = {
     status: "published",
     youtubeLink: "https://youtube.com/watch?v=sample2",
     content: "Discover the true meaning of walking in love as we delve into 1 Corinthians 13. This message explores practical ways to demonstrate Christ-like love in our relationships and community.",
-    thumbnailUrl: ""
+    thumbnailUrl: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65"
   },
   "SER-003": {
     id: "SER-003",
@@ -77,7 +66,7 @@ const sampleSermons: Record<string, Sermon> = {
     status: "draft",
     youtubeLink: "https://youtube.com/watch?v=sample3",
     content: "A timely message about finding and maintaining peace in the midst of life's storms. Drawing from Scripture, we learn how to anchor our souls in God's promises.",
-    thumbnailUrl: ""
+    thumbnailUrl: "https://images.unsplash.com/photo-1504681869696-d977211a5f4c"
   },
   "SER-004": {
     id: "SER-004",
@@ -91,7 +80,7 @@ const sampleSermons: Record<string, Sermon> = {
     status: "published",
     youtubeLink: "https://youtube.com/watch?v=sample4",
     content: "Explore the biblical principles of generosity and the blessings that come from cheerful giving. This sermon unpacks 2 Corinthians 9:6-7 and its application in our lives.",
-    thumbnailUrl: ""
+    thumbnailUrl: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94"
   },
   "SER-005": {
     id: "SER-005",
@@ -105,9 +94,20 @@ const sampleSermons: Record<string, Sermon> = {
     status: "draft",
     youtubeLink: "https://youtube.com/watch?v=sample5",
     content: "An in-depth look at Ephesians 6 and the armor of God. Learn how to stand firm in your faith and overcome spiritual battles through prayer and God's Word.",
-    thumbnailUrl: ""
+    thumbnailUrl: "https://images.unsplash.com/photo-1506126613408-eca07ce68773"
   }
 };
+
+interface Sermon {
+  id: string;
+  title: string;
+  preacher: string;
+  date: string;
+  status: "published" | "draft";
+  youtubeLink?: string;
+  content?: string;
+  thumbnailUrl?: string;
+}
 
 export default function SermonList() {
   const { toast } = useToast();
@@ -122,7 +122,7 @@ export default function SermonList() {
   const [sermonToDelete, setSermonToDelete] = useState<string>("");
 
   // Initialize sermons from localStorage with sample data if empty
-  const [sermons, setSermons] = useState<Sermon[]>(() => {
+  const [sermons, setSermons] = useState(() => {
     const stored = localStorage.getItem('sermons');
     if (!stored) {
       localStorage.setItem('sermons', JSON.stringify(sampleSermons));
