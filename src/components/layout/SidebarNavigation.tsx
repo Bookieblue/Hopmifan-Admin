@@ -29,6 +29,7 @@ const menuItems = [
       { label: "Bookstore", path: "/bookstore" }
     ]
   },
+  { icon: Book, label: "Sermons", path: "/sermons" },
   { icon: CreditCard, label: "Donations", path: "/donations" },
   {
     icon: Calendar,
@@ -50,7 +51,6 @@ const menuItems = [
   },
   { icon: CreditCard, label: "Payments", path: "/payments" },
   { icon: Users, label: "New Members", path: "/new-members" },
-  { icon: Book, label: "Sermons", path: "/sermons" },
   { icon: LogOut, label: "Logout", path: "/auth/signin" },
 ];
 
