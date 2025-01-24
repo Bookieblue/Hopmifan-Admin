@@ -107,7 +107,6 @@ export default function NewMembers() {
   };
 
   const handleViewDetails = (id: string) => {
-    // Implement view details functionality
     console.log("View details for member:", id);
   };
 
@@ -169,27 +168,27 @@ export default function NewMembers() {
   const columns = [
     {
       header: "Name",
-      accessor: "name",
+      accessor: (member: Member) => member.name,
       className: "text-[14px]"
     },
     {
       header: "Email",
-      accessor: "email",
+      accessor: (member: Member) => member.email,
       className: "text-[14px]"
     },
     {
       header: "Phone",
-      accessor: "phone",
+      accessor: (member: Member) => member.phone,
       className: "text-[14px]"
     },
     {
       header: "Location",
-      accessor: "location",
+      accessor: (member: Member) => member.location,
       className: "text-[14px]"
     },
     {
       header: "Join Date",
-      accessor: "joinDate",
+      accessor: (member: Member) => member.joinDate,
       className: "text-[14px]"
     },
     {
