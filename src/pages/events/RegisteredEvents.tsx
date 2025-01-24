@@ -139,19 +139,19 @@ export default function RegisteredEvents() {
     }
   };
 
-  const handleStatusChange = (id: string, newStatus: string) => {
+  const handleStatusChange = (status: string) => {
     const updatedRegistrations = registrations.map(registration => {
-      if (registration.id === id) {
+      if (registration.id === selectedRegistration?.id) {
         return {
           ...registration,
-          status: newStatus === 'confirmed' ? 'confirmed' : 'pending'
+          status: status === 'confirmed' ? 'confirmed' : 'pending'
         };
       }
       return registration;
     });
     setRegistrations(updatedRegistrations);
     toast({
-      description: `Registration status updated to ${newStatus}`,
+      description: `Registration status updated to ${status}`,
     });
   };
 
