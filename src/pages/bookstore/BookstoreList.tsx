@@ -42,27 +42,19 @@ const sampleBooks: Book[] = [
     id: "BOOK-1",
     title: "The Purpose Driven Life",
     author: "Segun Adewunmi",
-    price: 19.99,
+    price: 15000.00,
     description: "A comprehensive guide to finding your purpose in life through faith.",
     status: "published",
-    publishDate: new Date(2024, 0, 15).toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    })
+    publishDate: new Date(2024, 0, 15).toISOString()
   },
   {
     id: "BOOK-2",
-    title: "Prayer Warriors",
+    title: "Daily Devotional",
     author: "Segun Adewunmi",
-    price: 15.99,
+    price: 10000.00,
     description: "A guide to effective prayer and spiritual warfare.",
-    status: "draft",
-    publishDate: new Date(2024, 0, 20).toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    })
+    status: "published",
+    publishDate: new Date(2024, 0, 20).toISOString()
   },
   {
     id: "BOOK-3",
@@ -71,11 +63,7 @@ const sampleBooks: Book[] = [
     price: 24.99,
     description: "Overcoming life's challenges through unwavering faith.",
     status: "published",
-    publishDate: new Date(2024, 1, 1).toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    })
+    publishDate: new Date(2024, 1, 1).toISOString()
   }
 ];
 
@@ -189,7 +177,14 @@ export default function BookstoreList() {
       book.author.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || book.status === statusFilter;
     return matchesSearch && matchesStatus;
-  });
+  }).map(book => ({
+    ...book,
+    publishDate: new Date(book.publishDate).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    })
+  }));
 
   const handleSelectItem = (id: string, checked: boolean) => {
     setSelectedItems(prev =>
