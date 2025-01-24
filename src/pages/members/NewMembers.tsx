@@ -69,11 +69,20 @@ export default function NewMembers() {
       )
     },
     { 
-      header: "Contact", 
+      header: "Contact Info", 
       accessor: (member: any) => (
         <div>
           <div>{member.phone}</div>
-          <div className="text-sm text-gray-500">{member.location}</div>
+          <div className="text-sm text-gray-500 capitalize">{member.preferredContact} preferred</div>
+        </div>
+      )
+    },
+    { 
+      header: "Location", 
+      accessor: (member: any) => (
+        <div>
+          <div>{member.country}</div>
+          <div className="text-sm text-gray-500">{member.cityState}</div>
         </div>
       )
     },
@@ -87,6 +96,22 @@ export default function NewMembers() {
             {member.status === 'completed' ? 'Approved' : 'Pending'}
           </span>
           <div className="text-sm text-gray-500 mt-1">{member.joinDate}</div>
+        </div>
+      )
+    },
+    {
+      header: "Actions",
+      accessor: (member: any) => (
+        <div className="flex items-center justify-end gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewDetails(member.id);
+            }}
+            className="text-[#9b87f5] text-sm hover:underline"
+          >
+            See details
+          </button>
         </div>
       )
     }

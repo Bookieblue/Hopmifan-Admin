@@ -70,9 +70,22 @@ export default function PrayerRequestList() {
       )
     },
     { 
-      header: "Request", 
-      accessor: "description",
-      className: "max-w-[200px] truncate"
+      header: "Contact Info", 
+      accessor: (request: any) => (
+        <div>
+          <div>{request.phone}</div>
+          <div className="text-sm text-gray-500">{request.country}</div>
+        </div>
+      )
+    },
+    { 
+      header: "Location", 
+      accessor: (request: any) => (
+        <div>
+          <div>{request.country}</div>
+          <div className="text-sm text-gray-500">{request.cityState || 'N/A'}</div>
+        </div>
+      )
     },
     { 
       header: "Status & Date", 
@@ -84,6 +97,22 @@ export default function PrayerRequestList() {
             {request.status === 'completed' ? 'Prayed' : 'Pending'}
           </span>
           <div className="text-sm text-gray-500 mt-1">{request.date}</div>
+        </div>
+      )
+    },
+    {
+      header: "Actions",
+      accessor: (request: any) => (
+        <div className="flex items-center justify-end gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewDetails(request.id);
+            }}
+            className="text-[#9b87f5] text-sm hover:underline"
+          >
+            See details
+          </button>
         </div>
       )
     }
