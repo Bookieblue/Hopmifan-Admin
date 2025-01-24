@@ -1,22 +1,17 @@
-import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
-
 interface ViewDetailsButtonProps {
   onClick: () => void;
 }
 
 export function ViewDetailsButton({ onClick }: ViewDetailsButtonProps) {
   return (
-    <Button
-      variant="ghost"
-      size="icon"
+    <button
       onClick={(e) => {
         e.stopPropagation();
         onClick();
       }}
-      className="ml-2"
+      className="text-[#9b87f5] hover:text-[#8b75f3] text-sm font-medium"
     >
-      <Eye className="h-4 w-4" />
-    </Button>
+      See details
+    </button>
   );
 }
