@@ -12,7 +12,6 @@ import {
 import { DataTable } from "@/components/shared/DataTable";
 import { useToast } from "@/hooks/use-toast";
 import { FilterModal } from "@/components/sermons/FilterModal";
-import { BulkActions } from "@/components/shared/BulkActions";
 import {
   AlertDialog,
   AlertDialogAction,
