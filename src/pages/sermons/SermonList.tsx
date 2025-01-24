@@ -1,256 +1,71 @@
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
-import { Filter, Plus, Search } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { FilterModal } from "@/components/sermons/FilterModal";
-import { BulkActions } from "@/components/shared/BulkActions";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { SermonCard } from "@/components/sermons/SermonCard";
+import { Filter, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { DetailsModal } from "@/components/shared/DetailsModal";
+import { useToast } from "@/hooks/use-toast";
 
-// Sample data with consistent structure
-const sampleSermons = {
-  "SER-001": {
-    title: "The Power of Faith in Modern Times",
-    description: "Exploring how faith remains a vital force in our contemporary world, providing guidance and strength in facing modern challenges.",
-    author: "Pastor John Smith",
-    youtubeLink: "https://youtube.com/watch?v=example1",
-    publishDate: new Date(2024, 0, 20).toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    }),
-    status: "published",
-    thumbnailImage: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05"
-  },
-  "SER-002": {
-    title: "Understanding God's Grace",
-    content: "<p>A deep dive into the concept of divine grace and its transformative power in our lives.</p>",
-    author: "Rev. Sarah Johnson",
-    publishDate: new Date(2024, 0, 19).toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    }),
-    status: "published",
-    imagePreview: "https://images.unsplash.com/photo-1501854140801-50d01698950b"
-  },
-  "SER-003": {
-    title: "Walking in Love: A Christian's Journey",
-    content: "<p>Examining the practical application of love in our daily lives through biblical teachings and modern examples.</p>",
-    author: "Pastor Michael Brown",
-    publishDate: new Date(2024, 0, 18).toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    }),
-    status: "published",
-    imagePreview: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a"
-  },
-  "SER-004": {
-    title: "Finding Peace in Troubled Times",
-    content: "<p>Discovering spiritual peace and maintaining faith during periods of uncertainty and challenge.</p>",
-    author: "Rev. Emily Davis",
-    publishDate: new Date(2024, 0, 17).toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    }),
-    status: "draft",
-    imagePreview: "https://images.unsplash.com/photo-1504198322253-cfa87a0ff25f"
-  },
-  "SER-005": {
-    title: "The Purpose of Prayer",
-    content: "<p>Understanding the power and importance of prayer in building a stronger relationship with God.</p>",
-    author: "Pastor David Wilson",
-    publishDate: new Date(2024, 0, 16).toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    }),
-    status: "published",
-    imagePreview: "https://images.unsplash.com/photo-1455849318743-b2233052fcff"
-  }
-};
-
-// Updated type definition for sermon data
-type SermonData = {
-  id: string;
+interface SermonData {
   title: string;
-  description?: string;
-  content?: string;
+  description: string;
   author: string;
-  youtubeLink?: string;
+  youtubeLink: string;
   publishDate: string;
   status: string;
-  thumbnailImage?: string;
-  imagePreview?: string;
-};
+  thumbnailImage: string;
+  preacher?: string; // Made optional since it might not always be present
+}
 
-const SermonList = () => {
+const sampleSermons: SermonData[] = [
+  {
+    title: "The Power of Faith",
+    description: "A deep dive into the importance of faith in our lives.",
+    author: "Pastor John",
+    youtubeLink: "https://youtube.com/example1",
+    publishDate: "2024-01-01",
+    status: "published",
+    thumbnailImage: "https://example.com/image1.jpg",
+    preacher: "Pastor John"
+  },
+  {
+    title: "Hope in Difficult Times",
+    description: "Finding hope during challenging moments.",
+    author: "Pastor Jane",
+    youtubeLink: "https://youtube.com/example2",
+    publishDate: "2024-01-15",
+    status: "published",
+    thumbnailImage: "https://example.com/image2.jpg",
+    preacher: "Pastor Jane"
+  }
+];
+
+export default function SermonList() {
   const { toast } = useToast();
-  const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [authorFilter, setAuthorFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [dateFilter, setDateFilter] = useState("");
-  const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const [selectedSermons, setSelectedSermons] = useState<string[]>([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [sermonToDelete, setSermonToDelete] = useState<string>("");
-  const [bulkAction, setBulkAction] = useState("");
-  const postsPerPage = 15;
-
-  const [sermons, setSermons] = useState<SermonData[]>(() => {
-    const stored = localStorage.getItem('sermons');
-    if (stored) {
-      try {
-        const sermonsData = JSON.parse(stored);
-        return Object.entries(sermonsData).map(([id, sermon]: [string, any]) => ({
-          id,
-          ...sermon,
-          author: sermon.author || sermon.preacher // Consistently map to author
-        }));
-      } catch (error) {
-        console.error("Error parsing stored sermons:", error);
-        return [];
-      }
-    }
-    
-    localStorage.setItem('sermons', JSON.stringify(sampleSermons));
-    return Object.entries(sampleSermons).map(([id, sermon]) => ({
-      id,
-      ...sermon,
-      author: sermon.author || sermon.preacher // Consistently map to author
-    }));
-  });
-
-  const handleDelete = (sermonId: string) => {
-    setSermonToDelete(sermonId);
-    setDeleteDialogOpen(true);
-  };
-
-  const confirmDelete = () => {
-    setSermons(sermons.filter(sermon => sermon.id !== sermonToDelete));
-    
-    const storedSermons = JSON.parse(localStorage.getItem('sermons') || '{}');
-    delete storedSermons[sermonToDelete];
-    localStorage.setItem('sermons', JSON.stringify(storedSermons));
-    
-    toast({
-      description: "Sermon deleted successfully."
-    });
-    
-    setDeleteDialogOpen(false);
-    setSermonToDelete("");
-    setSelectedSermons(selectedSermons.filter(id => id !== sermonToDelete));
-  };
-
-  const handleRowClick = (id: string) => {
-    if (!deleteDialogOpen) {
-      navigate(`/sermons/${id}/edit`);
-    }
-  };
-
-  const handleStatusChange = (id: string, newStatus: string) => {
-    setSermons(sermons.map(sermon => 
-      sermon.id === id ? { ...sermon, status: newStatus } : sermon
-    ));
-    
-    const storedSermons = JSON.parse(localStorage.getItem('sermons') || '{}');
-    if (storedSermons[id]) {
-      storedSermons[id].status = newStatus;
-      localStorage.setItem('sermons', JSON.stringify(storedSermons));
-    }
-    
-    toast({
-      description: `Sermon ${newStatus === 'published' ? 'published' : 'unpublished'} successfully.`
-    });
-  };
-
-  const handleBulkAction = () => {
-    if (!bulkAction || selectedSermons.length === 0) return;
-
-    const storedSermons = JSON.parse(localStorage.getItem('sermons') || '{}');
-    let updatedSermons = [...sermons];
-
-    switch (bulkAction) {
-      case "delete":
-        updatedSermons = sermons.filter(sermon => !selectedSermons.includes(sermon.id));
-        selectedSermons.forEach(id => delete storedSermons[id]);
-        break;
-      
-      case "publish":
-      case "draft":
-        updatedSermons = sermons.map(sermon => 
-          selectedSermons.includes(sermon.id) 
-            ? { ...sermon, status: bulkAction === 'publish' ? 'published' : 'draft' }
-            : sermon
-        );
-        selectedSermons.forEach(id => {
-          if (storedSermons[id]) {
-            storedSermons[id].status = bulkAction === 'publish' ? 'published' : 'draft';
-          }
-        });
-        break;
-    }
-    
-    setSermons(updatedSermons);
-    localStorage.setItem('sermons', JSON.stringify(storedSermons));
-    
-    toast({
-      description: `Selected sermons ${bulkAction}ed successfully.`
-    });
-    
-    setSelectedSermons([]);
-    setBulkAction("");
-  };
+  const [sermons, setSermons] = useState(sampleSermons);
+  const [selectedSermon, setSelectedSermon] = useState<SermonData | null>(null);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
 
   const filteredSermons = sermons.filter(sermon => {
-    const matchesSearch = 
+    return (
       sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sermon.author.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesAuthor = authorFilter === 'all' || sermon.author === authorFilter;
-    const matchesStatus = statusFilter === 'all' || sermon.status === statusFilter;
-    const matchesDate = !dateFilter || sermon.publishDate === dateFilter;
-    
-    return matchesSearch && matchesAuthor && matchesStatus && matchesDate;
+      sermon.author.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   });
 
-  const totalPages = Math.ceil(filteredSermons.length / postsPerPage);
-  const startIndex = (currentPage - 1) * postsPerPage;
-  const currentSermons = filteredSermons.slice(startIndex, startIndex + postsPerPage);
-  const uniqueAuthors = Array.from(new Set(sermons.map(sermon => sermon.author)));
-
-  const bulkActions = [
-    { value: "delete", label: "Delete Selected" },
-    { value: "publish", label: "Publish Selected" },
-    { value: "draft", label: "Move to Draft" }
-  ];
+  const handleViewDetails = (id: string) => {
+    const sermon = sermons.find(s => s.title === id);
+    if (sermon) {
+      setSelectedSermon(sermon);
+      setDetailsModalOpen(true);
+    }
+  };
 
   return (
-    <div className="page-container">
+    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Our Sermons</h1>
-        <Link 
-          to="/sermons/create"
-          className="bg-[#695CAE] hover:bg-[#695CAE]/90 text-white inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2"
-        >
-          <Plus className="h-4 w-4" />
-          New Sermon
-        </Link>
+        <h1 className="text-2xl font-bold">Sermon List</h1>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -265,117 +80,59 @@ const SermonList = () => {
               className="pl-10"
             />
           </div>
-          <Button
-            variant="outline"
-            onClick={() => setFilterModalOpen(true)}
-            className="flex items-center gap-2"
-          >
-            <Filter className="h-4 w-4" />
-            Filters
-          </Button>
         </div>
       </div>
 
-      <FilterModal
-        open={filterModalOpen}
-        onOpenChange={setFilterModalOpen}
-        authorFilter={authorFilter}
-        setAuthorFilter={setAuthorFilter}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        uniqueAuthors={uniqueAuthors}
-      />
-
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
-          data={currentSermons}
+          data={filteredSermons}
           columns={[
             { 
               header: "Title", 
-              accessor: "title",
-              className: "text-[14px]"
+              accessor: (sermon: SermonData) => (
+                <div className="font-medium">{sermon.title}</div>
+              )
             },
             { 
               header: "Author", 
-              accessor: "author",
-              className: "text-[14px]"
+              accessor: (sermon: SermonData) => (
+                <div>{sermon.author}</div>
+              )
             },
             { 
-              header: "Date & Status", 
-              accessor: (sermon: any) => (
-                <div className="space-y-1 text-[14px]">
-                  <div>{sermon.publishDate}</div>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    sermon.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {sermon.status}
-                  </span>
+              header: "Published Date", 
+              accessor: (sermon: SermonData) => (
+                <div>{sermon.publishDate}</div>
+              )
+            },
+            { 
+              header: "Status", 
+              accessor: (sermon: SermonData) => (
+                <div>{sermon.status}</div>
+              )
+            },
+            {
+              header: "Actions",
+              accessor: (sermon: SermonData) => (
+                <div className="flex items-center justify-end gap-2">
+                  <Button onClick={() => handleViewDetails(sermon.title)} className="text-[#9b87f5] text-sm hover:underline">
+                    See details
+                  </Button>
                 </div>
-              ),
-              className: "text-[14px]"
+              )
             }
           ]}
-          selectedItems={selectedSermons}
-          onSelectItem={(id, checked) => {
-            if (checked) {
-              setSelectedSermons([...selectedSermons, id]);
-            } else {
-              setSelectedSermons(selectedSermons.filter(sermonId => sermonId !== id));
-            }
-          }}
-          onSelectAll={(checked) => {
-            if (checked) {
-              setSelectedSermons(currentSermons.map(sermon => sermon.id));
-            } else {
-              setSelectedSermons([]);
-            }
-          }}
-          getItemId={(item) => item.id}
-          actions={{
-            onDelete: handleDelete,
-            onStatusChange: handleStatusChange,
-          }}
-          bulkActions={bulkActions}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={handleBulkAction}
-          onRowClick={handleRowClick}
-          CardComponent={SermonCard}
-          showCheckboxes={true}
+          getItemId={(item) => item.title}
+          showCheckboxes={false}
         />
-
-        {selectedSermons.length > 0 && (
-          <BulkActions
-            selectedCount={selectedSermons.length}
-            bulkAction={bulkAction}
-            setBulkAction={setBulkAction}
-            onBulkAction={handleBulkAction}
-            actions={bulkActions}
-          />
-        )}
       </div>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the sermon
-              and remove all of its data from our servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DetailsModal
+        open={detailsModalOpen}
+        onOpenChange={setDetailsModalOpen}
+        title="Sermon Details"
+        data={selectedSermon}
+      />
     </div>
   );
-};
-
-export default SermonList;
+}

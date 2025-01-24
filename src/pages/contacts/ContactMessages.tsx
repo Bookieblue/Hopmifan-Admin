@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { ContactFilterModal } from "@/components/contacts/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
+import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
 import { useToast } from "@/hooks/use-toast";
 
 const sampleContacts = [

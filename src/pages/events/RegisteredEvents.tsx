@@ -61,6 +61,20 @@ export default function RegisteredEvents() {
   const [bulkAction, setBulkAction] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
+  const handleConfirmBulkDelete = () => {
+    if (selectedRegistrations.length === 0) return;
+    
+    const updatedRegistrations = registrations.filter(
+      registration => !selectedRegistrations.includes(registration.id)
+    );
+    setRegistrations(updatedRegistrations);
+    setSelectedRegistrations([]);
+    setDeleteDialogOpen(false);
+    toast({
+      description: `${selectedRegistrations.length} registrations deleted successfully`,
+    });
+  };
+
   const filteredRegistrations = registrations.filter(registration => {
     const matchesSearch = 
       `${registration.firstName} ${registration.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
