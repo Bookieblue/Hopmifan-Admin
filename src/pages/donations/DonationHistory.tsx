@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/donations/FilterModal";
 import { DonationDetailsModal } from "@/components/donations/DonationDetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const donations = [
   {
@@ -55,6 +56,7 @@ const donations = [
 
 export default function DonationHistory() {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [typeFilter, setTypeFilter] = useState("all");
@@ -155,7 +157,7 @@ export default function DonationHistory() {
   ];
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto">
+    <div className={`${isMobile ? 'p-4' : 'p-6'} max-w-[1400px] mx-auto`}>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold">Donation History</h1>
       </div>
