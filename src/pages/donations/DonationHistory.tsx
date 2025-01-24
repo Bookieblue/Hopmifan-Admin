@@ -157,7 +157,7 @@ export default function DonationHistory() {
   ];
 
   return (
-    <div className={`${isMobile ? 'mt-16 px-4 py-6' : 'p-6'} max-w-[1400px] mx-auto`}>
+    <div className="mobile-spacing">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold">Donation History</h1>
       </div>
