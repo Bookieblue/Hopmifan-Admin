@@ -11,18 +11,7 @@ type SermonData = {
   content: string;
   status: "draft" | "published";
   thumbnailUrl?: string;
-};
-
-const getStoredSermons = (): Record<string, SermonData> => {
-  try {
-    const stored = localStorage.getItem('sermons');
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (error) {
-    console.error('Error parsing sermons from localStorage:', error);
-  }
-  return {};
+  date: string;
 };
 
 export default function EditSermon() {
@@ -34,17 +23,39 @@ export default function EditSermon() {
 
   useEffect(() => {
     const fetchSermon = () => {
-      const sermons = getStoredSermons();
-      if (id && sermons[id]) {
-        setInitialData(sermons[id]);
-      } else {
+      try {
+        const stored = localStorage.getItem('sermons');
+        if (!stored) {
+          toast({
+            variant: "destructive",
+            description: "No sermons found"
+          });
+          navigate("/sermons");
+          return;
+        }
+
+        const sermons: SermonData[] = JSON.parse(stored);
+        const sermon = sermons.find(s => s.id === id);
+
+        if (sermon) {
+          setInitialData(sermon);
+        } else {
+          toast({
+            variant: "destructive",
+            description: "Sermon not found"
+          });
+          navigate("/sermons");
+        }
+      } catch (error) {
+        console.error('Error fetching sermon:', error);
         toast({
           variant: "destructive",
-          description: "Sermon not found"
+          description: "Error loading sermon data"
         });
         navigate("/sermons");
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     fetchSermon();
@@ -59,15 +70,22 @@ export default function EditSermon() {
     thumbnail: File | null;
   }) => {
     try {
-      const sermons = getStoredSermons();
-      if (id) {
-        sermons[id] = {
-          ...sermons[id],
-          ...data,
-          thumbnailUrl: data.thumbnail ? URL.createObjectURL(data.thumbnail) : sermons[id].thumbnailUrl
-        };
-        localStorage.setItem('sermons', JSON.stringify(sermons));
-      }
+      const stored = localStorage.getItem('sermons');
+      if (!stored) throw new Error('No sermons found');
+
+      const sermons: SermonData[] = JSON.parse(stored);
+      const updatedSermons = sermons.map(sermon => {
+        if (sermon.id === id) {
+          return {
+            ...sermon,
+            ...data,
+            thumbnailUrl: data.thumbnail ? URL.createObjectURL(data.thumbnail) : sermon.thumbnailUrl
+          };
+        }
+        return sermon;
+      });
+
+      localStorage.setItem('sermons', JSON.stringify(updatedSermons));
       
       toast({
         description: "Sermon updated successfully!"

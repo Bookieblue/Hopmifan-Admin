@@ -69,25 +69,24 @@ export default function SermonList() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sermonToDelete, setSermonToDelete] = useState<string>("");
 
-  // Initialize sermons from localStorage with sample data if empty
+  // Initialize sermons with proper structure
   const [sermons, setSermons] = useState<Sermon[]>(() => {
     const stored = localStorage.getItem('sermons');
     if (!stored) {
-      const sermonsObj = sampleSermons.reduce((acc, sermon) => {
-        acc[sermon.id] = sermon;
-        return acc;
-      }, {} as Record<string, Sermon>);
-      localStorage.setItem('sermons', JSON.stringify(sermonsObj));
+      localStorage.setItem('sermons', JSON.stringify(sampleSermons));
       return sampleSermons;
     }
     try {
-      const parsedSermons = JSON.parse(stored);
-      return Object.values(parsedSermons);
+      return JSON.parse(stored);
     } catch (error) {
-      console.error('Error parsing sermons from localStorage:', error);
+      console.error('Error parsing sermons:', error);
       return sampleSermons;
     }
   });
+
+  const handleRowClick = (id: string) => {
+    navigate(`/sermons/${id}/edit`);
+  };
 
   const handleDelete = (id: string) => {
     setSermonToDelete(id);
@@ -96,13 +95,8 @@ export default function SermonList() {
 
   const confirmDelete = () => {
     const updatedSermons = sermons.filter(sermon => sermon.id !== sermonToDelete);
-    const sermonsObj = updatedSermons.reduce((acc, sermon) => {
-      acc[sermon.id] = sermon;
-      return acc;
-    }, {} as Record<string, Sermon>);
-    
     setSermons(updatedSermons);
-    localStorage.setItem('sermons', JSON.stringify(sermonsObj));
+    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
     
     toast({
       description: "Sermon deleted successfully",
@@ -110,78 +104,6 @@ export default function SermonList() {
     setDeleteDialogOpen(false);
     setSermonToDelete("");
     setSelectedSermons(selectedSermons.filter(itemId => itemId !== sermonToDelete));
-  };
-
-  const handleStatusChange = (id: string, newStatus: "published" | "draft") => {
-    const updatedSermons = sermons.map(sermon => {
-      if (sermon.id === id) {
-        return { ...sermon, status: newStatus };
-      }
-      return sermon;
-    });
-
-    const sermonsObj = updatedSermons.reduce((acc, sermon) => {
-      acc[sermon.id] = sermon;
-      return acc;
-    }, {} as Record<string, Sermon>);
-    
-    setSermons(updatedSermons);
-    localStorage.setItem('sermons', JSON.stringify(sermonsObj));
-    
-    toast({
-      description: `Sermon ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
-    });
-  };
-
-  const handleBulkAction = () => {
-    if (!bulkAction || selectedSermons.length === 0) return;
-
-    const updatedSermons = [...sermons];
-    
-    switch (bulkAction) {
-      case "publish":
-      case "unpublish":
-        selectedSermons.forEach(id => {
-          const sermonIndex = updatedSermons.findIndex(s => s.id === id);
-          if (sermonIndex !== -1) {
-            updatedSermons[sermonIndex] = {
-              ...updatedSermons[sermonIndex],
-              status: bulkAction === "publish" ? "published" : "draft"
-            };
-          }
-        });
-        break;
-      case "delete":
-        const remainingSermons = updatedSermons.filter(
-          sermon => !selectedSermons.includes(sermon.id)
-        );
-        setSermons(remainingSermons);
-        const sermonsObj = remainingSermons.reduce((acc, sermon) => {
-          acc[sermon.id] = sermon;
-          return acc;
-        }, {} as Record<string, Sermon>);
-        localStorage.setItem('sermons', JSON.stringify(sermonsObj));
-        toast({
-          description: `${selectedSermons.length} sermons deleted successfully`,
-        });
-        setSelectedSermons([]);
-        setBulkAction("");
-        return;
-    }
-    
-    const sermonsObj = updatedSermons.reduce((acc, sermon) => {
-      acc[sermon.id] = sermon;
-      return acc;
-    }, {} as Record<string, Sermon>);
-    
-    setSermons(updatedSermons);
-    localStorage.setItem('sermons', JSON.stringify(sermonsObj));
-    setSelectedSermons([]);
-    setBulkAction("");
-    
-    toast({
-      description: `${selectedSermons.length} sermons ${bulkAction === "publish" ? "published" : "unpublished"} successfully`,
-    });
   };
 
   const filteredSermons = sermons.filter((sermon) => {
@@ -193,10 +115,6 @@ export default function SermonList() {
   });
 
   const navigate = useNavigate();
-
-  const handleRowClick = (id: string) => {
-    navigate(`/sermons/${id}/edit`);
-  };
 
   return (
     <div className="page-container">
