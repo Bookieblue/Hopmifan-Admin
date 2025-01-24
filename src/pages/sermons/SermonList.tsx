@@ -302,7 +302,7 @@ export default function SermonList() {
                     <DropdownMenuContent align="end" className="w-[200px]">
                       <DropdownMenuItem onClick={(e) => {
                         e.stopPropagation();
-                        handleEdit(sermon.id);
+                        handleRowClick(sermon.id);
                       }}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
