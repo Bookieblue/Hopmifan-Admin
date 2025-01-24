@@ -91,6 +91,23 @@ export default function DonationHistory() {
         </div>
       ),
       className: "text-gray-500 font-normal"
+    },
+    {
+      header: "Actions",
+      accessor: (donation) => (
+        <div className="flex items-center justify-end gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewDetails(donation.id);
+            }}
+            className="text-[#9b87f5] text-sm hover:underline"
+          >
+            See details
+          </button>
+        </div>
+      ),
+      className: "text-gray-500 font-normal"
     }
   ];
 
