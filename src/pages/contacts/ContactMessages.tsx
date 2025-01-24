@@ -183,9 +183,9 @@ export default function ContactMessages() {
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+    <div className="page-container">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Contact Messages</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Contact Messages</h1>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -211,7 +211,66 @@ export default function ContactMessages() {
         </div>
       </div>
 
-      <ContactFilterModal
+      <div className="bg-white md:rounded-lg md:border">
+        <DataTable
+          data={filteredContacts}
+          columns={columns}
+          selectedItems={selectedContacts}
+          onSelectItem={(id, checked) => {
+            setSelectedContacts(prev =>
+              checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
+            );
+          }}
+          onSelectAll={(checked) => {
+            setSelectedContacts(checked ? filteredContacts.map(c => c.id) : []);
+          }}
+          getItemId={(item) => item.id}
+          onRowClick={handleRowClick}
+          showCheckboxes={true}
+          CardComponent={({ item }) => (
+            <div className="p-4 border-b last:border-b-0">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
+                  <p className="text-sm text-gray-500">{item.email}</p>
+                </div>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {item.status === 'replied' ? 'Replied' : 'Pending'}
+                </span>
+              </div>
+              <div className="text-sm mb-2">
+                <p>{item.phone}</p>
+                <p className="text-gray-500">{item.country}, {item.cityState}</p>
+              </div>
+              <p className="text-sm text-gray-500">{item.dateSubmitted}</p>
+            </div>
+          )}
+          bulkActions={[
+            { value: "markReplied", label: "Mark as Replied" },
+            { value: "markPending", label: "Mark as Pending" }
+          ]}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
+        />
+
+        {selectedContacts.length > 0 && (
+          <BulkActions
+            selectedCount={selectedContacts.length}
+            bulkAction={bulkAction}
+            setBulkAction={setBulkAction}
+            onBulkAction={handleBulkAction}
+            actions={[
+              { value: "markReplied", label: "Mark as Replied" },
+              { value: "markPending", label: "Mark as Pending" }
+            ]}
+          />
+        )}
+      </div>
+
+      <FilterModal
         open={filterModalOpen}
         onOpenChange={setFilterModalOpen}
         countryFilter={countryFilter}
@@ -235,45 +294,6 @@ export default function ContactMessages() {
           buttonText: 'Mark as Replied'
         }}
       />
-
-      <div className="bg-white md:rounded-lg md:border">
-        <DataTable
-          data={filteredContacts}
-          columns={columns}
-          selectedItems={selectedContacts}
-          onSelectItem={(id, checked) => {
-            setSelectedContacts(prev =>
-              checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
-            );
-          }}
-          onSelectAll={(checked) => {
-            setSelectedContacts(checked ? filteredContacts.map(c => c.id) : []);
-          }}
-          getItemId={(item) => item.id}
-          onRowClick={handleRowClick}
-          showCheckboxes={true}
-          bulkActions={[
-            { value: "markReplied", label: "Mark as Replied" },
-            { value: "markPending", label: "Mark as Pending" }
-          ]}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={handleBulkAction}
-        />
-
-        {selectedContacts.length > 0 && (
-          <BulkActions
-            selectedCount={selectedContacts.length}
-            bulkAction={bulkAction}
-            setBulkAction={setBulkAction}
-            onBulkAction={handleBulkAction}
-            actions={[
-              { value: "markReplied", label: "Mark as Replied" },
-              { value: "markPending", label: "Mark as Pending" }
-            ]}
-          />
-        )}
-      </div>
     </div>
   );
 }

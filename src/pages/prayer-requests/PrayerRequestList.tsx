@@ -174,7 +174,7 @@ export default function PrayerRequestList() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border">
+      <div className="bg-white md:rounded-lg md:border">
         <DataTable
           data={requests}
           columns={columns}
@@ -206,7 +206,10 @@ export default function PrayerRequestList() {
                   {item.status === 'completed' ? 'Prayed' : 'Pending'}
                 </span>
               </div>
-              <p className="text-sm mb-2">{item.description}</p>
+              <div className="text-sm mb-2">
+                <p>{item.phone}</p>
+                <p className="text-gray-500">{item.country}</p>
+              </div>
               <p className="text-sm text-gray-500">{item.date}</p>
             </div>
           )}
@@ -246,8 +249,8 @@ export default function PrayerRequestList() {
         onStatusChange={handleStatusChange}
         statusLabels={{
           pending: 'Pending',
-          completed: 'Replied',
-          buttonText: 'Mark as Replied'
+          completed: 'Prayed',
+          buttonText: 'Mark as Prayed'
         }}
       />
     </div>

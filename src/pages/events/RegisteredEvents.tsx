@@ -196,31 +196,6 @@ export default function RegisteredEvents() {
         </div>
       </div>
 
-      <EventFilterModal
-        open={filterModalOpen}
-        onOpenChange={setFilterModalOpen}
-        countryFilter={countryFilter}
-        setCountryFilter={setCountryFilter}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        uniqueCountries={Array.from(new Set(registrations.map(registration => registration.country)))}
-      />
-
-      <DetailsModal
-        open={detailsModalOpen}
-        onOpenChange={setDetailsModalOpen}
-        title="Registration Details"
-        data={selectedRegistration}
-        onStatusChange={handleStatusChange}
-        statusLabels={{
-          pending: 'Pending',
-          completed: 'Confirmed',
-          buttonText: 'Confirm Registration'
-        }}
-      />
-
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
           data={filteredRegistrations}
@@ -309,6 +284,31 @@ export default function RegisteredEvents() {
           />
         )}
       </div>
+
+      <EventFilterModal
+        open={filterModalOpen}
+        onOpenChange={setFilterModalOpen}
+        countryFilter={countryFilter}
+        setCountryFilter={setCountryFilter}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        dateFilter={dateFilter}
+        setDateFilter={setDateFilter}
+        uniqueCountries={Array.from(new Set(registrations.map(registration => registration.country)))}
+      />
+
+      <DetailsModal
+        open={detailsModalOpen}
+        onOpenChange={setDetailsModalOpen}
+        title="Registration Details"
+        data={selectedRegistration}
+        onStatusChange={handleStatusChange}
+        statusLabels={{
+          pending: 'Pending',
+          completed: 'Confirmed',
+          buttonText: 'Confirm Registration'
+        }}
+      />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
