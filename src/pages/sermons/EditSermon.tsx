@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SermonForm } from "@/components/sermons/SermonForm";
 
 type SermonData = {
+  id: string;
   title: string;
   preacher: string;
   youtubeLink: string;
@@ -13,9 +14,13 @@ type SermonData = {
 };
 
 const getStoredSermons = (): Record<string, SermonData> => {
-  const stored = localStorage.getItem('sermons');
-  if (stored) {
-    return JSON.parse(stored);
+  try {
+    const stored = localStorage.getItem('sermons');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Error parsing sermons from localStorage:', error);
   }
   return {};
 };
@@ -25,18 +30,24 @@ export default function EditSermon() {
   const { toast } = useToast();
   const { id } = useParams();
   const [initialData, setInitialData] = useState<SermonData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const sermons = getStoredSermons();
-    if (id && sermons[id]) {
-      setInitialData(sermons[id]);
-    } else {
-      toast({
-        variant: "destructive",
-        description: "Sermon not found"
-      });
-      navigate("/sermons");
-    }
+    const fetchSermon = () => {
+      const sermons = getStoredSermons();
+      if (id && sermons[id]) {
+        setInitialData(sermons[id]);
+      } else {
+        toast({
+          variant: "destructive",
+          description: "Sermon not found"
+        });
+        navigate("/sermons");
+      }
+      setIsLoading(false);
+    };
+
+    fetchSermon();
   }, [id, navigate, toast]);
 
   const handleSubmit = async (data: {
@@ -51,6 +62,7 @@ export default function EditSermon() {
       const sermons = getStoredSermons();
       if (id) {
         sermons[id] = {
+          ...sermons[id],
           ...data,
           thumbnailUrl: data.thumbnail ? URL.createObjectURL(data.thumbnail) : sermons[id].thumbnailUrl
         };
@@ -62,6 +74,7 @@ export default function EditSermon() {
       });
       navigate("/sermons");
     } catch (error) {
+      console.error('Error updating sermon:', error);
       toast({
         variant: "destructive",
         description: "Failed to update sermon"
@@ -69,7 +82,17 @@ export default function EditSermon() {
     }
   };
 
-  if (!initialData) return null;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#695CAE]"></div>
+      </div>
+    );
+  }
+
+  if (!initialData) {
+    return null;
+  }
 
   return <SermonForm initialData={initialData} onSubmit={handleSubmit} isEdit />;
 }
