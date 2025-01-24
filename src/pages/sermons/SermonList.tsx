@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, MoreVertical, Edit, Trash2, CheckSquare, XSquare } from "lucide-react";
+import { Plus, MoreVertical, Edit, Trash2, CheckSquare, XSquare, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Filter } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useNavigate } from "react-router-dom";
 
 interface Sermon {
   id: string;
@@ -177,6 +177,12 @@ export default function SermonList() {
     return matchesSearch && matchesStatus && matchesDate;
   });
 
+  const navigate = useNavigate();
+
+  const handleRowClick = (id: string) => {
+    navigate(`/sermons/${id}/edit`);
+  };
+
   return (
     <div className="page-container">
       <div className="flex items-center justify-between gap-2 mb-6">
@@ -250,11 +256,9 @@ export default function SermonList() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-[200px]">
-                      <DropdownMenuItem>
-                        <Link to={`/sermons/${sermon.id}/edit`} className="flex items-center w-full">
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit
-                        </Link>
+                      <DropdownMenuItem onClick={() => handleRowClick(sermon.id)}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handleStatusChange(sermon.id, sermon.status === 'published' ? 'draft' : 'published')}
@@ -295,6 +299,7 @@ export default function SermonList() {
             setSelectedSermons(checked ? filteredSermons.map(s => s.id) : []);
           }}
           getItemId={(item) => item.id}
+          onRowClick={handleRowClick}
           showCheckboxes={true}
           bulkActions={[
             { value: "publish", label: "Publish Selected" },
