@@ -24,8 +24,19 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+interface Sermon {
+  id: string;
+  title: string;
+  preacher: string;
+  date: string;
+  status: "published" | "draft";
+  youtubeLink?: string;
+  content?: string;
+  thumbnailUrl?: string;
+}
+
 // Sample sermons data
-const sampleSermons = {
+const sampleSermons: Record<string, Sermon> = {
   "SER-001": {
     id: "SER-001",
     title: "The Power of Faith",
@@ -98,17 +109,6 @@ const sampleSermons = {
   }
 };
 
-interface Sermon {
-  id: string;
-  title: string;
-  preacher: string;
-  date: string;
-  status: "published" | "draft";
-  youtubeLink?: string;
-  content?: string;
-  thumbnailUrl?: string;
-}
-
 export default function SermonList() {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -122,7 +122,7 @@ export default function SermonList() {
   const [sermonToDelete, setSermonToDelete] = useState<string>("");
 
   // Initialize sermons from localStorage with sample data if empty
-  const [sermons, setSermons] = useState(() => {
+  const [sermons, setSermons] = useState<Sermon[]>(() => {
     const stored = localStorage.getItem('sermons');
     if (!stored) {
       localStorage.setItem('sermons', JSON.stringify(sampleSermons));
@@ -219,10 +219,6 @@ export default function SermonList() {
     navigate(`/sermons/${id}/edit`);
   };
 
-  const handleEdit = (id: string) => {
-    navigate(`/sermons/${id}/edit`);
-  };
-
   const filteredSermons = sermons.filter((sermon) => {
     const matchesSearch = sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sermon.preacher.toLowerCase().includes(searchQuery.toLowerCase());
@@ -266,7 +262,7 @@ export default function SermonList() {
       </div>
 
       <div className="bg-white rounded-lg border">
-        <DataTable
+        <DataTable<Sermon>
           data={filteredSermons}
           columns={[
             { 
