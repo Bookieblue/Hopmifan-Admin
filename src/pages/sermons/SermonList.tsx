@@ -35,8 +35,9 @@ interface Sermon {
   thumbnailUrl?: string;
 }
 
-const sampleSermons: Sermon[] = [
-  {
+// Initial sample data
+const sampleSermons: Record<string, Sermon> = {
+  "SER-001": {
     id: "SER-001",
     title: "Understanding God's Love",
     preacher: "Pastor John Doe",
@@ -46,7 +47,7 @@ const sampleSermons: Sermon[] = [
     content: "A powerful message about God's love...",
     thumbnailUrl: ""
   },
-  {
+  "SER-002": {
     id: "SER-002",
     title: "Walking in Faith",
     preacher: "Pastor Jane Smith",
@@ -54,8 +55,8 @@ const sampleSermons: Sermon[] = [
     status: "draft",
     content: "Learning to trust God in all circumstances...",
     thumbnailUrl: ""
-  },
-];
+  }
+};
 
 export default function SermonList() {
   const { toast } = useToast();
@@ -73,19 +74,15 @@ export default function SermonList() {
   const [sermons, setSermons] = useState<Sermon[]>(() => {
     const stored = localStorage.getItem('sermons');
     if (!stored) {
-      const sermonsObj = sampleSermons.reduce((acc, sermon) => {
-        acc[sermon.id] = sermon;
-        return acc;
-      }, {} as Record<string, Sermon>);
-      localStorage.setItem('sermons', JSON.stringify(sermonsObj));
-      return Object.values(sermonsObj);
+      localStorage.setItem('sermons', JSON.stringify(sampleSermons));
+      return Object.values(sampleSermons);
     }
     try {
       const parsedSermons = JSON.parse(stored);
       return Object.values(parsedSermons);
     } catch (error) {
       console.error('Error parsing sermons from localStorage:', error);
-      return sampleSermons;
+      return Object.values(sampleSermons);
     }
   });
 
@@ -95,92 +92,75 @@ export default function SermonList() {
   };
 
   const confirmDelete = () => {
-    const updatedSermons = sermons.filter(sermon => sermon.id !== sermonToDelete);
-    const sermonsObj = updatedSermons.reduce((acc, sermon) => {
-      acc[sermon.id] = sermon;
-      return acc;
-    }, {} as Record<string, Sermon>);
-    
-    setSermons(updatedSermons);
-    localStorage.setItem('sermons', JSON.stringify(sermonsObj));
-    
-    toast({
-      description: "Sermon deleted successfully",
-    });
+    const stored = localStorage.getItem('sermons');
+    if (stored) {
+      const sermons = JSON.parse(stored);
+      delete sermons[sermonToDelete];
+      localStorage.setItem('sermons', JSON.stringify(sermons));
+      setSermons(Object.values(sermons));
+      
+      toast({
+        description: "Sermon deleted successfully",
+      });
+    }
     setDeleteDialogOpen(false);
     setSermonToDelete("");
     setSelectedSermons(selectedSermons.filter(itemId => itemId !== sermonToDelete));
   };
 
   const handleStatusChange = (id: string, newStatus: "published" | "draft") => {
-    const updatedSermons = sermons.map(sermon => {
-      if (sermon.id === id) {
-        return { ...sermon, status: newStatus };
+    const stored = localStorage.getItem('sermons');
+    if (stored) {
+      const sermons = JSON.parse(stored);
+      if (sermons[id]) {
+        sermons[id].status = newStatus;
+        localStorage.setItem('sermons', JSON.stringify(sermons));
+        setSermons(Object.values(sermons));
+        
+        toast({
+          description: `Sermon ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
+        });
       }
-      return sermon;
-    });
-
-    const sermonsObj = updatedSermons.reduce((acc, sermon) => {
-      acc[sermon.id] = sermon;
-      return acc;
-    }, {} as Record<string, Sermon>);
-    
-    setSermons(updatedSermons);
-    localStorage.setItem('sermons', JSON.stringify(sermonsObj));
-    
-    toast({
-      description: `Sermon ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
-    });
+    }
   };
 
   const handleBulkAction = () => {
     if (!bulkAction || selectedSermons.length === 0) return;
 
-    const updatedSermons = [...sermons];
+    const stored = localStorage.getItem('sermons');
+    if (!stored) return;
+
+    const sermons = JSON.parse(stored);
     
     switch (bulkAction) {
       case "publish":
       case "unpublish":
         selectedSermons.forEach(id => {
-          const sermonIndex = updatedSermons.findIndex(s => s.id === id);
-          if (sermonIndex !== -1) {
-            updatedSermons[sermonIndex] = {
-              ...updatedSermons[sermonIndex],
-              status: bulkAction === "publish" ? "published" : "draft"
-            };
+          if (sermons[id]) {
+            sermons[id].status = bulkAction === "publish" ? "published" : "draft";
           }
         });
         break;
       case "delete":
-        const remainingSermons = updatedSermons.filter(
-          sermon => !selectedSermons.includes(sermon.id)
-        );
-        setSermons(remainingSermons);
-        const sermonsObj = remainingSermons.reduce((acc, sermon) => {
-          acc[sermon.id] = sermon;
-          return acc;
-        }, {} as Record<string, Sermon>);
-        localStorage.setItem('sermons', JSON.stringify(sermonsObj));
-        toast({
-          description: `${selectedSermons.length} sermons deleted successfully`,
+        selectedSermons.forEach(id => {
+          delete sermons[id];
         });
-        setSelectedSermons([]);
-        setBulkAction("");
-        return;
+        break;
     }
     
-    const sermonsObj = updatedSermons.reduce((acc, sermon) => {
-      acc[sermon.id] = sermon;
-      return acc;
-    }, {} as Record<string, Sermon>);
-    
-    setSermons(updatedSermons);
-    localStorage.setItem('sermons', JSON.stringify(sermonsObj));
+    localStorage.setItem('sermons', JSON.stringify(sermons));
+    setSermons(Object.values(sermons));
     setSelectedSermons([]);
     setBulkAction("");
     
     toast({
-      description: `${selectedSermons.length} sermons ${bulkAction === "publish" ? "published" : "unpublished"} successfully`,
+      description: `${selectedSermons.length} sermons ${
+        bulkAction === "publish" 
+          ? "published" 
+          : bulkAction === "unpublish" 
+          ? "unpublished" 
+          : "deleted"
+      } successfully`,
     });
   };
 
