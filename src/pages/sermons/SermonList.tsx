@@ -3,7 +3,6 @@ import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
 import { Filter, Plus, Search, MoreVertical, Edit, Trash2, CheckSquare, XSquare } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/sermons/FilterModal";
 import { BulkActions } from "@/components/shared/BulkActions";
@@ -103,15 +102,21 @@ const SermonList = () => {
   const [sermonToDelete, setSermonToDelete] = useState<string>("");
   const [bulkAction, setBulkAction] = useState("");
   const postsPerPage = 15;
-  
+
+  // Initialize sermons from localStorage or sample data
   const [sermons, setSermons] = useState(() => {
     const stored = localStorage.getItem('sermons');
     if (stored) {
-      const sermonsData = JSON.parse(stored);
-      return Object.entries(sermonsData).map(([id, sermon]: [string, any]) => ({
-        id,
-        ...sermon
-      }));
+      try {
+        const sermonsData = JSON.parse(stored);
+        return Object.entries(sermonsData).map(([id, sermon]: [string, any]) => ({
+          id,
+          ...sermon
+        }));
+      } catch (error) {
+        console.error("Error parsing stored sermons:", error);
+        return [];
+      }
     }
     // If no sermons exist in localStorage, initialize with sample data
     localStorage.setItem('sermons', JSON.stringify(sampleSermons));
@@ -235,10 +240,6 @@ const SermonList = () => {
   const totalPages = Math.ceil(filteredSermons.length / postsPerPage);
   const startIndex = (currentPage - 1) * postsPerPage;
   const currentSermons = filteredSermons.slice(startIndex, startIndex + postsPerPage);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
 
   const uniqueAuthors = Array.from(new Set(sermons.map(sermon => sermon.author)));
 
