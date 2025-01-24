@@ -3,35 +3,86 @@ import { DataTable } from "@/components/shared/DataTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Filter, Search } from "lucide-react";
-import { FilterModal } from "@/components/members/FilterModal";
-import { useToast } from "@/hooks/use-toast";
+import { FilterModal } from "@/components/prayer-requests/FilterModal";
+import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
+import { useToast } from "@/hooks/use-toast";
 
 export default function PrayerRequestList() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [locationFilter, setLocationFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [requests, setRequests] = useState([
     {
       id: "1",
+      firstName: "John",
+      lastName: "Doe",
+      email: "john@example.com",
+      phone: "+1234567890",
       description: "Pray for healing",
       status: "pending",
       date: "2024-01-15",
+      message: "Please pray for my complete healing and recovery.",
     },
   ]);
 
-  const filteredRequests = requests.filter((request) => {
-    const matchesSearch = request.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || request.status === statusFilter;
-    const matchesDate = !dateFilter || request.date === dateFilter;
+  const handleViewDetails = (id: string) => {
+    const request = requests.find(r => r.id === id);
+    if (request) {
+      setSelectedRequest(request);
+      setDetailsModalOpen(true);
+    }
+  };
 
-    return matchesSearch && matchesStatus && matchesDate;
-  });
+  const handleStatusChange = (status: string) => {
+    if (selectedRequest) {
+      setRequests(requests.map(request => 
+        request.id === selectedRequest.id 
+          ? { ...request, status }
+          : request
+      ));
+      setDetailsModalOpen(false);
+      toast({
+        description: `Prayer request marked as ${status}`,
+      });
+    }
+  };
+
+  const columns = [
+    { 
+      header: "Name", 
+      accessor: (request: any) => (
+        <div>
+          <div className="font-medium">{`${request.firstName} ${request.lastName}`}</div>
+          <div className="text-sm text-gray-500">{request.email}</div>
+        </div>
+      )
+    },
+    { 
+      header: "Request", 
+      accessor: "description",
+      className: "max-w-[200px] truncate"
+    },
+    { 
+      header: "Status & Date", 
+      accessor: (request: any) => (
+        <div>
+          <span className={`px-2 py-1 rounded-full text-xs ${
+            request.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            {request.status === 'completed' ? 'Prayed' : 'Pending'}
+          </span>
+          <div className="text-sm text-gray-500 mt-1">{request.date}</div>
+        </div>
+      )
+    }
+  ];
 
   const handleBulkAction = () => {
     if (!bulkAction || selectedRequests.length === 0) return;
@@ -45,7 +96,7 @@ export default function PrayerRequestList() {
           if (requestIndex !== -1) {
             updatedRequests[requestIndex] = {
               ...updatedRequests[requestIndex],
-              status: "prayed"
+              status: "completed"
             };
           }
         });
@@ -116,30 +167,8 @@ export default function PrayerRequestList() {
 
       <div className="bg-white rounded-lg border">
         <DataTable
-          data={filteredRequests}
-          columns={[
-            { 
-              header: "Description", 
-              accessor: "description",
-              className: "text-[14px]"
-            },
-            { 
-              header: "Status", 
-              accessor: (request) => (
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  request.status === 'prayed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {request.status}
-                </span>
-              ),
-              className: "text-[14px]"
-            },
-            {
-              header: "Date",
-              accessor: "date",
-              className: "text-[14px]"
-            }
-          ]}
+          data={requests}
+          columns={columns}
           selectedItems={selectedRequests}
           onSelectItem={(id, checked) => {
             setSelectedRequests(prev =>
@@ -147,18 +176,31 @@ export default function PrayerRequestList() {
             );
           }}
           onSelectAll={(checked) => {
-            setSelectedRequests(checked ? filteredRequests.map(r => r.id) : []);
+            setSelectedRequests(checked ? requests.map(r => r.id) : []);
           }}
           getItemId={(item) => item.id}
+          onRowClick={(id) => handleViewDetails(id)}
           showCheckboxes={true}
-          bulkActions={[
-            { value: "markPrayed", label: "Mark as Prayed" },
-            { value: "markPending", label: "Mark as Pending" },
-            { value: "delete", label: "Delete Selected" }
-          ]}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={handleBulkAction}
+          actions={{
+            onViewDetails: handleViewDetails
+          }}
+          CardComponent={({ item }) => (
+            <div className="p-4 border-b last:border-b-0">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
+                  <p className="text-sm text-gray-500">{item.email}</p>
+                </div>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  item.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {item.status === 'completed' ? 'Prayed' : 'Pending'}
+                </span>
+              </div>
+              <p className="text-sm mb-2">{item.description}</p>
+              <p className="text-sm text-gray-500">{item.date}</p>
+            </div>
+          )}
         />
 
         {selectedRequests.length > 0 && (
@@ -179,13 +221,23 @@ export default function PrayerRequestList() {
       <FilterModal
         open={showFilterModal}
         onOpenChange={setShowFilterModal}
-        locationFilter={locationFilter}
-        setLocationFilter={setLocationFilter}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
-        uniqueLocations={[]}
+      />
+
+      <DetailsModal
+        open={detailsModalOpen}
+        onOpenChange={setDetailsModalOpen}
+        title="Prayer Request Details"
+        data={selectedRequest}
+        onStatusChange={handleStatusChange}
+        statusLabels={{
+          pending: 'Pending',
+          completed: 'Prayed',
+          buttonText: 'Mark as Prayed'
+        }}
       />
     </div>
   );
