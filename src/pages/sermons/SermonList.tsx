@@ -33,6 +33,7 @@ interface Sermon {
   status: "published" | "draft";
   youtubeLink?: string;
   content?: string;
+  thumbnailUrl?: string;
 }
 
 const sampleSermons: Sermon[] = [
@@ -43,7 +44,8 @@ const sampleSermons: Sermon[] = [
     date: "Mar 15, 2024",
     status: "published",
     youtubeLink: "https://youtube.com/watch?v=123",
-    content: "A powerful message about God's love..."
+    content: "A powerful message about God's love...",
+    thumbnailUrl: ""
   },
   {
     id: "SER-002",
@@ -51,7 +53,8 @@ const sampleSermons: Sermon[] = [
     preacher: "Pastor Jane Smith",
     date: "Mar 14, 2024",
     status: "draft",
-    content: "Learning to trust God in all circumstances..."
+    content: "Learning to trust God in all circumstances...",
+    thumbnailUrl: ""
   },
 ];
 
@@ -68,14 +71,18 @@ export default function SermonList() {
 
   // Initialize sermons from localStorage with sample data if empty
   const [sermons, setSermons] = useState<Sermon[]>(() => {
+    const stored = localStorage.getItem('sermons');
+    if (!stored) {
+      const sermonsObj = sampleSermons.reduce((acc, sermon) => {
+        acc[sermon.id] = sermon;
+        return acc;
+      }, {} as Record<string, Sermon>);
+      localStorage.setItem('sermons', JSON.stringify(sermonsObj));
+      return sampleSermons;
+    }
     try {
-      const stored = localStorage.getItem('sermons');
-      if (!stored) {
-        localStorage.setItem('sermons', JSON.stringify(sampleSermons));
-        return sampleSermons;
-      }
       const parsedSermons = JSON.parse(stored);
-      return Array.isArray(parsedSermons) ? parsedSermons : sampleSermons;
+      return Object.values(parsedSermons);
     } catch (error) {
       console.error('Error parsing sermons from localStorage:', error);
       return sampleSermons;
@@ -89,8 +96,13 @@ export default function SermonList() {
 
   const confirmDelete = () => {
     const updatedSermons = sermons.filter(sermon => sermon.id !== sermonToDelete);
+    const sermonsObj = updatedSermons.reduce((acc, sermon) => {
+      acc[sermon.id] = sermon;
+      return acc;
+    }, {} as Record<string, Sermon>);
+    
     setSermons(updatedSermons);
-    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
+    localStorage.setItem('sermons', JSON.stringify(sermonsObj));
     
     toast({
       description: "Sermon deleted successfully",
@@ -107,8 +119,14 @@ export default function SermonList() {
       }
       return sermon;
     });
+
+    const sermonsObj = updatedSermons.reduce((acc, sermon) => {
+      acc[sermon.id] = sermon;
+      return acc;
+    }, {} as Record<string, Sermon>);
+    
     setSermons(updatedSermons);
-    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
+    localStorage.setItem('sermons', JSON.stringify(sermonsObj));
     
     toast({
       description: `Sermon ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
@@ -122,31 +140,15 @@ export default function SermonList() {
     
     switch (bulkAction) {
       case "publish":
-        selectedSermons.forEach(id => {
-          const sermonIndex = updatedSermons.findIndex(s => s.id === id);
-          if (sermonIndex !== -1) {
-            updatedSermons[sermonIndex] = {
-              ...updatedSermons[sermonIndex],
-              status: "published"
-            };
-          }
-        });
-        toast({
-          description: `${selectedSermons.length} sermons published successfully`,
-        });
-        break;
       case "unpublish":
         selectedSermons.forEach(id => {
           const sermonIndex = updatedSermons.findIndex(s => s.id === id);
           if (sermonIndex !== -1) {
             updatedSermons[sermonIndex] = {
               ...updatedSermons[sermonIndex],
-              status: "draft"
+              status: bulkAction === "publish" ? "published" : "draft"
             };
           }
-        });
-        toast({
-          description: `${selectedSermons.length} sermons unpublished successfully`,
         });
         break;
       case "delete":
@@ -154,7 +156,11 @@ export default function SermonList() {
           sermon => !selectedSermons.includes(sermon.id)
         );
         setSermons(remainingSermons);
-        localStorage.setItem('sermons', JSON.stringify(remainingSermons));
+        const sermonsObj = remainingSermons.reduce((acc, sermon) => {
+          acc[sermon.id] = sermon;
+          return acc;
+        }, {} as Record<string, Sermon>);
+        localStorage.setItem('sermons', JSON.stringify(sermonsObj));
         toast({
           description: `${selectedSermons.length} sermons deleted successfully`,
         });
@@ -163,10 +169,19 @@ export default function SermonList() {
         return;
     }
     
+    const sermonsObj = updatedSermons.reduce((acc, sermon) => {
+      acc[sermon.id] = sermon;
+      return acc;
+    }, {} as Record<string, Sermon>);
+    
     setSermons(updatedSermons);
-    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
+    localStorage.setItem('sermons', JSON.stringify(sermonsObj));
     setSelectedSermons([]);
     setBulkAction("");
+    
+    toast({
+      description: `${selectedSermons.length} sermons ${bulkAction === "publish" ? "published" : "unpublished"} successfully`,
+    });
   };
 
   const filteredSermons = sermons.filter((sermon) => {
