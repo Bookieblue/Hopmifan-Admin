@@ -1,4 +1,3 @@
-// Duplicate of EditBlog.tsx with "blog"/"Blog" replaced with "sermon"/"Sermon"
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -6,20 +5,11 @@ import { SermonForm } from "@/components/sermons/SermonForm";
 
 type SermonData = {
   title: string;
-  content: string;
-  author: string;
+  preacher: string;
+  youtubeLink: string;
+  description: string;
   status: "draft" | "published";
-  imagePreview?: string;
-  publishDate?: string;
-  language?: string;
-};
-
-const getStoredSermons = (): Record<string, SermonData> => {
-  const stored = localStorage.getItem('sermons');
-  if (stored) {
-    return JSON.parse(stored);
-  }
-  return {};
+  thumbnailImage?: string;
 };
 
 export default function EditSermon() {
@@ -29,7 +19,7 @@ export default function EditSermon() {
   const [initialData, setInitialData] = useState<SermonData | null>(null);
 
   useEffect(() => {
-    const sermons = getStoredSermons();
+    const sermons = JSON.parse(localStorage.getItem('sermons') || '{}');
     if (id && sermons[id]) {
       setInitialData(sermons[id]);
     } else {
@@ -43,20 +33,21 @@ export default function EditSermon() {
 
   const handleSubmit = async (data: {
     title: string;
-    content: string;
-    author: string;
+    preacher: string;
+    youtubeLink: string;
+    description: string;
     status: "draft" | "published";
-    featureImage: File | null;
-    language: string;
+    thumbnailImage: File | null;
   }) => {
     try {
-      const sermons = getStoredSermons();
+      const sermons = JSON.parse(localStorage.getItem('sermons') || '{}');
       if (id) {
         sermons[id] = {
           ...data,
-          imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : sermons[id].imagePreview,
-          publishDate: sermons[id].publishDate,
-          language: data.language
+          thumbnailImage: data.thumbnailImage 
+            ? URL.createObjectURL(data.thumbnailImage) 
+            : sermons[id].thumbnailImage,
+          publishDate: sermons[id].publishDate
         };
         localStorage.setItem('sermons', JSON.stringify(sermons));
       }
