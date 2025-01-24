@@ -41,9 +41,9 @@ export function StatsGrid() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <CircleDot className="text-green-500 h-4 w-4" />
-              <span className="text-lg font-medium">Total Donations</span>
+              <span className="text-base font-medium">Total Donations</span>
             </div>
-            <span className="text-3xl font-bold block">
+            <span className="text-2xl font-bold block">
               ₦{data.totalDonations.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
             </span>
           </div>
@@ -55,9 +55,9 @@ export function StatsGrid() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <CircleDot className="text-orange-500 h-4 w-4" />
-              <span className="text-lg font-medium">Bookstore Sales</span>
+              <span className="text-base font-medium">Bookstore Sales</span>
             </div>
-            <span className="text-3xl font-bold block">
+            <span className="text-2xl font-bold block">
               ₦{data.bookstoreSales.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
             </span>
           </div>
@@ -69,10 +69,10 @@ export function StatsGrid() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <CircleDot className="text-blue-500 h-4 w-4" />
-              <span className="text-lg font-medium">Prayer Requests</span>
+              <span className="text-base font-medium">Prayer Requests</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold">{data.prayerRequests}</span>
+              <span className="text-2xl font-bold">{data.prayerRequests}</span>
               <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">New request pending</span>
             </div>
           </div>
@@ -84,10 +84,10 @@ export function StatsGrid() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <CircleDot className="text-purple-500 h-4 w-4" />
-              <span className="text-lg font-medium">Membership</span>
+              <span className="text-base font-medium">Membership</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold">{data.membershipRequests}</span>
+              <span className="text-2xl font-bold">{data.membershipRequests}</span>
               <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">New request pending</span>
             </div>
           </div>
