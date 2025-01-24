@@ -1,191 +1,139 @@
 import { useState } from "react";
 import { DataTable } from "@/components/shared/DataTable";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Filter, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { ContactFilterModal } from "@/components/contacts/FilterModal";
-import { DetailsModal } from "@/components/shared/DetailsModal";
+import { ContactDetailsModal } from "@/components/contacts/ContactDetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
-import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
-
-const sampleContacts = [
-  {
-    id: "1",
-    firstName: "Oluwaseun",
-    lastName: "Adebayo",
-    phone: "+234 801 234 5678",
-    email: "oluwaseun.adebayo@gmail.com",
-    country: "Nigeria",
-    cityState: "Lagos, LA",
-    preferredContact: "whatsapp",
-    message: "I would like to join the church choir ministry. When are the rehearsals scheduled?",
-    dateSubmitted: new Date(2024, 2, 15).toLocaleDateString(),
-    status: "pending"
-  },
-  {
-    id: "2",
-    firstName: "Chioma",
-    lastName: "Okonkwo",
-    phone: "+234 802 345 6789",
-    email: "chioma.okonkwo@yahoo.com",
-    country: "Nigeria",
-    cityState: "Abuja, FC",
-    preferredContact: "phone",
-    message: "God bless you. I'm interested in the youth fellowship program. Please provide more information.",
-    dateSubmitted: new Date(2024, 2, 14).toLocaleDateString(),
-    status: "replied"
-  }
-];
 
 export default function ContactMessages() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const [countryFilter, setCountryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
-  const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const [selectedContact, setSelectedContact] = useState(null);
-  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [contacts, setContacts] = useState(sampleContacts);
-  const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+  const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
-
-  const columns = [
-    { 
-      header: "Name", 
-      accessor: (contact: any) => (
-        <div>
-          <div className="font-medium">{`${contact.firstName} ${contact.lastName}`}</div>
-          <div className="text-sm text-gray-500">{contact.email}</div>
-        </div>
-      )
-    },
-    { 
-      header: "Contact Info", 
-      accessor: (contact: any) => (
-        <div>
-          <div>{contact.phone}</div>
-          <div className="text-sm text-gray-500 capitalize">{contact.preferredContact} preferred</div>
-        </div>
-      )
-    },
-    { 
-      header: "Location", 
-      accessor: (contact: any) => (
-        <div>
-          <div>{contact.country}</div>
-          <div className="text-sm text-gray-500">{contact.cityState}</div>
-        </div>
-      )
-    },
-    { 
-      header: "Status & Date", 
-      accessor: (contact: any) => (
-        <div>
-          <span className={`px-2 py-1 rounded-full text-xs ${
-            contact.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {contact.status === 'replied' ? 'Replied' : 'Pending'}
-          </span>
-          <div className="text-sm text-gray-500 mt-1">{contact.dateSubmitted}</div>
-        </div>
-      )
-    },
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [messages, setMessages] = useState([
     {
-      header: "Actions",
-      accessor: (contact: any) => (
-        <div className="flex items-center justify-end gap-2 text-[14px]" onClick={(e) => e.stopPropagation()}>
-          <ViewDetailsButton onClick={() => handleViewDetails(contact.id)} />
-        </div>
-      )
+      id: "1",
+      firstName: "John",
+      lastName: "Doe",
+      email: "john@example.com",
+      phone: "+1234567890",
+      message: "Hello, I need assistance.",
+      status: "pending",
+      date: "2024-01-15",
+      country: "USA"
     },
-  ];
+  ]);
 
   const handleViewDetails = (id: string) => {
-    const contact = contacts.find(c => c.id === id);
-    if (contact) {
-      setSelectedContact(contact);
-      setDetailsModalOpen(true);
-    }
-  };
-
-  const filteredContacts = contacts.filter(contact => {
-    const matchesSearch = 
-      `${contact.firstName} ${contact.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      contact.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      contact.phone.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCountry = countryFilter === 'all' || contact.country === countryFilter;
-    const matchesStatus = statusFilter === 'all' || contact.status === statusFilter;
-    const matchesDate = !dateFilter || contact.dateSubmitted === dateFilter;
-    
-    return matchesSearch && matchesCountry && matchesStatus && matchesDate;
-  });
-
-  const handleRowClick = (id: string) => {
-    const contact = contacts.find(c => c.id === id);
-    if (contact) {
-      setSelectedContact(contact);
+    const message = messages.find(m => m.id === id);
+    if (message) {
+      setSelectedMessage(message);
       setDetailsModalOpen(true);
     }
   };
 
   const handleStatusChange = (status: string) => {
-    if (selectedContact) {
-      setContacts(contacts.map(contact => 
-        contact.id === selectedContact.id 
-          ? { ...contact, status }
-          : contact
+    if (selectedMessage) {
+      setMessages(messages.map(message => 
+        message.id === selectedMessage.id 
+          ? { ...message, status }
+          : message
       ));
       setDetailsModalOpen(false);
+      toast({
+        description: `Message marked as ${status}`,
+      });
     }
   };
 
-  const handleBulkAction = () => {
-    if (!bulkAction || selectedContacts.length === 0) return;
+  const columns = [
+    { 
+      header: "Name", 
+      accessor: (message: any) => (
+        <div>
+          <div className="font-medium">{`${message.firstName} ${message.lastName}`}</div>
+          <div className="text-sm text-gray-500">{message.email}</div>
+        </div>
+      )
+    },
+    { 
+      header: "Contact Info", 
+      accessor: (message: any) => (
+        <div>
+          <div>{message.phone}</div>
+          <div className="text-sm text-gray-500">{message.country}</div>
+        </div>
+      )
+    },
+    { 
+      header: "Status & Date", 
+      accessor: (message: any) => (
+        <div>
+          <span className={`px-2 py-1 rounded-full text-xs ${
+            message.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            {message.status === 'completed' ? 'Responded' : 'Pending'}
+          </span>
+          <div className="text-sm text-gray-500 mt-1">{message.date}</div>
+        </div>
+      )
+    }
+  ];
 
-    const updatedContacts = [...contacts];
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedMessages.length === 0) return;
+
+    const updatedMessages = [...messages];
     
     switch (bulkAction) {
-      case "markReplied":
-        selectedContacts.forEach(id => {
-          const contactIndex = updatedContacts.findIndex(c => c.id === id);
-          if (contactIndex !== -1) {
-            updatedContacts[contactIndex] = {
-              ...updatedContacts[contactIndex],
-              status: "replied"
+      case "markResponded":
+        selectedMessages.forEach(id => {
+          const messageIndex = updatedMessages.findIndex(m => m.id === id);
+          if (messageIndex !== -1) {
+            updatedMessages[messageIndex] = {
+              ...updatedMessages[messageIndex],
+              status: "completed"
             };
           }
         });
         toast({
-          description: `${selectedContacts.length} contacts marked as replied`,
+          description: `${selectedMessages.length} messages marked as responded`,
         });
         break;
       case "markPending":
-        selectedContacts.forEach(id => {
-          const contactIndex = updatedContacts.findIndex(c => c.id === id);
-          if (contactIndex !== -1) {
-            updatedContacts[contactIndex] = {
-              ...updatedContacts[contactIndex],
+        selectedMessages.forEach(id => {
+          const messageIndex = updatedMessages.findIndex(m => m.id === id);
+          if (messageIndex !== -1) {
+            updatedMessages[messageIndex] = {
+              ...updatedMessages[messageIndex],
               status: "pending"
             };
           }
         });
         toast({
-          description: `${selectedContacts.length} contacts marked as pending`,
+          description: `${selectedMessages.length} messages marked as pending`,
         });
         break;
     }
     
-    setContacts(updatedContacts);
-    setSelectedContacts([]);
+    setMessages(updatedMessages);
+    setSelectedMessages([]);
     setBulkAction("");
   };
 
   return (
-    <div className="page-container">
+    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Contact Messages</h1>
+        <h1 className="text-2xl font-bold">Contact Messages</h1>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -194,7 +142,7 @@ export default function ContactMessages() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
               type="text"
-              placeholder="Search contacts..."
+              placeholder="Search messages..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -203,7 +151,7 @@ export default function ContactMessages() {
           <Button
             variant="outline"
             className="flex items-center gap-2"
-            onClick={() => setFilterModalOpen(true)}
+            onClick={() => setShowFilterModal(true)}
           >
             <Filter className="h-4 w-4" />
             Filters
@@ -213,19 +161,19 @@ export default function ContactMessages() {
 
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
-          data={filteredContacts}
+          data={messages}
           columns={columns}
-          selectedItems={selectedContacts}
+          selectedItems={selectedMessages}
           onSelectItem={(id, checked) => {
-            setSelectedContacts(prev =>
+            setSelectedMessages(prev =>
               checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
             );
           }}
           onSelectAll={(checked) => {
-            setSelectedContacts(checked ? filteredContacts.map(c => c.id) : []);
+            setSelectedMessages(checked ? messages.map(m => m.id) : []);
           }}
           getItemId={(item) => item.id}
-          onRowClick={handleRowClick}
+          onRowClick={(id) => handleViewDetails(id)}
           showCheckboxes={true}
           CardComponent={({ item }) => (
             <div className="p-4 border-b last:border-b-0">
@@ -235,35 +183,28 @@ export default function ContactMessages() {
                   <p className="text-sm text-gray-500">{item.email}</p>
                 </div>
                 <span className={`px-2 py-1 rounded-full text-xs ${
-                  item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  item.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
-                  {item.status === 'replied' ? 'Replied' : 'Pending'}
+                  {item.status === 'completed' ? 'Responded' : 'Pending'}
                 </span>
               </div>
               <div className="text-sm mb-2">
                 <p>{item.phone}</p>
-                <p className="text-gray-500">{item.country}, {item.cityState}</p>
+                <p className="text-gray-500">{item.country}</p>
               </div>
-              <p className="text-sm text-gray-500">{item.dateSubmitted}</p>
+              <p className="text-sm text-gray-500">{item.date}</p>
             </div>
           )}
-          bulkActions={[
-            { value: "markReplied", label: "Mark as Replied" },
-            { value: "markPending", label: "Mark as Pending" }
-          ]}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={handleBulkAction}
         />
 
-        {selectedContacts.length > 0 && (
+        {selectedMessages.length > 0 && (
           <BulkActions
-            selectedCount={selectedContacts.length}
+            selectedCount={selectedMessages.length}
             bulkAction={bulkAction}
             setBulkAction={setBulkAction}
             onBulkAction={handleBulkAction}
             actions={[
-              { value: "markReplied", label: "Mark as Replied" },
+              { value: "markResponded", label: "Mark as Responded" },
               { value: "markPending", label: "Mark as Pending" }
             ]}
           />
@@ -271,28 +212,22 @@ export default function ContactMessages() {
       </div>
 
       <ContactFilterModal
-        open={filterModalOpen}
-        onOpenChange={setFilterModalOpen}
+        open={showFilterModal}
+        onOpenChange={setShowFilterModal}
         countryFilter={countryFilter}
         setCountryFilter={setCountryFilter}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
-        uniqueCountries={Array.from(new Set(contacts.map(contact => contact.country)))}
+        uniqueCountries={Array.from(new Set(messages.map(message => message.country)))}
       />
 
-      <DetailsModal
+      <ContactDetailsModal
         open={detailsModalOpen}
         onOpenChange={setDetailsModalOpen}
-        title="Contact Details"
-        data={selectedContact}
+        message={selectedMessage}
         onStatusChange={handleStatusChange}
-        statusLabels={{
-          pending: 'Pending',
-          completed: 'Replied',
-          buttonText: 'Mark as Replied'
-        }}
       />
     </div>
   );

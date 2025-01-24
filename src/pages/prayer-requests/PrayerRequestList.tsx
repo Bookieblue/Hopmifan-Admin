@@ -8,6 +8,8 @@ import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
 
+// ... keep existing code (imports and type definitions)
+
 export default function PrayerRequestList() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
@@ -146,9 +148,9 @@ export default function PrayerRequestList() {
   };
 
   return (
-    <div className="page-container">
+    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Prayer Requests</h1>
+        <h1 className="text-2xl font-bold">Prayer Requests</h1>
       </div>
 
       <div className="space-y-4 mb-6">

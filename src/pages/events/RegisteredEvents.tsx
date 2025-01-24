@@ -262,13 +262,26 @@ export default function RegisteredEvents() {
           onSelectAll={handleSelectAll}
           getItemId={(item) => item.id}
           showCheckboxes={true}
-          bulkActions={[
-            { value: "markConfirmed", label: "Mark as Confirmed" },
-            { value: "markPending", label: "Mark as Pending" }
-          ]}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={handleBulkAction}
+          CardComponent={({ item }) => (
+            <div className="p-4 border-b last:border-b-0">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
+                  <p className="text-sm text-gray-500">{item.email}</p>
+                </div>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  item.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {item.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+                </span>
+              </div>
+              <div className="text-sm mb-2">
+                <p>{item.phone}</p>
+                <p className="text-gray-500">{item.eventName}</p>
+              </div>
+              <p className="text-sm text-gray-500">{item.dateSubmitted}</p>
+            </div>
+          )}
         />
 
         {selectedRegistrations.length > 0 && (
