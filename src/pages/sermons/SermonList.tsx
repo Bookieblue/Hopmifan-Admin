@@ -188,6 +188,11 @@ export default function SermonList() {
     navigate(`/sermons/${id}/edit`);
   };
 
+  const handleEdit = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    navigate(`/sermons/${id}/edit`);
+  };
+
   const filteredSermons = sermons.filter((sermon) => {
     const matchesSearch = sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sermon.preacher.toLowerCase().includes(searchQuery.toLowerCase());
@@ -269,10 +274,7 @@ export default function SermonList() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-[200px]">
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/sermons/${sermon.id}/edit`);
-                      }}>
+                      <DropdownMenuItem onClick={(e) => handleEdit(e, sermon.id)}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
