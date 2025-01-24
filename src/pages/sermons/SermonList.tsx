@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Plus, MoreVertical, Edit, Trash2, CheckSquare, XSquare, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useNavigate } from "react-router-dom";
 
 interface Sermon {
   id: string;
@@ -83,6 +82,10 @@ export default function SermonList() {
       return sampleSermons;
     }
   });
+
+  const handleRowClick = (id: string) => {
+    navigate(`/sermons/${id}/edit`);
+  };
 
   const handleDelete = (id: string) => {
     setSermonToDelete(id);
