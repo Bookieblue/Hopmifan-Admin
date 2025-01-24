@@ -68,8 +68,8 @@ export default function SermonList() {
   const [bulkAction, setBulkAction] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sermonToDelete, setSermonToDelete] = useState<string>("");
+  const navigate = useNavigate();
 
-  // Initialize sermons with proper structure
   const [sermons, setSermons] = useState<Sermon[]>(() => {
     const stored = localStorage.getItem('sermons');
     if (!stored) {
@@ -83,10 +83,6 @@ export default function SermonList() {
       return sampleSermons;
     }
   });
-
-  const handleRowClick = (id: string) => {
-    navigate(`/sermons/${id}/edit`);
-  };
 
   const handleDelete = (id: string) => {
     setSermonToDelete(id);
@@ -106,6 +102,57 @@ export default function SermonList() {
     setSelectedSermons(selectedSermons.filter(itemId => itemId !== sermonToDelete));
   };
 
+  const handleStatusChange = (id: string, newStatus: "published" | "draft") => {
+    const updatedSermons = sermons.map(sermon => {
+      if (sermon.id === id) {
+        return { ...sermon, status: newStatus };
+      }
+      return sermon;
+    });
+    setSermons(updatedSermons);
+    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
+    
+    toast({
+      description: `Sermon ${newStatus === 'published' ? 'published' : 'unpublished'} successfully`,
+    });
+  };
+
+  const handleBulkAction = () => {
+    if (!selectedSermons.length || !bulkAction) return;
+
+    const updatedSermons = sermons.map(sermon => {
+      if (selectedSermons.includes(sermon.id)) {
+        switch (bulkAction) {
+          case "delete":
+            return null;
+          case "publish":
+            return { ...sermon, status: "published" };
+          case "unpublish":
+            return { ...sermon, status: "draft" };
+          default:
+            return sermon;
+        }
+      }
+      return sermon;
+    }).filter(Boolean) as Sermon[];
+
+    setSermons(updatedSermons);
+    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
+
+    const actionMessages = {
+      delete: "deleted",
+      publish: "published",
+      unpublish: "unpublished"
+    };
+
+    toast({
+      description: `${selectedSermons.length} sermons ${actionMessages[bulkAction as keyof typeof actionMessages]} successfully`,
+    });
+
+    setSelectedSermons([]);
+    setBulkAction("");
+  };
+
   const filteredSermons = sermons.filter((sermon) => {
     const matchesSearch = sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sermon.preacher.toLowerCase().includes(searchQuery.toLowerCase());
@@ -113,8 +160,6 @@ export default function SermonList() {
     const matchesDate = !dateFilter || sermon.date.includes(dateFilter);
     return matchesSearch && matchesStatus && matchesDate;
   });
-
-  const navigate = useNavigate();
 
   return (
     <div className="page-container">
