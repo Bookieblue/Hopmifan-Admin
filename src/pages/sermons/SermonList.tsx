@@ -39,21 +39,72 @@ interface Sermon {
 const sampleSermons: Record<string, Sermon> = {
   "SER-001": {
     id: "SER-001",
-    title: "Understanding God's Love",
-    preacher: "Pastor John Doe",
-    date: "Mar 15, 2024",
+    title: "The Power of Faith",
+    preacher: "Pastor John Smith",
+    date: new Date().toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
     status: "published",
-    youtubeLink: "https://youtube.com/watch?v=123",
-    content: "A powerful message about God's love...",
+    youtubeLink: "https://youtube.com/watch?v=sample1",
+    content: "In this powerful sermon, we explore the transformative power of faith in our daily lives. Through biblical examples and contemporary applications, we learn how faith can move mountains and change hearts.",
     thumbnailUrl: ""
   },
   "SER-002": {
     id: "SER-002",
-    title: "Walking in Faith",
-    preacher: "Pastor Jane Smith",
-    date: "Mar 14, 2024",
+    title: "Walking in Love",
+    preacher: "Pastor Sarah Johnson",
+    date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
+    status: "published",
+    youtubeLink: "https://youtube.com/watch?v=sample2",
+    content: "Discover the true meaning of walking in love as we delve into 1 Corinthians 13. This message explores practical ways to demonstrate Christ-like love in our relationships and community.",
+    thumbnailUrl: ""
+  },
+  "SER-003": {
+    id: "SER-003",
+    title: "Finding Peace in Troubled Times",
+    preacher: "Pastor Michael Brown",
+    date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
     status: "draft",
-    content: "Learning to trust God in all circumstances...",
+    youtubeLink: "https://youtube.com/watch?v=sample3",
+    content: "A timely message about finding and maintaining peace in the midst of life's storms. Drawing from Scripture, we learn how to anchor our souls in God's promises.",
+    thumbnailUrl: ""
+  },
+  "SER-004": {
+    id: "SER-004",
+    title: "The Grace of Giving",
+    preacher: "Pastor Rachel Williams",
+    date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
+    status: "published",
+    youtubeLink: "https://youtube.com/watch?v=sample4",
+    content: "Explore the biblical principles of generosity and the blessings that come from cheerful giving. This sermon unpacks 2 Corinthians 9:6-7 and its application in our lives.",
+    thumbnailUrl: ""
+  },
+  "SER-005": {
+    id: "SER-005",
+    title: "Spiritual Warfare",
+    preacher: "Pastor David Wilson",
+    date: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
+    status: "draft",
+    youtubeLink: "https://youtube.com/watch?v=sample5",
+    content: "An in-depth look at Ephesians 6 and the armor of God. Learn how to stand firm in your faith and overcome spiritual battles through prayer and God's Word.",
     thumbnailUrl: ""
   }
 };
