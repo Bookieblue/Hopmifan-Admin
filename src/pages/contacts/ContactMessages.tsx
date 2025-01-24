@@ -175,20 +175,9 @@ export default function ContactMessages() {
           description: `${selectedContacts.length} contacts marked as pending`,
         });
         break;
-      case "delete":
-        const newContacts = updatedContacts.filter(
-          contact => !selectedContacts.includes(contact.id)
-        );
-        setContacts(newContacts);
-        toast({
-          description: `${selectedContacts.length} contacts deleted`,
-        });
-        break;
     }
     
-    if (bulkAction !== "delete") {
-      setContacts(updatedContacts);
-    }
+    setContacts(updatedContacts);
     setSelectedContacts([]);
     setBulkAction("");
   };
@@ -265,8 +254,7 @@ export default function ContactMessages() {
           showCheckboxes={true}
           bulkActions={[
             { value: "markReplied", label: "Mark as Replied" },
-            { value: "markPending", label: "Mark as Pending" },
-            { value: "delete", label: "Delete Selected" }
+            { value: "markPending", label: "Mark as Pending" }
           ]}
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
@@ -281,8 +269,7 @@ export default function ContactMessages() {
             onBulkAction={handleBulkAction}
             actions={[
               { value: "markReplied", label: "Mark as Replied" },
-              { value: "markPending", label: "Mark as Pending" },
-              { value: "delete", label: "Delete Selected" }
+              { value: "markPending", label: "Mark as Pending" }
             ]}
           />
         )}

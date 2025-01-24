@@ -153,15 +153,6 @@ export default function PrayerRequestList() {
           description: `${selectedRequests.length} requests marked as pending`,
         });
         break;
-      case "delete":
-        const newRequests = updatedRequests.filter(
-          request => !selectedRequests.includes(request.id)
-        );
-        setRequests(newRequests);
-        toast({
-          description: `${selectedRequests.length} requests deleted`,
-        });
-        break;
     }
     
     if (bulkAction !== "delete") {
@@ -246,8 +237,7 @@ export default function PrayerRequestList() {
             onBulkAction={handleBulkAction}
             actions={[
               { value: "markPrayed", label: "Mark as Prayed" },
-              { value: "markPending", label: "Mark as Pending" },
-              { value: "delete", label: "Delete Selected" }
+              { value: "markPending", label: "Mark as Pending" }
             ]}
           />
         )}

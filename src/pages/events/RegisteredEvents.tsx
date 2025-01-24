@@ -112,30 +112,11 @@ export default function RegisteredEvents() {
           description: `${selectedRegistrations.length} registrations marked as pending`,
         });
         break;
-
-      case "delete":
-        setDeleteDialogOpen(true);
-        return;
     }
 
     setRegistrations(updatedRegistrations);
-    localStorage.setItem("eventRegistrations", JSON.stringify(updatedRegistrations));
     setSelectedRegistrations([]);
     setBulkAction("");
-  };
-
-  const handleConfirmBulkDelete = () => {
-    const updatedRegistrations = registrations.filter(
-      reg => !selectedRegistrations.includes(reg.id)
-    );
-    setRegistrations(updatedRegistrations);
-    localStorage.setItem("eventRegistrations", JSON.stringify(updatedRegistrations));
-    setSelectedRegistrations([]);
-    setBulkAction("");
-    setDeleteDialogOpen(false);
-    toast({
-      description: `${selectedRegistrations.length} registrations deleted`,
-    });
   };
 
   const filteredRegistrations = registrations.filter(registration => {
@@ -155,22 +136,6 @@ export default function RegisteredEvents() {
     if (registration) {
       setSelectedRegistration(registration);
       setDetailsModalOpen(true);
-    }
-  };
-
-  const handleCardClick = (registration: any) => {
-    setSelectedRegistration(registration);
-    setDetailsModalOpen(true);
-  };
-
-  const handleStatusChange = (status: string) => {
-    if (selectedRegistration) {
-      setRegistrations(registrations.map(registration => 
-        registration.id === selectedRegistration.id 
-          ? { ...registration, status }
-          : registration
-      ));
-      setDetailsModalOpen(false);
     }
   };
 
@@ -296,8 +261,7 @@ export default function RegisteredEvents() {
           showCheckboxes={true}
           bulkActions={[
             { value: "markConfirmed", label: "Mark as Confirmed" },
-            { value: "markPending", label: "Mark as Pending" },
-            { value: "delete", label: "Delete Selected" }
+            { value: "markPending", label: "Mark as Pending" }
           ]}
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
@@ -312,8 +276,7 @@ export default function RegisteredEvents() {
             onBulkAction={handleBulkAction}
             actions={[
               { value: "markConfirmed", label: "Mark as Confirmed" },
-              { value: "markPending", label: "Mark as Pending" },
-              { value: "delete", label: "Delete Selected" }
+              { value: "markPending", label: "Mark as Pending" }
             ]}
           />
         )}

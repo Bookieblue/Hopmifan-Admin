@@ -152,20 +152,9 @@ export default function NewMembers() {
           description: `${selectedMembers.length} members marked as pending`,
         });
         break;
-      case "delete":
-        const newMembers = updatedMembers.filter(
-          member => !selectedMembers.includes(member.id)
-        );
-        setMembers(newMembers);
-        toast({
-          description: `${selectedMembers.length} members deleted`,
-        });
-        break;
     }
     
-    if (bulkAction !== "delete") {
-      setMembers(updatedMembers);
-    }
+    setMembers(updatedMembers);
     setSelectedMembers([]);
     setBulkAction("");
   };
@@ -248,8 +237,7 @@ export default function NewMembers() {
             onBulkAction={handleBulkAction}
             actions={[
               { value: "approve", label: "Approve Selected" },
-              { value: "pending", label: "Mark as Pending" },
-              { value: "delete", label: "Delete Selected" }
+              { value: "pending", label: "Mark as Pending" }
             ]}
           />
         )}
