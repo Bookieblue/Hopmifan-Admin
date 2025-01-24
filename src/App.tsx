@@ -18,10 +18,6 @@ import PaymentHistory from "@/pages/payments/Index";
 import DonationHistory from "@/pages/donations/DonationHistory";
 import ContactMessages from "@/pages/contacts/ContactMessages";
 import NewMembers from "@/pages/members/NewMembers";
-import SermonList from "@/pages/sermons/SermonList";
-import CreateSermon from "@/pages/sermons/CreateSermon";
-import EditSermon from "@/pages/sermons/EditSermon";
-import ViewSermon from "@/pages/sermons/ViewSermon";
 import PrayerRequestList from "@/pages/prayer-requests/PrayerRequestList";
 import SignIn from "@/pages/auth/SignIn";
 import ForgotPassword from "@/pages/auth/ForgotPassword";
@@ -105,22 +101,6 @@ const router = createBrowserRouter([
       {
         path: "donations",
         element: <DonationHistory />,
-      },
-      {
-        path: "sermons",
-        element: <SermonList />,
-      },
-      {
-        path: "sermons/create",
-        element: <CreateSermon />,
-      },
-      {
-        path: "sermons/:id/edit",
-        element: <EditSermon />,
-      },
-      {
-        path: "sermons/:id",
-        element: <ViewSermon />,
       },
       {
         path: "prayer-requests",
