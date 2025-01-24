@@ -12,6 +12,7 @@ export default function PrayerRequestList() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [countryFilter, setCountryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
@@ -29,8 +30,12 @@ export default function PrayerRequestList() {
       status: "pending",
       date: "2024-01-15",
       message: "Please pray for my complete healing and recovery.",
+      country: "USA"
     },
   ]);
+
+  // Get unique countries from requests
+  const uniqueCountries = Array.from(new Set(requests.map(request => request.country)));
 
   const handleViewDetails = (id: string) => {
     const request = requests.find(r => r.id === id);
@@ -221,10 +226,13 @@ export default function PrayerRequestList() {
       <FilterModal
         open={showFilterModal}
         onOpenChange={setShowFilterModal}
+        countryFilter={countryFilter}
+        setCountryFilter={setCountryFilter}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
+        uniqueCountries={uniqueCountries}
       />
 
       <DetailsModal
