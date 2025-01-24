@@ -6,6 +6,8 @@ import { PaymentRow } from "@/components/payments/PaymentRow";
 import { PaymentFilters } from "@/components/payments/PaymentFilters";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { FilterModal } from "@/components/donations/FilterModal";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
 
 const payments = [
   { 
@@ -36,6 +38,7 @@ const payments = [
 
 export default function PaymentHistory() {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
@@ -43,6 +46,8 @@ export default function PaymentHistory() {
   const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState<string>("");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<any>(null);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -66,82 +71,32 @@ export default function PaymentHistory() {
     );
   };
 
-  const handleDownloadReceipt = (reference: string) => {
-    // Simulate receipt download
-    toast({
-      title: "Receipt Downloaded",
-      description: `Receipt for payment ${reference} has been downloaded`,
-    });
-  };
-
-  const handleBulkExportCSV = () => {
-    const selectedPaymentData = filteredPayments.filter(p => 
-      selectedPayments.includes(p.reference)
-    );
-    
-    const headers = ["Date", "Customer", "Amount", "Method", "Reference", "Type"];
-    const csvData = selectedPaymentData.map(payment => 
-      [payment.date, payment.customer, payment.amount, payment.method, payment.reference, payment.type].join(",")
-    );
-    
-    const csv = [headers.join(","), ...csvData].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `payment-history-${new Date().toISOString().split("T")[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    toast({
-      title: "Export Successful",
-      description: "Selected payments have been exported as CSV",
-    });
-  };
-
-  const handleBulkAction = () => {
-    if (!bulkAction || selectedPayments.length === 0) return;
-    
-    switch (bulkAction) {
-      case "download":
-        selectedPayments.forEach(reference => {
-          handleDownloadReceipt(reference);
-        });
-        break;
-      case "export":
-        handleBulkExportCSV();
-        break;
-      default:
-        toast({
-          title: "Action not supported",
-          description: "The selected bulk action is not supported",
-          variant: "destructive"
-        });
+  const handleViewDetails = (reference: string) => {
+    const payment = payments.find(p => p.reference === reference);
+    if (payment) {
+      setSelectedPayment(payment);
+      setDetailsModalOpen(true);
     }
-    
-    // Reset selection after bulk action
-    setSelectedPayments([]);
-    setBulkAction("");
   };
 
-  const handleApplyFilter = () => {
-    if (!startDate || !endDate) return;
-    
-    const filtered = payments.filter(payment => {
-      const paymentDate = new Date(payment.date);
-      return paymentDate >= startDate && paymentDate <= endDate;
-    });
-    setFilteredPayments(filtered);
-    setIsFilterModalOpen(false);
-  };
-
-  const handleResetFilter = () => {
-    setStartDate(undefined);
-    setEndDate(undefined);
-    setFilteredPayments(payments);
-    setIsFilterModalOpen(false);
-  };
+  const PaymentCard = ({ payment }: { payment: any }) => (
+    <div className="p-4 border-b last:border-b-0">
+      <div className="flex justify-between items-start mb-2">
+        <div>
+          <h3 className="font-medium">{payment.customer}</h3>
+          <p className="text-sm text-gray-500">{payment.date}</p>
+        </div>
+        <span className="font-medium">{payment.amount}</span>
+      </div>
+      <div className="flex justify-between items-center mt-2">
+        <div className="text-sm text-gray-500">
+          <p>{payment.method}</p>
+          <p>Ref: {payment.reference}</p>
+        </div>
+        <ViewDetailsButton onClick={() => handleViewDetails(payment.reference)} />
+      </div>
+    </div>
+  );
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
@@ -151,44 +106,111 @@ export default function PaymentHistory() {
 
       <PaymentFilters
         searchQuery={searchQuery}
-        setSearchQuery={handleSearch}
+        setSearchQuery={setSearchQuery}
         startDate={startDate}
         setStartDate={setStartDate}
         endDate={endDate}
         setEndDate={setEndDate}
-        handleResetFilter={handleResetFilter}
-        handleApplyFilter={handleApplyFilter}
+        handleResetFilter={() => {
+          setStartDate(undefined);
+          setEndDate(undefined);
+          setFilteredPayments(payments);
+          setIsFilterModalOpen(false);
+        }}
+        handleApplyFilter={() => {
+          if (!startDate || !endDate) return;
+          const filtered = payments.filter(payment => {
+            const paymentDate = new Date(payment.date);
+            return paymentDate >= startDate && paymentDate <= endDate;
+          });
+          setFilteredPayments(filtered);
+          setIsFilterModalOpen(false);
+        }}
         onOpenFilterModal={() => setIsFilterModalOpen(true)}
       />
 
       <div className="bg-white rounded-lg border">
-        <Table>
-          <PaymentTableHeader
-            onSelectAll={handleSelectAll}
-            isAllSelected={selectedPayments.length === filteredPayments.length}
-          />
-          <TableBody>
+        {isMobile ? (
+          <div className="divide-y">
             {filteredPayments.map((payment) => (
-              <PaymentRow
-                key={payment.reference}
-                payment={payment}
-                isSelected={selectedPayments.includes(payment.reference)}
-                onSelect={handleSelectPayment}
-                onDownloadReceipt={handleDownloadReceipt}
-              />
+              <PaymentCard key={payment.reference} payment={payment} />
             ))}
-          </TableBody>
-        </Table>
-        <BulkActions
-          selectedCount={selectedPayments.length}
-          bulkAction={bulkAction}
-          setBulkAction={setBulkAction}
-          onBulkAction={handleBulkAction}
-          actions={[
-            { value: "download", label: "Download Receipts" },
-            { value: "export", label: "Export as CSV" }
-          ]}
-        />
+          </div>
+        ) : (
+          <Table>
+            <PaymentTableHeader
+              onSelectAll={handleSelectAll}
+              isAllSelected={selectedPayments.length === filteredPayments.length}
+            />
+            <TableBody>
+              {filteredPayments.map((payment) => (
+                <PaymentRow
+                  key={payment.reference}
+                  payment={payment}
+                  isSelected={selectedPayments.includes(payment.reference)}
+                  onSelect={handleSelectPayment}
+                  onDownloadReceipt={() => {
+                    toast({
+                      title: "Receipt Downloaded",
+                      description: `Receipt for payment ${payment.reference} has been downloaded`,
+                    });
+                  }}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        )}
+        {selectedPayments.length > 0 && (
+          <BulkActions
+            selectedCount={selectedPayments.length}
+            bulkAction={bulkAction}
+            setBulkAction={setBulkAction}
+            onBulkAction={() => {
+              if (!bulkAction || selectedPayments.length === 0) return;
+              
+              switch (bulkAction) {
+                case "download":
+                  selectedPayments.forEach(reference => {
+                    toast({
+                      title: "Receipt Downloaded",
+                      description: `Receipt for payment ${reference} has been downloaded`,
+                    });
+                  });
+                  break;
+                case "export":
+                  const selectedPaymentData = filteredPayments.filter(p => 
+                    selectedPayments.includes(p.reference)
+                  );
+                  
+                  const headers = ["Date", "Customer", "Amount", "Method", "Reference", "Type"];
+                  const csvData = selectedPaymentData.map(payment => 
+                    [payment.date, payment.customer, payment.amount, payment.method, payment.reference, payment.type].join(",")
+                  );
+                  
+                  const csv = [headers.join(","), ...csvData].join("\n");
+                  const blob = new Blob([csv], { type: "text/csv" });
+                  const url = window.URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.setAttribute("download", `payment-history-${new Date().toISOString().split("T")[0]}.csv`);
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  
+                  toast({
+                    title: "Export Successful",
+                    description: "Selected payments have been exported as CSV",
+                  });
+                  break;
+              }
+              setBulkAction("");
+            }}
+            actions={[
+              { value: "download", label: "Download Receipts" },
+              { value: "export", label: "Export as CSV" }
+            ]}
+          />
+        )}
       </div>
 
       <FilterModal 
@@ -198,8 +220,21 @@ export default function PaymentHistory() {
         setStartDate={setStartDate}
         endDate={endDate}
         setEndDate={setEndDate}
-        onApply={handleApplyFilter}
-        onReset={handleResetFilter}
+        onApply={() => {
+          if (!startDate || !endDate) return;
+          const filtered = payments.filter(payment => {
+            const paymentDate = new Date(payment.date);
+            return paymentDate >= startDate && paymentDate <= endDate;
+          });
+          setFilteredPayments(filtered);
+          setIsFilterModalOpen(false);
+        }}
+        onReset={() => {
+          setStartDate(undefined);
+          setEndDate(undefined);
+          setFilteredPayments(payments);
+          setIsFilterModalOpen(false);
+        }}
       />
     </div>
   );
