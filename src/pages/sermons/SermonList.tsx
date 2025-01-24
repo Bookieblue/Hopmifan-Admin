@@ -35,7 +35,6 @@ interface Sermon {
   thumbnailUrl?: string;
 }
 
-// Sample sermons data
 const sampleSermons: Record<string, Sermon> = {
   "SER-001": {
     id: "SER-001",
@@ -219,10 +218,6 @@ export default function SermonList() {
     navigate(`/sermons/${id}/edit`);
   };
 
-  const handleEdit = (id: string) => {
-    navigate(`/sermons/${id}/edit`);
-  };
-
   const filteredSermons = sermons.filter((sermon) => {
     const matchesSearch = sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sermon.preacher.toLowerCase().includes(searchQuery.toLowerCase());
@@ -266,7 +261,7 @@ export default function SermonList() {
       </div>
 
       <div className="bg-white rounded-lg border">
-        <DataTable
+        <DataTable<Sermon>
           data={filteredSermons}
           columns={[
             { 
@@ -306,7 +301,7 @@ export default function SermonList() {
                     <DropdownMenuContent align="end" className="w-[200px]">
                       <DropdownMenuItem onClick={(e) => {
                         e.stopPropagation();
-                        handleEdit(sermon.id);
+                        handleRowClick(sermon.id);
                       }}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
