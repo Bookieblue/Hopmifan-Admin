@@ -28,10 +28,10 @@ import { SermonCard } from "@/components/sermons/SermonCard";
 
 const sampleSermons = {
   "SER-001": {
-    title: "Understanding God's Grace",
-    content: "<p>A deep dive into understanding God's grace and its impact on our daily lives.</p>",
+    title: "The Power of Faith in Modern Times",
+    content: "<p>Exploring how faith remains a vital force in our contemporary world, providing guidance and strength in facing modern challenges.</p>",
     author: "Pastor John Smith",
-    publishDate: new Date(2024, 2, 15).toLocaleDateString('en-US', {
+    publishDate: new Date(2024, 0, 20).toLocaleDateString('en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
@@ -40,16 +40,52 @@ const sampleSermons = {
     imagePreview: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05"
   },
   "SER-002": {
-    title: "The Power of Prayer",
-    content: "<p>Exploring the transformative power of prayer in our spiritual journey.</p>",
+    title: "Understanding God's Grace",
+    content: "<p>A deep dive into the concept of divine grace and its transformative power in our lives.</p>",
     author: "Rev. Sarah Johnson",
-    publishDate: new Date(2024, 2, 14).toLocaleDateString('en-US', {
+    publishDate: new Date(2024, 0, 19).toLocaleDateString('en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
     }),
     status: "published",
     imagePreview: "https://images.unsplash.com/photo-1501854140801-50d01698950b"
+  },
+  "SER-003": {
+    title: "Walking in Love: A Christian's Journey",
+    content: "<p>Examining the practical application of love in our daily lives through biblical teachings and modern examples.</p>",
+    author: "Pastor Michael Brown",
+    publishDate: new Date(2024, 0, 18).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
+    status: "published",
+    imagePreview: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a"
+  },
+  "SER-004": {
+    title: "Finding Peace in Troubled Times",
+    content: "<p>Discovering spiritual peace and maintaining faith during periods of uncertainty and challenge.</p>",
+    author: "Rev. Emily Davis",
+    publishDate: new Date(2024, 0, 17).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
+    status: "draft",
+    imagePreview: "https://images.unsplash.com/photo-1504198322253-cfa87a0ff25f"
+  },
+  "SER-005": {
+    title: "The Purpose of Prayer",
+    content: "<p>Understanding the power and importance of prayer in building a stronger relationship with God.</p>",
+    author: "Pastor David Wilson",
+    publishDate: new Date(2024, 0, 16).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }),
+    status: "published",
+    imagePreview: "https://images.unsplash.com/photo-1455849318743-b2233052fcff"
   }
 };
 
@@ -77,6 +113,7 @@ const SermonList = () => {
         ...sermon
       }));
     }
+    // If no sermons exist in localStorage, initialize with sample data
     localStorage.setItem('sermons', JSON.stringify(sampleSermons));
     return Object.entries(sampleSermons).map(([id, sermon]) => ({
       id,
