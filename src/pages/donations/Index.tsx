@@ -39,8 +39,6 @@ export default function DonationHistory() {
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [dateFilter, setDateFilter] = useState("");
   const [filteredDonations, setFilteredDonations] = useState(donations);
   const [selectedDonations, setSelectedDonations] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState<string>("");
@@ -115,8 +113,6 @@ export default function DonationHistory() {
   const handleResetFilter = () => {
     setStartDate(undefined);
     setEndDate(undefined);
-    setStatusFilter("all");
-    setDateFilter("");
     setFilteredDonations(donations);
     setIsFilterModalOpen(false);
   };
@@ -188,10 +184,6 @@ export default function DonationHistory() {
       <FilterModal 
         open={isFilterModalOpen}
         onOpenChange={setIsFilterModalOpen}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
         startDate={startDate}
         setStartDate={setStartDate}
         endDate={endDate}

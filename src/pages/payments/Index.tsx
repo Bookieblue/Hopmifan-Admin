@@ -39,8 +39,6 @@ export default function PaymentHistory() {
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [dateFilter, setDateFilter] = useState("");
   const [filteredPayments, setFilteredPayments] = useState(payments);
   const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState<string>("");
@@ -141,8 +139,6 @@ export default function PaymentHistory() {
   const handleResetFilter = () => {
     setStartDate(undefined);
     setEndDate(undefined);
-    setStatusFilter("all");
-    setDateFilter("");
     setFilteredPayments(payments);
     setIsFilterModalOpen(false);
   };
@@ -198,10 +194,6 @@ export default function PaymentHistory() {
       <FilterModal 
         open={isFilterModalOpen}
         onOpenChange={setIsFilterModalOpen}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
         startDate={startDate}
         setStartDate={setStartDate}
         endDate={endDate}
