@@ -139,6 +139,34 @@ export default function RegisteredEvents() {
     }
   };
 
+  const handleStatusChange = (id: string, newStatus: string) => {
+    const updatedRegistrations = registrations.map(registration => {
+      if (registration.id === id) {
+        return {
+          ...registration,
+          status: newStatus === 'confirmed' ? 'confirmed' : 'pending'
+        };
+      }
+      return registration;
+    });
+    setRegistrations(updatedRegistrations);
+    toast({
+      description: `Registration status updated to ${newStatus}`,
+    });
+  };
+
+  const handleConfirmBulkDelete = () => {
+    const updatedRegistrations = registrations.filter(
+      registration => !selectedRegistrations.includes(registration.id)
+    );
+    setRegistrations(updatedRegistrations);
+    setSelectedRegistrations([]);
+    setDeleteDialogOpen(false);
+    toast({
+      description: `${selectedRegistrations.length} registrations have been deleted`,
+    });
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
