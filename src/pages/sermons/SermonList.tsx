@@ -59,6 +59,7 @@ const sampleSermons: Sermon[] = [
 
 export default function SermonList() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [selectedSermons, setSelectedSermons] = useState<string[]>([]);
@@ -67,7 +68,6 @@ export default function SermonList() {
   const [bulkAction, setBulkAction] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sermonToDelete, setSermonToDelete] = useState<string>("");
-  const navigate = useNavigate();
 
   const [sermons, setSermons] = useState<Sermon[]>(() => {
     const stored = localStorage.getItem('sermons');
