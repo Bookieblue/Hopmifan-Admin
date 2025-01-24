@@ -12,14 +12,6 @@ type SermonData = {
   thumbnailUrl?: string;
 };
 
-const getStoredSermons = (): Record<string, SermonData> => {
-  const stored = localStorage.getItem('sermons');
-  if (stored) {
-    return JSON.parse(stored);
-  }
-  return {};
-};
-
 export default function EditSermon() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -27,13 +19,31 @@ export default function EditSermon() {
   const [initialData, setInitialData] = useState<SermonData | null>(null);
 
   useEffect(() => {
-    const sermons = getStoredSermons();
-    if (id && sermons[id]) {
-      setInitialData(sermons[id]);
+    const stored = localStorage.getItem('sermons');
+    if (stored) {
+      try {
+        const sermons = JSON.parse(stored);
+        if (id && sermons[id]) {
+          setInitialData(sermons[id]);
+        } else {
+          toast({
+            variant: "destructive",
+            description: "Sermon not found"
+          });
+          navigate("/sermons");
+        }
+      } catch (error) {
+        console.error('Error parsing sermons:', error);
+        toast({
+          variant: "destructive",
+          description: "Error loading sermon data"
+        });
+        navigate("/sermons");
+      }
     } else {
       toast({
         variant: "destructive",
-        description: "Sermon not found"
+        description: "No sermons found"
       });
       navigate("/sermons");
     }
@@ -48,20 +58,23 @@ export default function EditSermon() {
     thumbnail: File | null;
   }) => {
     try {
-      const sermons = getStoredSermons();
+      const stored = localStorage.getItem('sermons');
+      const sermons = stored ? JSON.parse(stored) : {};
+      
       if (id) {
         sermons[id] = {
           ...data,
-          thumbnailUrl: data.thumbnail ? URL.createObjectURL(data.thumbnail) : sermons[id].thumbnailUrl
+          thumbnailUrl: data.thumbnail ? URL.createObjectURL(data.thumbnail) : sermons[id]?.thumbnailUrl
         };
         localStorage.setItem('sermons', JSON.stringify(sermons));
+        
+        toast({
+          description: "Sermon updated successfully"
+        });
+        navigate("/sermons");
       }
-      
-      toast({
-        description: "Sermon updated successfully!"
-      });
-      navigate("/sermons");
     } catch (error) {
+      console.error('Error updating sermon:', error);
       toast({
         variant: "destructive",
         description: "Failed to update sermon"
@@ -69,7 +82,9 @@ export default function EditSermon() {
     }
   };
 
-  if (!initialData) return null;
+  if (!initialData) {
+    return null;
+  }
 
   return <SermonForm initialData={initialData} onSubmit={handleSubmit} isEdit />;
 }
