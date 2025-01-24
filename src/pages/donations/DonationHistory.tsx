@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Eye, Filter, MoreVertical } from "lucide-react";
+import { Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DataTable } from "@/components/shared/DataTable";
+import { DataTable, TableColumn } from "@/components/shared/DataTable";
 import { FilterModal } from "@/components/donations/FilterModal";
 import { ViewDetailsModal } from "@/components/donations/ViewDetailsModal";
 
@@ -63,7 +63,7 @@ export default function DonationHistory() {
     return matchesSearch && matchesStatus && matchesDate;
   });
 
-  const columns = [
+  const columns: TableColumn<Donation>[] = [
     {
       header: "Donor",
       accessor: "donor",
@@ -97,17 +97,15 @@ export default function DonationHistory() {
     {
       header: "Actions",
       accessor: (donation: Donation) => (
-        <div className="flex items-center justify-end gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleViewDetails(donation.id);
-            }}
-            className="text-[#9b87f5] text-sm hover:underline"
-          >
-            See details
-          </button>
-        </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleViewDetails(donation.id);
+          }}
+          className="text-[#9b87f5] text-sm hover:underline"
+        >
+          See details
+        </button>
       ),
       className: "text-gray-500 font-normal"
     }
