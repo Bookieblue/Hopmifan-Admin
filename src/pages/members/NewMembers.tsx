@@ -98,23 +98,6 @@ export default function NewMembers() {
           <div className="text-sm text-gray-500 mt-1">{member.joinDate}</div>
         </div>
       )
-    },
-    {
-      header: "Actions",
-      accessor: (member: any) => (
-        <div className="flex items-center justify-end gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleViewDetails(member.id);
-            }}
-            className="text-[#9b87f5] text-sm hover:underline"
-          >
-            See details
-          </button>
-        </div>
-      ),
-      className: "text-gray-500 font-normal"
     }
   ];
 
