@@ -53,19 +53,17 @@ const donations = [
   }
 ];
 
-type Donation = typeof donations[0];
-
 export default function DonationHistory() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const [typeFilter, setTypeFilter] = useState("all");
   const [stateFilter, setStateFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
-  const [filterModalOpen, setFilterModalOpen] = useState(false);
+  const [selectedDonations, setSelectedDonations] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState("");
   const [selectedDonation, setSelectedDonation] = useState<typeof donations[0] | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [bulkAction, setBulkAction] = useState("");
 
   const columns: TableColumn<typeof donations[0]>[] = [
     { 
@@ -99,19 +97,22 @@ export default function DonationHistory() {
     setSearchQuery(query);
   };
 
-  const handleDonationClick = (donation: typeof donations[0]) => {
-    setSelectedDonation(donation);
-    setDetailsModalOpen(true);
+  const handleViewDetails = (id: string) => {
+    const donation = donations.find(d => d.id === id);
+    if (donation) {
+      setSelectedDonation(donation);
+      setDetailsModalOpen(true);
+    }
   };
 
   const handleBulkAction = () => {
-    if (!selectedItems.length) return;
+    if (!selectedDonations.length) return;
 
     switch (bulkAction) {
       case "exportCSV": {
-        const selectedDonations = donations.filter(d => selectedItems.includes(d.id));
+        const selectedDonationData = donations.filter(d => selectedDonations.includes(d.id));
         const headers = ["Donor Name", "Amount", "Date", "Giving Type", "State", "Payment Method"];
-        const csvData = selectedDonations.map(donation => 
+        const csvData = selectedDonationData.map(donation => 
           [donation.donorName, donation.amount, donation.date, donation.givingType, donation.state, donation.paymentMethod].join(",")
         );
         
@@ -126,18 +127,18 @@ export default function DonationHistory() {
         document.body.removeChild(link);
         
         toast({
-          description: `${selectedItems.length} donations exported as CSV`,
+          description: `${selectedDonations.length} donations exported as CSV`,
         });
         break;
       }
       case "exportPDF": {
         toast({
-          description: `${selectedItems.length} donations exported as PDF`,
+          description: `${selectedDonations.length} donations exported as PDF`,
         });
         break;
       }
     }
-    setSelectedItems([]);
+    setSelectedDonations([]);
     setBulkAction("");
   };
 
@@ -173,7 +174,7 @@ export default function DonationHistory() {
           <Button
             variant="outline"
             className="flex items-center gap-2"
-            onClick={() => setFilterModalOpen(true)}
+            onClick={() => setShowFilterModal(true)}
           >
             <Filter className="h-4 w-4" />
             Filters
@@ -182,8 +183,8 @@ export default function DonationHistory() {
       </div>
 
       <FilterModal
-        open={filterModalOpen}
-        onOpenChange={setFilterModalOpen}
+        open={showFilterModal}
+        onOpenChange={setShowFilterModal}
         typeFilter={typeFilter}
         setTypeFilter={setTypeFilter}
         stateFilter={stateFilter}
@@ -194,36 +195,31 @@ export default function DonationHistory() {
         uniqueStates={Array.from(new Set(donations.map(d => d.state)))}
       />
 
-      <DonationDetailsModal
-        open={detailsModalOpen}
-        onOpenChange={setDetailsModalOpen}
-        donation={selectedDonation}
-      />
-
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
           data={filteredDonations}
           columns={columns}
-          selectedItems={selectedItems}
+          selectedItems={selectedDonations}
           onSelectItem={(id, checked) => {
-            setSelectedItems(prev => 
+            setSelectedDonations(prev => 
               checked ? [...prev, id] : prev.filter(item => item !== id)
             );
           }}
           onSelectAll={(checked) => {
-            setSelectedItems(checked ? filteredDonations.map(d => d.id) : []);
+            setSelectedDonations(checked ? filteredDonations.map(d => d.id) : []);
           }}
           getItemId={(item) => item.id}
-          onRowClick={(id) => handleDonationClick(donations.find(d => d.id === id)!)}
           showCheckboxes={true}
           bulkActions={bulkActions}
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
+          actions={{
+            onViewDetails: handleViewDetails
+          }}
           CardComponent={({ item }) => (
             <div 
               className="p-4 border-b last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => handleDonationClick(item)}
             >
               <div className="flex justify-between items-start">
                 <div>
@@ -236,9 +232,9 @@ export default function DonationHistory() {
           )}
         />
 
-        {selectedItems.length > 0 && (
+        {selectedDonations.length > 0 && (
           <BulkActions
-            selectedCount={selectedItems.length}
+            selectedCount={selectedDonations.length}
             bulkAction={bulkAction}
             setBulkAction={setBulkAction}
             onBulkAction={handleBulkAction}
@@ -246,6 +242,12 @@ export default function DonationHistory() {
           />
         )}
       </div>
+
+      <DonationDetailsModal
+        open={detailsModalOpen}
+        onOpenChange={setDetailsModalOpen}
+        donation={selectedDonation}
+      />
     </div>
   );
 }
