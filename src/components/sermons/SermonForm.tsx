@@ -1,34 +1,27 @@
 import { useState } from "react";
-import { Editor } from "@tinymce/tinymce-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface SermonFormProps {
   initialData?: {
     title: string;
-    content: string;
-    author: string;
+    preacher: string;
+    youtubeLink: string;
+    description: string;
     status: "draft" | "published";
-    imagePreview?: string;
-    language?: string;
+    thumbnailImage?: string;
   };
   onSubmit: (data: {
     title: string;
-    content: string;
-    author: string;
+    preacher: string;
+    youtubeLink: string;
+    description: string;
     status: "draft" | "published";
-    featureImage: File | null;
-    language: string;
+    thumbnailImage: File | null;
   }) => void;
   isEdit?: boolean;
 }
@@ -38,17 +31,17 @@ export function SermonForm({ initialData, onSubmit, isEdit = false }: SermonForm
   const { toast } = useToast();
   
   const [title, setTitle] = useState(initialData?.title ?? "");
-  const [content, setContent] = useState(initialData?.content ?? "");
-  const [author, setAuthor] = useState(initialData?.author ?? "");
-  const [featureImage, setFeatureImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(initialData?.imagePreview ?? "");
-  const [language, setLanguage] = useState(initialData?.language ?? "English");
+  const [preacher, setPreacher] = useState(initialData?.preacher ?? "");
+  const [youtubeLink, setYoutubeLink] = useState(initialData?.youtubeLink ?? "");
+  const [description, setDescription] = useState(initialData?.description ?? "");
+  const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>(initialData?.thumbnailImage ?? "");
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFeatureImage(file);
+      setThumbnailImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -61,8 +54,9 @@ export function SermonForm({ initialData, onSubmit, isEdit = false }: SermonForm
     const newErrors: { [key: string]: boolean } = {};
     
     if (!title.trim()) newErrors.title = true;
-    if (!content.trim()) newErrors.content = true;
-    if (!author.trim()) newErrors.author = true;
+    if (!preacher.trim()) newErrors.preacher = true;
+    if (!youtubeLink.trim()) newErrors.youtubeLink = true;
+    if (!description.trim()) newErrors.description = true;
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -79,11 +73,11 @@ export function SermonForm({ initialData, onSubmit, isEdit = false }: SermonForm
 
     onSubmit({
       title,
-      content,
-      author,
+      preacher,
+      youtubeLink,
+      description,
       status: isDraft ? "draft" : "published",
-      featureImage,
-      language
+      thumbnailImage
     });
   };
 
@@ -103,7 +97,7 @@ export function SermonForm({ initialData, onSubmit, isEdit = false }: SermonForm
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold">{isEdit ? 'Edit' : 'Add New'} Sermon</h1>
+        <h1 className="text-2xl font-bold">Add New Sermon</h1>
       </div>
 
       <div className="space-y-6">
@@ -124,60 +118,63 @@ export function SermonForm({ initialData, onSubmit, isEdit = false }: SermonForm
         </div>
 
         <div>
-          <label htmlFor="author" className="block text-sm font-medium mb-2">
-            Author <span className="text-red-500">*</span>
+          <label htmlFor="preacher" className="block text-sm font-medium mb-2">
+            Preacher <span className="text-red-500">*</span>
           </label>
           <Input
-            id="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            placeholder="Enter author name"
-            className={inputClassName('author')}
+            id="preacher"
+            value={preacher}
+            onChange={(e) => setPreacher(e.target.value)}
+            placeholder="Enter preacher name"
+            className={inputClassName('preacher')}
           />
-          {errors.author && (
-            <p className="text-red-500 text-sm mt-1">Author name is required</p>
+          {errors.preacher && (
+            <p className="text-red-500 text-sm mt-1">Preacher name is required</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="language" className="block text-sm font-medium mb-2">Language</label>
-          <Select value={language} onValueChange={setLanguage}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select language" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="English">English</SelectItem>
-              <SelectItem value="Yoruba">Yoruba</SelectItem>
-            </SelectContent>
-          </Select>
+          <label htmlFor="youtubeLink" className="block text-sm font-medium mb-2">
+            YouTube Link <span className="text-red-500">*</span>
+          </label>
+          <Input
+            id="youtubeLink"
+            value={youtubeLink}
+            onChange={(e) => setYoutubeLink(e.target.value)}
+            placeholder="Enter YouTube video link"
+            className={inputClassName('youtubeLink')}
+          />
+          {errors.youtubeLink && (
+            <p className="text-red-500 text-sm mt-1">YouTube link is required</p>
+          )}
         </div>
 
         <div>
-          <label htmlFor="featureImage" className="block text-sm font-medium mb-2">
-            Feature Image
+          <label htmlFor="thumbnailImage" className="block text-sm font-medium mb-2">
+            Thumbnail Image
           </label>
-          <div className="mt-1 flex items-center gap-4">
+          <div className="mt-1">
             <label
-              htmlFor="featureImage"
+              htmlFor="thumbnailImage"
               className="cursor-pointer flex items-center justify-center w-full h-48 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none hover:border-gray-400 focus:outline-none"
             >
               {imagePreview ? (
                 <img
                   src={imagePreview}
-                  alt="Preview"
+                  alt="Thumbnail preview"
                   className="h-full object-cover rounded-md"
                 />
               ) : (
                 <div className="flex flex-col items-center">
                   <Upload className="w-12 h-12 text-gray-400" />
                   <span className="mt-2 text-sm text-gray-500">
-                    Click to upload feature image
+                    Click to upload thumbnail image
                   </span>
                 </div>
               )}
               <input
                 type="file"
-                id="featureImage"
+                id="thumbnailImage"
                 accept="image/*"
                 className="hidden"
                 onChange={handleImageChange}
@@ -187,35 +184,18 @@ export function SermonForm({ initialData, onSubmit, isEdit = false }: SermonForm
         </div>
 
         <div>
-          <label htmlFor="content" className="block text-sm font-medium mb-2">
-            Content <span className="text-red-500">*</span>
+          <label htmlFor="description" className="block text-sm font-medium mb-2">
+            Description <span className="text-red-500">*</span>
           </label>
-          <div className={errors.content ? 'border-2 border-red-500 rounded-lg' : ''}>
-            <Editor
-              apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
-              init={{
-                height: 500,
-                menubar: false,
-                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px }',
-                branding: false,
-                promotion: false,
-                setup: (editor) => {
-                  editor.on('init', () => {
-                    const notification = document.querySelector('.tox-notifications-container');
-                    if (notification) {
-                      notification.remove();
-                    }
-                  });
-                }
-              }}
-              value={content}
-              onEditorChange={(newContent) => setContent(newContent)}
-            />
-          </div>
-          {errors.content && (
-            <p className="text-red-500 text-sm mt-1">Content is required</p>
+          <Textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter sermon description"
+            className={`min-h-[100px] ${inputClassName('description')}`}
+          />
+          {errors.description && (
+            <p className="text-red-500 text-sm mt-1">Description is required</p>
           )}
         </div>
 
@@ -227,6 +207,7 @@ export function SermonForm({ initialData, onSubmit, isEdit = false }: SermonForm
             Save as Draft
           </Button>
           <Button
+            className="bg-[#695CAE] hover:bg-[#695CAE]/90"
             onClick={() => handleSave(false)}
           >
             Publish

@@ -1,4 +1,3 @@
-// Duplicate of CreateBlog.tsx with "blog"/"Blog" replaced with "sermon"/"Sermon"
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { SermonForm } from "@/components/sermons/SermonForm";
@@ -9,11 +8,11 @@ export default function CreateSermon() {
 
   const handleSubmit = async (data: {
     title: string;
-    content: string;
-    author: string;
+    preacher: string;
+    youtubeLink: string;
+    description: string;
     status: "draft" | "published";
-    featureImage: File | null;
-    language: string;
+    thumbnailImage: File | null;
   }) => {
     try {
       const stored = localStorage.getItem('sermons');
@@ -23,7 +22,7 @@ export default function CreateSermon() {
       
       sermons[newId] = {
         ...data,
-        imagePreview: data.featureImage ? URL.createObjectURL(data.featureImage) : undefined,
+        thumbnailImage: data.thumbnailImage ? URL.createObjectURL(data.thumbnailImage) : undefined,
         publishDate: new Date().toLocaleDateString('en-US', {
           day: '2-digit',
           month: 'short',
