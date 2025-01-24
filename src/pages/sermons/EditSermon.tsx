@@ -17,51 +17,26 @@ export default function EditSermon() {
   const { toast } = useToast();
   const { id } = useParams();
   const [initialData, setInitialData] = useState<SermonData | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) {
-      toast({
-        variant: "destructive",
-        description: "Invalid sermon ID"
-      });
-      navigate("/sermons");
-      return;
-    }
-
-    try {
-      const stored = localStorage.getItem('sermons');
-      if (!stored) {
-        toast({
-          variant: "destructive",
-          description: "No sermons found"
-        });
-        navigate("/sermons");
-        return;
-      }
-
+    const stored = localStorage.getItem('sermons');
+    if (stored && id) {
       const sermons = JSON.parse(stored);
-      const sermon = sermons[id];
-
-      if (!sermon) {
+      if (sermons[id]) {
+        setInitialData(sermons[id]);
+      } else {
         toast({
           variant: "destructive",
           description: "Sermon not found"
         });
         navigate("/sermons");
-        return;
       }
-
-      setInitialData(sermon);
-    } catch (error) {
-      console.error('Error loading sermon:', error);
+    } else {
       toast({
         variant: "destructive",
-        description: "Error loading sermon data"
+        description: "No sermons found"
       });
       navigate("/sermons");
-    } finally {
-      setLoading(false);
     }
   }, [id, navigate, toast]);
 
@@ -73,26 +48,22 @@ export default function EditSermon() {
     status: "draft" | "published";
     thumbnail: File | null;
   }) => {
-    if (!id) return;
-
     try {
       const stored = localStorage.getItem('sermons');
       const sermons = stored ? JSON.parse(stored) : {};
       
-      sermons[id] = {
-        ...data,
-        thumbnailUrl: data.thumbnail 
-          ? URL.createObjectURL(data.thumbnail) 
-          : sermons[id]?.thumbnailUrl
-      };
-
-      localStorage.setItem('sermons', JSON.stringify(sermons));
-      
-      toast({
-        description: "Sermon updated successfully"
-      });
-      
-      navigate("/sermons");
+      if (id) {
+        sermons[id] = {
+          ...data,
+          thumbnailUrl: data.thumbnail ? URL.createObjectURL(data.thumbnail) : sermons[id]?.thumbnailUrl
+        };
+        localStorage.setItem('sermons', JSON.stringify(sermons));
+        
+        toast({
+          description: "Sermon updated successfully"
+        });
+        navigate("/sermons");
+      }
     } catch (error) {
       console.error('Error updating sermon:', error);
       toast({
@@ -101,10 +72,6 @@ export default function EditSermon() {
       });
     }
   };
-
-  if (loading) {
-    return <div className="p-6">Loading...</div>;
-  }
 
   if (!initialData) {
     return null;

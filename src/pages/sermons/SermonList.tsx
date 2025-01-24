@@ -78,7 +78,7 @@ export default function SermonList() {
         return acc;
       }, {} as Record<string, Sermon>);
       localStorage.setItem('sermons', JSON.stringify(sermonsObj));
-      return sampleSermons;
+      return Object.values(sermonsObj);
     }
     try {
       const parsedSermons = JSON.parse(stored);
@@ -188,8 +188,7 @@ export default function SermonList() {
     navigate(`/sermons/${id}/edit`);
   };
 
-  const handleEdit = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
+  const handleEdit = (id: string) => {
     navigate(`/sermons/${id}/edit`);
   };
 
@@ -274,7 +273,10 @@ export default function SermonList() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-[200px]">
-                      <DropdownMenuItem onClick={(e) => handleEdit(e, sermon.id)}>
+                      <DropdownMenuItem onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(sermon.id);
+                      }}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
@@ -334,7 +336,6 @@ export default function SermonList() {
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
         />
-
         {selectedSermons.length > 0 && (
           <BulkActions
             selectedCount={selectedSermons.length}
