@@ -270,7 +270,7 @@ export default function ContactMessages() {
         )}
       </div>
 
-      <FilterModal
+      <ContactFilterModal
         open={filterModalOpen}
         onOpenChange={setFilterModalOpen}
         countryFilter={countryFilter}
