@@ -272,8 +272,8 @@ export default function PrayerRequestList() {
         onStatusChange={handleStatusChange}
         statusLabels={{
           pending: 'Pending',
-          completed: 'Prayed',
-          buttonText: 'Mark as Prayed'
+          completed: 'Replied',
+          buttonText: 'Mark as Replied'
         }}
       />
     </div>

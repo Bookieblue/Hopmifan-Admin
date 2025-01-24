@@ -274,8 +274,8 @@ export default function NewMembers() {
         onStatusChange={handleStatusChange}
         statusLabels={{
           pending: 'Pending',
-          completed: 'Approved',
-          buttonText: 'Approve Member'
+          completed: 'Contacted',
+          buttonText: 'Mark as Contacted'
         }}
       />
     </div>
