@@ -19,11 +19,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { SermonCard } from "@/components/sermons/SermonCard";
 
+// Sample data with consistent structure
 const sampleSermons = {
   "SER-001": {
     title: "The Power of Faith in Modern Times",
     description: "Exploring how faith remains a vital force in our contemporary world, providing guidance and strength in facing modern challenges.",
-    preacher: "Pastor John Smith",
+    author: "Pastor John Smith",
     youtubeLink: "https://youtube.com/watch?v=example1",
     publishDate: new Date(2024, 0, 20).toLocaleDateString('en-US', {
       day: '2-digit',
@@ -83,14 +84,13 @@ const sampleSermons = {
   }
 };
 
-// Add a type definition for sermon data
+// Updated type definition for sermon data
 type SermonData = {
   id: string;
   title: string;
   description?: string;
   content?: string;
-  preacher?: string;
-  author?: string;
+  author: string;
   youtubeLink?: string;
   publishDate: string;
   status: string;
@@ -113,7 +113,6 @@ const SermonList = () => {
   const [bulkAction, setBulkAction] = useState("");
   const postsPerPage = 15;
 
-  // Update the sermons state initialization with the new type
   const [sermons, setSermons] = useState<SermonData[]>(() => {
     const stored = localStorage.getItem('sermons');
     if (stored) {
@@ -122,21 +121,19 @@ const SermonList = () => {
         return Object.entries(sermonsData).map(([id, sermon]: [string, any]) => ({
           id,
           ...sermon,
-          // Handle both preacher and author fields consistently
-          author: sermon.preacher || sermon.author
+          author: sermon.author || sermon.preacher // Consistently map to author
         }));
       } catch (error) {
         console.error("Error parsing stored sermons:", error);
         return [];
       }
     }
-    // Initialize with sample data
+    
     localStorage.setItem('sermons', JSON.stringify(sampleSermons));
     return Object.entries(sampleSermons).map(([id, sermon]) => ({
       id,
       ...sermon,
-      // Handle both preacher and author fields consistently
-      author: sermon.preacher || sermon.author
+      author: sermon.author || sermon.preacher // Consistently map to author
     }));
   });
 
@@ -301,7 +298,7 @@ const SermonList = () => {
               className: "text-[14px]"
             },
             { 
-              header: "Preacher", 
+              header: "Author", 
               accessor: "author",
               className: "text-[14px]"
             },
@@ -380,3 +377,5 @@ const SermonList = () => {
     </div>
   );
 };
+
+export default SermonList;
