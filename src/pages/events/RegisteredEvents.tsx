@@ -7,6 +7,7 @@ import { EventFilterModal } from "@/components/registered-events/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
+import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -54,7 +55,7 @@ export default function RegisteredEvents() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const [selectedRegistration, setSelectedRegistration] = useState(null);
+  const [selectedRegistration, setSelectedRegistration] = useState<any>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [registrations, setRegistrations] = useState(sampleRegistrations);
   const [selectedRegistrations, setSelectedRegistrations] = useState<string[]>([]);
@@ -230,9 +231,7 @@ export default function RegisteredEvents() {
               header: "Actions",
               accessor: (registration: any) => (
                 <div className="flex items-center justify-end gap-2">
-                  <Button onClick={() => handleViewDetails(registration.id)} className="text-[#9b87f5] text-sm hover:underline">
-                    See details
-                  </Button>
+                  <ViewDetailsButton onClick={() => handleViewDetails(registration.id)} />
                 </div>
               )
             }
