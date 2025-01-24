@@ -120,7 +120,6 @@ export default function SermonList() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sermonToDelete, setSermonToDelete] = useState<string>("");
 
-  // Initialize sermons from localStorage with sample data if empty
   const [sermons, setSermons] = useState<Sermon[]>(() => {
     const stored = localStorage.getItem('sermons');
     if (!stored) {
