@@ -1,18 +1,12 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable } from "@/components/shared/DataTable";
-import { Filter, Plus, Search, MoreVertical, Edit, Trash2, CheckSquare, XSquare } from "lucide-react";
+import { Filter, Plus, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/sermons/FilterModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,15 +22,16 @@ import { SermonCard } from "@/components/sermons/SermonCard";
 const sampleSermons = {
   "SER-001": {
     title: "The Power of Faith in Modern Times",
-    content: "<p>Exploring how faith remains a vital force in our contemporary world, providing guidance and strength in facing modern challenges.</p>",
-    author: "Pastor John Smith",
+    description: "Exploring how faith remains a vital force in our contemporary world, providing guidance and strength in facing modern challenges.",
+    preacher: "Pastor John Smith",
+    youtubeLink: "https://youtube.com/watch?v=example1",
     publishDate: new Date(2024, 0, 20).toLocaleDateString('en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
     }),
     status: "published",
-    imagePreview: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05"
+    thumbnailImage: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05"
   },
   "SER-002": {
     title: "Understanding God's Grace",
@@ -111,7 +106,8 @@ const SermonList = () => {
         const sermonsData = JSON.parse(stored);
         return Object.entries(sermonsData).map(([id, sermon]: [string, any]) => ({
           id,
-          ...sermon
+          ...sermon,
+          author: sermon.preacher // Map preacher to author for compatibility
         }));
       } catch (error) {
         console.error("Error parsing stored sermons:", error);
@@ -122,7 +118,8 @@ const SermonList = () => {
     localStorage.setItem('sermons', JSON.stringify(sampleSermons));
     return Object.entries(sampleSermons).map(([id, sermon]) => ({
       id,
-      ...sermon
+      ...sermon,
+      author: sermon.preacher // Map preacher to author for compatibility
     }));
   });
 
@@ -172,64 +169,45 @@ const SermonList = () => {
   const handleBulkAction = () => {
     if (!bulkAction || selectedSermons.length === 0) return;
 
+    const storedSermons = JSON.parse(localStorage.getItem('sermons') || '{}');
+    let updatedSermons = [...sermons];
+
     switch (bulkAction) {
       case "delete":
-        const updatedSermons = sermons.filter(sermon => !selectedSermons.includes(sermon.id));
-        setSermons(updatedSermons);
-        
-        const storedSermons = JSON.parse(localStorage.getItem('sermons') || '{}');
+        updatedSermons = sermons.filter(sermon => !selectedSermons.includes(sermon.id));
         selectedSermons.forEach(id => delete storedSermons[id]);
-        localStorage.setItem('sermons', JSON.stringify(storedSermons));
-        
-        toast({
-          description: "Selected sermons deleted successfully."
-        });
         break;
       
       case "publish":
-        setSermons(sermons.map(sermon => 
-          selectedSermons.includes(sermon.id) ? { ...sermon, status: 'published' } : sermon
-        ));
-        
-        const storedSermonsPublish = JSON.parse(localStorage.getItem('sermons') || '{}');
-        selectedSermons.forEach(id => {
-          if (storedSermonsPublish[id]) {
-            storedSermonsPublish[id].status = 'published';
-          }
-        });
-        localStorage.setItem('sermons', JSON.stringify(storedSermonsPublish));
-        
-        toast({
-          description: "Selected sermons published successfully."
-        });
-        break;
-      
       case "draft":
-        setSermons(sermons.map(sermon => 
-          selectedSermons.includes(sermon.id) ? { ...sermon, status: 'draft' } : sermon
-        ));
-        
-        const storedSermonsDraft = JSON.parse(localStorage.getItem('sermons') || '{}');
+        updatedSermons = sermons.map(sermon => 
+          selectedSermons.includes(sermon.id) 
+            ? { ...sermon, status: bulkAction === 'publish' ? 'published' : 'draft' }
+            : sermon
+        );
         selectedSermons.forEach(id => {
-          if (storedSermonsDraft[id]) {
-            storedSermonsDraft[id].status = 'draft';
+          if (storedSermons[id]) {
+            storedSermons[id].status = bulkAction === 'publish' ? 'published' : 'draft';
           }
-        });
-        localStorage.setItem('sermons', JSON.stringify(storedSermonsDraft));
-        
-        toast({
-          description: "Selected sermons moved to draft successfully."
         });
         break;
     }
+    
+    setSermons(updatedSermons);
+    localStorage.setItem('sermons', JSON.stringify(storedSermons));
+    
+    toast({
+      description: `Selected sermons ${bulkAction}ed successfully.`
+    });
     
     setSelectedSermons([]);
     setBulkAction("");
   };
 
   const filteredSermons = sermons.filter(sermon => {
-    const matchesSearch = sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         sermon.author.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = 
+      sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sermon.author.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesAuthor = authorFilter === 'all' || sermon.author === authorFilter;
     const matchesStatus = statusFilter === 'all' || sermon.status === statusFilter;
     const matchesDate = !dateFilter || sermon.publishDate === dateFilter;
@@ -240,7 +218,6 @@ const SermonList = () => {
   const totalPages = Math.ceil(filteredSermons.length / postsPerPage);
   const startIndex = (currentPage - 1) * postsPerPage;
   const currentSermons = filteredSermons.slice(startIndex, startIndex + postsPerPage);
-
   const uniqueAuthors = Array.from(new Set(sermons.map(sermon => sermon.author)));
 
   const bulkActions = [
@@ -307,7 +284,7 @@ const SermonList = () => {
               className: "text-[14px]"
             },
             { 
-              header: "Author", 
+              header: "Preacher", 
               accessor: "author",
               className: "text-[14px]"
             },
@@ -324,46 +301,6 @@ const SermonList = () => {
                 </div>
               ),
               className: "text-[14px]"
-            },
-            {
-              header: "Actions",
-              accessor: (sermon: any) => (
-                <div className="flex items-center justify-end gap-2 text-[14px]" onClick={(e) => e.stopPropagation()}>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-[200px] bg-white">
-                      <DropdownMenuItem onClick={() => navigate(`/sermons/${sermon.id}/edit`)}>
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleStatusChange(sermon.id, sermon.status === 'published' ? 'draft' : 'published')}
-                      >
-                        {sermon.status === 'published' ? (
-                          <>
-                            <XSquare className="h-4 w-4 mr-2" />
-                            Unpublish
-                          </>
-                        ) : (
-                          <>
-                            <CheckSquare className="h-4 w-4 mr-2" />
-                            Publish
-                          </>
-                        )}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDelete(sermon.id)} className="text-red-600">
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              ),
-              className: "w-[100px] text-[14px]"
             }
           ]}
           selectedItems={selectedSermons}
