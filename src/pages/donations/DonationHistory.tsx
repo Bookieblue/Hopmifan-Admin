@@ -89,7 +89,8 @@ export default function DonationHistory() {
           <div>{donation.paymentMethod}</div>
           <div className="text-sm text-gray-500">{donation.date}</div>
         </div>
-      )
+      ),
+      className: "text-gray-500 font-normal"
     }
   ];
 
