@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTable, TableColumn } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
@@ -88,23 +88,6 @@ export default function DonationHistory() {
         <div className="space-y-1">
           <div>{donation.paymentMethod}</div>
           <div className="text-sm text-gray-500">{donation.date}</div>
-        </div>
-      ),
-      className: "text-gray-500 font-normal"
-    },
-    {
-      header: "Actions",
-      accessor: (donation) => (
-        <div className="flex items-center justify-end gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleViewDetails(donation.id);
-            }}
-            className="text-[#9b87f5] text-sm hover:underline"
-          >
-            See details
-          </button>
         </div>
       ),
       className: "text-gray-500 font-normal"
