@@ -272,12 +272,27 @@ export default function RegisteredEvents() {
                 </div>
               )
             },
+            {
+              header: "Actions",
+              accessor: (registration: any) => (
+                <div className="flex items-center justify-end gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRowClick(registration.id);
+                    }}
+                    className="text-[#9b87f5] text-sm hover:underline"
+                  >
+                    See details
+                  </button>
+                </div>
+              )
+            }
           ]}
           selectedItems={selectedRegistrations}
           onSelectItem={handleSelectItem}
           onSelectAll={handleSelectAll}
           getItemId={(item) => item.id}
-          onRowClick={handleRowClick}
           showCheckboxes={true}
           bulkActions={[
             { value: "markConfirmed", label: "Mark as Confirmed" },
@@ -323,4 +338,3 @@ export default function RegisteredEvents() {
     </div>
   );
 }
-
