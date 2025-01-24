@@ -1,122 +1,115 @@
 import { useState } from "react";
-import { DataTable } from "@/components/shared/DataTable";
-import { Input } from "@/components/ui/input";
+import { MoreVertical, Plus, Eye, Trash2, CheckSquare, XSquare, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Filter, Search } from "lucide-react";
-import { FilterModal } from "@/components/members/FilterModal";
-import { DetailsModal } from "@/components/shared/DetailsModal";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { DataTable } from "@/components/shared/DataTable";
 import { useToast } from "@/hooks/use-toast";
+import { FilterModal } from "@/components/members/FilterModal";
 import { BulkActions } from "@/components/shared/BulkActions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+interface Member {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  location: string;
+  joinDate: string;
+  status: "pending" | "approved";
+}
+
+const sampleMembers: Member[] = [
+  {
+    id: "MEM-001",
+    name: "John Doe",
+    email: "john@example.com",
+    phone: "+1234567890",
+    location: "New York",
+    joinDate: "2024-03-15",
+    status: "pending"
+  },
+  {
+    id: "MEM-002",
+    name: "Jane Smith",
+    email: "jane@example.com",
+    phone: "+1987654321",
+    location: "Los Angeles",
+    joinDate: "2024-03-14",
+    status: "approved"
+  }
+];
 
 export default function NewMembers() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [locationFilter, setLocationFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
-  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
-  const [selectedMember, setSelectedMember] = useState(null);
-  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [members, setMembers] = useState([
-    {
-      id: "1",
-      firstName: "John",
-      lastName: "Doe",
-      email: "john@example.com",
-      phone: "+1234567890",
-      location: "New York",
-      status: "pending",
-      joinDate: "2024-01-15",
-      message: "I would like to join the church and serve in the choir ministry.",
-      country: "United States",
-      cityState: "New York, NY",
-      preferredContact: "email"
-    },
-  ]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [memberToDelete, setMemberToDelete] = useState<string>("");
+
+  const [members, setMembers] = useState<Member[]>(() => {
+    const stored = localStorage.getItem('members');
+    if (!stored) {
+      localStorage.setItem('members', JSON.stringify(sampleMembers));
+      return sampleMembers;
+    }
+    return JSON.parse(stored);
+  });
+
+  const handleDelete = (id: string) => {
+    setMemberToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    const updatedMembers = members.filter(member => member.id !== memberToDelete);
+    setMembers(updatedMembers);
+    localStorage.setItem('members', JSON.stringify(updatedMembers));
+    toast({
+      description: "Member deleted successfully",
+    });
+    setDeleteDialogOpen(false);
+    setMemberToDelete("");
+    setSelectedMembers(selectedMembers.filter(itemId => itemId !== memberToDelete));
+  };
+
+  const handleStatusChange = (id: string, newStatus: "pending" | "approved") => {
+    const updatedMembers = members.map(member => {
+      if (member.id === id) {
+        return { ...member, status: newStatus };
+      }
+      return member;
+    });
+    setMembers(updatedMembers);
+    localStorage.setItem('members', JSON.stringify(updatedMembers));
+    toast({
+      description: `Member ${newStatus === 'approved' ? 'approved' : 'marked as pending'} successfully`,
+    });
+  };
 
   const handleViewDetails = (id: string) => {
-    const member = members.find(m => m.id === id);
-    if (member) {
-      setSelectedMember(member);
-      setDetailsModalOpen(true);
-    }
+    // Implement view details functionality
+    console.log("View details for member:", id);
   };
-
-  const handleStatusChange = (status: string) => {
-    if (selectedMember) {
-      setMembers(members.map(member => 
-        member.id === selectedMember.id 
-          ? { ...member, status }
-          : member
-      ));
-      setDetailsModalOpen(false);
-      toast({
-        description: `Member ${status === 'completed' ? 'approved' : 'pending'}`,
-      });
-    }
-  };
-
-  const columns = [
-    { 
-      header: "Name", 
-      accessor: (member: any) => (
-        <div>
-          <div className="font-medium">{`${member.firstName} ${member.lastName}`}</div>
-          <div className="text-sm text-gray-500">{member.email}</div>
-        </div>
-      )
-    },
-    { 
-      header: "Contact Info", 
-      accessor: (member: any) => (
-        <div>
-          <div>{member.phone}</div>
-          <div className="text-sm text-gray-500 capitalize">{member.preferredContact} preferred</div>
-        </div>
-      )
-    },
-    { 
-      header: "Location", 
-      accessor: (member: any) => (
-        <div>
-          <div>{member.country}</div>
-          <div className="text-sm text-gray-500">{member.cityState}</div>
-        </div>
-      )
-    },
-    {
-      header: "Status & Date",
-      accessor: (member: any) => (
-        <div>
-          <span className={`px-2 py-1 rounded-full text-xs ${
-            member.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {member.status === 'completed' ? 'Approved' : 'Pending'}
-          </span>
-          <div className="text-sm text-gray-500 mt-1">{member.joinDate}</div>
-        </div>
-      )
-    },
-    {
-      header: "Actions",
-      accessor: (member: any) => (
-        <div className="flex items-center justify-end gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleViewDetails(member.id);
-            }}
-            className="text-[#9b87f5] text-sm hover:underline"
-          >
-            See details
-          </button>
-        </div>
-      ),
-      className: "text-gray-500 font-normal"
-    }
-  ];
 
   const handleBulkAction = () => {
     if (!bulkAction || selectedMembers.length === 0) return;
@@ -125,83 +118,165 @@ export default function NewMembers() {
     
     switch (bulkAction) {
       case "approve":
-        selectedMembers.forEach(id => {
-          const memberIndex = updatedMembers.findIndex(m => m.id === id);
-          if (memberIndex !== -1) {
-            updatedMembers[memberIndex] = {
-              ...updatedMembers[memberIndex],
-              status: "completed"
-            };
-          }
-        });
-        toast({
-          description: `${selectedMembers.length} members approved`,
-        });
-        break;
       case "pending":
         selectedMembers.forEach(id => {
           const memberIndex = updatedMembers.findIndex(m => m.id === id);
           if (memberIndex !== -1) {
             updatedMembers[memberIndex] = {
               ...updatedMembers[memberIndex],
-              status: "pending"
+              status: bulkAction === "approve" ? "approved" : "pending"
             };
           }
         });
-        toast({
-          description: `${selectedMembers.length} members marked as pending`,
-        });
         break;
       case "delete":
-        const newMembers = updatedMembers.filter(
+        const remainingMembers = updatedMembers.filter(
           member => !selectedMembers.includes(member.id)
         );
-        setMembers(newMembers);
+        setMembers(remainingMembers);
+        localStorage.setItem('members', JSON.stringify(remainingMembers));
         toast({
-          description: `${selectedMembers.length} members deleted`,
+          description: `${selectedMembers.length} members deleted successfully`,
         });
-        break;
+        setSelectedMembers([]);
+        setBulkAction("");
+        return;
     }
     
-    if (bulkAction !== "delete") {
-      setMembers(updatedMembers);
-    }
+    setMembers(updatedMembers);
+    localStorage.setItem('members', JSON.stringify(updatedMembers));
     setSelectedMembers([]);
     setBulkAction("");
+    
+    toast({
+      description: `${selectedMembers.length} members ${bulkAction === "approve" ? "approved" : "marked as pending"} successfully`,
+    });
   };
+
+  const uniqueLocations = Array.from(new Set(members.map(member => member.location)));
+
+  const filteredMembers = members.filter((member) => {
+    const matchesSearch = 
+      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.phone.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesLocation = locationFilter === "all" || member.location === locationFilter;
+    const matchesStatus = statusFilter === "all" || member.status === statusFilter;
+    const matchesDate = !dateFilter || member.joinDate.includes(dateFilter);
+    return matchesSearch && matchesLocation && matchesStatus && matchesDate;
+  });
+
+  const columns = [
+    {
+      header: "Name",
+      accessor: "name",
+      className: "text-[14px]"
+    },
+    {
+      header: "Email",
+      accessor: "email",
+      className: "text-[14px]"
+    },
+    {
+      header: "Phone",
+      accessor: "phone",
+      className: "text-[14px]"
+    },
+    {
+      header: "Location",
+      accessor: "location",
+      className: "text-[14px]"
+    },
+    {
+      header: "Join Date",
+      accessor: "joinDate",
+      className: "text-[14px]"
+    },
+    {
+      header: "Status",
+      accessor: (member: Member) => (
+        <span className={`px-2 py-1 rounded-full text-xs ${
+          member.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+        }`}>
+          {member.status}
+        </span>
+      ),
+      className: "text-[14px]"
+    },
+    {
+      header: "Actions",
+      accessor: (member: Member) => (
+        <div className="flex items-center justify-end gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[200px]">
+              <DropdownMenuItem onClick={() => handleViewDetails(member.id)}>
+                <Eye className="h-4 w-4 mr-2" />
+                View Details
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleStatusChange(member.id, member.status === 'approved' ? 'pending' : 'approved')}>
+                {member.status === 'approved' ? (
+                  <>
+                    <XSquare className="h-4 w-4 mr-2" />
+                    Mark as Pending
+                  </>
+                ) : (
+                  <>
+                    <CheckSquare className="h-4 w-4 mr-2" />
+                    Approve
+                  </>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDelete(member.id)} className="text-red-600">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+      className: "text-[14px]"
+    }
+  ];
 
   return (
     <div className="page-container">
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold text-gray-900">New Members</h1>
+        <Button className="bg-[#695CAE] hover:bg-[#695CAE]/90">
+          <Plus className="h-4 w-4 mr-2" />
+          Add Member
+        </Button>
       </div>
 
-      <div className="space-y-4 mb-6">
-        <div className="flex items-center gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Search members..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Button
-            variant="outline"
-            className="flex items-center gap-2"
-            onClick={() => setShowFilterModal(true)}
-          >
-            <Filter className="h-4 w-4" />
-            Filters
-          </Button>
+      <div className="flex items-center gap-4 mb-6">
+        <div className="relative flex-1">
+          <Input
+            type="text"
+            placeholder="Search members..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
         </div>
+        <Button
+          variant="outline"
+          onClick={() => setFilterModalOpen(true)}
+          className="flex items-center gap-2"
+        >
+          <Filter className="h-4 w-4" />
+          Filters
+        </Button>
       </div>
 
       <div className="bg-white rounded-lg border">
         <DataTable
-          data={members}
+          data={filteredMembers}
           columns={columns}
           selectedItems={selectedMembers}
           onSelectItem={(id, checked) => {
@@ -210,34 +285,18 @@ export default function NewMembers() {
             );
           }}
           onSelectAll={(checked) => {
-            setSelectedMembers(checked ? members.map(m => m.id) : []);
+            setSelectedMembers(checked ? filteredMembers.map(m => m.id) : []);
           }}
           getItemId={(item) => item.id}
-          onRowClick={(id) => handleViewDetails(id)}
           showCheckboxes={true}
-          actions={{
-            onViewDetails: handleViewDetails
-          }}
-          CardComponent={({ item }) => (
-            <div className="p-4 border-b last:border-b-0">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
-                  <p className="text-sm text-gray-500">{item.email}</p>
-                </div>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  item.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {item.status === 'completed' ? 'Approved' : 'Pending'}
-                </span>
-              </div>
-              <div className="text-sm mb-2">
-                <p>{item.phone}</p>
-                <p className="text-gray-500">{item.location}</p>
-              </div>
-              <p className="text-sm text-gray-500">{item.joinDate}</p>
-            </div>
-          )}
+          bulkActions={[
+            { value: "approve", label: "Approve Selected" },
+            { value: "pending", label: "Mark as Pending" },
+            { value: "delete", label: "Delete Selected" }
+          ]}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
         />
 
         {selectedMembers.length > 0 && (
@@ -256,29 +315,34 @@ export default function NewMembers() {
       </div>
 
       <FilterModal
-        open={showFilterModal}
-        onOpenChange={setShowFilterModal}
+        open={filterModalOpen}
+        onOpenChange={setFilterModalOpen}
         locationFilter={locationFilter}
         setLocationFilter={setLocationFilter}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
-        uniqueLocations={Array.from(new Set(members.map((member) => member.location)))}
+        uniqueLocations={uniqueLocations}
       />
 
-      <DetailsModal
-        open={detailsModalOpen}
-        onOpenChange={setDetailsModalOpen}
-        title="Member Details"
-        data={selectedMember}
-        onStatusChange={handleStatusChange}
-        statusLabels={{
-          pending: 'Pending',
-          completed: 'Contacted',
-          buttonText: 'Mark as Contacted'
-        }}
-      />
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the member
+              and remove all of their data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

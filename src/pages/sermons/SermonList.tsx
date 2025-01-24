@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Plus, MoreVertical, Edit, Trash2, CheckSquare, XSquare, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useNavigate } from "react-router-dom";
 
 interface Sermon {
   id: string;
@@ -60,6 +59,7 @@ const sampleSermons: Sermon[] = [
 
 export default function SermonList() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [selectedSermons, setSelectedSermons] = useState<string[]>([]);
@@ -184,6 +184,14 @@ export default function SermonList() {
     });
   };
 
+  const handleEdit = (id: string) => {
+    navigate(`/sermons/${id}/edit`);
+  };
+
+  const handleRowClick = (id: string) => {
+    handleEdit(id);
+  };
+
   const filteredSermons = sermons.filter((sermon) => {
     const matchesSearch = sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sermon.preacher.toLowerCase().includes(searchQuery.toLowerCase());
@@ -191,12 +199,6 @@ export default function SermonList() {
     const matchesDate = !dateFilter || sermon.date.includes(dateFilter);
     return matchesSearch && matchesStatus && matchesDate;
   });
-
-  const navigate = useNavigate();
-
-  const handleRowClick = (id: string) => {
-    navigate(`/sermons/${id}/edit`);
-  };
 
   return (
     <div className="page-container">
@@ -271,7 +273,7 @@ export default function SermonList() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-[200px]">
-                      <DropdownMenuItem onClick={() => handleRowClick(sermon.id)}>
+                      <DropdownMenuItem onClick={() => handleEdit(sermon.id)}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
