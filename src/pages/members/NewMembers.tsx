@@ -113,7 +113,8 @@ export default function NewMembers() {
             See details
           </button>
         </div>
-      )
+      ),
+      className: "text-gray-500 font-normal"
     }
   ];
 
