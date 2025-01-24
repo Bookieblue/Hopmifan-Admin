@@ -23,6 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { SermonCard } from "@/components/sermons/SermonCard";
 
 interface Sermon {
   id: string;
@@ -120,13 +121,16 @@ export default function SermonList() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sermonToDelete, setSermonToDelete] = useState<string>("");
 
+  // Initialize sermons from localStorage or use sample data
   const [sermons, setSermons] = useState<Sermon[]>(() => {
-    const stored = localStorage.getItem('sermons');
-    if (!stored) {
-      localStorage.setItem('sermons', JSON.stringify(sampleSermons));
-      return Object.values(sampleSermons);
-    }
     try {
+      const stored = localStorage.getItem('sermons');
+      if (!stored) {
+        console.log('No sermons in localStorage, using sample data');
+        localStorage.setItem('sermons', JSON.stringify(sampleSermons));
+        return Object.values(sampleSermons);
+      }
+      console.log('Found sermons in localStorage');
       const parsedSermons = JSON.parse(stored);
       return Object.values(parsedSermons);
     } catch (error) {
@@ -141,15 +145,23 @@ export default function SermonList() {
   };
 
   const confirmDelete = () => {
-    const stored = localStorage.getItem('sermons');
-    if (stored) {
-      const sermons = JSON.parse(stored);
-      delete sermons[sermonToDelete];
-      localStorage.setItem('sermons', JSON.stringify(sermons));
-      setSermons(Object.values(sermons));
-      
+    try {
+      const stored = localStorage.getItem('sermons');
+      if (stored) {
+        const sermons = JSON.parse(stored);
+        delete sermons[sermonToDelete];
+        localStorage.setItem('sermons', JSON.stringify(sermons));
+        setSermons(Object.values(sermons));
+        
+        toast({
+          description: "Sermon deleted successfully",
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting sermon:', error);
       toast({
-        description: "Sermon deleted successfully",
+        variant: "destructive",
+        description: "Error deleting sermon",
       });
     }
     setDeleteDialogOpen(false);
@@ -352,6 +364,11 @@ export default function SermonList() {
           getItemId={(item) => item.id}
           onRowClick={handleRowClick}
           showCheckboxes={true}
+          CardComponent={SermonCard}
+          actions={{
+            onDelete: handleDelete,
+            onStatusChange: (id, status) => handleStatusChange(id, status as "published" | "draft")
+          }}
           bulkActions={[
             { value: "publish", label: "Publish Selected" },
             { value: "unpublish", label: "Unpublish Selected" },
@@ -361,19 +378,6 @@ export default function SermonList() {
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
         />
-        {selectedSermons.length > 0 && (
-          <BulkActions
-            selectedCount={selectedSermons.length}
-            bulkAction={bulkAction}
-            setBulkAction={setBulkAction}
-            onBulkAction={handleBulkAction}
-            actions={[
-              { value: "publish", label: "Publish Selected" },
-              { value: "unpublish", label: "Unpublish Selected" },
-              { value: "delete", label: "Delete Selected" }
-            ]}
-          />
-        )}
       </div>
 
       <FilterModal
