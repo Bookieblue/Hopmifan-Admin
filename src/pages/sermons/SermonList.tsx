@@ -83,6 +83,21 @@ const sampleSermons = {
   }
 };
 
+// Add a type definition for sermon data
+type SermonData = {
+  id: string;
+  title: string;
+  description?: string;
+  content?: string;
+  preacher?: string;
+  author?: string;
+  youtubeLink?: string;
+  publishDate: string;
+  status: string;
+  thumbnailImage?: string;
+  imagePreview?: string;
+};
+
 const SermonList = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -98,8 +113,8 @@ const SermonList = () => {
   const [bulkAction, setBulkAction] = useState("");
   const postsPerPage = 15;
 
-  // Initialize sermons from localStorage or sample data
-  const [sermons, setSermons] = useState(() => {
+  // Update the sermons state initialization with the new type
+  const [sermons, setSermons] = useState<SermonData[]>(() => {
     const stored = localStorage.getItem('sermons');
     if (stored) {
       try {
@@ -107,7 +122,7 @@ const SermonList = () => {
         return Object.entries(sermonsData).map(([id, sermon]: [string, any]) => ({
           id,
           ...sermon,
-          // Handle both preacher and author fields
+          // Handle both preacher and author fields consistently
           author: sermon.preacher || sermon.author
         }));
       } catch (error) {
@@ -115,12 +130,12 @@ const SermonList = () => {
         return [];
       }
     }
-    // If no sermons exist in localStorage, initialize with sample data
+    // Initialize with sample data
     localStorage.setItem('sermons', JSON.stringify(sampleSermons));
     return Object.entries(sampleSermons).map(([id, sermon]) => ({
       id,
       ...sermon,
-      // Handle both preacher and author fields
+      // Handle both preacher and author fields consistently
       author: sermon.preacher || sermon.author
     }));
   });
@@ -365,5 +380,3 @@ const SermonList = () => {
     </div>
   );
 };
-
-export default SermonList;
