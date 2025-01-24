@@ -15,7 +15,7 @@ interface FilterModalProps {
   uniqueCountries: string[];
 }
 
-export function PrayerRequestFilterModal({
+export const FilterModal = ({
   open,
   onOpenChange,
   countryFilter,
@@ -25,7 +25,7 @@ export function PrayerRequestFilterModal({
   dateFilter,
   setDateFilter,
   uniqueCountries,
-}: FilterModalProps) {
+}: FilterModalProps) => {
   const handleReset = () => {
     setCountryFilter("all");
     setStatusFilter("all");
