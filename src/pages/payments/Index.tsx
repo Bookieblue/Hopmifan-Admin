@@ -112,7 +112,7 @@ export default function PaymentHistory() {
   );
 
   return (
-    <div className="max-w-[1400px] mx-auto p-4 sm:px-6 lg:px-8">
+    <div className="mobile-spacing">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold">Payment History</h1>
       </div>
