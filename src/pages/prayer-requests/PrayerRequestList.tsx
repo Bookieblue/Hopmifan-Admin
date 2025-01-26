@@ -1,154 +1,165 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Plus, Search, Filter } from "lucide-react";
 import { DataTable } from "@/components/shared/DataTable";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Filter, Search } from "lucide-react";
 import { FilterModal } from "@/components/prayer-requests/FilterModal";
-import { DetailsModal } from "@/components/shared/DetailsModal";
-import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { BulkActions } from "@/components/shared/BulkActions";
+import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
+import { DetailsModal } from "@/components/shared/DetailsModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+const samplePrayerRequests = [
+  {
+    id: "PR-1",
+    name: "John Doe",
+    email: "john@example.com",
+    request: "Please pray for my upcoming surgery next week.",
+    date: "2024-01-28",
+    status: "pending"
+  },
+  {
+    id: "PR-2",
+    name: "Jane Smith",
+    email: "jane@example.com",
+    request: "Seeking prayer for my family's well-being.",
+    date: "2024-01-27",
+    status: "completed"
+  }
+];
 
 export default function PrayerRequestList() {
-  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [showFilterModal, setShowFilterModal] = useState(false);
-  const [countryFilter, setCountryFilter] = useState("all");
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
-  const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
-  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<any>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [requests, setRequests] = useState([
-    {
-      id: "1",
-      firstName: "John",
-      lastName: "Doe",
-      email: "john@example.com",
-      phone: "+1234567890",
-      description: "Pray for healing",
-      status: "pending",
-      date: "2024-01-15",
-      message: "Please pray for my complete healing and recovery.",
-      country: "USA"
-    },
-  ]);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  // Get unique countries from requests
-  const uniqueCountries = Array.from(new Set(requests.map(request => request.country)));
+  const [prayerRequests, setPrayerRequests] = useState(() => {
+    const stored = localStorage.getItem('prayerRequests');
+    if (!stored) {
+      localStorage.setItem('prayerRequests', JSON.stringify(samplePrayerRequests));
+      return samplePrayerRequests;
+    }
+    return JSON.parse(stored);
+  });
+
+  const handleDelete = (ids: string[]) => {
+    const updatedRequests = prayerRequests.filter(request => !ids.includes(request.id));
+    setPrayerRequests(updatedRequests);
+    localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
+    
+    toast({
+      description: `${ids.length} prayer request(s) deleted successfully`,
+    });
+    setSelectedItems([]);
+  };
+
+  const handleStatusChange = (id: string) => {
+    const updatedRequests = prayerRequests.map(request => {
+      if (request.id === id) {
+        return {
+          ...request,
+          status: request.status === 'completed' ? 'pending' : 'completed'
+        };
+      }
+      return request;
+    });
+    setPrayerRequests(updatedRequests);
+    localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
+    
+    toast({
+      description: "Prayer request status updated successfully",
+    });
+  };
+
+  const handleBulkAction = () => {
+    if (!selectedItems.length || !bulkAction) return;
+
+    const updatedRequests = prayerRequests.map(request => {
+      if (selectedItems.includes(request.id)) {
+        switch (bulkAction) {
+          case "delete":
+            return null;
+          case "markPrayed":
+            return { ...request, status: "completed" };
+          case "markPending":
+            return { ...request, status: "pending" };
+          default:
+            return request;
+        }
+      }
+      return request;
+    }).filter(Boolean);
+
+    setPrayerRequests(updatedRequests as any[]);
+    localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
+
+    const actionMessages = {
+      delete: "deleted",
+      markPrayed: "marked as prayed",
+      markPending: "marked as pending"
+    };
+
+    toast({
+      description: `${selectedItems.length} prayer requests ${actionMessages[bulkAction as keyof typeof actionMessages]} successfully`,
+    });
+
+    setSelectedItems([]);
+    setBulkAction("");
+  };
 
   const handleViewDetails = (id: string) => {
-    const request = requests.find(r => r.id === id);
+    const request = prayerRequests.find(r => r.id === id);
     if (request) {
       setSelectedRequest(request);
       setDetailsModalOpen(true);
     }
   };
 
-  const handleStatusChange = (status: string) => {
-    if (selectedRequest) {
-      setRequests(requests.map(request => 
-        request.id === selectedRequest.id 
-          ? { ...request, status }
-          : request
-      ));
-      setDetailsModalOpen(false);
-      toast({
-        description: `Prayer request marked as ${status}`,
-      });
-    }
-  };
+  const filteredRequests = prayerRequests.filter((request) => {
+    const matchesSearch = request.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      request.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      request.request.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "all" || request.status === statusFilter;
+    const matchesDate = !dateFilter || request.date === dateFilter;
+    return matchesSearch && matchesStatus && matchesDate;
+  });
 
-  const columns = [
-    { 
-      header: "Name", 
-      accessor: (request: any) => (
-        <div>
-          <div className="font-medium">{`${request.firstName} ${request.lastName}`}</div>
-          <div className="text-sm text-gray-500">{request.email}</div>
-        </div>
-      )
-    },
-    { 
-      header: "Contact Info", 
-      accessor: (request: any) => (
-        <div>
-          <div>{request.phone}</div>
-          <div className="text-sm text-gray-500">{request.country}</div>
-        </div>
-      )
-    },
-    { 
-      header: "Location", 
-      accessor: (request: any) => (
-        <div>
-          <div>{request.country}</div>
-          <div className="text-sm text-gray-500">{request.cityState || 'N/A'}</div>
-        </div>
-      )
-    },
-    { 
-      header: "Status & Date", 
-      accessor: (request: any) => (
-        <div>
-          <span className={`px-2 py-1 rounded-full text-xs ${
-            request.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {request.status === 'completed' ? 'Prayed' : 'Pending'}
-          </span>
-          <div className="text-sm text-gray-500 mt-1">{request.date}</div>
-        </div>
-      )
-    }
+  const bulkActions = [
+    { value: "delete", label: "Delete Selected" },
+    { value: "markPrayed", label: "Mark as Prayed" },
+    { value: "markPending", label: "Mark as Pending" }
   ];
 
-  const handleBulkAction = () => {
-    if (!bulkAction || selectedRequests.length === 0) return;
-
-    const updatedRequests = [...requests];
-    
-    switch (bulkAction) {
-      case "markPrayed":
-        selectedRequests.forEach(id => {
-          const requestIndex = updatedRequests.findIndex(r => r.id === id);
-          if (requestIndex !== -1) {
-            updatedRequests[requestIndex] = {
-              ...updatedRequests[requestIndex],
-              status: "completed"
-            };
-          }
-        });
-        toast({
-          description: `${selectedRequests.length} requests marked as prayed`,
-        });
-        break;
-      case "markPending":
-        selectedRequests.forEach(id => {
-          const requestIndex = updatedRequests.findIndex(r => r.id === id);
-          if (requestIndex !== -1) {
-            updatedRequests[requestIndex] = {
-              ...updatedRequests[requestIndex],
-              status: "pending"
-            };
-          }
-        });
-        toast({
-          description: `${selectedRequests.length} requests marked as pending`,
-        });
-        break;
-    }
-    
-    if (bulkAction !== "delete") {
-      setRequests(updatedRequests);
-    }
-    setSelectedRequests([]);
-    setBulkAction("");
-  };
-
   return (
-    <div className="mobile-spacing">
+    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Prayer Requests</h1>
+        <Link 
+          to="/prayer-requests/create"
+          className="bg-[#695CAE] hover:bg-[#695CAE]/90 text-white inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2"
+        >
+          <Plus className="h-4 w-4" />
+          New Request
+        </Link>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -166,7 +177,7 @@ export default function PrayerRequestList() {
           <Button
             variant="outline"
             className="flex items-center gap-2"
-            onClick={() => setShowFilterModal(true)}
+            onClick={() => setFilterModalOpen(true)}
           >
             <Filter className="h-4 w-4" />
             Filters
@@ -176,74 +187,95 @@ export default function PrayerRequestList() {
 
       <div className="bg-white md:rounded-lg md:border">
         <DataTable
-          data={requests}
-          columns={columns}
-          selectedItems={selectedRequests}
+          data={filteredRequests}
+          columns={[
+            {
+              header: "Name",
+              accessor: (request: any) => (
+                <div>
+                  <div className="font-medium">{request.name}</div>
+                  <div className="text-sm text-gray-500">{request.email}</div>
+                </div>
+              )
+            },
+            {
+              header: "Request",
+              accessor: "request",
+              className: "max-w-[400px]"
+            },
+            {
+              header: "Date",
+              accessor: "date"
+            },
+            {
+              header: "Status",
+              accessor: (request: any) => (
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  request.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {request.status === 'completed' ? 'Prayed' : 'Pending'}
+                </span>
+              )
+            }
+          ]}
+          selectedItems={selectedItems}
           onSelectItem={(id, checked) => {
-            setSelectedRequests(prev =>
+            setSelectedItems(prev =>
               checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
             );
           }}
           onSelectAll={(checked) => {
-            setSelectedRequests(checked ? requests.map(r => r.id) : []);
+            setSelectedItems(checked ? filteredRequests.map(r => r.id) : []);
           }}
           getItemId={(item) => item.id}
-          onRowClick={(id) => handleViewDetails(id)}
           showCheckboxes={true}
-          actions={{
-            onViewDetails: handleViewDetails
-          }}
           CardComponent={({ item }) => (
             <div className="p-4 border-b last:border-b-0">
               <div className="flex justify-between items-start mb-2">
                 <div>
-                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
+                  <h3 className="font-medium">{item.name}</h3>
                   <p className="text-sm text-gray-500">{item.email}</p>
                 </div>
               </div>
               <div className="text-sm mb-2">
-                <p>{item.phone}</p>
-                <p className="text-gray-500">{item.country}</p>
+                <p className="text-gray-500">{item.request}</p>
               </div>
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-500">{item.date}</p>
                 <div className="flex items-center gap-2">
-                  <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     item.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                   }`}>
                     {item.status === 'completed' ? 'Prayed' : 'Pending'}
                   </span>
+                  <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
                 </div>
               </div>
             </div>
           )}
+          actions={{
+            onViewDetails: handleViewDetails
+          }}
         />
 
-        {selectedRequests.length > 0 && (
+        {selectedItems.length > 0 && (
           <BulkActions
-            selectedCount={selectedRequests.length}
+            selectedCount={selectedItems.length}
             bulkAction={bulkAction}
             setBulkAction={setBulkAction}
             onBulkAction={handleBulkAction}
-            actions={[
-              { value: "markPrayed", label: "Mark as Prayed" },
-              { value: "markPending", label: "Mark as Pending" }
-            ]}
+            actions={bulkActions}
           />
         )}
       </div>
 
       <FilterModal
-        open={showFilterModal}
-        onOpenChange={setShowFilterModal}
-        countryFilter={countryFilter}
-        setCountryFilter={setCountryFilter}
+        open={filterModalOpen}
+        onOpenChange={setFilterModalOpen}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
-        uniqueCountries={uniqueCountries}
       />
 
       <DetailsModal
@@ -251,13 +283,30 @@ export default function PrayerRequestList() {
         onOpenChange={setDetailsModalOpen}
         title="Prayer Request Details"
         data={selectedRequest}
-        onStatusChange={handleStatusChange}
+        onStatusChange={() => handleStatusChange(selectedRequest?.id)}
         statusLabels={{
           pending: 'Pending',
           completed: 'Prayed',
           buttonText: 'Mark as Prayed'
         }}
       />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the selected prayer requests.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => handleDelete(selectedItems)} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
