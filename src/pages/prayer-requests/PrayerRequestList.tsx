@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/prayer-requests/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
+import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
 import { useToast } from "@/hooks/use-toast";
 
 const samplePrayerRequests = [
@@ -16,7 +17,9 @@ const samplePrayerRequests = [
     request: "Please pray for my upcoming surgery next week. I need strength and healing.",
     date: new Date().toLocaleDateString(),
     status: "pending",
-    country: "United States"
+    country: "United States",
+    cityState: "New York, NY",
+    preferredContact: "email"
   },
   {
     id: "2",
@@ -25,45 +28,33 @@ const samplePrayerRequests = [
     request: "Requesting prayers for my family's unity and peace during difficult times.",
     date: new Date().toLocaleDateString(),
     status: "pending",
-    country: "Canada"
-  },
-  {
-    id: "3",
-    name: "Michael Chen",
-    email: "michael.c@example.com",
-    request: "Please pray for my mother's recovery from illness. She needs complete healing.",
-    date: new Date().toLocaleDateString(),
-    status: "pending",
-    country: "Singapore"
+    country: "Canada",
+    cityState: "Toronto, ON",
+    preferredContact: "phone"
   }
 ];
 
 export default function PrayerRequestList() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [filterModalOpen, setFilterModalOpen] = useState(false);
+  const [countryFilter, setCountryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
-  const [countryFilter, setCountryFilter] = useState("all");
-  const [bulkAction, setBulkAction] = useState("");
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState("");
 
-  // Initialize prayer requests from localStorage or use sample data
-  const [prayerRequests, setPrayerRequests] = useState(() => {
+  // Initialize prayer requests from localStorage
+  const [requests, setRequests] = useState(() => {
     try {
       const stored = localStorage.getItem('prayerRequests');
       if (!stored) {
         localStorage.setItem('prayerRequests', JSON.stringify(samplePrayerRequests));
         return samplePrayerRequests;
       }
-      const parsedData = JSON.parse(stored);
-      if (!parsedData || parsedData.length === 0) {
-        localStorage.setItem('prayerRequests', JSON.stringify(samplePrayerRequests));
-        return samplePrayerRequests;
-      }
-      return parsedData;
+      return JSON.parse(stored);
     } catch (error) {
       console.error('Error loading prayer requests:', error);
       return samplePrayerRequests;
@@ -71,8 +62,8 @@ export default function PrayerRequestList() {
   });
 
   const columns = [
-    {
-      header: "Name & Email",
+    { 
+      header: "Name", 
       accessor: (request: any) => (
         <div>
           <div className="font-medium">{request.name}</div>
@@ -80,16 +71,34 @@ export default function PrayerRequestList() {
         </div>
       )
     },
-    {
-      header: "Request",
+    { 
+      header: "Request", 
       accessor: (request: any) => (
-        <div className="max-w-[400px] truncate">
+        <div className="max-w-[300px] truncate">
           {request.request}
         </div>
       )
     },
-    {
-      header: "Status & Date",
+    { 
+      header: "Contact Info", 
+      accessor: (request: any) => (
+        <div>
+          <div>{request.preferredContact}</div>
+          <div className="text-sm text-gray-500 capitalize">{request.preferredContact} preferred</div>
+        </div>
+      )
+    },
+    { 
+      header: "Location", 
+      accessor: (request: any) => (
+        <div>
+          <div>{request.country}</div>
+          <div className="text-sm text-gray-500">{request.cityState}</div>
+        </div>
+      )
+    },
+    { 
+      header: "Status & Date", 
       accessor: (request: any) => (
         <div>
           <span className={`px-2 py-1 rounded-full text-xs ${
@@ -100,11 +109,19 @@ export default function PrayerRequestList() {
           <div className="text-sm text-gray-500 mt-1">{request.date}</div>
         </div>
       )
+    },
+    {
+      header: "Actions",
+      accessor: (request: any) => (
+        <div className="flex items-center justify-end gap-2">
+          <ViewDetailsButton onClick={() => handleViewDetails(request.id)} />
+        </div>
+      )
     }
   ];
 
   const handleViewDetails = (id: string) => {
-    const request = prayerRequests.find(r => r.id === id);
+    const request = requests.find(r => r.id === id);
     if (request) {
       setSelectedRequest(request);
       setDetailsModalOpen(true);
@@ -113,10 +130,10 @@ export default function PrayerRequestList() {
 
   const handleStatusChange = (status: string) => {
     if (selectedRequest) {
-      const updatedRequests = prayerRequests.map(request =>
+      const updatedRequests = requests.map(request =>
         request.id === selectedRequest.id ? { ...request, status } : request
       );
-      setPrayerRequests(updatedRequests);
+      setRequests(updatedRequests);
       localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
       setDetailsModalOpen(false);
       toast({
@@ -125,11 +142,23 @@ export default function PrayerRequestList() {
     }
   };
 
-  const handleBulkAction = () => {
-    if (!selectedItems.length || !bulkAction) return;
+  const filteredRequests = requests.filter(request => {
+    const searchLower = searchQuery.toLowerCase();
+    const matchesSearch = 
+      (request?.name?.toLowerCase() || '').includes(searchLower) ||
+      (request?.email?.toLowerCase() || '').includes(searchLower) ||
+      (request?.request?.toLowerCase() || '').includes(searchLower);
+    const matchesCountry = countryFilter === "all" || request?.country === countryFilter;
+    const matchesStatus = statusFilter === "all" || request?.status === statusFilter;
+    const matchesDate = !dateFilter || request?.date === dateFilter;
+    return matchesSearch && matchesCountry && matchesStatus && matchesDate;
+  });
 
-    const updatedRequests = prayerRequests.map(request => {
-      if (selectedItems.includes(request.id)) {
+  const handleBulkAction = () => {
+    if (!selectedRequests.length || !bulkAction) return;
+
+    const updatedRequests = requests.map(request => {
+      if (selectedRequests.includes(request.id)) {
         return {
           ...request,
           status: bulkAction === 'markPrayed' ? 'completed' : 'pending'
@@ -138,28 +167,16 @@ export default function PrayerRequestList() {
       return request;
     });
 
-    setPrayerRequests(updatedRequests);
+    setRequests(updatedRequests);
     localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
     
     toast({
-      description: `${selectedItems.length} prayer requests updated successfully`,
+      description: `${selectedRequests.length} prayer requests updated successfully`,
     });
     
-    setSelectedItems([]);
+    setSelectedRequests([]);
     setBulkAction("");
   };
-
-  const filteredRequests = prayerRequests.filter((request) => {
-    const searchLower = searchQuery.toLowerCase();
-    const matchesSearch = 
-      (request?.name?.toLowerCase() || '').includes(searchLower) ||
-      (request?.email?.toLowerCase() || '').includes(searchLower) ||
-      (request?.request?.toLowerCase() || '').includes(searchLower);
-    const matchesStatus = statusFilter === "all" || request?.status === statusFilter;
-    const matchesDate = !dateFilter || request?.date === dateFilter;
-    const matchesCountry = countryFilter === "all" || request?.country === countryFilter;
-    return matchesSearch && matchesStatus && matchesDate && matchesCountry;
-  });
 
   return (
     <div className="mobile-spacing">
@@ -194,14 +211,14 @@ export default function PrayerRequestList() {
         <DataTable
           data={filteredRequests}
           columns={columns}
-          selectedItems={selectedItems}
+          selectedItems={selectedRequests}
           onSelectItem={(id, checked) => {
-            setSelectedItems(prev =>
+            setSelectedRequests(prev =>
               checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
             );
           }}
           onSelectAll={(checked) => {
-            setSelectedItems(checked ? filteredRequests.map(r => r.id) : []);
+            setSelectedRequests(checked ? filteredRequests.map(r => r.id) : []);
           }}
           getItemId={(item) => item.id}
           onRowClick={handleViewDetails}
@@ -227,9 +244,9 @@ export default function PrayerRequestList() {
           )}
         />
 
-        {selectedItems.length > 0 && (
+        {selectedRequests.length > 0 && (
           <BulkActions
-            selectedCount={selectedItems.length}
+            selectedCount={selectedRequests.length}
             bulkAction={bulkAction}
             setBulkAction={setBulkAction}
             onBulkAction={handleBulkAction}
@@ -250,7 +267,7 @@ export default function PrayerRequestList() {
         setDateFilter={setDateFilter}
         countryFilter={countryFilter}
         setCountryFilter={setCountryFilter}
-        uniqueCountries={Array.from(new Set(prayerRequests.map(request => request.country)))}
+        uniqueCountries={Array.from(new Set(requests.map(request => request.country)))}
       />
 
       <DetailsModal
