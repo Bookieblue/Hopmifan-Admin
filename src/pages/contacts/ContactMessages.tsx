@@ -183,7 +183,7 @@ export default function ContactMessages() {
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+    <div className="mobile-spacing">
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold">Contact Messages</h1>
       </div>
@@ -211,7 +211,7 @@ export default function ContactMessages() {
         </div>
       </div>
 
-      <div className="bg-white md:rounded-lg md:border">
+      <div className="bg-white md:rounded-lg md:border overflow-hidden">
         <DataTable
           data={filteredContacts}
           columns={columns}
