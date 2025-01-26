@@ -33,20 +33,29 @@ interface PrayerRequest {
 const samplePrayerRequests: PrayerRequest[] = [
   {
     id: "PR-1",
-    name: "John Doe",
-    email: "john@example.com",
-    request: "Please pray for my upcoming surgery next week.",
-    date: "2024-01-28",
+    name: "John Smith",
+    email: "john.smith@example.com",
+    request: "Please pray for my upcoming surgery next week. I'm feeling anxious and need strength.",
+    date: new Date().toISOString().split('T')[0],
     status: "pending",
     country: "USA"
   },
   {
     id: "PR-2",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    request: "Seeking prayer for my family's well-being.",
-    date: "2024-01-27",
-    status: "completed",
+    name: "Maria Garcia",
+    email: "maria.g@example.com",
+    request: "Seeking prayer for my family's unity and peace during difficult times.",
+    date: new Date().toISOString().split('T')[0],
+    status: "pending",
+    country: "Spain"
+  },
+  {
+    id: "PR-3",
+    name: "David Wilson",
+    email: "david.w@example.com",
+    request: "Please pray for my mother's recovery from illness and complete healing.",
+    date: new Date().toISOString().split('T')[0],
+    status: "pending",
     country: "Canada"
   }
 ];
@@ -67,7 +76,7 @@ export default function PrayerRequestList() {
 
   const [prayerRequests, setPrayerRequests] = useState<PrayerRequest[]>(() => {
     const stored = localStorage.getItem('prayerRequests');
-    if (!stored) {
+    if (!stored || JSON.parse(stored).length === 0) {
       localStorage.setItem('prayerRequests', JSON.stringify(samplePrayerRequests));
       return samplePrayerRequests;
     }
@@ -75,7 +84,7 @@ export default function PrayerRequestList() {
   });
 
   // Get unique countries from prayer requests
-  const uniqueCountries = Array.from(new Set(prayerRequests.map(request => request.country))) as string[];
+  const uniqueCountries = Array.from(new Set(prayerRequests.map(request => request.country)));
 
   const handleDelete = (ids: string[]) => {
     const updatedRequests = prayerRequests.filter(request => !ids.includes(request.id));
@@ -86,6 +95,7 @@ export default function PrayerRequestList() {
       description: `${ids.length} prayer request(s) deleted successfully`,
     });
     setSelectedItems([]);
+    setDeleteDialogOpen(false);
   };
 
   const handleStatusChange = (id: string) => {
@@ -152,9 +162,9 @@ export default function PrayerRequestList() {
 
   const filteredRequests = prayerRequests.filter((request) => {
     const matchesSearch = 
-      (request.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (request.email?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (request.request?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+      request.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      request.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      request.request.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || request.status === statusFilter;
     const matchesDate = !dateFilter || request.date === dateFilter;
     const matchesCountry = countryFilter === "all" || request.country === countryFilter;
@@ -253,6 +263,7 @@ export default function PrayerRequestList() {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-base mb-1">{item.name}</h3>
                   <p className="text-sm text-gray-500 mb-2">{item.email}</p>
+                  <p className="text-sm text-gray-700 mb-2">{item.request}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">{item.date}</span>
                     <span className={`px-2 py-1 rounded-full text-xs ${
@@ -262,7 +273,6 @@ export default function PrayerRequestList() {
                     </span>
                   </div>
                 </div>
-                <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
               </div>
             </div>
           )}
@@ -299,7 +309,7 @@ export default function PrayerRequestList() {
         onOpenChange={setDetailsModalOpen}
         title="Prayer Request Details"
         data={selectedRequest}
-        onStatusChange={() => handleStatusChange(selectedRequest?.id)}
+        onStatusChange={() => selectedRequest && handleStatusChange(selectedRequest.id)}
         statusLabels={{
           pending: 'Pending',
           completed: 'Prayed',
