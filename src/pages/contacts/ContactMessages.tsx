@@ -244,7 +244,14 @@ export default function ContactMessages() {
                 <p>{item.phone}</p>
                 <p className="text-gray-500">{item.country}, {item.cityState}</p>
               </div>
-              <p className="text-sm text-gray-500">{item.dateSubmitted}</p>
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-gray-500">{item.dateSubmitted}</p>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {item.status === 'replied' ? 'Replied' : 'Pending'}
+                </span>
+              </div>
             </div>
           )}
           actions={{
