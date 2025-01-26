@@ -240,28 +240,21 @@ export default function RegisteredEvents() {
           getItemId={(item) => item.id}
           showCheckboxes={true}
           CardComponent={({ item }) => (
-            <div className="p-4 border-b last:border-b-0">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
-                  <p className="text-sm text-gray-500">{item.email}</p>
+            <div className="p-4">
+              <div className="flex justify-between items-start">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-base mb-1">{`${item.firstName} ${item.lastName}`}</h3>
+                  <p className="text-sm text-gray-500 mb-2">{item.email}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">{item.dateSubmitted}</span>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      item.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {item.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="text-sm mb-2">
-                <p>{item.phone}</p>
-                <p className="text-gray-500">{item.country}, {item.cityState}</p>
-                <p className="text-gray-500">{item.eventName}</p>
-              </div>
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-500">{item.dateSubmitted}</p>
-                <div className="flex items-center gap-2">
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    item.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {item.status === 'confirmed' ? 'Confirmed' : 'Pending'}
-                  </span>
-                  <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
-                </div>
+                <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
               </div>
             </div>
           )}
@@ -319,8 +312,8 @@ export default function RegisteredEvents() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmBulkDelete}>
-              Continue
+            <AlertDialogAction onClick={handleConfirmBulkDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
