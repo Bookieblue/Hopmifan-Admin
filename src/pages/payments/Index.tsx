@@ -99,7 +99,7 @@ export default function PaymentHistory() {
   );
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto">
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-6">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold">Payment History</h1>
       </div>
