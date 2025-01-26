@@ -7,6 +7,7 @@ import { FilterModal } from "@/components/members/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { useToast } from "@/hooks/use-toast";
 import { BulkActions } from "@/components/shared/BulkActions";
+import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
 
 export default function NewMembers() {
   const { toast } = useToast();
