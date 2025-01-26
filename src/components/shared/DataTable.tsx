@@ -130,7 +130,6 @@ export function DataTable<T>({
                 {column.header}
               </th>
             ))}
-            {!isMobile && actions?.onViewDetails && <th className="px-4 py-3 text-right">Actions</th>}
           </tr>
         </thead>
         <TableBody>
@@ -161,11 +160,6 @@ export function DataTable<T>({
                       : String(item[column.accessor])}
                   </td>
                 ))}
-                {!isMobile && actions?.onViewDetails && (
-                  <td className="px-4 py-3 text-right">
-                    <ViewDetailsButton onClick={() => actions.onViewDetails(id)} />
-                  </td>
-                )}
               </tr>
             );
           })}
