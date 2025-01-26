@@ -141,9 +141,10 @@ export default function PrayerRequestList() {
   };
 
   const filteredRequests = prayerRequests.filter((request) => {
-    const matchesSearch = request.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      request.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      request.request.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = 
+      (request.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (request.email?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (request.request?.toLowerCase() || '').includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || request.status === statusFilter;
     const matchesDate = !dateFilter || request.date === dateFilter;
     const matchesCountry = countryFilter === "all" || request.country === countryFilter;
