@@ -200,17 +200,19 @@ export default function PrayerRequestList() {
                   <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
                   <p className="text-sm text-gray-500">{item.email}</p>
                 </div>
+              </div>
+              <div className="text-sm mb-2">
+                <p>{item.phone}</p>
+                <p className="text-gray-500">{item.country}</p>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-gray-500">{item.date}</p>
                 <span className={`px-2 py-1 rounded-full text-xs ${
                   item.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
                   {item.status === 'completed' ? 'Prayed' : 'Pending'}
                 </span>
               </div>
-              <div className="text-sm mb-2">
-                <p>{item.phone}</p>
-                <p className="text-gray-500">{item.country}</p>
-              </div>
-              <p className="text-sm text-gray-500">{item.date}</p>
             </div>
           )}
         />

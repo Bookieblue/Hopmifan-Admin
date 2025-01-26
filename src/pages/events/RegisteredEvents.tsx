@@ -7,7 +7,6 @@ import { EventFilterModal } from "@/components/registered-events/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
-import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -187,8 +186,8 @@ export default function RegisteredEvents() {
         <DataTable
           data={filteredRegistrations}
           columns={[
-            { 
-              header: "Name", 
+            {
+              header: "Name",
               accessor: (registration: any) => (
                 <div>
                   <div className="font-medium">{`${registration.firstName} ${registration.lastName}`}</div>
@@ -196,8 +195,8 @@ export default function RegisteredEvents() {
                 </div>
               )
             },
-            { 
-              header: "Contact Info", 
+            {
+              header: "Contact Info",
               accessor: (registration: any) => (
                 <div>
                   <div>{registration.phone}</div>
@@ -205,8 +204,8 @@ export default function RegisteredEvents() {
                 </div>
               )
             },
-            { 
-              header: "Location", 
+            {
+              header: "Location",
               accessor: (registration: any) => (
                 <div>
                   <div>{registration.country}</div>
@@ -214,8 +213,8 @@ export default function RegisteredEvents() {
                 </div>
               )
             },
-            { 
-              header: "Status & Date", 
+            {
+              header: "Status & Date",
               accessor: (registration: any) => (
                 <div>
                   <span className={`px-2 py-1 rounded-full text-xs ${
@@ -231,7 +230,7 @@ export default function RegisteredEvents() {
               header: "Actions",
               accessor: (registration: any) => (
                 <div className="flex items-center justify-end gap-2">
-                  <ViewDetailsButton onClick={() => handleViewDetails(registration.id)} />
+                  <Button variant="link" onClick={() => handleViewDetails(registration.id)}>View Details</Button>
                 </div>
               )
             }
@@ -247,6 +246,29 @@ export default function RegisteredEvents() {
           }}
           getItemId={(item) => item.id}
           showCheckboxes={true}
+          CardComponent={({ item }) => (
+            <div className="p-4 border-b last:border-b-0">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
+                  <p className="text-sm text-gray-500">{item.email}</p>
+                </div>
+              </div>
+              <div className="text-sm mb-2">
+                <p>{item.phone}</p>
+                <p className="text-gray-500">{item.country}, {item.cityState}</p>
+                <p className="text-gray-500">{item.eventName}</p>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-gray-500">{item.dateSubmitted}</p>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  item.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {item.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+                </span>
+              </div>
+            </div>
+          )}
         />
 
         {selectedRegistrations.length > 0 && (
