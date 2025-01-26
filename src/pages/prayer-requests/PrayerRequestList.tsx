@@ -146,7 +146,7 @@ export default function PrayerRequestList() {
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+    <div className="mobile-spacing">
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Prayer Requests</h1>
       </div>

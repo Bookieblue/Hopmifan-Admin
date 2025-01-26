@@ -14,7 +14,7 @@ interface SermonData {
   publishDate: string;
   status: string;
   thumbnailImage: string;
-  preacher?: string; // Made optional since it might not always be present
+  preacher?: string;
 }
 
 const sampleSermons: SermonData[] = [
@@ -46,6 +46,7 @@ export default function SermonList() {
   const [sermons, setSermons] = useState(sampleSermons);
   const [selectedSermon, setSelectedSermon] = useState<SermonData | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [selectedSermons, setSelectedSermons] = useState<string[]>([]);
 
   const filteredSermons = sermons.filter(sermon => {
     return (
@@ -63,7 +64,7 @@ export default function SermonList() {
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+    <div className="mobile-spacing">
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold">Sermon List</h1>
       </div>
@@ -110,20 +111,22 @@ export default function SermonList() {
               accessor: (sermon: SermonData) => (
                 <div>{sermon.status}</div>
               )
-            },
-            {
-              header: "Actions",
-              accessor: (sermon: SermonData) => (
-                <div className="flex items-center justify-end gap-2">
-                  <Button onClick={() => handleViewDetails(sermon.title)} className="text-[#9b87f5] text-sm hover:underline">
-                    See details
-                  </Button>
-                </div>
-              )
             }
           ]}
+          selectedItems={selectedSermons}
+          onSelectItem={(id, checked) => {
+            setSelectedSermons(prev =>
+              checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
+            );
+          }}
+          onSelectAll={(checked) => {
+            setSelectedSermons(checked ? filteredSermons.map(s => s.title) : []);
+          }}
           getItemId={(item) => item.title}
           showCheckboxes={false}
+          actions={{
+            onViewDetails: handleViewDetails
+          }}
         />
       </div>
 
@@ -132,6 +135,12 @@ export default function SermonList() {
         onOpenChange={setDetailsModalOpen}
         title="Sermon Details"
         data={selectedSermon}
+        onStatusChange={() => {}}
+        statusLabels={{
+          pending: 'Pending',
+          completed: 'Published',
+          buttonText: 'Publish'
+        }}
       />
     </div>
   );
