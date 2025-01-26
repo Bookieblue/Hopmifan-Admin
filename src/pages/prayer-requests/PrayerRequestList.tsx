@@ -20,7 +20,17 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const samplePrayerRequests = [
+interface PrayerRequest {
+  id: string;
+  name: string;
+  email: string;
+  request: string;
+  date: string;
+  status: string;
+  country: string;
+}
+
+const samplePrayerRequests: PrayerRequest[] = [
   {
     id: "PR-1",
     name: "John Doe",
@@ -47,15 +57,15 @@ export default function PrayerRequestList() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
-  const [countryFilter, setCountryFilter] = useState("all"); // Added missing state
+  const [countryFilter, setCountryFilter] = useState("all");
   const [bulkAction, setBulkAction] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<any>(null);
+  const [selectedRequest, setSelectedRequest] = useState<PrayerRequest | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const [prayerRequests, setPrayerRequests] = useState(() => {
+  const [prayerRequests, setPrayerRequests] = useState<PrayerRequest[]>(() => {
     const stored = localStorage.getItem('prayerRequests');
     if (!stored) {
       localStorage.setItem('prayerRequests', JSON.stringify(samplePrayerRequests));
@@ -65,7 +75,7 @@ export default function PrayerRequestList() {
   });
 
   // Get unique countries from prayer requests
-  const uniqueCountries = Array.from(new Set(prayerRequests.map(request => request.country || 'Unknown')));
+  const uniqueCountries = Array.from(new Set(prayerRequests.map(request => request.country))) as string[];
 
   const handleDelete = (ids: string[]) => {
     const updatedRequests = prayerRequests.filter(request => !ids.includes(request.id));
@@ -113,9 +123,9 @@ export default function PrayerRequestList() {
         }
       }
       return request;
-    }).filter(Boolean);
+    }).filter((request): request is PrayerRequest => request !== null);
 
-    setPrayerRequests(updatedRequests as any[]);
+    setPrayerRequests(updatedRequests);
     localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
 
     const actionMessages = {
