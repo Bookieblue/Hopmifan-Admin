@@ -7,6 +7,7 @@ import { EventFilterModal } from "@/components/registered-events/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useToast } from "@/hooks/use-toast";
+import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -230,7 +231,7 @@ export default function RegisteredEvents() {
               header: "Actions",
               accessor: (registration: any) => (
                 <div className="flex items-center justify-end gap-2">
-                  <Button variant="link" onClick={() => handleViewDetails(registration.id)}>View Details</Button>
+                  <ViewDetailsButton onClick={() => handleViewDetails(registration.id)} />
                 </div>
               )
             }
