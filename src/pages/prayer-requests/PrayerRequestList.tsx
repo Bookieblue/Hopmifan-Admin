@@ -12,29 +12,29 @@ import { useToast } from "@/hooks/use-toast";
 const samplePrayerRequests = [
   {
     id: "1",
-    firstName: "James",
-    lastName: "Anderson",
+    firstName: "Alice",
+    lastName: "Johnson",
     phone: "+234 803 456 7890",
-    email: "james.anderson@gmail.com",
+    email: "alice.johnson@gmail.com",
     country: "Nigeria",
     cityState: "Lagos, LA",
     preferredContact: "whatsapp",
     request: "Please pray for my upcoming surgery next week. I need God's healing touch.",
-    dateSubmitted: new Date(2024, 2, 15).toLocaleDateString(),
+    dateSubmitted: "2025-01-20T19:22:17.761Z",
     status: "pending"
   },
   {
     id: "2",
-    firstName: "Mary",
-    lastName: "Johnson",
+    firstName: "Bob",
+    lastName: "Wilson",
     phone: "+234 804 567 8901",
-    email: "mary.johnson@yahoo.com",
+    email: "bob.wilson@yahoo.com",
     country: "Nigeria",
     cityState: "Abuja, FC",
     preferredContact: "phone",
     request: "Requesting prayers for my family's spiritual growth and unity.",
-    dateSubmitted: new Date(2024, 2, 14).toLocaleDateString(),
-    status: "prayed"
+    dateSubmitted: "2025-01-20T19:22:17.761Z",
+    status: "pending"
   }
 ];
 
@@ -102,7 +102,7 @@ export default function PrayerRequestList() {
           }`}>
             {request.status === 'prayed' ? 'Prayed' : 'Pending'}
           </span>
-          <div className="text-sm text-gray-500 mt-1">{request.dateSubmitted}</div>
+          <div className="text-sm text-gray-500 mt-1">{new Date(request.dateSubmitted).toLocaleString()}</div>
         </div>
       )
     },
@@ -225,9 +225,8 @@ export default function PrayerRequestList() {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-base mb-1">{`${item.firstName} ${item.lastName}`}</h3>
                   <p className="text-sm text-gray-500 mb-2">{item.email}</p>
-                  <p className="text-sm text-gray-700 mb-2">{item.request}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">{item.dateSubmitted}</span>
+                    <span className="text-sm text-gray-500">{new Date(item.dateSubmitted).toLocaleString()}</span>
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       item.status === 'prayed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                     }`}>
@@ -257,12 +256,12 @@ export default function PrayerRequestList() {
       <FilterModal
         open={filterModalOpen}
         onOpenChange={setFilterModalOpen}
+        countryFilter={countryFilter}
+        setCountryFilter={setCountryFilter}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
-        countryFilter={countryFilter}
-        setCountryFilter={setCountryFilter}
         uniqueCountries={Array.from(new Set(requests.map(request => request.country)))}
       />
 
