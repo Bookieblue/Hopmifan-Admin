@@ -75,12 +75,17 @@ export default function PrayerRequestList() {
   const navigate = useNavigate();
 
   const [prayerRequests, setPrayerRequests] = useState<PrayerRequest[]>(() => {
-    const stored = localStorage.getItem('prayerRequests');
-    if (!stored || JSON.parse(stored).length === 0) {
-      localStorage.setItem('prayerRequests', JSON.stringify(samplePrayerRequests));
+    try {
+      const stored = localStorage.getItem('prayerRequests');
+      if (!stored || JSON.parse(stored).length === 0) {
+        localStorage.setItem('prayerRequests', JSON.stringify(samplePrayerRequests));
+        return samplePrayerRequests;
+      }
+      return JSON.parse(stored);
+    } catch (error) {
+      console.error('Error parsing prayer requests from localStorage:', error);
       return samplePrayerRequests;
     }
-    return JSON.parse(stored);
   });
 
   // Get unique countries from prayer requests
@@ -162,12 +167,12 @@ export default function PrayerRequestList() {
 
   const filteredRequests = prayerRequests.filter((request) => {
     const matchesSearch = 
-      request.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      request.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      request.request.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || request.status === statusFilter;
-    const matchesDate = !dateFilter || request.date === dateFilter;
-    const matchesCountry = countryFilter === "all" || request.country === countryFilter;
+      (request?.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (request?.email?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (request?.request?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "all" || request?.status === statusFilter;
+    const matchesDate = !dateFilter || request?.date === dateFilter;
+    const matchesCountry = countryFilter === "all" || request?.country === countryFilter;
     return matchesSearch && matchesStatus && matchesDate && matchesCountry;
   });
 
