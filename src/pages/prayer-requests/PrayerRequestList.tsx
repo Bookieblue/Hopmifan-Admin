@@ -69,18 +69,16 @@ export default function PrayerRequestList() {
     { 
       header: "Name", 
       accessor: (request: any) => (
-        <div>
-          <div className="font-medium">{`${request.firstName} ${request.lastName}`}</div>
-          <div className="text-sm text-gray-500">{request.email}</div>
+        <div className="font-medium">
+          {`${request.firstName} ${request.lastName}`}
         </div>
       )
     },
     { 
       header: "Contact Info", 
       accessor: (request: any) => (
-        <div>
-          <div>{request.phone}</div>
-          <div className="text-sm text-gray-500 capitalize">{request.preferredContact} preferred</div>
+        <div className="text-gray-600">
+          Preferred
         </div>
       )
     },
@@ -109,8 +107,8 @@ export default function PrayerRequestList() {
     {
       header: "Actions",
       accessor: (request: any) => (
-        <div className="flex items-center justify-end gap-2">
-          <ViewDetailsButton onClick={() => handleViewDetails(request.id)} />
+        <div className="text-[#9b87f5] hover:text-[#8b75f3] text-sm font-medium">
+          See details
         </div>
       )
     }
@@ -234,6 +232,7 @@ export default function PrayerRequestList() {
                     </span>
                   </div>
                 </div>
+                <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
               </div>
             </div>
           )}
