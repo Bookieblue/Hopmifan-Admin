@@ -85,9 +85,9 @@ export function DataTable<T>({
             <h2 className="font-semibold text-lg">Items</h2>
           </div>
         )}
-        <div className="w-full">
+        <div className="w-full space-y-2">
           {data.map((item) => (
-            <div key={getItemId(item)} className="flex items-center gap-2 w-full border-b last:border-b-0">
+            <div key={getItemId(item)} className="flex items-center gap-2 w-full border rounded-lg p-4">
               {showCheckboxes && (
                 <div className="pl-4">
                   <Checkbox
@@ -96,7 +96,7 @@ export function DataTable<T>({
                   />
                 </div>
               )}
-              <div className="flex-1 w-full overflow-x-hidden" onClick={() => onRowClick?.(getItemId(item))}>
+              <div className="flex-1 w-full overflow-x-hidden">
                 <CardComponent item={item} actions={actions} />
               </div>
             </div>
