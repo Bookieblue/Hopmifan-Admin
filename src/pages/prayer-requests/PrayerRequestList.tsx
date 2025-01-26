@@ -207,11 +207,14 @@ export default function PrayerRequestList() {
               </div>
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-500">{item.date}</p>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  item.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {item.status === 'completed' ? 'Prayed' : 'Pending'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    item.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {item.status === 'completed' ? 'Prayed' : 'Pending'}
+                  </span>
+                </div>
               </div>
             </div>
           )}

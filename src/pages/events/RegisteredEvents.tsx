@@ -262,11 +262,14 @@ export default function RegisteredEvents() {
               </div>
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-500">{item.dateSubmitted}</p>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  item.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {item.status === 'confirmed' ? 'Confirmed' : 'Pending'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    item.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {item.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+                  </span>
+                </div>
               </div>
             </div>
           )}
