@@ -33,29 +33,20 @@ interface PrayerRequest {
 const samplePrayerRequests: PrayerRequest[] = [
   {
     id: "PR-1",
-    name: "John Smith",
-    email: "john.smith@example.com",
-    request: "Please pray for my upcoming heart surgery next week. I'm feeling anxious and need strength.",
+    name: "John Doe",
+    email: "john@example.com",
+    request: "Please pray for my upcoming surgery next week.",
     date: "2024-01-28",
     status: "pending",
     country: "USA"
   },
   {
     id: "PR-2",
-    name: "Maria Garcia",
-    email: "maria.g@example.com",
-    request: "Seeking prayers for my family's unity and peace. We're going through difficult times.",
+    name: "Jane Smith",
+    email: "jane@example.com",
+    request: "Seeking prayer for my family's well-being.",
     date: "2024-01-27",
     status: "completed",
-    country: "Spain"
-  },
-  {
-    id: "PR-3",
-    name: "David Chen",
-    email: "david.chen@example.com",
-    request: "Please pray for my mother's recovery from COVID-19. She's in the hospital.",
-    date: "2024-01-26",
-    status: "pending",
     country: "Canada"
   }
 ];
@@ -74,10 +65,9 @@ export default function PrayerRequestList() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Initialize prayer requests with sample data if local storage is empty
   const [prayerRequests, setPrayerRequests] = useState<PrayerRequest[]>(() => {
     const stored = localStorage.getItem('prayerRequests');
-    if (!stored || JSON.parse(stored).length === 0) {
+    if (!stored) {
       localStorage.setItem('prayerRequests', JSON.stringify(samplePrayerRequests));
       return samplePrayerRequests;
     }
@@ -171,6 +161,12 @@ export default function PrayerRequestList() {
     return matchesSearch && matchesStatus && matchesDate && matchesCountry;
   });
 
+  const bulkActions = [
+    { value: "delete", label: "Delete Selected" },
+    { value: "markPrayed", label: "Mark as Prayed" },
+    { value: "markPending", label: "Mark as Pending" }
+  ];
+
   return (
     <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
       <div className="flex items-center justify-between gap-2 mb-6">
@@ -257,7 +253,6 @@ export default function PrayerRequestList() {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-base mb-1">{item.name}</h3>
                   <p className="text-sm text-gray-500 mb-2">{item.email}</p>
-                  <p className="text-sm mb-2">{item.request}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">{item.date}</span>
                     <span className={`px-2 py-1 rounded-full text-xs ${
@@ -267,17 +262,12 @@ export default function PrayerRequestList() {
                     </span>
                   </div>
                 </div>
+                <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
               </div>
             </div>
           )}
           actions={{
-            onViewDetails: (id) => {
-              const request = prayerRequests.find(r => r.id === id);
-              if (request) {
-                setSelectedRequest(request);
-                setDetailsModalOpen(true);
-              }
-            }
+            onViewDetails: handleViewDetails
           }}
         />
 
@@ -287,11 +277,7 @@ export default function PrayerRequestList() {
             bulkAction={bulkAction}
             setBulkAction={setBulkAction}
             onBulkAction={handleBulkAction}
-            actions={[
-              { value: "delete", label: "Delete Selected" },
-              { value: "markPrayed", label: "Mark as Prayed" },
-              { value: "markPending", label: "Mark as Pending" }
-            ]}
+            actions={bulkActions}
           />
         )}
       </div>
