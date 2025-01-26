@@ -75,7 +75,7 @@ export function DataTable<T>({
 
   if (isMobile && CardComponent) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 w-full">
         {showCheckboxes && (
           <div className="px-4 py-2 flex items-center gap-3 border-b">
             <Checkbox
@@ -85,20 +85,24 @@ export function DataTable<T>({
             <h2 className="font-semibold text-lg">Items</h2>
           </div>
         )}
-        <div className="px-4">
+        <div className="w-full">
           {data.map((item) => (
-            <div key={getItemId(item)} className="flex items-center gap-2">
+            <div key={getItemId(item)} className="flex items-center gap-2 w-full border-b last:border-b-0">
               {showCheckboxes && (
-                <Checkbox
-                  checked={selectedItems.includes(getItemId(item))}
-                  onCheckedChange={(checked) => onSelectItem(getItemId(item), checked as boolean)}
-                />
+                <div className="pl-4">
+                  <Checkbox
+                    checked={selectedItems.includes(getItemId(item))}
+                    onCheckedChange={(checked) => onSelectItem(getItemId(item), checked as boolean)}
+                  />
+                </div>
               )}
-              <div className="flex-1">
+              <div className="flex-1 w-full overflow-x-hidden" onClick={() => onRowClick?.(getItemId(item))}>
                 <CardComponent item={item} actions={actions} />
               </div>
               {actions?.onViewDetails && (
-                <ViewDetailsButton onClick={() => actions.onViewDetails!(getItemId(item))} />
+                <div className="pr-4">
+                  <ViewDetailsButton onClick={() => actions.onViewDetails!(getItemId(item))} />
+                </div>
               )}
             </div>
           ))}
@@ -108,7 +112,7 @@ export function DataTable<T>({
   }
 
   return (
-    <div>
+    <div className="w-full overflow-x-auto">
       <table className="w-full text-[14px]">
         <thead>
           <tr className="border-b">
