@@ -20,7 +20,7 @@ const samplePrayerRequests = [
     cityState: "Lagos, LA",
     preferredContact: "whatsapp",
     request: "Please pray for my upcoming surgery next week. I need God's healing touch.",
-    dateSubmitted: "2025-01-20T19:22:17.761Z",
+    dateSubmitted: "2024-01-20T20:22:17.761Z",
     status: "pending"
   },
   {
@@ -33,7 +33,7 @@ const samplePrayerRequests = [
     cityState: "Abuja, FC",
     preferredContact: "phone",
     request: "Requesting prayers for my family's spiritual growth and unity.",
-    dateSubmitted: "2025-01-20T19:22:17.761Z",
+    dateSubmitted: "2024-01-20T20:22:17.761Z",
     status: "pending"
   }
 ];
@@ -69,16 +69,18 @@ export default function PrayerRequestList() {
     { 
       header: "Name", 
       accessor: (request: any) => (
-        <div className="font-medium">
-          {`${request.firstName} ${request.lastName}`}
+        <div>
+          <div className="font-medium">{`${request.firstName} ${request.lastName}`}</div>
+          <div className="text-sm text-gray-500">{request.email}</div>
         </div>
       )
     },
     { 
       header: "Contact Info", 
       accessor: (request: any) => (
-        <div className="text-gray-600">
-          Preferred
+        <div>
+          <div>{request.phone}</div>
+          <div className="text-sm text-gray-500 capitalize">{request.preferredContact} preferred</div>
         </div>
       )
     },
@@ -100,15 +102,17 @@ export default function PrayerRequestList() {
           }`}>
             {request.status === 'prayed' ? 'Prayed' : 'Pending'}
           </span>
-          <div className="text-sm text-gray-500 mt-1">{new Date(request.dateSubmitted).toLocaleString()}</div>
+          <div className="text-sm text-gray-500 mt-1">
+            {new Date(request.dateSubmitted).toLocaleString()}
+          </div>
         </div>
       )
     },
     {
       header: "Actions",
       accessor: (request: any) => (
-        <div className="text-[#9b87f5] hover:text-[#8b75f3] text-sm font-medium">
-          See details
+        <div className="flex items-center justify-end gap-2">
+          <ViewDetailsButton onClick={() => handleViewDetails(request.id)} />
         </div>
       )
     }
