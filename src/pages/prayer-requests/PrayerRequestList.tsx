@@ -248,26 +248,21 @@ export default function PrayerRequestList() {
           getItemId={(item) => item.id}
           showCheckboxes={true}
           CardComponent={({ item }) => (
-            <div className="p-4 border-b last:border-b-0">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-medium">{item.name}</h3>
-                  <p className="text-sm text-gray-500">{item.email}</p>
+            <div className="p-4">
+              <div className="flex justify-between items-start">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-base mb-1">{item.name}</h3>
+                  <p className="text-sm text-gray-500 mb-2">{item.email}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">{item.date}</span>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      item.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {item.status === 'completed' ? 'Prayed' : 'Pending'}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="text-sm mb-2">
-                <p className="text-gray-500">{item.request}</p>
-              </div>
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-500">{item.date}</p>
-                <div className="flex items-center gap-2">
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    item.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {item.status === 'completed' ? 'Prayed' : 'Pending'}
-                  </span>
-                  <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
-                </div>
+                <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
               </div>
             </div>
           )}

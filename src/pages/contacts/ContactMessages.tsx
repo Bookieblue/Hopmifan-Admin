@@ -228,29 +228,21 @@ export default function ContactMessages() {
           onRowClick={handleRowClick}
           showCheckboxes={true}
           CardComponent={({ item }) => (
-            <div className="p-4 border-b last:border-b-0">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-medium">{`${item.firstName} ${item.lastName}`}</h3>
-                  <p className="text-sm text-gray-500">{item.email}</p>
+            <div className="p-4">
+              <div className="flex justify-between items-start">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-base mb-1">{`${item.firstName} ${item.lastName}`}</h3>
+                  <p className="text-sm text-gray-500 mb-2">{item.email}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">{item.dateSubmitted}</span>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {item.status === 'replied' ? 'Replied' : 'Pending'}
+                    </span>
+                  </div>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {item.status === 'replied' ? 'Replied' : 'Pending'}
-                </span>
-              </div>
-              <div className="text-sm mb-2">
-                <p>{item.phone}</p>
-                <p className="text-gray-500">{item.country}, {item.cityState}</p>
-              </div>
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-500">{item.dateSubmitted}</p>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {item.status === 'replied' ? 'Replied' : 'Pending'}
-                </span>
+                <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
               </div>
             </div>
           )}
