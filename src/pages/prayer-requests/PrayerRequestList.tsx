@@ -1,66 +1,45 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Plus, Search, Filter } from "lucide-react";
 import { DataTable } from "@/components/shared/DataTable";
-import { FilterModal } from "@/components/prayer-requests/FilterModal";
-import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { BulkActions } from "@/components/shared/BulkActions";
-import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
+import { FilterModal } from "@/components/prayer-requests/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { BulkActions } from "@/components/shared/BulkActions";
+import { useToast } from "@/hooks/use-toast";
 
-interface PrayerRequest {
-  id: string;
-  name: string;
-  email: string;
-  request: string;
-  date: string;
-  status: string;
-  country: string;
-}
-
-const samplePrayerRequests: PrayerRequest[] = [
+const samplePrayerRequests = [
   {
-    id: "PR-1",
+    id: "1",
     name: "John Smith",
     email: "john.smith@example.com",
-    request: "Please pray for my upcoming surgery next week. I'm feeling anxious and need strength.",
-    date: new Date().toISOString().split('T')[0],
+    request: "Please pray for my upcoming surgery next week. I need strength and healing.",
+    date: new Date().toLocaleDateString(),
     status: "pending",
-    country: "USA"
+    country: "United States"
   },
   {
-    id: "PR-2",
-    name: "Maria Garcia",
-    email: "maria.g@example.com",
-    request: "Seeking prayer for my family's unity and peace during difficult times.",
-    date: new Date().toISOString().split('T')[0],
-    status: "pending",
-    country: "Spain"
-  },
-  {
-    id: "PR-3",
-    name: "David Wilson",
-    email: "david.w@example.com",
-    request: "Please pray for my mother's recovery from illness and complete healing.",
-    date: new Date().toISOString().split('T')[0],
+    id: "2",
+    name: "Sarah Johnson",
+    email: "sarah.j@example.com",
+    request: "Requesting prayers for my family's unity and peace during difficult times.",
+    date: new Date().toLocaleDateString(),
     status: "pending",
     country: "Canada"
+  },
+  {
+    id: "3",
+    name: "Michael Chen",
+    email: "michael.c@example.com",
+    request: "Please pray for my mother's recovery from illness. She needs complete healing.",
+    date: new Date().toLocaleDateString(),
+    status: "pending",
+    country: "Singapore"
   }
 ];
 
 export default function PrayerRequestList() {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [filterModalOpen, setFilterModalOpen] = useState(false);
@@ -68,94 +47,61 @@ export default function PrayerRequestList() {
   const [dateFilter, setDateFilter] = useState("");
   const [countryFilter, setCountryFilter] = useState("all");
   const [bulkAction, setBulkAction] = useState("");
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<PrayerRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
 
-  const [prayerRequests, setPrayerRequests] = useState<PrayerRequest[]>(() => {
+  // Initialize prayer requests from localStorage or use sample data
+  const [prayerRequests, setPrayerRequests] = useState(() => {
     try {
       const stored = localStorage.getItem('prayerRequests');
-      if (!stored || JSON.parse(stored).length === 0) {
+      if (!stored) {
         localStorage.setItem('prayerRequests', JSON.stringify(samplePrayerRequests));
         return samplePrayerRequests;
       }
-      return JSON.parse(stored);
+      const parsedData = JSON.parse(stored);
+      if (!parsedData || parsedData.length === 0) {
+        localStorage.setItem('prayerRequests', JSON.stringify(samplePrayerRequests));
+        return samplePrayerRequests;
+      }
+      return parsedData;
     } catch (error) {
-      console.error('Error parsing prayer requests from localStorage:', error);
+      console.error('Error loading prayer requests:', error);
       return samplePrayerRequests;
     }
   });
 
-  // Get unique countries from prayer requests
-  const uniqueCountries = Array.from(new Set(prayerRequests.map(request => request.country)));
-
-  const handleDelete = (ids: string[]) => {
-    const updatedRequests = prayerRequests.filter(request => !ids.includes(request.id));
-    setPrayerRequests(updatedRequests);
-    localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
-    
-    toast({
-      description: `${ids.length} prayer request(s) deleted successfully`,
-    });
-    setSelectedItems([]);
-    setDeleteDialogOpen(false);
-  };
-
-  const handleStatusChange = (id: string) => {
-    const updatedRequests = prayerRequests.map(request => {
-      if (request.id === id) {
-        return {
-          ...request,
-          status: request.status === 'completed' ? 'pending' : 'completed'
-        };
-      }
-      return request;
-    });
-    setPrayerRequests(updatedRequests);
-    localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
-    
-    toast({
-      description: "Prayer request status updated successfully",
-    });
-  };
-
-  const handleBulkAction = () => {
-    if (!selectedItems.length || !bulkAction) return;
-
-    const updatedRequests = prayerRequests.map(request => {
-      if (selectedItems.includes(request.id)) {
-        switch (bulkAction) {
-          case "delete":
-            return null;
-          case "markPrayed":
-            return { ...request, status: "completed" };
-          case "markPending":
-            return { ...request, status: "pending" };
-          default:
-            return request;
-        }
-      }
-      return request;
-    }).filter((request): request is PrayerRequest => request !== null);
-
-    setPrayerRequests(updatedRequests);
-    localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
-
-    const actionMessages = {
-      delete: "deleted",
-      markPrayed: "marked as prayed",
-      markPending: "marked as pending"
-    };
-
-    toast({
-      description: `${selectedItems.length} prayer requests ${actionMessages[bulkAction as keyof typeof actionMessages]} successfully`,
-    });
-
-    setSelectedItems([]);
-    setBulkAction("");
-  };
+  const columns = [
+    {
+      header: "Name & Email",
+      accessor: (request: any) => (
+        <div>
+          <div className="font-medium">{request.name}</div>
+          <div className="text-sm text-gray-500">{request.email}</div>
+        </div>
+      )
+    },
+    {
+      header: "Request",
+      accessor: (request: any) => (
+        <div className="max-w-[400px] truncate">
+          {request.request}
+        </div>
+      )
+    },
+    {
+      header: "Status & Date",
+      accessor: (request: any) => (
+        <div>
+          <span className={`px-2 py-1 rounded-full text-xs ${
+            request.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            {request.status === 'completed' ? 'Prayed' : 'Pending'}
+          </span>
+          <div className="text-sm text-gray-500 mt-1">{request.date}</div>
+        </div>
+      )
+    }
+  ];
 
   const handleViewDetails = (id: string) => {
     const request = prayerRequests.find(r => r.id === id);
@@ -165,34 +111,60 @@ export default function PrayerRequestList() {
     }
   };
 
+  const handleStatusChange = (status: string) => {
+    if (selectedRequest) {
+      const updatedRequests = prayerRequests.map(request =>
+        request.id === selectedRequest.id ? { ...request, status } : request
+      );
+      setPrayerRequests(updatedRequests);
+      localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
+      setDetailsModalOpen(false);
+      toast({
+        description: "Prayer request status updated successfully",
+      });
+    }
+  };
+
+  const handleBulkAction = () => {
+    if (!selectedItems.length || !bulkAction) return;
+
+    const updatedRequests = prayerRequests.map(request => {
+      if (selectedItems.includes(request.id)) {
+        return {
+          ...request,
+          status: bulkAction === 'markPrayed' ? 'completed' : 'pending'
+        };
+      }
+      return request;
+    });
+
+    setPrayerRequests(updatedRequests);
+    localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
+    
+    toast({
+      description: `${selectedItems.length} prayer requests updated successfully`,
+    });
+    
+    setSelectedItems([]);
+    setBulkAction("");
+  };
+
   const filteredRequests = prayerRequests.filter((request) => {
+    const searchLower = searchQuery.toLowerCase();
     const matchesSearch = 
-      (request?.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (request?.email?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (request?.request?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+      (request?.name?.toLowerCase() || '').includes(searchLower) ||
+      (request?.email?.toLowerCase() || '').includes(searchLower) ||
+      (request?.request?.toLowerCase() || '').includes(searchLower);
     const matchesStatus = statusFilter === "all" || request?.status === statusFilter;
     const matchesDate = !dateFilter || request?.date === dateFilter;
     const matchesCountry = countryFilter === "all" || request?.country === countryFilter;
     return matchesSearch && matchesStatus && matchesDate && matchesCountry;
   });
 
-  const bulkActions = [
-    { value: "delete", label: "Delete Selected" },
-    { value: "markPrayed", label: "Mark as Prayed" },
-    { value: "markPending", label: "Mark as Pending" }
-  ];
-
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-0 md:px-6">
+    <div className="mobile-spacing">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Prayer Requests</h1>
-        <Link 
-          to="/prayer-requests/create"
-          className="bg-[#695CAE] hover:bg-[#695CAE]/90 text-white inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2"
-        >
-          <Plus className="h-4 w-4" />
-          New Request
-        </Link>
+        <h1 className="text-2xl font-bold">Prayer Requests</h1>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -218,39 +190,10 @@ export default function PrayerRequestList() {
         </div>
       </div>
 
-      <div className="bg-white md:rounded-lg md:border">
+      <div className="bg-white md:rounded-lg md:border overflow-hidden">
         <DataTable
           data={filteredRequests}
-          columns={[
-            {
-              header: "Name",
-              accessor: (request: any) => (
-                <div>
-                  <div className="font-medium">{request.name}</div>
-                  <div className="text-sm text-gray-500">{request.email}</div>
-                </div>
-              )
-            },
-            {
-              header: "Request",
-              accessor: "request",
-              className: "max-w-[400px]"
-            },
-            {
-              header: "Date",
-              accessor: "date"
-            },
-            {
-              header: "Status",
-              accessor: (request: any) => (
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  request.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {request.status === 'completed' ? 'Prayed' : 'Pending'}
-                </span>
-              )
-            }
-          ]}
+          columns={columns}
           selectedItems={selectedItems}
           onSelectItem={(id, checked) => {
             setSelectedItems(prev =>
@@ -261,6 +204,7 @@ export default function PrayerRequestList() {
             setSelectedItems(checked ? filteredRequests.map(r => r.id) : []);
           }}
           getItemId={(item) => item.id}
+          onRowClick={handleViewDetails}
           showCheckboxes={true}
           CardComponent={({ item }) => (
             <div className="p-4">
@@ -281,9 +225,6 @@ export default function PrayerRequestList() {
               </div>
             </div>
           )}
-          actions={{
-            onViewDetails: handleViewDetails
-          }}
         />
 
         {selectedItems.length > 0 && (
@@ -292,7 +233,10 @@ export default function PrayerRequestList() {
             bulkAction={bulkAction}
             setBulkAction={setBulkAction}
             onBulkAction={handleBulkAction}
-            actions={bulkActions}
+            actions={[
+              { value: "markPrayed", label: "Mark as Prayed" },
+              { value: "markPending", label: "Mark as Pending" }
+            ]}
           />
         )}
       </div>
@@ -306,7 +250,7 @@ export default function PrayerRequestList() {
         setDateFilter={setDateFilter}
         countryFilter={countryFilter}
         setCountryFilter={setCountryFilter}
-        uniqueCountries={uniqueCountries}
+        uniqueCountries={Array.from(new Set(prayerRequests.map(request => request.country)))}
       />
 
       <DetailsModal
@@ -314,30 +258,13 @@ export default function PrayerRequestList() {
         onOpenChange={setDetailsModalOpen}
         title="Prayer Request Details"
         data={selectedRequest}
-        onStatusChange={() => selectedRequest && handleStatusChange(selectedRequest.id)}
+        onStatusChange={handleStatusChange}
         statusLabels={{
           pending: 'Pending',
           completed: 'Prayed',
           buttonText: 'Mark as Prayed'
         }}
       />
-
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the selected prayer requests.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => handleDelete(selectedItems)} className="bg-red-600 hover:bg-red-700">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
