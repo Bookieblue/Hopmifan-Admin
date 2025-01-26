@@ -20,7 +20,7 @@ const samplePrayerRequests = [
     cityState: "Lagos, LA",
     preferredContact: "whatsapp",
     request: "Please pray for my upcoming surgery next week. I need God's healing touch.",
-    dateSubmitted: "2024-01-20T20:22:17.761Z",
+    dateSubmitted: new Date("2024-01-20T20:22:17.761Z").toLocaleDateString(),
     status: "pending"
   },
   {
@@ -33,7 +33,7 @@ const samplePrayerRequests = [
     cityState: "Abuja, FC",
     preferredContact: "phone",
     request: "Requesting prayers for my family's spiritual growth and unity.",
-    dateSubmitted: "2024-01-20T20:22:17.761Z",
+    dateSubmitted: new Date("2024-01-20T20:22:17.761Z").toLocaleDateString(),
     status: "pending"
   }
 ];
@@ -102,9 +102,7 @@ export default function PrayerRequestList() {
           }`}>
             {request.status === 'prayed' ? 'Prayed' : 'Pending'}
           </span>
-          <div className="text-sm text-gray-500 mt-1">
-            {new Date(request.dateSubmitted).toLocaleString()}
-          </div>
+          <div className="text-sm text-gray-500 mt-1">{request.dateSubmitted}</div>
         </div>
       )
     },
@@ -121,7 +119,10 @@ export default function PrayerRequestList() {
   const handleViewDetails = (id: string) => {
     const request = requests.find(r => r.id === id);
     if (request) {
-      setSelectedRequest(request);
+      setSelectedRequest({
+        ...request,
+        message: request.request // Map request field to message for DetailsModal
+      });
       setDetailsModalOpen(true);
     }
   };
@@ -228,7 +229,7 @@ export default function PrayerRequestList() {
                   <h3 className="font-medium text-base mb-1">{`${item.firstName} ${item.lastName}`}</h3>
                   <p className="text-sm text-gray-500 mb-2">{item.email}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">{new Date(item.dateSubmitted).toLocaleString()}</span>
+                    <span className="text-sm text-gray-500">{item.dateSubmitted}</span>
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       item.status === 'prayed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                     }`}>
