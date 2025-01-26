@@ -27,7 +27,8 @@ const samplePrayerRequests = [
     email: "john@example.com",
     request: "Please pray for my upcoming surgery next week.",
     date: "2024-01-28",
-    status: "pending"
+    status: "pending",
+    country: "USA"
   },
   {
     id: "PR-2",
@@ -35,7 +36,8 @@ const samplePrayerRequests = [
     email: "jane@example.com",
     request: "Seeking prayer for my family's well-being.",
     date: "2024-01-27",
-    status: "completed"
+    status: "completed",
+    country: "Canada"
   }
 ];
 
@@ -45,6 +47,7 @@ export default function PrayerRequestList() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
+  const [countryFilter, setCountryFilter] = useState("all"); // Added missing state
   const [bulkAction, setBulkAction] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
@@ -60,6 +63,9 @@ export default function PrayerRequestList() {
     }
     return JSON.parse(stored);
   });
+
+  // Get unique countries from prayer requests
+  const uniqueCountries = Array.from(new Set(prayerRequests.map(request => request.country || 'Unknown')));
 
   const handleDelete = (ids: string[]) => {
     const updatedRequests = prayerRequests.filter(request => !ids.includes(request.id));
@@ -140,7 +146,8 @@ export default function PrayerRequestList() {
       request.request.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || request.status === statusFilter;
     const matchesDate = !dateFilter || request.date === dateFilter;
-    return matchesSearch && matchesStatus && matchesDate;
+    const matchesCountry = countryFilter === "all" || request.country === countryFilter;
+    return matchesSearch && matchesStatus && matchesDate && matchesCountry;
   });
 
   const bulkActions = [
@@ -276,6 +283,9 @@ export default function PrayerRequestList() {
         setStatusFilter={setStatusFilter}
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
+        countryFilter={countryFilter}
+        setCountryFilter={setCountryFilter}
+        uniqueCountries={uniqueCountries}
       />
 
       <DetailsModal
