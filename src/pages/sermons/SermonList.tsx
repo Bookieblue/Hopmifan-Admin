@@ -5,6 +5,7 @@ import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { useToast } from "@/hooks/use-toast";
+import { SermonCard } from "@/components/sermons/SermonCard";
 
 interface SermonData {
   title: string;
@@ -66,7 +67,7 @@ export default function SermonList() {
   return (
     <div className="mobile-spacing">
       <div className="flex items-center justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Sermon List</h1>
+        <h1 className="text-2xl font-bold">Sermons</h1>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -127,6 +128,7 @@ export default function SermonList() {
           actions={{
             onViewDetails: handleViewDetails
           }}
+          CardComponent={SermonCard}
         />
       </div>
 

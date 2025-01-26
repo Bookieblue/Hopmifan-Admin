@@ -10,12 +10,12 @@ import { useNavigate } from "react-router-dom";
 
 interface SermonCardProps {
   item: {
-    id: string;
+    id?: string;
     title: string;
     author: string;
     publishDate: string;
     status: string;
-    content?: string;
+    description?: string;
   };
   actions?: {
     onDelete?: (id: string) => void;
@@ -57,11 +57,11 @@ export const SermonCard = ({ item, actions }: SermonCardProps) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuItem onClick={() => handleEdit(item.id)}>
+                <DropdownMenuItem onClick={() => item.id && handleEdit(item.id)}>
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </DropdownMenuItem>
-                {actions?.onStatusChange && (
+                {actions?.onStatusChange && item.id && (
                   <DropdownMenuItem
                     onClick={() => actions.onStatusChange(item.id, item.status === 'published' ? 'draft' : 'published')}
                   >
@@ -78,7 +78,7 @@ export const SermonCard = ({ item, actions }: SermonCardProps) => {
                     )}
                   </DropdownMenuItem>
                 )}
-                {actions?.onDelete && (
+                {actions?.onDelete && item.id && (
                   <DropdownMenuItem
                     onClick={() => actions.onDelete(item.id)}
                     className="text-red-600"
@@ -94,4 +94,4 @@ export const SermonCard = ({ item, actions }: SermonCardProps) => {
       </div>
     </div>
   );
-}
+};
