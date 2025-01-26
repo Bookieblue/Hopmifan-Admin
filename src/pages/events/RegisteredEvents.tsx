@@ -226,14 +226,6 @@ export default function RegisteredEvents() {
                   <div className="text-sm text-gray-500 mt-1">{registration.dateSubmitted}</div>
                 </div>
               )
-            },
-            {
-              header: "Actions",
-              accessor: (registration: any) => (
-                <div className="flex items-center justify-end gap-2">
-                  <ViewDetailsButton onClick={() => handleViewDetails(registration.id)} />
-                </div>
-              )
             }
           ]}
           selectedItems={selectedRegistrations}
