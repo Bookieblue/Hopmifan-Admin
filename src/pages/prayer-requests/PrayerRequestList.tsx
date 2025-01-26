@@ -12,25 +12,29 @@ import { useToast } from "@/hooks/use-toast";
 const samplePrayerRequests = [
   {
     id: "1",
-    name: "John Smith",
-    email: "john.smith@example.com",
-    request: "Please pray for my upcoming surgery next week. I need strength and healing.",
-    date: new Date().toLocaleDateString(),
-    status: "pending",
-    country: "United States",
-    cityState: "New York, NY",
-    preferredContact: "email"
+    firstName: "James",
+    lastName: "Anderson",
+    phone: "+234 803 456 7890",
+    email: "james.anderson@gmail.com",
+    country: "Nigeria",
+    cityState: "Lagos, LA",
+    preferredContact: "whatsapp",
+    request: "Please pray for my upcoming surgery next week. I need God's healing touch.",
+    dateSubmitted: new Date(2024, 2, 15).toLocaleDateString(),
+    status: "pending"
   },
   {
     id: "2",
-    name: "Sarah Johnson",
-    email: "sarah.j@example.com",
-    request: "Requesting prayers for my family's unity and peace during difficult times.",
-    date: new Date().toLocaleDateString(),
-    status: "pending",
-    country: "Canada",
-    cityState: "Toronto, ON",
-    preferredContact: "phone"
+    firstName: "Mary",
+    lastName: "Johnson",
+    phone: "+234 804 567 8901",
+    email: "mary.johnson@yahoo.com",
+    country: "Nigeria",
+    cityState: "Abuja, FC",
+    preferredContact: "phone",
+    request: "Requesting prayers for my family's spiritual growth and unity.",
+    dateSubmitted: new Date(2024, 2, 14).toLocaleDateString(),
+    status: "prayed"
   }
 ];
 
@@ -66,16 +70,8 @@ export default function PrayerRequestList() {
       header: "Name", 
       accessor: (request: any) => (
         <div>
-          <div className="font-medium">{request.name}</div>
+          <div className="font-medium">{`${request.firstName} ${request.lastName}`}</div>
           <div className="text-sm text-gray-500">{request.email}</div>
-        </div>
-      )
-    },
-    { 
-      header: "Request", 
-      accessor: (request: any) => (
-        <div className="max-w-[300px] truncate">
-          {request.request}
         </div>
       )
     },
@@ -83,7 +79,7 @@ export default function PrayerRequestList() {
       header: "Contact Info", 
       accessor: (request: any) => (
         <div>
-          <div>{request.preferredContact}</div>
+          <div>{request.phone}</div>
           <div className="text-sm text-gray-500 capitalize">{request.preferredContact} preferred</div>
         </div>
       )
@@ -102,11 +98,11 @@ export default function PrayerRequestList() {
       accessor: (request: any) => (
         <div>
           <span className={`px-2 py-1 rounded-full text-xs ${
-            request.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+            request.status === 'prayed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
           }`}>
-            {request.status === 'completed' ? 'Prayed' : 'Pending'}
+            {request.status === 'prayed' ? 'Prayed' : 'Pending'}
           </span>
-          <div className="text-sm text-gray-500 mt-1">{request.date}</div>
+          <div className="text-sm text-gray-500 mt-1">{request.dateSubmitted}</div>
         </div>
       )
     },
@@ -145,12 +141,12 @@ export default function PrayerRequestList() {
   const filteredRequests = requests.filter(request => {
     const searchLower = searchQuery.toLowerCase();
     const matchesSearch = 
-      (request?.name?.toLowerCase() || '').includes(searchLower) ||
-      (request?.email?.toLowerCase() || '').includes(searchLower) ||
-      (request?.request?.toLowerCase() || '').includes(searchLower);
-    const matchesCountry = countryFilter === "all" || request?.country === countryFilter;
-    const matchesStatus = statusFilter === "all" || request?.status === statusFilter;
-    const matchesDate = !dateFilter || request?.date === dateFilter;
+      `${request.firstName} ${request.lastName}`.toLowerCase().includes(searchLower) ||
+      request.email.toLowerCase().includes(searchLower) ||
+      request.phone.toLowerCase().includes(searchLower);
+    const matchesCountry = countryFilter === "all" || request.country === countryFilter;
+    const matchesStatus = statusFilter === "all" || request.status === statusFilter;
+    const matchesDate = !dateFilter || request.dateSubmitted === dateFilter;
     return matchesSearch && matchesCountry && matchesStatus && matchesDate;
   });
 
@@ -161,7 +157,7 @@ export default function PrayerRequestList() {
       if (selectedRequests.includes(request.id)) {
         return {
           ...request,
-          status: bulkAction === 'markPrayed' ? 'completed' : 'pending'
+          status: bulkAction === 'markPrayed' ? 'prayed' : 'pending'
         };
       }
       return request;
@@ -227,15 +223,15 @@ export default function PrayerRequestList() {
             <div className="p-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-base mb-1">{item.name}</h3>
+                  <h3 className="font-medium text-base mb-1">{`${item.firstName} ${item.lastName}`}</h3>
                   <p className="text-sm text-gray-500 mb-2">{item.email}</p>
                   <p className="text-sm text-gray-700 mb-2">{item.request}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">{item.date}</span>
+                    <span className="text-sm text-gray-500">{item.dateSubmitted}</span>
                     <span className={`px-2 py-1 rounded-full text-xs ${
-                      item.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                      item.status === 'prayed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {item.status === 'completed' ? 'Prayed' : 'Pending'}
+                      {item.status === 'prayed' ? 'Prayed' : 'Pending'}
                     </span>
                   </div>
                 </div>
