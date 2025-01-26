@@ -99,11 +99,6 @@ export function DataTable<T>({
               <div className="flex-1 w-full overflow-x-hidden" onClick={() => onRowClick?.(getItemId(item))}>
                 <CardComponent item={item} actions={actions} />
               </div>
-              {actions?.onViewDetails && (
-                <div className="pr-4">
-                  <ViewDetailsButton onClick={() => actions.onViewDetails!(getItemId(item))} />
-                </div>
-              )}
             </div>
           ))}
         </div>
@@ -135,7 +130,7 @@ export function DataTable<T>({
                 {column.header}
               </th>
             ))}
-            {actions?.onViewDetails && <th className="px-4 py-3 text-right">Actions</th>}
+            {!isMobile && actions?.onViewDetails && <th className="px-4 py-3 text-right">Actions</th>}
           </tr>
         </thead>
         <TableBody>
@@ -166,7 +161,7 @@ export function DataTable<T>({
                       : String(item[column.accessor])}
                   </td>
                 ))}
-                {actions?.onViewDetails && (
+                {!isMobile && actions?.onViewDetails && (
                   <td className="px-4 py-3 text-right">
                     <ViewDetailsButton onClick={() => actions.onViewDetails(id)} />
                   </td>
