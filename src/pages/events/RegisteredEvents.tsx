@@ -270,6 +270,9 @@ export default function RegisteredEvents() {
               </div>
             </div>
           )}
+          actions={{
+            onViewDetails: handleViewDetails
+          }}
         />
 
         {selectedRegistrations.length > 0 && (
