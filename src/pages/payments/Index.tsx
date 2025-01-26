@@ -7,7 +7,8 @@ import { PaymentFilters } from "@/components/payments/PaymentFilters";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { FilterModal } from "@/components/donations/FilterModal";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
+import { Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const payments = [
   { 
@@ -93,7 +94,19 @@ export default function PaymentHistory() {
           <p>{payment.method}</p>
           <p>Ref: {payment.reference}</p>
         </div>
-        <ViewDetailsButton onClick={() => handleViewDetails(payment.reference)} />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            toast({
+              title: "Receipt Downloaded",
+              description: `Receipt for payment ${payment.reference} has been downloaded`,
+            });
+          }}
+          className="h-8 w-8"
+        >
+          <Download className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );
