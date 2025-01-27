@@ -18,9 +18,9 @@ const samplePrayerRequests = [
     email: "alice.johnson@gmail.com",
     country: "Nigeria",
     cityState: "Lagos, LA",
-    preferredContact: "whatsapp",
-    request: "Please pray for my upcoming surgery next week. I need God's healing touch.",
-    dateSubmitted: new Date("2024-01-20T20:22:17.761Z").toLocaleDateString(),
+    preferredContact: "WhatsApp",
+    request: "Please pray for my upcoming surgery next week. I need God's healing touch and divine protection during the procedure. I believe in the power of collective prayers.",
+    dateSubmitted: new Date(2024, 0, 20).toLocaleDateString(),
     status: "pending"
   },
   {
@@ -31,10 +31,23 @@ const samplePrayerRequests = [
     email: "bob.wilson@yahoo.com",
     country: "Nigeria",
     cityState: "Abuja, FC",
-    preferredContact: "phone",
-    request: "Requesting prayers for my family's spiritual growth and unity.",
-    dateSubmitted: new Date("2024-01-20T20:22:17.761Z").toLocaleDateString(),
+    preferredContact: "Phone",
+    request: "Requesting prayers for my family's spiritual growth and unity. We've been facing some challenges lately and need God's intervention for peace and harmony in our home.",
+    dateSubmitted: new Date(2024, 0, 19).toLocaleDateString(),
     status: "pending"
+  },
+  {
+    id: "3",
+    firstName: "Grace",
+    lastName: "Okonkwo",
+    phone: "+234 805 678 9012",
+    email: "grace.okonkwo@gmail.com",
+    country: "Nigeria",
+    cityState: "Port Harcourt, RV",
+    preferredContact: "Email",
+    request: "I need prayers for my business that has been struggling lately. Believing God for a turnaround and His divine provision.",
+    dateSubmitted: new Date(2024, 0, 18).toLocaleDateString(),
+    status: "prayed"
   }
 ];
 
@@ -65,7 +78,7 @@ export default function PrayerRequestList() {
     }
   });
 
-  const columns = [
+const columns = [
     { 
       header: "Name", 
       accessor: (request: any) => (
@@ -114,7 +127,7 @@ export default function PrayerRequestList() {
         </div>
       )
     }
-  ];
+];
 
   const handleViewDetails = (id: string) => {
     const request = requests.find(r => r.id === id);
