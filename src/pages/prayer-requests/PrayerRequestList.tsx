@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { Filter, Search } from "lucide-react";
+import { Filter, Search, FileDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FilterModal } from "@/components/prayer-requests/FilterModal";
 import { DetailsModal } from "@/components/shared/DetailsModal";
@@ -63,7 +63,6 @@ export default function PrayerRequestList() {
   const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
 
-  // Initialize prayer requests from localStorage
   const [requests, setRequests] = useState(() => {
     try {
       const stored = localStorage.getItem('prayerRequests');
@@ -78,7 +77,40 @@ export default function PrayerRequestList() {
     }
   });
 
-const columns = [
+  const exportAsCSV = () => {
+    const headers = ["Name", "Email", "Phone", "Location", "Request", "Status", "Date"];
+    const csvData = requests.map(request => [
+      `${request.firstName} ${request.lastName}`,
+      request.email,
+      request.phone,
+      `${request.country}, ${request.cityState}`,
+      request.request,
+      request.status,
+      request.dateSubmitted
+    ]);
+    
+    const csvContent = [headers, ...csvData]
+      .map(row => row.map(cell => `"${cell}"`).join(","))
+      .join("\n");
+    
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "prayer_requests.csv";
+    link.click();
+    toast({
+      description: "Prayer requests exported as CSV successfully",
+    });
+  };
+
+  const exportAsPDF = () => {
+    window.print();
+    toast({
+      description: "Prayer requests exported as PDF successfully",
+    });
+  };
+
+  const columns = [
     { 
       header: "Name", 
       accessor: (request: any) => (
@@ -113,7 +145,7 @@ const columns = [
           <span className={`px-2 py-1 rounded-full text-xs ${
             request.status === 'prayed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
           }`}>
-            {request.status === 'prayed' ? 'Prayed' : 'Pending'}
+            {request.status === 'prayed' ? 'Replied' : 'Pending'}
           </span>
           <div className="text-sm text-gray-500 mt-1">{request.dateSubmitted}</div>
         </div>
@@ -127,7 +159,7 @@ const columns = [
         </div>
       )
     }
-];
+  ];
 
   const handleViewDetails = (id: string) => {
     const request = requests.find(r => r.id === id);
@@ -194,6 +226,24 @@ const columns = [
     <div className="mobile-spacing">
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold">Prayer Requests</h1>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={exportAsCSV}
+          >
+            <FileDown className="h-4 w-4" />
+            Export CSV
+          </Button>
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={exportAsPDF}
+          >
+            <FileDown className="h-4 w-4" />
+            Export PDF
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -246,7 +296,7 @@ const columns = [
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       item.status === 'prayed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {item.status === 'prayed' ? 'Prayed' : 'Pending'}
+                      {item.status === 'prayed' ? 'Replied' : 'Pending'}
                     </span>
                   </div>
                 </div>
@@ -263,7 +313,7 @@ const columns = [
             setBulkAction={setBulkAction}
             onBulkAction={handleBulkAction}
             actions={[
-              { value: "markPrayed", label: "Mark as Prayed" },
+              { value: "markPrayed", label: "Mark as Replied" },
               { value: "markPending", label: "Mark as Pending" }
             ]}
           />
@@ -290,8 +340,8 @@ const columns = [
         onStatusChange={handleStatusChange}
         statusLabels={{
           pending: 'Pending',
-          completed: 'Prayed',
-          buttonText: 'Mark as Prayed'
+          completed: 'Replied',
+          buttonText: 'Mark as Replied'
         }}
       />
     </div>
