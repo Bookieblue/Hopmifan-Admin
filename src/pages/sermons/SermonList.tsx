@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { Filter, Search, Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { useToast } from "@/hooks/use-toast";
 import { SermonCard } from "@/components/sermons/SermonCard";
 import { useNavigate } from "react-router-dom";
+import { BulkActions } from "@/components/shared/BulkActions";
 
 const sampleSermons = [
   {
@@ -138,7 +139,7 @@ export default function SermonList() {
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold">Sermons</h1>
         <Button
-          onClick={() => navigate("/sermons/new")}
+          onClick={() => navigate("/sermons/create")}
           className="bg-[#695CAE] hover:bg-[#695CAE]/90"
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -149,13 +150,12 @@ export default function SermonList() {
       <div className="space-y-4 mb-6">
         <div className="flex items-center gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
               type="text"
               placeholder="Search sermons..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-4"
             />
           </div>
         </div>
@@ -220,6 +220,7 @@ export default function SermonList() {
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
+          onRowClick={(id) => handleViewDetails(id)}
         />
       </div>
 
