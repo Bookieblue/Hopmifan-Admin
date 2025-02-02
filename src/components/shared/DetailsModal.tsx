@@ -8,6 +8,7 @@ interface DetailsModalProps {
   onOpenChange: (open: boolean) => void;
   title: string;
   data: {
+    id?: string;
     firstName?: string;
     lastName?: string;
     email?: string;
@@ -20,7 +21,7 @@ interface DetailsModalProps {
     status?: string;
     [key: string]: any;
   } | null;
-  onStatusChange: (status: string) => void;
+  onStatusChange: (id: string, status: string) => void;
   statusLabels: {
     pending: string;
     completed: string;
@@ -39,10 +40,12 @@ export function DetailsModal({
   const { toast } = useToast();
 
   const handleStatusChange = () => {
-    onStatusChange('completed');
-    toast({
-      description: `${title} marked as ${statusLabels.completed.toLowerCase()}`
-    });
+    if (data?.id) {
+      onStatusChange(data.id, 'completed');
+      toast({
+        description: `${title} marked as ${statusLabels.completed.toLowerCase()}`
+      });
+    }
   };
 
   if (!data) return null;
