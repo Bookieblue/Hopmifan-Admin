@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { Plus, Download } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { useToast } from "@/hooks/use-toast";
 import { SermonCard } from "@/components/sermons/SermonCard";
 import { useNavigate } from "react-router-dom";
-import { BulkActions } from "@/components/shared/BulkActions";
 
 const sampleSermons = [
   {
@@ -167,21 +166,16 @@ export default function SermonList() {
           columns={[
             { 
               header: "Title", 
-              accessor: (sermon: any) => (
-                <div className="font-medium">{sermon.title}</div>
-              )
+              accessor: "title",
+              className: "font-medium"
             },
             { 
               header: "Preacher", 
-              accessor: (sermon: any) => (
-                <div>{sermon.preacher}</div>
-              )
+              accessor: "preacher"
             },
             { 
               header: "Published Date", 
-              accessor: (sermon: any) => (
-                <div>{sermon.publishDate}</div>
-              )
+              accessor: "publishDate"
             },
             { 
               header: "Status", 
@@ -229,7 +223,7 @@ export default function SermonList() {
         onOpenChange={setDetailsModalOpen}
         title="Sermon Details"
         data={selectedSermon}
-        onStatusChange={handleStatusChange}
+        onStatusChange={(status) => selectedSermon?.id && handleStatusChange(selectedSermon.id, status)}
         statusLabels={{
           pending: 'Draft',
           completed: 'Published',
