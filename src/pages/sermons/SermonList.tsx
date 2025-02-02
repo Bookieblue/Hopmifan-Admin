@@ -133,6 +133,10 @@ export default function SermonList() {
     });
   };
 
+  const handleRowClick = (id: string) => {
+    navigate(`/sermons/${id}/edit`);
+  };
+
   return (
     <div className="mobile-spacing">
       <div className="flex items-center justify-between gap-2 mb-6">
@@ -214,7 +218,7 @@ export default function SermonList() {
           bulkAction={bulkAction}
           setBulkAction={setBulkAction}
           onBulkAction={handleBulkAction}
-          onRowClick={(id) => handleViewDetails(id)}
+          onRowClick={handleRowClick}
         />
       </div>
 
