@@ -1,73 +1,149 @@
 import { useState } from "react";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { Filter, Search } from "lucide-react";
+import { Filter, Search, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { DetailsModal } from "@/components/shared/DetailsModal";
 import { useToast } from "@/hooks/use-toast";
 import { SermonCard } from "@/components/sermons/SermonCard";
+import { useNavigate } from "react-router-dom";
 
-interface SermonData {
-  title: string;
-  description: string;
-  author: string;
-  youtubeLink: string;
-  publishDate: string;
-  status: string;
-  thumbnailImage: string;
-  preacher?: string;
-}
-
-const sampleSermons: SermonData[] = [
+const sampleSermons = [
   {
+    id: "SER-001",
     title: "The Power of Faith",
-    description: "A deep dive into the importance of faith in our lives.",
-    author: "Pastor John",
-    youtubeLink: "https://youtube.com/example1",
-    publishDate: "2024-01-01",
+    preacher: "Pastor John Smith",
+    publishDate: "Mar 15, 2024",
     status: "published",
-    thumbnailImage: "https://example.com/image1.jpg",
-    preacher: "Pastor John"
+    description: "A deep dive into the importance of faith in our daily lives.",
+    youtubeLink: "https://youtube.com/watch?v=123"
   },
   {
-    title: "Hope in Difficult Times",
-    description: "Finding hope during challenging moments.",
-    author: "Pastor Jane",
-    youtubeLink: "https://youtube.com/example2",
-    publishDate: "2024-01-15",
+    id: "SER-002",
+    title: "Walking in Love",
+    preacher: "Pastor Sarah Johnson",
+    publishDate: "Mar 12, 2024",
+    status: "draft",
+    description: "Understanding the true meaning of walking in love.",
+    youtubeLink: "https://youtube.com/watch?v=456"
+  },
+  {
+    id: "SER-003",
+    title: "The Grace Journey",
+    preacher: "Pastor Michael Brown",
+    publishDate: "Mar 10, 2024",
     status: "published",
-    thumbnailImage: "https://example.com/image2.jpg",
-    preacher: "Pastor Jane"
+    description: "Exploring the depths of God's grace in our lives.",
+    youtubeLink: "https://youtube.com/watch?v=789"
+  },
+  {
+    id: "SER-004",
+    title: "Living with Purpose",
+    preacher: "Pastor Emma Wilson",
+    publishDate: "Mar 8, 2024",
+    status: "published",
+    description: "Discovering and fulfilling your God-given purpose.",
+    youtubeLink: "https://youtube.com/watch?v=012"
+  },
+  {
+    id: "SER-005",
+    title: "The Power of Prayer",
+    preacher: "Pastor David Lee",
+    publishDate: "Mar 5, 2024",
+    status: "draft",
+    description: "Understanding the transformative power of prayer.",
+    youtubeLink: "https://youtube.com/watch?v=345"
   }
 ];
 
 export default function SermonList() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [sermons, setSermons] = useState(sampleSermons);
-  const [selectedSermon, setSelectedSermon] = useState<SermonData | null>(null);
+  const [sermons, setSermons] = useState(() => {
+    const stored = localStorage.getItem('sermons');
+    return stored ? JSON.parse(stored) : sampleSermons;
+  });
+  const [selectedSermon, setSelectedSermon] = useState<any | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedSermons, setSelectedSermons] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState("");
 
   const filteredSermons = sermons.filter(sermon => {
     return (
       sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sermon.author.toLowerCase().includes(searchQuery.toLowerCase())
+      sermon.preacher.toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
 
   const handleViewDetails = (id: string) => {
-    const sermon = sermons.find(s => s.title === id);
+    const sermon = sermons.find(s => s.id === id);
     if (sermon) {
       setSelectedSermon(sermon);
       setDetailsModalOpen(true);
     }
   };
 
+  const handleDelete = (id: string) => {
+    const updatedSermons = sermons.filter(sermon => sermon.id !== id);
+    setSermons(updatedSermons);
+    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
+    toast({
+      description: "Sermon deleted successfully",
+    });
+  };
+
+  const handleStatusChange = (id: string, currentStatus: string) => {
+    const updatedSermons = sermons.map(sermon => {
+      if (sermon.id === id) {
+        return {
+          ...sermon,
+          status: currentStatus === 'published' ? 'draft' : 'published'
+        };
+      }
+      return sermon;
+    });
+    setSermons(updatedSermons);
+    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
+    toast({
+      description: `Sermon ${currentStatus === 'published' ? 'unpublished' : 'published'} successfully`,
+    });
+  };
+
+  const handleBulkAction = () => {
+    if (!bulkAction || selectedSermons.length === 0) return;
+
+    const updatedSermons = sermons.map(sermon => {
+      if (selectedSermons.includes(sermon.id)) {
+        return {
+          ...sermon,
+          status: bulkAction === "publish" ? "published" : "draft"
+        };
+      }
+      return sermon;
+    });
+
+    setSermons(updatedSermons);
+    localStorage.setItem('sermons', JSON.stringify(updatedSermons));
+    setSelectedSermons([]);
+    setBulkAction("");
+    
+    toast({
+      description: `Selected sermons ${bulkAction === "publish" ? "published" : "unpublished"} successfully`,
+    });
+  };
+
   return (
     <div className="mobile-spacing">
       <div className="flex items-center justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold">Sermons</h1>
+        <Button
+          onClick={() => navigate("/sermons/new")}
+          className="bg-[#695CAE] hover:bg-[#695CAE]/90"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Sermon
+        </Button>
       </div>
 
       <div className="space-y-4 mb-6">
@@ -91,26 +167,32 @@ export default function SermonList() {
           columns={[
             { 
               header: "Title", 
-              accessor: (sermon: SermonData) => (
+              accessor: (sermon: any) => (
                 <div className="font-medium">{sermon.title}</div>
               )
             },
             { 
-              header: "Author", 
-              accessor: (sermon: SermonData) => (
-                <div>{sermon.author}</div>
+              header: "Preacher", 
+              accessor: (sermon: any) => (
+                <div>{sermon.preacher}</div>
               )
             },
             { 
               header: "Published Date", 
-              accessor: (sermon: SermonData) => (
+              accessor: (sermon: any) => (
                 <div>{sermon.publishDate}</div>
               )
             },
             { 
               header: "Status", 
-              accessor: (sermon: SermonData) => (
-                <div>{sermon.status}</div>
+              accessor: (sermon: any) => (
+                <div>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    sermon.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {sermon.status === 'published' ? 'Published' : 'Draft'}
+                  </span>
+                </div>
               )
             }
           ]}
@@ -121,14 +203,23 @@ export default function SermonList() {
             );
           }}
           onSelectAll={(checked) => {
-            setSelectedSermons(checked ? filteredSermons.map(s => s.title) : []);
+            setSelectedSermons(checked ? filteredSermons.map(s => s.id) : []);
           }}
-          getItemId={(item) => item.title}
-          showCheckboxes={false}
+          getItemId={(item) => item.id}
+          showCheckboxes={true}
           actions={{
+            onDelete: handleDelete,
+            onStatusChange: handleStatusChange,
             onViewDetails: handleViewDetails
           }}
           CardComponent={SermonCard}
+          bulkActions={[
+            { value: "publish", label: "Publish" },
+            { value: "unpublish", label: "Unpublish" }
+          ]}
+          bulkAction={bulkAction}
+          setBulkAction={setBulkAction}
+          onBulkAction={handleBulkAction}
         />
       </div>
 
@@ -137,9 +228,9 @@ export default function SermonList() {
         onOpenChange={setDetailsModalOpen}
         title="Sermon Details"
         data={selectedSermon}
-        onStatusChange={() => {}}
+        onStatusChange={handleStatusChange}
         statusLabels={{
-          pending: 'Pending',
+          pending: 'Draft',
           completed: 'Published',
           buttonText: 'Publish'
         }}
