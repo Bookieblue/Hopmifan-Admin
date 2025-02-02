@@ -227,7 +227,7 @@ export default function SermonList() {
         onOpenChange={setDetailsModalOpen}
         title="Sermon Details"
         data={selectedSermon}
-        onStatusChange={(status) => selectedSermon?.id && handleStatusChange(selectedSermon.id, status)}
+        onStatusChange={(id) => selectedSermon?.id && handleStatusChange(selectedSermon.id, selectedSermon.status)}
         statusLabels={{
           pending: 'Draft',
           completed: 'Published',
