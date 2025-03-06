@@ -8,6 +8,8 @@ import { DetailsModal } from "@/components/shared/DetailsModal";
 import { useToast } from "@/hooks/use-toast";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
+import { useQuery } from "@tanstack/react-query";
+import { formatDate } from "@/components/utils/formatDate";
 
 export default function NewMembers() {
   const { toast } = useToast();
@@ -20,101 +22,140 @@ export default function NewMembers() {
   const [bulkAction, setBulkAction] = useState("");
   const [selectedMember, setSelectedMember] = useState(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [members, setMembers] = useState([
-    {
-      id: "1",
-      firstName: "John",
-      lastName: "Doe",
-      email: "john@example.com",
-      phone: "+1234567890",
-      location: "New York",
-      status: "pending",
-      joinDate: "2024-01-15",
-      message: "I would like to join the church and serve in the choir ministry.",
-      country: "United States",
-      cityState: "New York, NY",
-      preferredContact: "email"
-    },
-  ]);
+
+  const backendURL = import.meta.env.VITE_PUBLIC_API_BASE_URL || "";
+
+  // Fetch members using TanStack Query
+
+  const fetchMembers = async () => {
+    const response = await fetch(`${backendURL}/api/members`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch members");
+    }
+    const result = await response.json();
+
+    // Ensure we return an array and map to update status dynamically
+    return Array.isArray(result.data?.members)
+      ? result.data.members.map((member) => ({
+          ...member,
+          status: member.replied ? "completed" : "pending",
+        }))
+      : [];
+  };
+
+  const {
+    data: members = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["members"],
+    queryFn: fetchMembers,
+  });
 
   const handleViewDetails = (id: string) => {
-    const member = members.find(m => m.id === id);
+    const member = members.find((m) => m.id === id);
     if (member) {
       setSelectedMember(member);
       setDetailsModalOpen(true);
     }
   };
 
-  const handleStatusChange = (status: string) => {
-    if (selectedMember) {
-      setMembers(members.map(member => 
-        member.id === selectedMember.id 
-          ? { ...member, status }
-          : member
-      ));
-      setDetailsModalOpen(false);
+  const handleStatusChange = async (status: string) => {
+    if (!selectedMember) return;
+  
+    try {
+      const response = await fetch(`${backendURL}/api/members/${selectedMember.id}/reply`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ "members": true }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update member status");
+      }
+  
       toast({
-        description: `Member ${status === 'completed' ? 'approved' : 'pending'}`,
+        description: `Member ${
+          status === "completed" ? "approved" : "pending"
+        } successfully updated.`,
+      });
+  
+      setDetailsModalOpen(false);
+    } catch (error) {
+      toast({
+        description: "An error occurred while updating status.",
+        variant: "destructive",
       });
     }
   };
+  
 
   const columns = [
-    { 
-      header: "Name", 
+    {
+      header: "Name",
       accessor: (member: any) => (
         <div>
           <div className="font-medium">{`${member.firstName} ${member.lastName}`}</div>
           <div className="text-sm text-gray-500">{member.email}</div>
         </div>
-      )
+      ),
     },
-    { 
-      header: "Contact Info", 
+    {
+      header: "Contact Info",
       accessor: (member: any) => (
         <div>
-          <div>{member.phone}</div>
-          <div className="text-sm text-gray-500 capitalize">{member.preferredContact} preferred</div>
+          <div>{member.phoneNumber}</div>
+          <div className="text-sm text-gray-500 capitalize">
+            {member.methodOfContact} preferred
+          </div>
         </div>
-      )
+      ),
     },
-    { 
-      header: "Location", 
+    {
+      header: "Location",
       accessor: (member: any) => (
         <div>
           <div>{member.country}</div>
-          <div className="text-sm text-gray-500">{member.cityState}</div>
+          <div className="text-sm text-gray-500">{member.cityAndState}</div>
         </div>
-      )
+      ),
     },
     {
       header: "Status & Date",
       accessor: (member: any) => (
         <div>
-          <span className={`px-2 py-1 rounded-full text-xs ${
-            member.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {member.status === 'completed' ? 'Approved' : 'Pending'}
+          <span
+            className={`px-2 py-1 rounded-full text-xs ${
+              member.status === "completed"
+                ? "bg-green-100 text-green-800"
+                : "bg-yellow-100 text-yellow-800"
+            }`}
+          >
+            {member.status === "completed" ? "Approved" : "Pending"}
           </span>
-          <div className="text-sm text-gray-500 mt-1">{member.joinDate}</div>
+          <div className="text-sm text-gray-500 mt-1">
+            {member.createdAt ? formatDate(member.createdAt) : "N/A"}
+          </div>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   const handleBulkAction = () => {
     if (!bulkAction || selectedMembers.length === 0) return;
 
     const updatedMembers = [...members];
-    
+
     switch (bulkAction) {
       case "approve":
-        selectedMembers.forEach(id => {
-          const memberIndex = updatedMembers.findIndex(m => m.id === id);
+        selectedMembers.forEach((id) => {
+          const memberIndex = updatedMembers.findIndex((m) => m.id === id);
           if (memberIndex !== -1) {
             updatedMembers[memberIndex] = {
               ...updatedMembers[memberIndex],
-              status: "completed"
+              status: "completed",
             };
           }
         });
@@ -123,12 +164,12 @@ export default function NewMembers() {
         });
         break;
       case "pending":
-        selectedMembers.forEach(id => {
-          const memberIndex = updatedMembers.findIndex(m => m.id === id);
+        selectedMembers.forEach((id) => {
+          const memberIndex = updatedMembers.findIndex((m) => m.id === id);
           if (memberIndex !== -1) {
             updatedMembers[memberIndex] = {
               ...updatedMembers[memberIndex],
-              status: "pending"
+              status: "pending",
             };
           }
         });
@@ -137,11 +178,32 @@ export default function NewMembers() {
         });
         break;
     }
-    
-    setMembers(updatedMembers);
+
+    // setMembers(updatedMembers);
     setSelectedMembers([]);
     setBulkAction("");
   };
+
+  const filteredMembers = members.filter((member) => {
+    const matchesSearch =
+      searchQuery === "" ||
+      member.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesLocation =
+      locationFilter === "all" || member.country === locationFilter;
+
+    const matchesStatus =
+      statusFilter === "all" || member.status === statusFilter;
+
+    const matchesDate =
+      !dateFilter ||
+      (member.createdAt &&
+        formatDate(member.createdAt) === formatDate(dateFilter));
+
+    return matchesSearch && matchesLocation && matchesStatus && matchesDate;
+  });
 
   return (
     <div className="page-container">
@@ -173,55 +235,61 @@ export default function NewMembers() {
       </div>
 
       <div className="bg-white rounded-lg border">
-        <DataTable
-          data={members}
-          columns={columns}
-          selectedItems={selectedMembers}
-          onSelectItem={(id, checked) => {
-            setSelectedMembers(prev =>
-              checked ? [...prev, id] : prev.filter(itemId => itemId !== id)
-            );
-          }}
-          onSelectAll={(checked) => {
-            setSelectedMembers(checked ? members.map(m => m.id) : []);
-          }}
-          getItemId={(item) => item.id}
-          onRowClick={(id) => handleViewDetails(id)}
-          showCheckboxes={true}
-          actions={{
-            onViewDetails: handleViewDetails
-          }}
-          CardComponent={({ item }) => (
-            <div className="p-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-base mb-1">{`${item.firstName} ${item.lastName}`}</h3>
-                  <p className="text-sm text-gray-500 mb-2">{item.email}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">{item.joinDate}</span>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      item.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {item.status === 'completed' ? 'Approved' : 'Pending'}
-                    </span>
+        {isLoading ? (
+          <div className="flex justify-center items-center p-6">
+            <span className="animate-spin border-4 border-gray-300 border-t-gray-600 rounded-full w-6 h-6"></span>
+            <span className="ml-3 text-gray-600">Loading members...</span>
+          </div>
+        ) : isError ? (
+          <div className="text-center text-red-500 p-6">
+            Failed to load members. Please try again.
+          </div>
+        ) : (
+          <DataTable
+            data={filteredMembers}
+            columns={columns}
+            selectedItems={selectedMembers}
+            onSelectItem={(id, checked) => {
+              setSelectedMembers((prev) =>
+                checked ? [...prev, id] : prev.filter((itemId) => itemId !== id)
+              );
+            }}
+            onSelectAll={(checked) => {
+              setSelectedMembers(checked ? members.map((m) => m.id) : []);
+            }}
+            getItemId={(item) => item.id}
+            onRowClick={(id) => handleViewDetails(id)}
+            showCheckboxes={true}
+            actions={{
+              onViewDetails: handleViewDetails,
+            }}
+            CardComponent={({ item }) => (
+              <div className="p-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-base mb-1">{`${item.firstName} ${item.lastName}`}</h3>
+                    <p className="text-sm text-gray-500 mb-2">{item.email}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">
+                        {item.createdAt}
+                      </span>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          item.status === "completed"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {item.status === "completed" ? "Approved" : "Pending"}
+                      </span>
+                    </div>
                   </div>
+                  <ViewDetailsButton
+                    onClick={() => handleViewDetails(item.id)}
+                  />
                 </div>
-                <ViewDetailsButton onClick={() => handleViewDetails(item.id)} />
               </div>
-            </div>
-          )}
-        />
-
-        {selectedMembers.length > 0 && (
-          <BulkActions
-            selectedCount={selectedMembers.length}
-            bulkAction={bulkAction}
-            setBulkAction={setBulkAction}
-            onBulkAction={handleBulkAction}
-            actions={[
-              { value: "approve", label: "Approve Selected" },
-              { value: "pending", label: "Mark as Pending" }
-            ]}
+            )}
           />
         )}
       </div>
@@ -235,7 +303,9 @@ export default function NewMembers() {
         setStatusFilter={setStatusFilter}
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
-        uniqueLocations={Array.from(new Set(members.map((member) => member.location)))}
+        uniqueLocations={Array.from(
+          new Set(members.map((member) => member.location))
+        )}
       />
 
       <DetailsModal
@@ -245,9 +315,9 @@ export default function NewMembers() {
         data={selectedMember}
         onStatusChange={handleStatusChange}
         statusLabels={{
-          pending: 'Pending',
-          completed: 'Contacted',
-          buttonText: 'Mark as Contacted'
+          pending: "Pending",
+          completed: "Contacted",
+          buttonText: "Mark as Contacted",
         }}
       />
     </div>

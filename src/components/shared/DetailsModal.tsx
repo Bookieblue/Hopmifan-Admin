@@ -2,6 +2,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { formatDate } from "../utils/formatDate";
+
 
 interface DetailsModalProps {
   open: boolean;
@@ -12,12 +14,12 @@ interface DetailsModalProps {
     firstName?: string;
     lastName?: string;
     email?: string;
-    phone?: string;
+    phoneNumber?: string;
     country?: string;
-    cityState?: string;
-    preferredContact?: string;
-    message?: string;
-    dateSubmitted?: string;
+    cityAndState?: string;
+    methodOfContact?: string;
+    areaOfInterest?: string;
+    createdAt?: string;
     status?: string;
     [key: string]: any;
   } | null;
@@ -50,6 +52,8 @@ export function DetailsModal({
 
   if (!data) return null;
 
+
+   console.log('dta', data)
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[600px] max-h-[90vh] flex flex-col overflow-hidden sm:max-w-[600px]">
@@ -72,35 +76,45 @@ export function DetailsModal({
                   <p className="text-gray-700 break-words">{data.email}</p>
                 </div>
               )}
-              {data.phone && (
+              {data.phoneNumber && (
                 <div>
                   <h3 className="font-medium mb-1">Phone</h3>
-                  <p className="text-gray-700">{data.phone}</p>
+                  <p className="text-gray-700">{data.phoneNumber}</p>
                 </div>
               )}
-              {data.country && data.cityState && (
+              {data.country && data.cityAndState && (
                 <div>
                   <h3 className="font-medium mb-1">Location</h3>
-                  <p className="text-gray-700">{data.country}, {data.cityState}</p>
+                  <p className="text-gray-700">{data.country}, {data.cityAndState}</p>
                 </div>
               )}
-              {data.preferredContact && (
+              {data.methodOfContact && (
                 <div>
                   <h3 className="font-medium mb-1">Preferred Contact</h3>
-                  <p className="text-gray-700 capitalize">{data.preferredContact}</p>
+                  <p className="text-gray-700 capitalize">{data.methodOfContact}</p>
                 </div>
               )}
-              {data.dateSubmitted && (
+              {data.createdAt && (
                 <div>
                   <h3 className="font-medium mb-1">Date Submitted</h3>
-                  <p className="text-gray-700">{data.dateSubmitted}</p>
+                  <p className="text-gray-700">
+  {data.createdAt ? formatDate(data.createdAt) : "N/A"}
+</p>
+
                 </div>
               )}
             </div>
-            {data.message && (
+            {data.areaOfInterest && (
               <div>
-                <h3 className="font-medium mb-2">Message</h3>
-                <p className="text-gray-700 whitespace-pre-wrap break-words">{data.message}</p>
+                <h3 className="font-medium mb-2">Area of Interest</h3>
+                <p className="text-gray-700 whitespace-pre-wrap break-words">{data.areaOfInterest}</p>
+              </div>
+            )}
+
+           {data.prayerRequest && (
+              <div>
+                <h3 className="font-medium mb-2">Prayer Request</h3>
+                <p className="text-gray-700 whitespace-pre-wrap break-words">{data.prayerRequest}</p>
               </div>
             )}
           </div>

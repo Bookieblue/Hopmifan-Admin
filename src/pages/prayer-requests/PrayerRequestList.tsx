@@ -8,48 +8,49 @@ import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 
-const samplePrayerRequests = [
-  {
-    id: "1",
-    firstName: "Alice",
-    lastName: "Johnson",
-    phone: "+234 803 456 7890",
-    email: "alice.johnson@gmail.com",
-    country: "Nigeria",
-    cityState: "Lagos, LA",
-    preferredContact: "WhatsApp",
-    request: "Please pray for my upcoming surgery next week. I need God's healing touch and divine protection during the procedure. I believe in the power of collective prayers.",
-    dateSubmitted: new Date(2024, 0, 20).toLocaleDateString(),
-    status: "pending"
-  },
-  {
-    id: "2",
-    firstName: "Bob",
-    lastName: "Wilson",
-    phone: "+234 804 567 8901",
-    email: "bob.wilson@yahoo.com",
-    country: "Nigeria",
-    cityState: "Abuja, FC",
-    preferredContact: "Phone",
-    request: "Requesting prayers for my family's spiritual growth and unity. We've been facing some challenges lately and need God's intervention for peace and harmony in our home.",
-    dateSubmitted: new Date(2024, 0, 19).toLocaleDateString(),
-    status: "pending"
-  },
-  {
-    id: "3",
-    firstName: "Grace",
-    lastName: "Okonkwo",
-    phone: "+234 805 678 9012",
-    email: "grace.okonkwo@gmail.com",
-    country: "Nigeria",
-    cityState: "Port Harcourt, RV",
-    preferredContact: "Email",
-    request: "I need prayers for my business that has been struggling lately. Believing God for a turnaround and His divine provision.",
-    dateSubmitted: new Date(2024, 0, 18).toLocaleDateString(),
-    status: "prayed"
-  }
-];
+// const samplePrayerRequests = [
+//   {
+//     id: "1",
+//     firstName: "Alice",
+//     lastName: "Johnson",
+//     phone: "+234 803 456 7890",
+//     email: "alice.johnson@gmail.com",
+//     country: "Nigeria",
+//     cityState: "Lagos, LA",
+//     preferredContact: "WhatsApp",
+//     request: "Please pray for my upcoming surgery next week. I need God's healing touch and divine protection during the procedure. I believe in the power of collective prayers.",
+//     dateSubmitted: new Date(2024, 0, 20).toLocaleDateString(),
+//     status: "pending"
+//   },
+//   {
+//     id: "2",
+//     firstName: "Bob",
+//     lastName: "Wilson",
+//     phone: "+234 804 567 8901",
+//     email: "bob.wilson@yahoo.com",
+//     country: "Nigeria",
+//     cityState: "Abuja, FC",
+//     preferredContact: "Phone",
+//     request: "Requesting prayers for my family's spiritual growth and unity. We've been facing some challenges lately and need God's intervention for peace and harmony in our home.",
+//     dateSubmitted: new Date(2024, 0, 19).toLocaleDateString(),
+//     status: "pending"
+//   },
+//   {
+//     id: "3",
+//     firstName: "Grace",
+//     lastName: "Okonkwo",
+//     phone: "+234 805 678 9012",
+//     email: "grace.okonkwo@gmail.com",
+//     country: "Nigeria",
+//     cityState: "Port Harcourt, RV",
+//     preferredContact: "Email",
+//     request: "I need prayers for my business that has been struggling lately. Believing God for a turnaround and His divine provision.",
+//     dateSubmitted: new Date(2024, 0, 18).toLocaleDateString(),
+//     status: "prayed"
+//   }
+// ];
 
 export default function PrayerRequestList() {
   const { toast } = useToast();
@@ -63,18 +64,38 @@ export default function PrayerRequestList() {
   const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
 
-  const [requests, setRequests] = useState(() => {
-    try {
-      const stored = localStorage.getItem('prayerRequests');
-      if (!stored) {
-        localStorage.setItem('prayerRequests', JSON.stringify(samplePrayerRequests));
-        return samplePrayerRequests;
+  const backendURL = import.meta.env.VITE_PUBLIC_API_BASE_URL || "";
+
+
+  const fetchPrayerRequest = async () => {
+      try {
+        const response = await fetch(`${backendURL}/api/prayer-request?page=1&limit=20`);
+        console.log('Response:', response);
+        if (!response.ok) {
+          throw new Error("Failed to fetch prayer requests");
+        }
+    
+        const result = await response.json();
+        console.log('Data:', result); // Debugging log to see what’s returned
+    
+        return Array.isArray(result.data?.prayerRequests)
+          ? result.data.prayerRequests.map(prayer => ({
+              ...prayer,
+              status: prayer.replied ? "completed" : "pending",
+            }))
+          : [];
+      } catch (error) {
+        console.error("Error fetching prayer requests:", error);
+        throw error;
       }
-      return JSON.parse(stored);
-    } catch (error) {
-      console.error('Error loading prayer requests:', error);
-      return samplePrayerRequests;
-    }
+    };
+    
+  
+  const { data: requests = [], isLoading, isError } = useQuery({
+    queryKey: ["prayerRequests"],
+    queryFn: fetchPrayerRequest,
+    staleTime: 60000,
+    refetchOnWindowFocus: false,
   });
 
   const exportAsCSV = () => {
@@ -82,8 +103,8 @@ export default function PrayerRequestList() {
     const csvData = requests.map(request => [
       `${request.firstName} ${request.lastName}`,
       request.email,
-      request.phone,
-      `${request.country}, ${request.cityState}`,
+      request.phoneNumber,
+      `${request.country}, ${request.cityAndState}`,
       request.request,
       request.status,
       request.dateSubmitted
@@ -124,8 +145,8 @@ export default function PrayerRequestList() {
       header: "Contact Info", 
       accessor: (request: any) => (
         <div>
-          <div>{request.phone}</div>
-          <div className="text-sm text-gray-500 capitalize">{request.preferredContact} preferred</div>
+          <div>{request.phoneNumber}</div>
+          <div className="text-sm text-gray-500 capitalize">{request.methodOfContact} preferred</div>
         </div>
       )
     },
@@ -134,7 +155,7 @@ export default function PrayerRequestList() {
       accessor: (request: any) => (
         <div>
           <div>{request.country}</div>
-          <div className="text-sm text-gray-500">{request.cityState}</div>
+          <div className="text-sm text-gray-500">{request.cityAndState}</div>
         </div>
       )
     },
@@ -177,7 +198,7 @@ export default function PrayerRequestList() {
       const updatedRequests = requests.map(request =>
         request.id === selectedRequest.id ? { ...request, status } : request
       );
-      setRequests(updatedRequests);
+      // setRequests(updatedRequests);
       localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
       setDetailsModalOpen(false);
       toast({
@@ -191,7 +212,7 @@ export default function PrayerRequestList() {
     const matchesSearch = 
       `${request.firstName} ${request.lastName}`.toLowerCase().includes(searchLower) ||
       request.email.toLowerCase().includes(searchLower) ||
-      request.phone.toLowerCase().includes(searchLower);
+      request.phoneNumber.toLowerCase().includes(searchLower);
     const matchesCountry = countryFilter === "all" || request.country === countryFilter;
     const matchesStatus = statusFilter === "all" || request.status === statusFilter;
     const matchesDate = !dateFilter || request.dateSubmitted === dateFilter;
@@ -211,7 +232,7 @@ export default function PrayerRequestList() {
       return request;
     });
 
-    setRequests(updatedRequests);
+    // setRequests(updatedRequests);
     localStorage.setItem('prayerRequests', JSON.stringify(updatedRequests));
     
     toast({
@@ -270,6 +291,14 @@ export default function PrayerRequestList() {
       </div>
 
       <div className="bg-white md:rounded-lg md:border overflow-hidden">
+      {isLoading ? (
+    <div className="flex justify-center items-center p-6">
+      <span className="animate-spin border-4 border-gray-300 border-t-gray-600 rounded-full w-6 h-6"></span>
+      <span className="ml-3 text-gray-600">Loading prayer requests...</span>
+    </div>
+  ) : isError ? (
+    <div className="text-center text-red-500 p-6">Failed to load prayer requests. Please try again.</div>
+  ) : (  
         <DataTable
           data={filteredRequests}
           columns={columns}
@@ -305,6 +334,7 @@ export default function PrayerRequestList() {
             </div>
           )}
         />
+)}
 
         {selectedRequests.length > 0 && (
           <BulkActions

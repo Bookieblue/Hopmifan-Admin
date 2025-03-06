@@ -8,51 +8,10 @@ import { FilterModal } from "@/components/donations/FilterModal";
 import { DonationDetailsModal } from "@/components/donations/DonationDetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useQuery } from "@tanstack/react-query";
+import { formatDate } from "@/components/utils/formatDate";
 
-const donations = [
-  {
-    id: "1",
-    donorName: "Oluwaseun Adebayo",
-    firstName: "Oluwaseun",
-    lastName: "Adebayo",
-    amount: "₦50,000",
-    date: "15 Mar 2024",
-    givingType: "Tithe",
-    phone: "+234 803 123 4567",
-    email: "oluwaseun@example.com",
-    country: "Nigeria",
-    state: "Lagos",
-    paymentMethod: "Bank Transfer"
-  },
-  {
-    id: "2",
-    donorName: "Chioma Okonkwo",
-    firstName: "Chioma",
-    lastName: "Okonkwo",
-    amount: "₦25,000",
-    date: "14 Mar 2024",
-    givingType: "Offering",
-    phone: "+234 805 987 6543",
-    email: "chioma@example.com",
-    country: "Nigeria",
-    state: "Abuja",
-    paymentMethod: "Card Payment"
-  },
-  {
-    id: "3",
-    donorName: "Emmanuel Nwachukwu",
-    firstName: "Emmanuel",
-    lastName: "Nwachukwu",
-    amount: "₦100,000",
-    date: "13 Mar 2024",
-    givingType: "Project Support",
-    phone: "+234 802 345 6789",
-    email: "emmanuel@example.com",
-    country: "Nigeria",
-    state: "Rivers",
-    paymentMethod: "Bank Transfer"
-  }
-];
+
 
 export default function DonationHistory() {
   const { toast } = useToast();
@@ -67,29 +26,68 @@ export default function DonationHistory() {
   const [selectedDonation, setSelectedDonation] = useState<typeof donations[0] | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
 
+
+  const backendURL = import.meta.env.VITE_PUBLIC_API_BASE_URL || "";
+
+
+  // Fetch members using TanStack Query
+
+  const fetchMembers = async () => {
+    const response = await fetch(`${backendURL}/api/donations`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch members");
+  }
+  const result = await response.json();
+
+  // Ensure we return an array and map to update status dynamically
+  return Array.isArray(result.data?.events)
+  ? result.data.events.map(donate => ({
+      ...donate,
+    }))
+  : [];
+
+};
+
+  
+
+  const { data: donations = [], isLoading, isError } = useQuery({
+    queryKey: ["donations"],
+    queryFn: fetchMembers,
+  });
+  
+
   const columns: TableColumn<typeof donations[0]>[] = [
     { 
       header: "Member", 
-      accessor: "donorName" 
+      accessor: (donation: any) => (
+        <div>
+          <div className="font-medium">{`${donation.firstName} ${donation.lastName}`}</div>
+          <div className="text-sm text-gray-500">{donation.email}</div>
+        </div>
+      )
     },
     { 
       header: "Amount", 
-      accessor: "amount" 
+      accessor: (donation) => `₦${donation.amount}`
     },
     { 
       header: "Giving Type", 
-      accessor: "givingType" 
+      accessor: "donationType" 
+    },
+    { 
+      header: "Phone Number", 
+      accessor: "phoneNumber" 
     },
     { 
       header: "State", 
-      accessor: "state" 
+      accessor: "cityAndState" 
     },
     { 
       header: "Payment Info", 
       accessor: (donation) => (
         <div className="space-y-1">
-          <div>{donation.paymentMethod}</div>
-          <div className="text-sm text-gray-500">{donation.date}</div>
+          <div>{donation.trxfReference}</div>
+          <div className="text-xs text-gray-500"> {formatDate(donation.createdAt)}</div>
         </div>
       ),
       className: "text-gray-500 font-normal"
@@ -199,6 +197,14 @@ export default function DonationHistory() {
       />
 
       <div className="bg-white md:rounded-lg md:border">
+      {isLoading ? (
+    <div className="flex justify-center items-center p-6">
+      <span className="animate-spin border-4 border-gray-300 border-t-gray-600 rounded-full w-6 h-6"></span>
+      <span className="ml-3 text-gray-600">Loading Donations...</span>
+    </div>
+  ) : isError ? (
+    <div className="text-center text-red-500 p-6">Failed to load donations. Please try again.</div>
+  ) : (
         <DataTable
           data={filteredDonations}
           columns={columns}
@@ -226,14 +232,16 @@ export default function DonationHistory() {
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-medium">{item.donorName}</h3>
-                  <p className="text-sm text-gray-500">{item.givingType}</p>
+                  <h3 className="font-medium">{item.firstName}</h3>
+                  <p className="text-sm text-gray-500">{item.donationType}</p>
                 </div>
-                <span className="font-medium">{item.amount}</span>
+                <span className="font-medium">₦{item.amount}</span>
               </div>
             </div>
           )}
         />
+
+  )}
 
         {selectedDonations.length > 0 && (
           <BulkActions

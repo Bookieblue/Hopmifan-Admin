@@ -8,35 +8,10 @@ import { DetailsModal } from "@/components/shared/DetailsModal";
 import { BulkActions } from "@/components/shared/BulkActions";
 import { ViewDetailsButton } from "@/components/shared/ViewDetailsButton";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { formatDate } from "@/components/utils/formatDate";
 
-const sampleContacts = [
-  {
-    id: "1",
-    firstName: "Oluwaseun",
-    lastName: "Adebayo",
-    phone: "+234 801 234 5678",
-    email: "oluwaseun.adebayo@gmail.com",
-    country: "Nigeria",
-    cityState: "Lagos, LA",
-    preferredContact: "whatsapp",
-    message: "I would like to join the church choir ministry. When are the rehearsals scheduled?",
-    dateSubmitted: new Date(2024, 2, 15).toLocaleDateString(),
-    status: "pending"
-  },
-  {
-    id: "2",
-    firstName: "Chioma",
-    lastName: "Okonkwo",
-    phone: "+234 802 345 6789",
-    email: "chioma.okonkwo@yahoo.com",
-    country: "Nigeria",
-    cityState: "Abuja, FC",
-    preferredContact: "phone",
-    message: "God bless you. I'm interested in the youth fellowship program. Please provide more information.",
-    dateSubmitted: new Date(2024, 2, 14).toLocaleDateString(),
-    status: "replied"
-  }
-];
+
 
 export default function ContactMessages() {
   const { toast } = useToast();
@@ -47,9 +22,43 @@ export default function ContactMessages() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [contacts, setContacts] = useState(sampleContacts);
+  // const [contacts, setContacts] = useState(sampleContacts);
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState("");
+
+
+  const backendURL = import.meta.env.VITE_PUBLIC_API_BASE_URL || "";
+
+
+  const fetchContacts = async () => {
+    try {
+      const response = await fetch(`${backendURL}/api/contact-us?page=1&limit=20`);
+      console.log('Response:', response);
+      if (!response.ok) {
+        throw new Error("Failed to fetch contacts");
+      }
+  
+      const result = await response.json();
+  
+      return Array.isArray(result.data?.contacts)
+        ? result.data.contacts.map(contact => ({
+            ...contact,
+            status: contact.replied ? "completed" : "pending",
+          }))
+        : [];
+    } catch (error) {
+      console.error("Error fetching contacts:", error);
+      throw error;
+    }
+  };
+  
+  const { data: contacts = [], isLoading, isError } = useQuery({
+    queryKey: ["contacts"],
+    queryFn: fetchContacts,
+    staleTime: 60000,
+    refetchOnWindowFocus: false,
+  });
+  
 
   const columns = [
     { 
@@ -65,8 +74,8 @@ export default function ContactMessages() {
       header: "Contact Info", 
       accessor: (contact: any) => (
         <div>
-          <div>{contact.phone}</div>
-          <div className="text-sm text-gray-500 capitalize">{contact.preferredContact} preferred</div>
+          <div>{contact.phoneNumber}</div>
+          <div className="text-sm text-gray-500 capitalize">{contact.methodOfContact} preferred</div>
         </div>
       )
     },
@@ -75,7 +84,7 @@ export default function ContactMessages() {
       accessor: (contact: any) => (
         <div>
           <div>{contact.country}</div>
-          <div className="text-sm text-gray-500">{contact.cityState}</div>
+          <div className="text-sm text-gray-500">{contact.cityAndState}</div>
         </div>
       )
     },
@@ -88,7 +97,7 @@ export default function ContactMessages() {
           }`}>
             {contact.status === 'replied' ? 'Replied' : 'Pending'}
           </span>
-          <div className="text-sm text-gray-500 mt-1">{contact.dateSubmitted}</div>
+          <div className="text-sm text-gray-500 mt-1">{formatDate(contact.createdAt)}</div>
         </div>
       )
     },
@@ -114,7 +123,8 @@ export default function ContactMessages() {
     const matchesSearch = 
       `${contact.firstName} ${contact.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
       contact.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      contact.phone.toLowerCase().includes(searchQuery.toLowerCase());
+      contact.phoneNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contact.cityAndState.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCountry = countryFilter === 'all' || contact.country === countryFilter;
     const matchesStatus = statusFilter === 'all' || contact.status === statusFilter;
     const matchesDate = !dateFilter || contact.dateSubmitted === dateFilter;
@@ -132,11 +142,11 @@ export default function ContactMessages() {
 
   const handleStatusChange = (status: string) => {
     if (selectedContact) {
-      setContacts(contacts.map(contact => 
-        contact.id === selectedContact.id 
-          ? { ...contact, status }
-          : contact
-      ));
+      // setContacts(contacts.map(contact => 
+      //   contact.id === selectedContact.id 
+      //     ? { ...contact, status }
+      //     : contact
+      // ));
       setDetailsModalOpen(false);
     }
   };
@@ -177,7 +187,7 @@ export default function ContactMessages() {
         break;
     }
     
-    setContacts(updatedContacts);
+    // setContacts(updatedContacts);
     setSelectedContacts([]);
     setBulkAction("");
   };
@@ -212,6 +222,14 @@ export default function ContactMessages() {
       </div>
 
       <div className="bg-white md:rounded-lg md:border overflow-hidden">
+      {isLoading ? (
+    <div className="flex justify-center items-center p-6">
+      <span className="animate-spin border-4 border-gray-300 border-t-gray-600 rounded-full w-6 h-6"></span>
+      <span className="ml-3 text-gray-600">Loading contact messages...</span>
+    </div>
+  ) : isError ? (
+    <div className="text-center text-red-500 p-6">Failed to load contact messages. Please try again.</div>
+  ) :
         <DataTable
           data={filteredContacts}
           columns={columns}
@@ -234,7 +252,7 @@ export default function ContactMessages() {
                   <h3 className="font-medium text-base mb-1">{`${item.firstName} ${item.lastName}`}</h3>
                   <p className="text-sm text-gray-500 mb-2">{item.email}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">{item.dateSubmitted}</span>
+                    <span className="text-sm text-gray-500">{formatDate(item.createdAt)}</span>
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       item.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                     }`}>
@@ -250,6 +268,8 @@ export default function ContactMessages() {
             onViewDetails: handleViewDetails
           }}
         />
+
+  }
 
         {selectedContacts.length > 0 && (
           <BulkActions
