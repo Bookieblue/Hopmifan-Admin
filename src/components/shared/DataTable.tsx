@@ -79,7 +79,7 @@ export function DataTable<T>({
         {showCheckboxes && (
           <div className="px-4 py-2 flex items-center gap-3 border-b">
             <Checkbox
-              checked={selectedItems.length === data.length}
+              checked={selectedItems?.length === data?.length}
               onCheckedChange={onSelectAll}
             />
             <h2 className="font-semibold text-lg">Items</h2>
@@ -114,7 +114,7 @@ export function DataTable<T>({
             {showCheckboxes && (
               <th className="px-4 py-3 text-left">
                 <Checkbox
-                  checked={selectedItems.length === data.length}
+                  checked={selectedItems?.length === data?.length}
                   onCheckedChange={onSelectAll}
                 />
               </th>
