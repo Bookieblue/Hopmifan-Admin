@@ -18,22 +18,24 @@ interface BlogFormProps {
     title: string;
     content: string;
     author: string;
-    status: "draft" | "published";
-    imagePreview?: string;
+    // status: "draft" | "published";
+    status: "unpublish" | "publish";
+    imageUrl?: string;
     language?: string;
   };
   onSubmit: (data: {
     title: string;
     content: string;
     author: string;
-    status: "draft" | "published";
+    status: "unpublish" | "publish";
     featureImage: File | null;
     language: string;
   }) => void;
   isEdit?: boolean;
+  isLoading? : boolean
 }
 
-export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProps) {
+export function BlogForm({ initialData, onSubmit, isEdit = false, isLoading }: BlogFormProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -41,9 +43,10 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
   const [content, setContent] = useState(initialData?.content ?? "");
   const [author, setAuthor] = useState(initialData?.author ?? "");
   const [featureImage, setFeatureImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(initialData?.imagePreview ?? "");
+  const [imagePreview, setImagePreview] = useState<string>(initialData?.imageUrl ?? "");
   const [language, setLanguage] = useState(initialData?.language ?? "English");
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
+  
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -61,7 +64,7 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
     const newErrors: { [key: string]: boolean } = {};
     
     if (!title.trim()) newErrors.title = true;
-    if (!content.trim()) newErrors.content = true;
+    // if (!content.trim()) newErrors.content = true;
     if (!author.trim()) newErrors.author = true;
     
     setErrors(newErrors);
@@ -81,7 +84,7 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
       title,
       content,
       author,
-      status: isDraft ? "draft" : "published",
+      status: isDraft ? "unpublish" : "publish",
       featureImage,
       language
     });
@@ -223,13 +226,20 @@ export function BlogForm({ initialData, onSubmit, isEdit = false }: BlogFormProp
           <Button
             variant="outline"
             onClick={() => handleSave(true)}
+            disabled = {isLoading}
           >
-            Save as Draft
+            {
+              isLoading  ? 'Saving...' : 'Save as Draft'
+            }
+           
           </Button>
           <Button
             onClick={() => handleSave(false)}
+            disabled = {isLoading}
           >
-            Publish
+               {
+              isLoading ? 'Publishing...' : 'Publish'
+            }
           </Button>
         </div>
       </div>

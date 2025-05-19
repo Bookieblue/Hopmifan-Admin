@@ -18,6 +18,7 @@ interface BulkActionsProps {
   setBulkAction: (value: string) => void;
   onBulkAction: () => void;
   actions: BulkAction[];
+  isTakingAction?: boolean; 
 }
 
 export function BulkActions({
@@ -25,7 +26,7 @@ export function BulkActions({
   bulkAction,
   setBulkAction,
   onBulkAction,
-  actions,
+  actions, isTakingAction
 }: BulkActionsProps) {
   if (selectedCount === 0) return null;
 
@@ -49,9 +50,9 @@ export function BulkActions({
       <Button
         variant="outline"
         onClick={onBulkAction}
-        disabled={!bulkAction}
+        disabled={!bulkAction || isTakingAction}
       >
-        Apply
+        {isTakingAction ? "Applying..." : 'Apply'}
       </Button>
     </div>
   );

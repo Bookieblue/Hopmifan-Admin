@@ -16,6 +16,7 @@ interface BlogCardProps {
     publishDate: string;
     status: string;
     content?: string;
+    datePublished?: string;
   };
   actions?: {
     onDelete?: (id: string) => void;
