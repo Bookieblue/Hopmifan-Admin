@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { EventForm } from "@/components/events/EventForm";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { EventForm } from '@/components/events/EventForm';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function CreateEvent() {
   const navigate = useNavigate();
@@ -17,43 +17,51 @@ export default function CreateEvent() {
       location: string;
       description: string;
       meetingLink: string;
-      status: "draft" | "published";
+      status: 'unpublish' | 'publish';
       featureImage: File | null;
     }) => {
       const formData = new FormData();
-      formData.append("title", data.title);
-      formData.append("description", data.description);
-      formData.append("date", data.date);
-      formData.append("time", data.time);
-      formData.append("location", data.location);
-      formData.append("meetingLink", data.meetingLink);
-      formData.append("status", data.status);
+      formData.append('title', data.title);
+      formData.append('description', data.description);
+      formData.append('date', data.date);
+      formData.append('time', data.time);
+      formData.append('location', data.location);
+      formData.append('meetingLink', data.meetingLink);
+      formData.append('status', data.status);
       if (data.featureImage) {
-        formData.append("eventImage", data.featureImage);
+        formData.append('eventImage', data.featureImage);
       }
 
-      const response = await fetch("https://homifan-website.vercel.app/api/events", {
-        method: "POST",
-        body: formData,
-      });
+      const pass = localStorage.getItem('pass');
+
+      const response = await fetch(
+        'https://homifan-website.vercel.app/api/events',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${pass}`,
+          },
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to create event");
+        throw new Error('Failed to create event');
       }
 
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["events"]); // Refresh event list
+      queryClient.invalidateQueries(['events']); // Refresh event list
       toast({
-        description: "Event created successfully!",
+        description: 'Event created successfully!',
       });
-      navigate("/events");
+      navigate('/events');
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        description: "Failed to create event",
+        variant: 'destructive',
+        description: 'Failed to create event',
       });
     },
   });
@@ -65,7 +73,7 @@ export default function CreateEvent() {
     location: string;
     description: string;
     meetingLink: string;
-    status: "draft" | "published";
+    status: 'unpublish' | 'publish';
     featureImage: File | null;
   }) => {
     mutation.mutate(data);
