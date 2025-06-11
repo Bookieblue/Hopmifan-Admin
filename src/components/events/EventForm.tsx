@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Upload } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowLeft, Upload } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 interface EventFormProps {
   initialData?: {
@@ -14,7 +14,7 @@ interface EventFormProps {
     location: string;
     description: string;
     meetingLink: string;
-    status: "draft" | "published";
+    status: 'draft' | 'published';
     imageUrl?: string;
   };
   onSubmit: (data: {
@@ -24,24 +24,34 @@ interface EventFormProps {
     location: string;
     description: string;
     meetingLink: string;
-    status: "draft" | "published";
+    status: 'unpublish' | 'publish';
     featureImage: File | null;
   }) => void;
   isEdit?: boolean;
 }
 
-export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormProps) {
+export function EventForm({
+  initialData,
+  onSubmit,
+  isEdit = false,
+}: EventFormProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
-  const [title, setTitle] = useState(initialData?.title ?? "");
-  const [date, setDate] = useState(initialData?.date ?? "");
-  const [time, setTime] = useState(initialData?.time ?? "");
-  const [location, setLocation] = useState(initialData?.location ?? "");
-  const [description, setDescription] = useState(initialData?.description ?? "");
-  const [meetingLink, setMeetingLink] = useState(initialData?.meetingLink ?? "");
+
+  const [title, setTitle] = useState(initialData?.title ?? '');
+  const [date, setDate] = useState(initialData?.date ?? '');
+  const [time, setTime] = useState(initialData?.time ?? '');
+  const [location, setLocation] = useState(initialData?.location ?? '');
+  const [description, setDescription] = useState(
+    initialData?.description ?? ''
+  );
+  const [meetingLink, setMeetingLink] = useState(
+    initialData?.meetingLink ?? ''
+  );
   const [featureImage, setFeatureImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(initialData?.imageUrl ?? "");
+  const [imagePreview, setImagePreview] = useState<string>(
+    initialData?.imageUrl ?? ''
+  );
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,55 +68,63 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
 
   const validateForm = () => {
     const newErrors: { [key: string]: boolean } = {};
-    
+
     if (!title.trim()) newErrors.title = true;
     if (!date) newErrors.date = true;
     if (!time) newErrors.time = true;
     if (!location.trim()) newErrors.location = true;
     if (!description.trim()) newErrors.description = true;
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const formatDateTime = (dateStr: string, timeStr: string) => {
+    const date = new Date(dateStr);
+    const [hours, minutes] = timeStr.split(':');
+    date.setHours(parseInt(hours), parseInt(minutes));
+    return date.toISOString();
   };
 
   const handleSave = (isDraft: boolean) => {
     if (!isDraft && !validateForm()) {
       toast({
-        description: "Please fill in all required fields",
-        variant: "destructive"
+        description: 'Please fill in all required fields',
+        variant: 'destructive',
       });
       return;
     }
 
+    const formattedDate = formatDateTime(date, time);
+
     onSubmit({
       title,
-      date,
-      time,
+      date: formattedDate,
+      time: time + ':00', // Append seconds to match the required format
       location,
       description,
       meetingLink,
-      status: isDraft ? "draft" : "published",
-      featureImage
+      status: isDraft ? 'unpublish' : 'publish',
+      featureImage,
     });
   };
 
-  const inputClassName = (fieldName: string) => `${
-    errors[fieldName] 
-      ? 'border-red-500 focus-visible:ring-red-500' 
-      : 'border-input focus-visible:ring-ring'
-  }`;
+  const inputClassName = (fieldName: string) =>
+    `${
+      errors[fieldName]
+        ? 'border-red-500 focus-visible:ring-red-500'
+        : 'border-input focus-visible:ring-ring'
+    }`;
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="flex items-center gap-4 mb-6">
-        <Button 
-          variant="ghost" 
-          size="icon"
-          onClick={() => navigate("/events")}
-        >
+        <Button variant="ghost" size="icon" onClick={() => navigate('/events')}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold">{isEdit ? 'Edit' : 'Add New'} Event</h1>
+        <h1 className="text-2xl font-bold">
+          {isEdit ? 'Edit' : 'Add New'} Event
+        </h1>
       </div>
 
       <div className="space-y-6">
@@ -117,7 +135,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
           <Input
             id="title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
             placeholder="Enter event title"
             className={inputClassName('title')}
           />
@@ -135,7 +153,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
               id="date"
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={e => setDate(e.target.value)}
               className={inputClassName('date')}
             />
             {errors.date && (
@@ -150,7 +168,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
               id="time"
               type="time"
               value={time}
-              onChange={(e) => setTime(e.target.value)}
+              onChange={e => setTime(e.target.value)}
               className={inputClassName('time')}
             />
             {errors.time && (
@@ -166,7 +184,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
           <Input
             id="location"
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={e => setLocation(e.target.value)}
             placeholder="Enter event location"
             className={inputClassName('location')}
           />
@@ -176,17 +194,25 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
         </div>
 
         <div>
-          <label htmlFor="meetingLink" className="block text-sm font-medium mb-2">Meeting Link (Optional)</label>
+          <label
+            htmlFor="meetingLink"
+            className="block text-sm font-medium mb-2"
+          >
+            Meeting Link (Optional)
+          </label>
           <Input
             id="meetingLink"
             value={meetingLink}
-            onChange={(e) => setMeetingLink(e.target.value)}
+            onChange={e => setMeetingLink(e.target.value)}
             placeholder="Enter virtual meeting link"
           />
         </div>
 
         <div>
-          <label htmlFor="featureImage" className="block text-sm font-medium mb-2">
+          <label
+            htmlFor="featureImage"
+            className="block text-sm font-medium mb-2"
+          >
             Feature Image
           </label>
           <div className="mt-1 flex items-center gap-4">
@@ -220,13 +246,16 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium mb-2">
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium mb-2"
+          >
             Description <span className="text-red-500">*</span>
           </label>
           <Textarea
             id="description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={e => setDescription(e.target.value)}
             placeholder="Enter event description"
             rows={6}
             className={inputClassName('description')}
@@ -237,17 +266,10 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
         </div>
 
         <div className="flex justify-end gap-4">
-          <Button
-            variant="outline"
-            onClick={() => handleSave(true)}
-          >
+          <Button variant="outline" onClick={() => handleSave(true)}>
             Save as Draft
           </Button>
-          <Button
-            onClick={() => handleSave(false)}
-          >
-            Publish
-          </Button>
+          <Button onClick={() => handleSave(false)}>Publish</Button>
         </div>
       </div>
     </div>

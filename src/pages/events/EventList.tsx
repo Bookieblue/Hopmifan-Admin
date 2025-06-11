@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Plus,
   Search,
@@ -10,21 +10,21 @@ import {
   CheckSquare,
   XSquare,
   Copy,
-} from "lucide-react";
-import { DataTable } from "@/components/shared/DataTable";
-import { FilterModal } from "@/components/events/FilterModal";
-import { EventCard } from "@/components/events/EventCard";
-import { useToast } from "@/hooks/use-toast";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { BulkActions } from "@/components/shared/BulkActions";
+} from 'lucide-react';
+import { DataTable } from '@/components/shared/DataTable';
+import { FilterModal } from '@/components/events/FilterModal';
+import { EventCard } from '@/components/events/EventCard';
+import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { BulkActions } from '@/components/shared/BulkActions';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,10 +34,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import { formatEventDateTime } from "@/components/utils/formatDateAndtTime";
+} from '@/components/ui/alert-dialog';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { formatEventDateTime } from '@/components/utils/formatDateAndtTime';
 
 interface Event {
   id: string;
@@ -53,11 +53,11 @@ interface Event {
 
 const fetchEvents = async () => {
   const response = await fetch(
-    "https://homifan-website.vercel.app/api/events?page=1&limit=20"
+    'https://homifan-website.vercel.app/api/events?page=1&limit=20'
   );
 
   if (!response.ok) {
-    console.error("Fetch error:", response.status, response.statusText);
+    console.error('Fetch error:', response.status, response.statusText);
     throw new Error(
       `Failed to fetch events: ${response.status} ${response.statusText}`
     );
@@ -68,37 +68,21 @@ const fetchEvents = async () => {
 };
 
 export default function EventList() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const [locationFilter, setLocationFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [dateFilter, setDateFilter] = useState("");
-  const [bulkAction, setBulkAction] = useState("");
+  const [locationFilter, setLocationFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState('');
+  const [bulkAction, setBulkAction] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [eventToDelete, setEventToDelete] = useState<string>("");
+  const [eventToDelete, setEventToDelete] = useState<string>('');
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  // Initialize events from localStorage with sample data if empty
-  // const [events, setEvents] = useState<Event[]>(() => {
-  //   try {
-  //     const stored = localStorage.getItem('events');
-  //     if (!stored) {
-  //       localStorage.setItem('events', JSON.stringify(sampleEvents));
-  //       return sampleEvents;
-  //     }
-  //     const parsedEvents = JSON.parse(stored);
-  //     return Array.isArray(parsedEvents) ? parsedEvents : sampleEvents;
-  //   } catch (error) {
-  //     console.error('Error parsing events from localStorage:', error);
-  //     return sampleEvents;
-  //   }
-  // });
-
   const { data, isError, isLoading } = useQuery({
-    queryKey: ["events"],
+    queryKey: ['events'],
     queryFn: fetchEvents,
   });
 
@@ -110,39 +94,37 @@ export default function EventList() {
   };
 
   const confirmDelete = () => {
-    const updatedEvents = events.filter((event) => event.id !== eventToDelete);
+    const updatedEvents = events.filter(event => event.id !== eventToDelete);
     // setEvents(updatedEvents);
-    localStorage.setItem("events", JSON.stringify(updatedEvents));
+    localStorage.setItem('events', JSON.stringify(updatedEvents));
 
     toast({
-      description: "Event deleted successfully",
+      description: 'Event deleted successfully',
     });
     setDeleteDialogOpen(false);
-    setEventToDelete("");
-    setSelectedItems(
-      selectedItems.filter((itemId) => itemId !== eventToDelete)
-    );
+    setEventToDelete('');
+    setSelectedItems(selectedItems.filter(itemId => itemId !== eventToDelete));
   };
 
   const handleStatusChange = (id: string, newStatus: string) => {
-    const updatedEvents = events.map((event) => {
+    const updatedEvents = events.map(event => {
       if (event.id === id) {
         return { ...event, status: newStatus };
       }
       return event;
     });
     // setEvents(updatedEvents);
-    localStorage.setItem("events", JSON.stringify(updatedEvents));
+    localStorage.setItem('events', JSON.stringify(updatedEvents));
 
     toast({
       description: `Event ${
-        newStatus === "published" ? "published" : "unpublished"
+        newStatus === 'published' ? 'published' : 'unpublished'
       } successfully`,
     });
   };
 
   const handleDuplicate = (id: string) => {
-    const eventToDuplicate = events.find((event) => event.id === id);
+    const eventToDuplicate = events.find(event => event.id === id);
     if (eventToDuplicate) {
       const newEvent = {
         ...eventToDuplicate,
@@ -151,10 +133,10 @@ export default function EventList() {
       };
       const updatedEvents = [...events, newEvent];
       // setEvents(updatedEvents);
-      localStorage.setItem("events", JSON.stringify(updatedEvents));
+      localStorage.setItem('events', JSON.stringify(updatedEvents));
 
       toast({
-        description: "Event duplicated successfully",
+        description: 'Event duplicated successfully',
       });
     }
   };
@@ -163,15 +145,15 @@ export default function EventList() {
     if (!selectedItems.length || !bulkAction) return;
 
     const updatedEvents = events
-      .map((event) => {
+      .map(event => {
         if (selectedItems.includes(event.id)) {
           switch (bulkAction) {
-            case "delete":
+            case 'delete':
               return null;
-            case "publish":
-              return { ...event, status: "published" };
-            case "unpublish":
-              return { ...event, status: "draft" };
+            case 'publish':
+              return { ...event, status: 'published' };
+            case 'unpublish':
+              return { ...event, status: 'draft' };
             default:
               return event;
           }
@@ -181,12 +163,12 @@ export default function EventList() {
       .filter(Boolean) as Event[];
 
     // setEvents(updatedEvents);
-    localStorage.setItem("events", JSON.stringify(updatedEvents));
+    localStorage.setItem('events', JSON.stringify(updatedEvents));
 
     const actionMessages = {
-      delete: "deleted",
-      publish: "published",
-      unpublish: "unpublished",
+      delete: 'deleted',
+      publish: 'published',
+      unpublish: 'unpublished',
     };
 
     toast({
@@ -196,7 +178,7 @@ export default function EventList() {
     });
 
     setSelectedItems([]);
-    setBulkAction("");
+    setBulkAction('');
   };
 
   // const filteredEvents = events.filter((event) => {
@@ -209,13 +191,13 @@ export default function EventList() {
   // });
 
   const handleSelectItem = (id: string, checked: boolean) => {
-    setSelectedItems((prev) =>
-      checked ? [...prev, id] : prev.filter((item) => item !== id)
+    setSelectedItems(prev =>
+      checked ? [...prev, id] : prev.filter(item => item !== id)
     );
   };
 
   const handleSelectAll = (checked: boolean) => {
-    setSelectedItems(checked ? events.map((event) => event.id) : []);
+    setSelectedItems(checked ? events.map(event => event.id) : []);
   };
 
   const handleRowClick = (id: string) => {
@@ -223,9 +205,9 @@ export default function EventList() {
   };
 
   const bulkActions = [
-    { value: "delete", label: "Delete Selected" },
-    { value: "publish", label: "Publish Selected" },
-    { value: "unpublish", label: "Unpublish Selected" },
+    { value: 'delete', label: 'Delete Selected' },
+    { value: 'publish', label: 'Publish Selected' },
+    { value: 'unpublish', label: 'Unpublish Selected' },
   ];
 
   return (
@@ -249,7 +231,7 @@ export default function EventList() {
               type="text"
               placeholder="Search events..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -279,17 +261,17 @@ export default function EventList() {
             data={events}
             columns={[
               {
-                header: "Title",
-                accessor: "title",
-                className: "text-[14px] cursor-pointer",
+                header: 'Title',
+                accessor: 'title',
+                className: 'text-[14px] cursor-pointer',
               },
               {
-                header: "Location",
-                accessor: "location",
-                className: "text-[14px] cursor-pointer",
+                header: 'Location',
+                accessor: 'location',
+                className: 'text-[14px] cursor-pointer',
               },
               {
-                header: "Date & Time",
+                header: 'Date & Time',
                 accessor: (event: any) => {
                   const formattedDateTime = formatEventDateTime(
                     event.date,
@@ -301,29 +283,29 @@ export default function EventList() {
                     </div>
                   );
                 },
-                className: "text-[14px] cursor-pointer",
+                className: 'text-[14px] cursor-pointer',
               },
               {
-                header: "Status",
+                header: 'Status',
                 accessor: (event: any) => (
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${
-                      event.status === "published"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
+                      event.status === 'published'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-yellow-100 text-yellow-800'
                     }`}
                   >
                     {event.status}
                   </span>
                 ),
-                className: "text-[14px]",
+                className: 'text-[14px]',
               },
               {
-                header: "Actions",
+                header: 'Actions',
                 accessor: (event: any) => (
                   <div
                     className="flex items-center justify-end gap-2 text-[14px]"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={e => e.stopPropagation()}
                   >
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -357,13 +339,13 @@ export default function EventList() {
                           onClick={() =>
                             handleStatusChange(
                               event.id,
-                              event.status === "published"
-                                ? "draft"
-                                : "published"
+                              event.status === 'published'
+                                ? 'draft'
+                                : 'published'
                             )
                           }
                         >
-                          {event.status === "published" ? (
+                          {event.status === 'published' ? (
                             <>
                               <XSquare className="h-4 w-4 mr-2" />
                               Unpublish
@@ -386,13 +368,13 @@ export default function EventList() {
                     </DropdownMenu>
                   </div>
                 ),
-                className: "w-[100px] text-[14px]",
+                className: 'w-[100px] text-[14px]',
               },
             ]}
             selectedItems={selectedItems}
             onSelectItem={handleSelectItem}
             onSelectAll={handleSelectAll}
-            getItemId={(item) => item.id}
+            getItemId={item => item.id}
             onRowClick={handleRowClick}
             CardComponent={isMobile ? EventCard : undefined}
             actions={{
@@ -429,7 +411,7 @@ export default function EventList() {
         dateFilter={dateFilter}
         setDateFilter={setDateFilter}
         uniqueLocations={Array.from(
-          new Set(events.map((event) => event.location))
+          new Set(events.map(event => event.location))
         )}
       />
 
