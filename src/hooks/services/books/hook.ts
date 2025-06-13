@@ -16,7 +16,7 @@ interface BookInterface {
   authorImage: File | null;
 }
 
-interface Book {
+export interface Book {
   id: string;
   title: string;
   description: string;
@@ -46,6 +46,14 @@ interface BookListResponse {
     perPage: number;
     totalPages: number;
   };
+}
+
+interface UpdateBookStatusPayload {
+  bookIds: string[];
+}
+
+interface DeleteBookPayload {
+  bookIds: string[];
 }
 
 export const useCreateBook = () => {
@@ -79,4 +87,82 @@ export const useGetBookList = () => {
     queryKey: ['books'],
     queryFn: getBooks,
   });
+};
+
+export const useUpdateBookStatus = () => {
+  const updateBookStatus = async (
+    payload: UpdateBookStatusPayload,
+    action: 'publish' | 'unpublish'
+  ) => {
+    const token = localStorage.getItem('pass');
+    setBearerToken(token);
+    const response = await api.post(`books/${action}`, payload);
+    return response.data;
+  };
+
+  const mutation = useMutation({
+    mutationFn: ({
+      payload,
+      action,
+    }: {
+      payload: UpdateBookStatusPayload;
+      action: 'publish' | 'unpublish';
+    }) => updateBookStatus(payload, action),
+  });
+
+  return mutation;
+};
+
+export const useDeleteBook = () => {
+  const deleteBook = async (payload: DeleteBookPayload) => {
+    const token = localStorage.getItem('pass');
+    setBearerToken(token);
+    const response = await api.post('books/delete', payload);
+    return response.data;
+  };
+
+  const mutation = useMutation({
+    mutationFn: deleteBook,
+  });
+
+  return mutation;
+};
+
+export const useGetBook = (id: string) => {
+  const getBook = async () => {
+    const token = localStorage.getItem('pass');
+    setBearerToken(token);
+    const response = await api.get<{ data: Book }>(`books/${id}`);
+    return response.data;
+  };
+
+  return useQuery({
+    queryKey: ['book', id],
+    queryFn: getBook,
+    enabled: !!id,
+  });
+};
+
+export const useUpdateBook = () => {
+  const updateBook = async ({
+    id,
+    payload,
+  }: {
+    id: string;
+    payload: FormData;
+  }) => {
+    const token = localStorage.getItem('pass');
+    setBearerToken(token);
+    const response = await api.put(`books/${id}`, payload, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  };
+
+  const mutation = useMutation({
+    mutationFn: updateBook,
+  });
+  return mutation;
 };
