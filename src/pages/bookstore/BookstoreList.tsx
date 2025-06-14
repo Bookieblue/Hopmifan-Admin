@@ -19,7 +19,12 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { BulkActions } from '@/components/shared/BulkActions';
-import { useGetBookList } from '@/hooks/services/books/hook';
+import {
+  useGetBookList,
+  useUpdateBookStatus,
+  useDeleteBook,
+  Book,
+} from '@/hooks/services/books/hook';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +41,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function BookstoreList() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,6 +56,9 @@ export default function BookstoreList() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { data: bookListResponse, isLoading } = useGetBookList();
+  const { mutate: updateBookStatus } = useUpdateBookStatus();
+  const { mutate: deleteBook } = useDeleteBook();
+  const queryClient = useQueryClient();
 
   const books = bookListResponse?.data.books || [];
 
@@ -59,25 +68,51 @@ export default function BookstoreList() {
   };
 
   const confirmDelete = () => {
-    // TODO: Implement delete API call
-    setDeleteDialogOpen(false);
-    setBookToDelete('');
-    setSelectedItems(selectedItems.filter(itemId => itemId !== bookToDelete));
-    toast({
-      description: 'Book deleted successfully',
-    });
+    deleteBook(
+      { bookIds: [bookToDelete] },
+      {
+        onSuccess: () => {
+          toast({
+            description: 'Book deleted successfully',
+          });
+          setDeleteDialogOpen(false);
+          setBookToDelete('');
+          setSelectedItems(
+            selectedItems.filter(itemId => itemId !== bookToDelete)
+          );
+          queryClient.invalidateQueries({ queryKey: ['books'] });
+        },
+        onError: () => {
+          toast({
+            variant: 'destructive',
+            description: 'Failed to delete book',
+          });
+        },
+      }
+    );
   };
 
   const handleStatusChange = (
     id: string,
     newStatus: 'publish' | 'unpublish'
   ) => {
-    // TODO: Implement status change API call
-    toast({
-      description: `Book ${
-        newStatus === 'publish' ? 'published' : 'unpublished'
-      } successfully`,
-    });
+    updateBookStatus(
+      { payload: { bookIds: [id] }, action: newStatus },
+      {
+        onSuccess: () => {
+          toast({
+            description: `Book ${newStatus}ed successfully`,
+          });
+          queryClient.invalidateQueries({ queryKey: ['books'] });
+        },
+        onError: () => {
+          toast({
+            variant: 'destructive',
+            description: `Failed to ${newStatus} book`,
+          });
+        },
+      }
+    );
   };
 
   const handleDuplicate = (id: string) => {
@@ -89,12 +124,48 @@ export default function BookstoreList() {
 
   const handleBulkAction = () => {
     if (!selectedItems.length || !bulkAction) return;
-    // TODO: Implement bulk actions API call
-    toast({
-      description: `${selectedItems.length} books ${bulkAction}ed successfully`,
-    });
-    setSelectedItems([]);
-    setBulkAction('');
+
+    if (bulkAction === 'delete') {
+      deleteBook(
+        { bookIds: selectedItems },
+        {
+          onSuccess: () => {
+            toast({
+              description: `${selectedItems.length} books deleted successfully`,
+            });
+            setSelectedItems([]);
+            setBulkAction('');
+            queryClient.invalidateQueries({ queryKey: ['books'] });
+          },
+          onError: () => {
+            toast({
+              variant: 'destructive',
+              description: 'Failed to delete books',
+            });
+          },
+        }
+      );
+    } else if (bulkAction === 'publish' || bulkAction === 'unpublish') {
+      updateBookStatus(
+        { payload: { bookIds: selectedItems }, action: bulkAction },
+        {
+          onSuccess: () => {
+            toast({
+              description: `${selectedItems.length} books ${bulkAction}ed successfully`,
+            });
+            setSelectedItems([]);
+            setBulkAction('');
+            queryClient.invalidateQueries({ queryKey: ['books'] });
+          },
+          onError: () => {
+            toast({
+              variant: 'destructive',
+              description: `Failed to ${bulkAction} books`,
+            });
+          },
+        }
+      );
+    }
   };
 
   const filteredBooks = books
@@ -191,14 +262,14 @@ export default function BookstoreList() {
             },
             {
               header: 'Price',
-              accessor: (book: any) => (
+              accessor: (book: Book) => (
                 <div className="text-[14px]">${book.price.toFixed(2)}</div>
               ),
               className: 'text-[14px]',
             },
             {
               header: 'Status',
-              accessor: (book: any) => (
+              accessor: (book: Book) => (
                 <span
                   className={`px-2 py-1 rounded-full text-xs ${
                     book.status === 'publish'
@@ -213,12 +284,17 @@ export default function BookstoreList() {
             },
             {
               header: 'Date',
-              accessor: 'publishDate',
+              accessor: (book: Book) =>
+                new Date(book.createdAt).toLocaleDateString('en-US', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                }),
               className: 'text-[14px]',
             },
             {
               header: 'Actions',
-              accessor: (book: any) => (
+              accessor: (book: Book) => (
                 <div
                   className="flex items-center justify-end gap-2 text-[14px]"
                   onClick={e => e.stopPropagation()}

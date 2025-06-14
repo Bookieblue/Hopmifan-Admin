@@ -52,7 +52,7 @@ export default function CreateEvent() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['events']); // Refresh event list
+      queryClient.invalidateQueries({ queryKey: ['events'] });
       toast({
         description: 'Event created successfully!',
       });
